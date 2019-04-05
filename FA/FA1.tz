@@ -1,0 +1,54 @@
+parameter
+  (or
+    (pair %transfer
+      (address %recipient)
+      (nat %amount)
+    )
+    (or
+      (pair %getTotalSupply
+        (contract nat)
+        unit
+      )
+      (pair %getBalance
+        (contract (option nat))
+        address
+      )
+    )
+  );
+storage
+  (pair
+    (big_map address nat)
+    (nat %totalSupply)
+  );
+code {UNPAIR;
+      IF_LEFT
+        {DUUP; CAR; SOURCE; GET; ASSERT_SOME;      # if source has account
+         CAST @old_source_balance nat;
+         DUUP; CDR; SWAP; SUB; ISNAT; ASSERT_SOME; # if sufficient funds
+         CAST @new_source_balance nat;
+         DUUUP; CAR; SWAP; SOME; SOURCE; UPDATE;   # debit source
+         DUP; DUUUP; CAR; GET;
+         IF_SOME                                   # If recipient has account
+           {CAST @old_recipient_balance nat;
+            DUUUP; UNPAIR; DIP {ADD; CAST @new_recipient_balance nat};
+            DIP {SOME}; UPDATE;                    # credit recipient
+            DIP {DROP; CDR;}; PAIR;                # new storage
+           }
+           {SWAP; UNPAIR; DIP {SOME}; UPDATE;      # create account
+            DIP {CDR}; PAIR;                       # new storage
+           };
+         NIL operation; PAIR;
+        }
+        {IF_LEFT
+          {DIP {DUP; CDR;}; CAR; SWAP; DIP {PUSH mutez 0};
+           TRANSFER_TOKENS;
+           NIL operation; SWAP; CONS; PAIR;
+          }
+          {DIP {DUP; CAR;}; UNPAIR;
+           DIP {GET}; SWAP; DIP {PUSH mutez 0};
+           TRANSFER_TOKENS;
+           NIL operation; SWAP; CONS;
+           PAIR;
+          };
+        };
+     };
