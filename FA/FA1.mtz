@@ -1,0 +1,57 @@
+let {
+  getSourceBalance :: '[parameter, storage] -> '[nat, parameter, storage] =
+    {duup; car; source; get; assert_some; 
+     CAST @old_source_balance nat;
+    };
+
+  newSourceBalance :: '[nat, parameter, storage] -> '[nat, parameter, storage] =
+    { duup; cdr; swap; sub; isnat; assert_some; 
+      cast @new_source_balance nat;
+    };
+
+  debitSource :: '[nat, parameter, storage] -> '[parameter, storage] =
+   { dip {swap; unpair}; some; source; update; pair; swap} ;
+
+  getRecipientBalance :: '[parameter, storage] -> '[option nat, parameter, storage] =
+    { duup; car; duup; car; get;};
+
+  newRecipientBalance :: '[option nat, parameter, storage] -> '[nat, parameter, storage] =
+    { if_some
+        {duup; cdr; add; cast @new_recipient_balance nat}
+        {dup; cdr;};
+    };
+
+  creditRecipient :: '[nat, parameter, storage] -> '[parameter, storage] =
+    { some; duup; car; diip {swap; unpair}; update; pair; swap;};
+
+};
+parameter
+  ( (address, nat)                   %transfer
+  | (contract nat, ())               %getTotalSupply
+  | (contract (option nat), address) %getBalance
+  );
+storage
+  (big_map address nat, nat)
+  ;
+code {unpair;
+      if_left { getSourceBalance;
+                newSourceBalance;
+                debitSource;
+                getRecipientBalance;
+                newRecipientBalance;
+                creditRecipient;
+                drop; nil operation; pair;
+              }
+        {if_left
+          {dip {dup; cdr;}; car; swap; dip {push mutez 0};
+           transfer_tokens;
+           nil operation; swap; cons; pair;
+          }
+          {dip {dup; car;}; unpair;
+           dip {get}; swap; dip {push mutez 0};
+           transfer_tokens;
+           nil operation; swap; cons;
+           pair;
+          };
+        };
+     };
