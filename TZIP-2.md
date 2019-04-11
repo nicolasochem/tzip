@@ -1,4 +1,16 @@
-# tz-0 : Tezos Standard Index Codes
+---
+tzip: 2
+title: TZIP Index
+status: Active
+type: Meta
+author: John Burnham
+advocate: John Burnham
+created: 2019-04-10
+---
+
+## Summary
+
+## Abstract
 
 ## Background: A brief history of the RFC document
 
@@ -82,18 +94,18 @@ is in-line with other successful RFC processes such as Python. The problem is
 in the unexpected emergent interaction between technical standards and the
 largely marketing-driven token economy.
 
-## Meaning RFC serial numbers
+## Solution: Meaningful RFC serial numbers
 
-In Tezos, which does not yet have a formalized `RFC` process, we can partially
-mitigate the above problem by giving `RFC`s more meaningful serial numbers.
+We can mitigate the above problems by giving `RFC`s more meaningful serial
+numbers.
 
-We define the "Tezos Standards" index code as two components:
+We define the TZIP index code as two components:
 
 1. An alphabetic Domain prefix (e.g. `FA` or `G`) which signifies the standard's
    topic or domain of relevance. This prefix can be empty, which indicates a
    meta-level standard (a standard about the standards process itself). The
    mapping between specific letter prefixes and domains is maintained in a
-   registry (cf. `tz1: Tezos Standards Governance Process and Guidelines`).
+   registry
 2. A serial number represented as a list of dot separated numbers (e.g. `1.2.3`
    or `15`), which signfies whether the standard is an extension or
    specialization of another more general standard. For example `2.34` would be
@@ -134,35 +146,86 @@ certain point than issuing a new root code.
 
 In contexts where the overall index code may appear with abbreviations
 or serial numbers from external platforms (such as `RFC` or `EIP` numbers), the
-letters `tz` (for "tezos ztandards") should be prepended to the code like so:
+letters `TZIP` should be prepended to the code like so:
 
 ```
-tz-FA2
-tz-A3.4
+TZIP-FA2
+TZIP-A3.4
 ```
 
-Meta-level standards (such as this one `tz-0`) should always have the `tz-`
+Meta-level standards (such as this one `TZIP-2`) should always have `TZIP`
 prepended to their index codes.
 
-## Domain Prefixes defined by this document
+## TZIP Index: Types
 
-```
-  A - Assets
- FA - Fungible Assets
- NA - Nonfungible Assets
-  G - Governance
-  N - Networking
-  P - Protocol
-  X - Cryptography
-  Z - Informational
-```
+### List of Types
+
+| Type Prefix | Topic                          |
+|-------------|--------------------------------|
+|             | Meta                           |
+| A           | Application                    |
+| AA          | Asset Application              |
+| LA          | Layer-n Application            |
+| FAA         | Fungible Asset Application     |
+| NAA         | Non-fungible Asset Application |
+| I           | Interface                      |
+| L           | Language                       |
+| N           | Networking                     |
+| O           | Operations                     |
+| P           | Protocol                       |
+| X           | Cryptography                   |
+| Z           | Informational                  |
+
+### Descriptions:
+
+**(A) Application**: Applications built on top of Tezos, particularly smart
+contract or higher layer applications.
+
+**(LA) Layer-n Applications**: Higher-layer applications which use the Tezos
+chain e.g. for settlement or communication.
+
+**(AA)** Assets: Applications which implement a resource with economic value
+which users own or control with some expectation of future benefit.
+
+**(FAA)** Fungible Assets: Assets whose units are interchangeable and of equal
+value.
+
+**(NAA)** Nonfungible Assets: Assets whose units are are not
+interchangeable or of equal value.
+
+**(P) Protocol**: improvements to the Tezos protocol requiring a
+recourse to the protocol amendment process.
+
+**(N) Networking**: improvements to the peer-to-peer layer
+
+**(X) Cryptographic**: improvements to cryptographic primitives
+
+**(I) Interface**: improvements around client API/RPC specifications and
+standards
+
+**(L) Language**: improvements to smart contract, formal proof, or
+implementation languages. Examples are specifications for
+[Michelson], [LIGO, [SmartPy], [Morley], [Liquidity], [Fi] or best practices
+for Tezos projects using OCaml, Haskell, Rust, JavaScript, Coq, Agda, etc.
+
+**(Z) Informational**: Tezos design issue, or provides general guidelines or
+information to the Tezos community.
+
+A **Meta TZIP** describes a process surrounding Tezos or proposes a change
+to (or an event in) a process. Examples include procedures, guidelines,
+changes to the TZIP process itself, or proposals for new social institutions
+and spaces. This document is a Meta TZIP.
+
+Unlike other types of TZIP, active Meta TZIPs should be consistent with one
+another as much as possible and are binding on TZIP editors.
+
+Additional types of TZIP may be proposed, and existing TZIP types may also be
+deprecated by future Meta TZIPs. The TZIP Editors will maintain up-to-date list
+of active TZIP types in [TZIP-2: TZIP Index][TZIP-2].
 
 ## Additional Documents
 
-[tz-1: Standards Governance and Guidelines]
-[tz-2: Contract Interface Standards]
-
-
+[TZIP-1]: (/TZIP-1.md)
 [issue-20]: https://github.com/ethereum/EIPs/issues/20
 [issue-16]: https://github.com/ethereum/EIPs/issues/16
 [pubprocess]: https://www.rfc-editor.org/pubprocess/
@@ -170,3 +233,8 @@ prepended to their index codes.
 [RFCs]: https://en.wikipedia.org/wiki/List_of_RFCs,
 [Internet Standard]: (https://en.wikipedia.org/wiki/Internet_Standard).
 [ERC20]: https://en.wikipedia.org/wiki/ERC-20
+
+## Copyright
+
+Copyright and related rights waived via
+[CC0](https://creativecommons.org/publicdomain/zero/1.0/).
