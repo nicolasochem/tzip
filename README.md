@@ -1,3 +1,3 @@
-# index
+# Tezos Improvement Proposals
 
-A collection of standards proposals (as well as implementations, where appropriate) sorted by their assigned Tezos Standards index code
+See [TZIP-1](TZIP-1.md)
