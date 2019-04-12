@@ -1,7 +1,7 @@
 ---
 tzip: 2
 title: TZIP Index
-status: Active
+status: WIP
 type: Meta
 author: John Burnham
 advocate: John Burnham

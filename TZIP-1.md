@@ -323,9 +323,9 @@ Each TZIP should have the following parts:
 ## TZIP Formats and Templates
 
 TZIPs should be written in [markdown] format.  Image files should be included in
-a subdirectory of the `assets` folder for that TZIP as follow: `assets/tzip-X`
-(for tzip **X**). When linking to an image in the TZIP, use relative links such
-as `../assets/tzip-X/image.png`.
+a subdirectory of the `assets` folder for that TZIP as follow: `assets/X` (for
+tzip **X**, replacing any `.` with `_`). When linking to an image in the TZIP,
+use relative links such as `../assets/X/image.png`.
 
 ## TZIP Header Preamble
 

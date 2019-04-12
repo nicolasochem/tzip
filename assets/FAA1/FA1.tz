@@ -18,7 +18,7 @@ parameter
 storage
   (pair
     (big_map address nat)
-    (nat %totalSupply)
+    nat
   );
 code {UNPAIR;
       IF_LEFT
@@ -49,6 +49,6 @@ code {UNPAIR;
            TRANSFER_TOKENS;
            NIL operation; SWAP; CONS;
            PAIR;
-          };
+           };
         };
      };
