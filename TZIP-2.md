@@ -27,8 +27,7 @@ auspices of the `IETF`, which additionally canonizes certain `RFC`s (or sets of
 things like `ASCII` (RFC-20), `TCP` (RFC-793), `DNS` (RFC-1035), etc.  ([a list
 of notable `RFC`s][RFC])
 
-Roughly speaking the `RFC` [process][pubprocess]
-works like this:
+Roughly speaking the `RFC` [process][pubprocess] works like this:
 
 1. Submit a draft to the RFC Editor
 2. Various review procedures for independent submissions (RFCs generated
@@ -43,7 +42,7 @@ it is designed to be deliberative and thorough, to "move slow and break
 nothing."
 
 A full state diagram for the RFC Editor process:
-https://www.rfc-editor.org/wp-content/uploads/rfc-editor-process.gif
+![](https://www.rfc-editor.org/wp-content/uploads/rfc-editor-process.gif)
 
 The relevant part of this process for our purposes is step 4 (Assign an `RFC`
 serial number). RFC numbers are issued in order, steadily ticking up as each
@@ -77,12 +76,12 @@ In one sense, this is a standard working properly, people need common language
 to cooordinate with one another. However, using the name "ERC-20" (i.e. issue
 number 20 in the EIP repository) for this purpose is perverse. Standards serial
 numbers are not designed for marketing copy; imagine calling `TCP/IP`
-"RFC-[1347][RFC1347]/[791][RFC791]".  At best, the additional layer of jargon
+"[RFC-1347]/[RFC-791]".  At best, the additional layer of jargon
 obscures meaning. At worst, it can lead to cargo cult mentality in those who
 misunderstand the purpose of standards and thus conflate compliance with the
 generation of real value.
 
-https://dilbert.com/strip/1997-09-24
+![](https://dilbert.com/strip/1997-09-24)
 "What's the difference between ERC-20 and ERC-223? Oh, about 103."
 
 An egregious (and fascinating) example of this abuse is the adoption of the
@@ -101,7 +100,7 @@ numbers.
 
 We define the TZIP index code as two components:
 
-1. An alphabetic Domain prefix (e.g. `FA` or `G`) which signifies the standard's
+1. An alphabetic Domain prefix (e.g. `FA` or `P`) which signifies the standard's
    topic or domain of relevance. This prefix can be empty, which indicates a
    meta-level standard (a standard about the standards process itself). The
    mapping between specific letter prefixes and domains is maintained in a
@@ -129,7 +128,9 @@ is already a standard with the code `FA1`, which our `ERC-20` port is not an
 extension of, our index code will then be `FA2`.
 
 Crucially, domain prefixes export distinct namespaces, so `A1` and `FA1` are
-not necessarily related and might be completely independent.
+not necessarily related and might be completely independent. Whether or not
+a TZIP of a given type applies to all TZIPs in its subtypes is to be defined by
+the TZIP in question.
 
 Now let's further suppose that some time later we return to our `FA2` standard
 and wish to make an extension, say by adding a transfer restriction function to
@@ -164,10 +165,8 @@ prepended to their index codes.
 |-------------|--------------------------------|
 |             | Meta                           |
 | A           | Application                    |
-| AA          | Asset Application              |
 | LA          | Layer-n Application            |
-| FAA         | Fungible Asset Application     |
-| NAA         | Non-fungible Asset Application |
+| FA          | Financial Application          |
 | I           | Interface                      |
 | L           | Language                       |
 | N           | Networking                     |
@@ -184,14 +183,9 @@ contract or higher layer applications.
 **(LA) Layer-n Applications**: Higher-layer applications which use the Tezos
 chain e.g. for settlement or communication.
 
-**(AA)** Assets: Applications which implement a resource with economic value
-which users own or control with some expectation of future benefit.
-
-**(FAA)** Fungible Assets: Assets whose units are interchangeable and of equal
-value.
-
-**(NAA)** Nonfungible Assets: Assets whose units are are not
-interchangeable or of equal value.
+**(FA) Financial Applications**: Applications involving the management,
+allocation or transfer of instruments which mediate economic value, such as
+assets or liabilities.
 
 **(P) Protocol**: improvements to the Tezos protocol requiring a
 recourse to the protocol amendment process.
@@ -222,8 +216,6 @@ another as much as possible and are binding on TZIP editors.
 Additional types of TZIP may be proposed, and existing TZIP types may also be
 deprecated by future Meta TZIPs. The TZIP Editors will maintain up-to-date list
 of active TZIP types in [TZIP-2: TZIP Index][TZIP-2].
-
-## Additional Documents
 
 [TZIP-1]: (/TZIP-1.md)
 [issue-20]: https://github.com/ethereum/EIPs/issues/20

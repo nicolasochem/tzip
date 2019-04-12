@@ -1,10 +1,10 @@
 ---
 tzip: 1
 title: TZIP Purpose and Guidelines
-status: Active
+status: WIP
 type: Meta
-author: John Burnham
-advocate: John Burnham
+author: John Burnham, Jacob Arluck
+advocate: John Burnham, Jacob Arluck
 created: 2019-04-10
 ---
 
@@ -30,8 +30,8 @@ prescriptive social institution. Unlike Ethereum, Tezos already has a
 prescriptive decentralized governance institution: The quorum of Tezos bakers
 and delegates. The goal of this proposal is to support that institution by
 encouraging high quality technical discussion, documentation and, where
-appropriate, non-binding standardization. Or to put it simply, Tezos already
-has a Parliament, but now we need a *[Hansard]*
+appropriate, non-binding standardization. Or in other words, Tezos already
+has its Parliament, but does not yet have its *[Hansard]*
 
 ## What is a TZIP?
 
@@ -77,7 +77,7 @@ maintain an up-to-date list. Unlike some other standardization schemas, instead
 of purely numeric serial numbers, TZIPs use "TZIP indices", a system similar to
 the Library of Congress Classification that mixes alphabetic topic prefixes
 ("A", "P", etc.) with serial numbers which may be extended with a `.` character
-(e.g. `FAA1.2` is an extension of `FAA1`) This index namespace is also defined
+(e.g. `FA1.2` is an extension of `FA1`) This index namespace is also defined
 in [TZIP-2].
 
 It is highly recommended that a single TZIP contain a single key proposal or
