@@ -454,18 +454,20 @@ to the TZIP editors.
 Copyright and related rights waived via
 [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
 
+[Michelson]: http://tezos.gitlab.io/zeronet/whitedoc/michelson.html
+[the Issues section of this repository]: https://gitlab.com/tzip/tzip/issues
+[merge request]: https://gitlab.com/tzip/tzip/merge_requests
+[LIGO]: https://medium.com/tezos/introducing-ligo-a-new-smart-contract-language-for-tezos-233fa17f21c7
+[SmartPy]: https://medium.com/@SmartPy_io/introducing-smartpy-and-smartpy-io-d4013bee7d4e
+[Morley]: https://gitlab.com/tezos-standards/morley
+[Liquidity]: http://www.liquidity-lang.org/
+[Fi]: https://learn.fi-code.com/
+[last-call.xml]
+
+
 [Hansard]: https://en.wikipedia.org/wiki/Hansard
 [TZIP-2]: /TZIP-2.md
 [TZIP-3]: /TZIP-3.md
-[Michelson]
-[LIGO]
-[SmartPy]
-[Morley]
-[Liquidity]
-[Fi]
-[the Issues section of this repository]
-[merge request]
-[last-call.xml]
 [tip-1]: https://gitlab.com/tips2/TIPs/blob/master/TIPS/tip-1.md
 [Ethereum's EIP-1]: https://github.com/ethereum/EIPs
 [Bitcoin's BIP-0001]: https://github.com/bitcoin/bips
