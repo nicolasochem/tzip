@@ -1,0 +1,19 @@
+parameter
+ (or
+    unit   %antibump_counter
+    (or
+      unit %bump_counter
+      nat  %reset_counter
+    )
+  );
+storage nat;
+code {UNPAIR;
+      IF_LEFT
+        {DROP; PUSH nat 1; SUB; ISNAT; ASSERT_SOME;
+         NIL operation; PAIR
+        }                                               # %antibump_counter
+        {IF_LEFT
+          {DROP; PUSH nat 1; ADD; NIL operation; PAIR;} # %bump_counter
+          {DIP {DROP}; NIL operation; PAIR;}            # %reset_counter
+        };
+     };
