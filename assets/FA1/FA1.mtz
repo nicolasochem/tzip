@@ -1,57 +1,59 @@
 let {
-  getSourceBalance :: '[parameter, storage] -> '[nat, parameter, storage] =
-    {duup; car; source; get; assert_some; 
-     CAST @old_source_balance nat;
+
+  type Parameter =
+    ( (Address, Nat)              %transfer
+    | View () Nat                 %getTotalSupply
+    | View Address (Option Nat)   %getBalance
+    );
+
+  type Storage = (BigMap Address Nat, Nat);
+
+  getSourceBalance :: '[(Address, Nat), Storage]
+                   -> '[Nat, (Address, Nat), Storage]
+  = {duup; car; source; get; assert_some; };
+
+  newSourceBalance :: '[Nat, (Address, Nat), Storage]
+                   -> '[Nat, (Address, Nat), Storage]
+  = { duup; cdr; swap; sub; isnat; assert_some; };
+
+  debitSource :: '[Nat, (Address, Nat), Storage] -> '[(Address, Nat), Storage]
+  = { dip {swap; unpair}; some; source; update; pair; swap};
+
+  getRecipientBalance :: '[(Address, Nat), Storage] 
+                      -> '[Option Nat, (Address, Nat), Storage]
+  = { duup; car; duup; car; get};
+
+  newRecipientBalance :: '[Option Nat, (Address, Nat), Storage]
+                      -> '[Nat, (Address, Nat), Storage]
+  = { if_some
+      {duup; cdr; add}
+      {dup; cdr};
     };
 
-  newSourceBalance :: '[nat, parameter, storage] -> '[nat, parameter, storage] =
-    { duup; cdr; swap; sub; isnat; assert_some; 
-      cast @new_source_balance nat;
+  creditRecipient :: '[Nat, (Address, Nat), Storage]
+                  -> '[(Address, Nat), Storage]
+  = { some; duup; car; diip {swap; unpair}; update; pair; swap;};
+
+  transferBalance :: '[(Address, Nat), Storage]
+                  -> '[(List Operation, Storage)]
+  = { getSourceBalance; newSourceBalance; debitSource;
+      getRecipientBalance; newRecipientBalance; creditRecipient;
+      drop; nil operation; pair;
     };
 
-  debitSource :: '[nat, parameter, storage] -> '[parameter, storage] =
-   { dip {swap; unpair}; some; source; update; pair; swap} ;
+  getTotalSupply :: '[ View () Nat, Storage ] -> '[(List Operation, Storage)]
+  = { view {cddr} };
 
-  getRecipientBalance :: '[parameter, storage] -> '[option nat, parameter, storage] =
-    { duup; car; duup; car; get;};
-
-  newRecipientBalance :: '[option nat, parameter, storage] -> '[nat, parameter, storage] =
-    { if_some
-        {duup; cdr; add; cast @new_recipient_balance nat}
-        {dup; cdr;};
-    };
-
-  creditRecipient :: '[nat, parameter, storage] -> '[parameter, storage] =
-    { some; duup; car; diip {swap; unpair}; update; pair; swap;};
+  getBalance :: '[ View Address (Option Nat), Storage ]
+             -> '[(List Operation, Storage)]
+  = { view { unpair; dip {car}; get} };
 
 };
-parameter
-  ( (address, nat)                   %transfer
-  | (contract nat, ())               %getTotalSupply
-  | (contract (option nat), address) %getBalance
-  );
-storage
-  (big_map address nat, nat)
-  ;
+parameter Parameter;
+storage Storage;
 code {unpair;
-      if_left { getSourceBalance;
-                newSourceBalance;
-                debitSource;
-                getRecipientBalance;
-                newRecipientBalance;
-                creditRecipient;
-                drop; nil operation; pair;
-              }
-        {if_left
-          {dip {dup; cdr;}; car; swap; dip {push mutez 0};
-           transfer_tokens;
-           nil operation; swap; cons; pair;
-          }
-          {dip {dup; car;}; unpair;
-           dip {get}; swap; dip {push mutez 0};
-           transfer_tokens;
-           nil operation; swap; cons;
-           pair;
-          };
-        };
+      case
+        { transferBalance}
+        { getTotalSupply }
+        { getBalance };
      };
