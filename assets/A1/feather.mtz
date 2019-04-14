@@ -1,0 +1,17 @@
+parameter (unit, option nat);
+storage address;
+code { UNPAIR; DUP; CDR; IF_SOME
+        { LEFT (contract (unit, option nat));
+          DIP {SOURCE; CONTRACT (nat | contract (unit, option nat));
+               ASSERT_SOME; AMOUNT;
+              };
+          TRANSFER_TOKENS; NIL operation; SWAP;
+          CONS; DIP {DROP}; PAIR;
+        }
+        { CAR; DIP {SELF}; PAIR;
+          RIGHT nat; RIGHT unit; RIGHT unit;
+          DIP {AMOUNT};
+          DIIP {DUP; CONTRACT (unit | unit | nat | view unit nat); ASSERT_SOME};
+          TRANSFER_TOKENS; NIL operation; SWAP; CONS; PAIR;
+        }
+    };

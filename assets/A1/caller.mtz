@@ -1,0 +1,11 @@
+parameter
+ ( nat                         %append
+ | contract (unit, option nat)
+ );
+storage (list nat);
+code { UNPAIR; CASE
+        { CONS; NIL operation; PAIR }
+        { NONE nat; UNIT; PAIR; DIP {AMOUNT}; TRANSFER_TOKENS;
+          NIL operation; SWAP; CONS; PAIR;
+        };
+    };
