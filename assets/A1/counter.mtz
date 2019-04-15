@@ -1,14 +1,14 @@
 parameter
-  ( unit          %antibump_counter
-  | unit          %bump_counter
-  | nat           %reset_counter
-  | view unit nat %getCount
+  ( Unit          %antibump_counter
+  | Unit          %bump_counter
+  | Nat           %reset_counter
+  | View Unit Nat %getCount
   );
-storage nat;
-code {UNPAIR;
-      CASE
-        {DROP; PUSH nat 1; SUB; ISNAT; ASSERT_SOME; NIL operation; PAIR }
-        {DROP; PUSH nat 1; ADD; NIL operation; PAIR;}
-        {DIP {DROP}; NIL operation; PAIR;}
-        {VIEW {CDR}}
+storage Nat;
+code {unpair;
+      case
+        {drop; push Nat 1; sub; isnat; assert_some; nil Operation; pair }
+        {drop; push Nat 1; add; nil Operation; pair;}
+        {dip {drop}; nil Operation; pair;}
+        {view {cdr}}
      };
