@@ -118,8 +118,8 @@ and providing an interface to transfer balances between accounts. Since
 `ERC-20` balances are fungible (all units of the asset are interchangeable and 
 without distinction, aside from their ownership).
 
-Let's suppose that the code `A` is mapped to the topic "Asset", and its
-extension `FA` is mapped to "Fungible Asset"  in our Domain Prefix Registry
+Let's suppose that the code `A` is mapped to the topic "Application", and its
+extension `FA` is mapped to "Financial Application"  in our Domain Prefix Registry
 (prefixes specialize from right to left by prepending characters). Our prefix
 for our `ERC-20` port is thus `FA`.
 

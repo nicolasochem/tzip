@@ -244,8 +244,8 @@ these requests as per the conditions below:
     the TZIP is compatible with the current protocol, and may be updated without
     changing its TZIP index
   * :arrow_right: Final -- Some TZIPs may move to Final, which indicates that
-    the TZIP is compatible with the current protocol, and may be updated without
-    changing its TZIP index
+    the TZIP is compatible with the current protocol, but may **not** be updated
+    without changing its TZIP index
   * :x: -- A Last Call which results in material changes or substantial
     unaddressed technical complaints will cause the TZIP to revert to Draft.
 
@@ -267,7 +267,7 @@ these requests as per the conditions below:
   * :arrow_right: Superseded -- The TZIP is superseded by a new TZIP.
 
 * **Final** -- Some TZIPs may move to Final, which indicates that
-    the TZIP is compatible with the current protocol, and may be updated without
+    the TZIP is compatible with the current protocol, but may **not** be updated without
     changing its TZIP index
   * :arrow_right: Superseded -- The TZIP is superseded by a new TZIP.
 
