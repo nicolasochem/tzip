@@ -1,11 +1,14 @@
 parameter
- ( nat                         %append
- | contract (unit, option nat)
+ ( nat   %append
+ | unit  %record
  );
-storage (list nat);
+storage ((list nat), address %feather);
 code { UNPAIR; CASE
-        { CONS; NIL operation; PAIR }
-        { NONE nat; UNIT; PAIR; DIP {AMOUNT}; TRANSFER_TOKENS;
+        { DIP {UNPAIR}; CONS; PAIR; NIL operation; PAIR }
+        { DROP; DUP; CDR;
+          CONTRACT (pair unit (option nat)); ASSERT_SOME;
+          NONE nat; UNIT; PAIR;
+          DIP {AMOUNT}; TRANSFER_TOKENS;
           NIL operation; SWAP; CONS; PAIR;
         };
     };
