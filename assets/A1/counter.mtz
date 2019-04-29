@@ -7,7 +7,7 @@ parameter
 storage Nat;
 code {unpair;
       case
-        {drop; push Nat 1; sub; isnat; assert_some; nil Operation; pair }
+        {drop; push Nat 1; swap; sub; isnat; assert_some; nil Operation; pair }
         {drop; push Nat 1; add; nil Operation; pair;}
         {dip {drop}; nil Operation; pair;}
         {view {cdr}}

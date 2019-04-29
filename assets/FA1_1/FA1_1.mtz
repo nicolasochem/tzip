@@ -2,19 +2,25 @@ let {
 
   type Parameter =
     ( (Address, Nat)              %transfer
+    | (Address, Nat)              %mint
+    | (Address, Nat)              %burn
     | View () Nat                 %getTotalSupply
     | View Address (Option Nat)   %getBalance
     );
 
-  type Storage = (BigMap Address Nat, Nat);
+  type Storage =
+    (BigMap %ledger Address Nat
+    , Nat     %totalSupply
+    , Address %centralBank
+    );
 
   getSourceBalance :: '[(Address, Nat), Storage]
                    -> '[Nat, (Address, Nat), Storage]
   = {duup; car; source; get; assert_some; };
 
-  newSourceBalance :: '[Nat, (Address, Nat), Storage]
-                   -> '[Option Nat, (Address, Nat), Storage]
-  = { duup; cdr; swap; sub; dup; assert_ge;
+  subtractBalance :: '[Nat, (Address, Nat), Storage]
+                  -> '[Option Nat, (Address, Nat), Storage]
+  = { duup; cdr; swap; sub; dup; assert_ge; 
       dup; eq; if {drop; none Nat} {isnat};
     };
 
@@ -32,19 +38,40 @@ let {
       {dup; cdr};
     };
 
-  creditRecipient :: '[Nat, (Address, Nat), Storage]
+  updateRecipient :: '[Nat, (Address, Nat), Storage]
                   -> '[(Address, Nat), Storage]
   = { some; duup; car; diip {swap; unpair}; update; pair; swap;};
 
+  sourceIsBank :: '[Storage] -> '[Bool, Storage]
+  = { dup; cddr; source; cmpeq};
+
+  mintBalance :: '[(Address, Nat), Storage]
+              -> '[([Operation], Storage)]
+  = { dip {sourceIsBank; assert;};
+      getRecipientBalance; newRecipientBalance; updateRecipient;
+      drop; nil Operation; pair;
+    };
+
+  burnBalance :: '[(Address, Nat), Storage]
+              -> '[([Operation], Storage)]
+  = { dip {sourceIsBank; assert;};
+      getRecipientBalance;
+      assert_some;
+      subtractBalance;
+      assert_some;
+      updateRecipient;
+      drop; nil operation; pair
+    };
+
   transferBalance :: '[(Address, Nat), Storage]
                   -> '[(List Operation, Storage)]
-  = { getSourceBalance; newSourceBalance; debitSource;
-      getRecipientBalance; newRecipientBalance; creditRecipient;
+  = { getSourceBalance; subtractBalance; debitSource;
+      getRecipientBalance; newRecipientBalance; updateRecipient;
       drop; nil operation; pair;
     };
 
   getTotalSupply :: '[ View () Nat, Storage ] -> '[(List Operation, Storage)]
-  = { view {cddr} };
+  = { view {cddar} };
 
   getBalance :: '[ View Address (Option Nat), Storage ]
              -> '[(List Operation, Storage)]
@@ -56,6 +83,8 @@ storage Storage;
 code {unpair;
       case
         { transferBalance}
+        { mintBalance}
+        { burnBalance}
         { getTotalSupply }
         { getBalance };
      };
