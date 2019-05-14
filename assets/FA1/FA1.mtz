@@ -1,13 +1,5 @@
 let {
 
-  type Parameter =
-    ( (Address, Nat)              %transfer
-    | View () Nat                 %getTotalSupply
-    | View Address (Option Nat)   %getBalance
-    );
-
-  type Storage = (BigMap Address Nat, Nat);
-
   getSourceBalance :: '[(Address, Nat), Storage]
                    -> '[Nat, (Address, Nat), Storage]
   = {duup; car; source; get; assert_some; };
@@ -51,8 +43,12 @@ let {
   = { view { unpair; dip {car}; get} };
 
 };
-parameter Parameter;
-storage Storage;
+parameter
+  ( (Address, Nat)              %transfer
+  | View () Nat                 %getTotalSupply
+  | View Address (Option Nat)   %getBalance
+  );
+storage (BigMap Address Nat, Nat);
 code {unpair;
       case
         { transferBalance}

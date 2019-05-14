@@ -3,22 +3,6 @@
 
 let {
 
-  type Parameter =
-    ( (Address :from, Address :to, Nat :val)     %safeTransfer
-    | (Address :to, Nat)                         %mint
-    | (Address :from, Nat)                       %burn
-    | (Option %setApprover Address)
-    | View () Nat                                %getTotalSupply
-    | View Address (Option Nat)                  %getBalance
-    );
-
-  type Storage =
-    ( (BigMap %ledger Address Nat)
-    , Nat     %totalSupply
-    , (Option %approver Address)
-    , Address %centralBank
-    );
-
   getFromBalance :: '[(Address :from, Nat), Storage, ...]
                    -> '[Nat, (Address :from, Nat), Storage, ...]
   = {duup; car; duup; car; get; assert_some; };
@@ -99,8 +83,22 @@ let {
   = { view { unpair; dip {car}; get} };
 
 };
-parameter Parameter;
-storage Storage;
+parameter
+  ( (Address :from, Address :to, Nat :val)     %safeTransfer
+  | (Address :to, Nat)                         %mint
+  | (Address :from, Nat)                       %burn
+  | (Option %setApprover Address)
+  | View () Nat                                %getTotalSupply
+  | View Address (Option Nat)                  %getBalance
+  );
+
+storage
+  ( (BigMap %ledger Address Nat)
+  , Nat     %totalSupply
+  , (Option %approver Address)
+  , Address %centralBank
+  );
+
 code {unpair;
       case
         { transferBalance}

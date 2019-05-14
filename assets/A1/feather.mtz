@@ -1,6 +1,4 @@
 let {
-  type Parameter = (Unit, Option Nat);
-  type Storage = (Address %counter, Option %caller Address);
 
   toCounter :: '[Parameter, Storage]
             -> '[(List Operation, Storage)]
@@ -23,8 +21,7 @@ let {
       dip {car; none address; swap; pair}; pair
     };
 
-
 };
-parameter Parameter;
-storage Storage;
+parameter (Unit, Option Nat);
+storage (Address %counter, Option %caller Address);
 code { unpair; dup; cdr; if_some {toCaller} {toCounter};}

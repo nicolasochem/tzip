@@ -1,16 +1,6 @@
 # FA-2, ERC-20 style transfer approvals
 
 let {
-  type Parameter =
-    ( (Address :from, Nat :val)              %transferFrom
-    | (Address :to, Nat :val)                %approve
-    | View (Address :from, Address :to) Nat  %getAllowance
-    );
-
-  type Storage =
-    ( BigMap   %approvals (Address :from) (Map (Address :to) Nat)
-    , Address  %ledger
-    );
 
    zeroNone :: '[ Nat, ...] -> '[ Option Nat, ...]
    = { dup; push nat 0; cmpeq; if {drop; none Nat;} {some;}; };
@@ -93,8 +83,17 @@ let {
 
 };
 
-parameter Parameter;
-storage Storage;
+parameter
+  ( (Address :from, Nat :val)              %transferFrom
+  | (Address :to, Nat :val)                %approve
+  | View (Address :from, Address :to) Nat  %getAllowance
+  );
+
+storage
+  ( BigMap   %approvals (Address :from) (Map (Address :to) Nat)
+  , Address  %ledger
+  );
+
 code {unpair;
       case
         { transferFrom }
