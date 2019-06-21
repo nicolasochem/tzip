@@ -15,7 +15,7 @@ as well as approvals for spending tokens from other accounts.
 
 ## Approvable Ledger Interface
 
-A contract which implements approvable ledger must have parameter of type
+A contract which implements approvable ledger must have a parameter of type
 
 ```
 parameter
@@ -29,10 +29,10 @@ parameter
 ```
 for some `x`.
 
-There is a proposal that standardizes multiple entrypoints, it requires contract parameter to have such form.
-Once implemented, contract's extension point can be used to add new entry points in a backward-compatible way.
+There is a proposal that standardizes multiple entry points, and it requires a contract parameter to have such a form.
+Once implemented, the contract's extension point can be used to add new entry points in a backward-compatible way.
 
-See also [syntax explanation](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#adt-syntax-sugar) and [Michelson Contract Interfaces and Conventions document](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#view-entry-points).
+See also [syntax explanation](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#adt-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#view-entry-points).
 
 ## Errors
 
@@ -50,29 +50,29 @@ will result in the following error:
 ### transfer
 
 This entry point will credit the account of the address passed in the
-`"to"` parameter, while debiting the account corresponding to `"from"` parameter.
+`"to"` parameter, while debiting the account corresponding to the `"from"` parameter.
 Should the sender address have insufficient funds, the transaction will fail and
 no state will be mutated.
 
 This entry point serves multiple purposes.
 When called with `"from"` account equal to the transaction sender, we assume that
-user transfers his own money and this does not require approval. Otherwise,
-amount of approval equal to number of transfered tokens is consumed.
+the user transfers their own money and this does not require approval. Otherwise,
+the amount of approval equal to the number of transferred tokens is consumed.
 
 This entry point can fail with the following errors:
-* `NotEnoughBalance` - insufficient funds on sender account to perform given
+* `NotEnoughBalance` - insufficient funds on the sender account to perform a given
 transfer. The error will contain a `(nat :required, nat :present)` pair, where
-`required` is requested amount of tokens, `present` is available amount.
-* `NotEnoughAllowance` - given account has no permission to withdraw given
+`required` is the requested amount of tokens, `present` is the available amount.
+* `NotEnoughAllowance` - a given account has no permission to withdraw a given
 amount of funds. The error will contain a `(nat :required, nat :present)` pair,
-where `required` is requested amount of tokens, `present` is current allowance.
+where `required` is the requested amount of tokens, `present` is the current allowance.
 
 ### approve
 
-This entry point, called with `(address: to, nat: val)`
-parameters allow `to` account to withdrawal from sender, multiple times,
-up to the `val` amount. Each call of `transfer` entry point decreases
-allowance amount on transferred amount of tokens.
+This entry point called with `(address: to, nat: val)`
+parameters allows `to` account to withdrawal from the sender, multiple times,
+up to the `val` amount. Each call of `transfer` entry point decreases the
+allowance amount on the transferred amount of tokens.
 
 If this entry point is called again, it overwrites the current allowance
 with `val`.
@@ -83,25 +83,25 @@ forbidden to prevent the [corresponding attack vector](https://docs.google.com/d
 This entry point can fail with the following errors:
 * `UnsafeAllowanceChange` - attempt to change approval value from non-zero to
 non-zero was performed. The error will contain `nat :previous` value, where
-`previous` stands for the allowance value upon contract call.
+`previous` stands for the allowance value upon the contract call.
 
 ### getBalance
 
-This view will return balance of the address in the ledger.
+This view will return the balance of the address in the ledger.
 
 ### getAllowance
 
-This view will return approval value between given two addresses.
+This view will return the approval value between two given addresses.
 
 ### getTotalSupply
 
-This view simply returns total number of tokens.
+This view simply returns the total number of tokens.
 
 ## Related work
 
 [ERC-20](https://eips.ethereum.org/EIPS/eip-20) is a standard used in Ethererum for implementing tokens.
 It also describes transfer and approval operations.
-The interface we propose here differs from ERC-20 in that we have `transfer`
+The interface we propose here differs from ERC-20. Specifically, we have `transfer`
 and `transferFrom` analogies merged into a single entry point.
-Also, ERC-20 is known to suffer from some vulnerabilities, we took them into
+Also, ERC-20 is known to suffer from some vulnerabilities, and we took them into
 account when implementing our interface.
