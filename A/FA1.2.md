@@ -19,11 +19,11 @@ A contract which implements approvable ledger must have parameter of type
 
 ```
 parameter
-  or (address :from, address :to, nat :val)  %transfer (
-  or (address :to, nat :val)                 %approve (
-  or (view address nat)                      %getBalance (
-  or (view (address :from, address :to) nat) %getAllowance (
-  or (view unit nat)                         %getTotalSupply
+  or ((address :from, address :to, nat :val)  %transfer) (
+  or ((address :to, nat :val)                 %approve) (
+  or ((view address nat)                      %getBalance) (
+  or ((view (address :from, address :to) nat) %getAllowance) (
+  or ((view unit nat)                         %getTotalSupply)
      x
   )))));
 ```
