@@ -7,8 +7,8 @@ parameter
                      (contract (pair (pair (address :from) (address :to)) (option nat))))
                   (or (pair %getTotalSupply unit (contract (pair unit (option nat))))
                       (or (bool %setPause)
-                          (or (address %setManager)
-                              (or (pair %getManager unit (contract (pair unit (option address))))
+                          (or (address %setAdministrator)
+                              (or (pair %getAdministrator unit (contract (pair unit (option address))))
                                   (or (pair %mint address nat) (pair %burn address nat))))))))));
 storage
   (pair (big_map address (pair nat (map address nat))) (pair address (pair bool nat)));
