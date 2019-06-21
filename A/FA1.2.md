@@ -2,8 +2,8 @@
 tzip: FA1.2
 title: Approvable Ledger
 type: Financial Application
-author: Konstantin Ivanov
-advocate: Konstantin Ivanov
+author: Konstantin Ivanov, Ivan Gromakovskii
+advocate: Konstantin Ivanov, Ivan Gromakovskii
 created: 2019-06-20
 ---
 
