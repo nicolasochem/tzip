@@ -104,7 +104,7 @@ Resulting contract in Michelson is [also provided](./ManagedLedger.tz).
 ### Compiling Lorentz contract
 
 Currently, in order to compile Lorentz implementation of Managed Ledger into Michelson the following steps should be performed:
-1. [Build the project](https://gitlab.com/morley-framework/morley/blob/master/README.md#running-and-building).
+1. [Build the project](https://gitlab.com/morley-framework/morley/blob/436127c4b2a4fe9c3f0fb512dc01148a96be9be6/README.md#running-and-building).
 2. Run `stack exec lorentz-contracts -- print -n ManagedLedger > ManagedLedger.tz`.
 3. Add necessary annotations to contract parameter type.
 At the moment, this step has to be performed manually because Lorentz does not support annotations (it provides similar safety guarantees in a different way). We are [planning to implement this feature](https://issues.serokell.io/issue/TM-64), after which annotations will be set automatically.
