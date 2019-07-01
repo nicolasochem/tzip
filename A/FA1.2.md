@@ -19,11 +19,11 @@ A contract which implements approvable ledger must have a parameter of type
 
 ```
 parameter
-  or ((address :from, address :to, nat :val)  %transfer) (
-  or ((address :to, nat :val)                 %approve) (
-  or ((view address nat)                      %getBalance) (
-  or ((view (address :from, address :to) nat) %getAllowance) (
-  or ((view unit nat)                         %getTotalSupply)
+  or ((address :from, address :to, nat :value)      %transfer) (
+  or ((address :spender, nat :value)                %approve) (
+  or ((view (address :owner, address :spender) nat) %getAllowance) (
+  or ((view (address :owner) nat)                   %getBalance) (
+  or ((view unit nat)                               %getTotalSupply)
      x
   )))));
 ```
@@ -85,13 +85,13 @@ This entry point can fail with the following errors:
 non-zero was performed. The error will contain `nat :previous` value, where
 `previous` stands for the allowance value upon the contract call.
 
-### getBalance
-
-This view will return the balance of the address in the ledger.
-
 ### getAllowance
 
 This view will return the approval value between two given addresses.
+
+### getBalance
+
+This view will return the balance of the address in the ledger.
 
 ### getTotalSupply
 
