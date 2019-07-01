@@ -1,15 +1,16 @@
 parameter
-  (or (pair %transfer (address :from) (pair (address :to) (nat :val)))
-      (or (pair %approve (address :to) (nat :val))
-          (or (pair %getBalance address (contract (pair address (option nat))))
-              (or (pair %getAllowance
-                     (pair (address :from) (address :to))
-                     (contract (pair (pair (address :from) (address :to)) (option nat))))
-                  (or (pair %getTotalSupply unit (contract (pair unit (option nat))))
+  (or (pair %transfer (address :from) (pair (address :to) (nat :value)))
+      (or (pair %approve (address :spender) (nat :value))
+          (or (pair %getAllowance
+                 (pair (address :owner) (address :spender))
+                 (contract (nat :remaining)))
+              (or (pair %getBalance (address :owner) (contract (nat :balance)))
+                  (or (pair %getTotalSupply unit (contract (nat :totalSupply)))
                       (or (bool %setPause)
                           (or (address %setAdministrator)
-                              (or (pair %getAdministrator unit (contract (pair unit (option address))))
-                                  (or (pair %mint address nat) (pair %burn address nat))))))))));
+                              (or (pair %getAdministrator unit (contract (address :administrator)))
+                                  (or (pair %mint (address :to) (nat :value))
+                                      (pair %burn (address :from) (nat :value)))))))))));
 storage
   (pair (big_map address (pair nat (map address nat))) (pair address (pair bool nat)));
 code { DUP ;
@@ -25,7 +26,7 @@ code { DUP ;
            CDR ;
            CAR ;
            DIP { DUP ; CAR } ;
-           CAST address;
+           CAST address ;
            COMPARE ;
            EQ ;
            IF { DROP }
@@ -41,7 +42,7 @@ code { DUP ;
                            DIP { DIP { DUP } ;
                                  CAR ;
                                  SENDER ;
-                                 PAIR % % ;
+                                 PAIR ;
                                  DUP ;
                                  DIP { CDR ;
                                        DIP { CAR } ;
@@ -67,13 +68,13 @@ code { DUP ;
                                            SWAP ;
                                            CDR ;
                                            CDR ;
-                                           PAIR % % ;
+                                           PAIR ;
                                            PUSH string "NotEnoughAllowance" ;
-                                           PAIR % % ;
+                                           PAIR ;
                                            FAILWITH }
                                          {} } ;
-                                 PAIR % % } ;
-                           PAIR % % ;
+                                 PAIR } ;
+                           PAIR ;
                            DIP { DROP ; DROP } ;
                            DIP { DUP ; CAR } ;
                            SWAP ;
@@ -83,7 +84,7 @@ code { DUP ;
                            IF_NONE
                              { PUSH nat 0 ;
                                DIP { EMPTY_MAP address nat } ;
-                               PAIR % % ;
+                               PAIR ;
                                EMPTY_MAP address nat }
                              { DUP ; CDR } ;
                            DIP { DIP { DUP } ; SWAP } ;
@@ -102,7 +103,7 @@ code { DUP ;
                            DIP { DUP ; DIP { CAR } ; CDR } ;
                            DIP { DROP } ;
                            SWAP ;
-                           PAIR % % ;
+                           PAIR ;
                            SOME ;
                            SWAP ;
                            CAR ;
@@ -110,7 +111,7 @@ code { DUP ;
                            UPDATE ;
                            DIP { DUP ; DIP { CDR } ; CAR } ;
                            DIP { DROP } ;
-                           PAIR % % } }
+                           PAIR } }
                    {} ;
                 DIP { DUP } ;
                 SWAP ;
@@ -127,7 +128,7 @@ code { DUP ;
                     INT ;
                     EQ ;
                     IF { NONE (pair nat (map address nat)) }
-                       { DUP ; CDR ; CDR ; DIP { EMPTY_MAP address nat } ; PAIR % % ; SOME } }
+                       { DUP ; CDR ; CDR ; DIP { EMPTY_MAP address nat } ; PAIR ; SOME } }
                   { DIP { DUP } ;
                     SWAP ;
                     CDR ;
@@ -136,7 +137,7 @@ code { DUP ;
                     ADD ;
                     DIP { DUP ; DIP { CDR } ; CAR } ;
                     DIP { DROP } ;
-                    PAIR % % ;
+                    PAIR ;
                     SOME } ;
                 SWAP ;
                 DIP { DIP { DUP ; CAR } } ;
@@ -146,7 +147,7 @@ code { DUP ;
                       UPDATE ;
                       DIP { DUP ; DIP { CDR } ; CAR } ;
                       DIP { DROP } ;
-                      PAIR % % } ;
+                      PAIR } ;
                 DUP ;
                 DIP { CDR ;
                       CDR ;
@@ -163,13 +164,13 @@ code { DUP ;
                       DIP { DUP ; DIP { CAR } ; CDR } ;
                       DIP { DROP } ;
                       SWAP ;
-                      PAIR % % ;
+                      PAIR ;
                       SWAP ;
-                      PAIR % % ;
+                      PAIR ;
                       DIP { DUP ; DIP { CAR } ; CDR } ;
                       DIP { DROP } ;
                       SWAP ;
-                      PAIR % % } ;
+                      PAIR } ;
                 DIP { DUP } ;
                 SWAP ;
                 CAR ;
@@ -182,9 +183,9 @@ code { DUP ;
                     CDR ;
                     PUSH nat 0 ;
                     SWAP ;
-                    PAIR % % ;
+                    PAIR ;
                     PUSH string "NotEnoughBalance" ;
-                    PAIR % % ;
+                    PAIR ;
                     FAILWITH }
                   {} ;
                 DUP ;
@@ -202,14 +203,14 @@ code { DUP ;
                     SWAP ;
                     CDR ;
                     CDR ;
-                    PAIR % % ;
+                    PAIR ;
                     PUSH string "NotEnoughBalance" ;
-                    PAIR % % ;
+                    PAIR ;
                     FAILWITH }
                   {} ;
                 DIP { DUP ; DIP { CDR } ; CAR } ;
                 DIP { DROP } ;
-                PAIR % % ;
+                PAIR ;
                 DIP { DUP } ;
                 SWAP ;
                 DIP { DUP ;
@@ -229,7 +230,7 @@ code { DUP ;
                       UPDATE ;
                       DIP { DUP ; DIP { CDR } ; CAR } ;
                       DIP { DROP } ;
-                      PAIR % % } ;
+                      PAIR } ;
                 DUP ;
                 DIP { CDR ;
                       CDR ;
@@ -246,16 +247,16 @@ code { DUP ;
                       DIP { DUP ; DIP { CAR } ; CDR } ;
                       DIP { DROP } ;
                       SWAP ;
-                      PAIR % % ;
+                      PAIR ;
                       SWAP ;
-                      PAIR % % ;
+                      PAIR ;
                       DIP { DUP ; DIP { CAR } ; CDR } ;
                       DIP { DROP } ;
                       SWAP ;
-                      PAIR % % } ;
+                      PAIR } ;
                 DROP } ;
            NIL operation ;
-           PAIR % % }
+           PAIR }
          { IF_LEFT
              { DIP { DUP ;
                      CDR ;
@@ -263,7 +264,7 @@ code { DUP ;
                      CAR ;
                      IF { PUSH (pair string unit) (Pair "OperationsArePaused" Unit) ; FAILWITH } {} } ;
                SENDER ;
-               PAIR % % ;
+               PAIR ;
                DIP { DUP } ;
                SWAP ;
                DIP { DUP } ;
@@ -287,7 +288,7 @@ code { DUP ;
                     CDR ;
                     INT ;
                     EQ ;
-                    IF { DROP } { PUSH string "UnsafeAllowanceChange" ; PAIR % % ; FAILWITH } } ;
+                    IF { DROP } { PUSH string "UnsafeAllowanceChange" ; PAIR ; FAILWITH } } ;
                DIP { DUP ; CAR } ;
                SWAP ;
                DIP { DUP ; CAR } ;
@@ -296,7 +297,7 @@ code { DUP ;
                IF_NONE
                  { PUSH nat 0 ;
                    DIP { EMPTY_MAP address nat } ;
-                   PAIR % % ;
+                   PAIR ;
                    EMPTY_MAP address nat }
                  { DUP ; CDR } ;
                DIP { DIP { DUP } ; SWAP } ;
@@ -315,7 +316,7 @@ code { DUP ;
                DIP { DUP ; DIP { CAR } ; CDR } ;
                DIP { DROP } ;
                SWAP ;
-               PAIR % % ;
+               PAIR ;
                SOME ;
                SWAP ;
                CAR ;
@@ -323,70 +324,66 @@ code { DUP ;
                UPDATE ;
                DIP { DUP ; DIP { CDR } ; CAR } ;
                DIP { DROP } ;
-               PAIR % % ;
+               PAIR ;
                NIL operation ;
-               PAIR % % }
+               PAIR }
              { IF_LEFT
                  { DUP ;
                    CAR ;
                    DIP { CDR } ;
                    DIP { DIP { DUP } ; SWAP } ;
+                   PAIR ;
                    DUP ;
-                   DIP { PAIR % % ;
-                         DUP ;
-                         CAR ;
-                         DIP { CDR } ;
+                   CAR ;
+                   DIP { CDR } ;
+                   DUP ;
+                   DIP { CAR ;
                          DIP { CAR } ;
                          GET ;
-                         IF_NONE { PUSH nat 0 } { CAR } ;
-                         SOME } ;
-                   PAIR % % ;
+                         IF_NONE { EMPTY_MAP address nat } { CDR } } ;
+                   CDR ;
+                   GET ;
+                   IF_NONE { PUSH nat 0 } {} ;
                    DIP { AMOUNT } ;
                    TRANSFER_TOKENS ;
                    NIL operation ;
                    SWAP ;
                    CONS ;
-                   PAIR % % }
+                   PAIR }
                  { IF_LEFT
                      { DUP ;
                        CAR ;
                        DIP { CDR } ;
                        DIP { DIP { DUP } ; SWAP } ;
+                       PAIR ;
                        DUP ;
-                       DIP { PAIR % % ;
-                             DUP ;
-                             CAR ;
-                             DIP { CDR } ;
-                             DUP ;
-                             DIP { CAR ;
-                                   DIP { CAR } ;
-                                   GET ;
-                                   IF_NONE { EMPTY_MAP address nat } { CDR } } ;
-                             CDR ;
-                             GET ;
-                             IF_NONE { PUSH nat 0 } {} ;
-                             SOME } ;
-                       PAIR % % ;
+                       CAR ;
+                       DIP { CDR } ;
+                       DIP { CAR } ;
+                       GET ;
+                       IF_NONE { PUSH nat 0 } { CAR } ;
                        DIP { AMOUNT } ;
                        TRANSFER_TOKENS ;
                        NIL operation ;
                        SWAP ;
                        CONS ;
-                       PAIR % % }
+                       PAIR }
                      { IF_LEFT
                          { DUP ;
                            CAR ;
                            DIP { CDR } ;
                            DIP { DIP { DUP } ; SWAP } ;
-                           DUP ;
-                           DIP { PAIR % % ; CDR ; CDR ; CDR ; CDR ; SOME } ;
-                           PAIR % % ;
+                           PAIR ;
+                           CDR ;
+                           CDR ;
+                           CDR ;
+                           CDR ;
                            DIP { AMOUNT } ;
                            TRANSFER_TOKENS ;
                            NIL operation ;
                            SWAP ;
                            CONS ;
-                           PAIR % % }
+                           PAIR }
                          { IF_LEFT
                              { DIP { DUP ;
                                      CDR ;
@@ -399,15 +396,15 @@ code { DUP ;
                                DIP { DUP ; DIP { CAR } ; CDR } ;
                                DIP { DUP ; DIP { CDR } ; CAR } ;
                                DIP { DROP } ;
-                               PAIR % % ;
+                               PAIR ;
                                SWAP ;
-                               PAIR % % ;
+                               PAIR ;
                                DIP { DUP ; DIP { CAR } ; CDR } ;
                                DIP { DROP } ;
                                SWAP ;
-                               PAIR % % ;
+                               PAIR ;
                                NIL operation ;
-                               PAIR % % }
+                               PAIR }
                              { IF_LEFT
                                  { DIP { DUP ;
                                          CDR ;
@@ -419,27 +416,28 @@ code { DUP ;
                                    DIP { DUP ; CDR } ;
                                    DIP { DUP ; DIP { CDR } ; CAR } ;
                                    DIP { DROP } ;
-                                   PAIR % % ;
+                                   PAIR ;
                                    DIP { DUP ; DIP { CAR } ; CDR } ;
                                    DIP { DROP } ;
                                    SWAP ;
-                                   PAIR % % ;
+                                   PAIR ;
                                    NIL operation ;
-                                   PAIR % % }
+                                   PAIR }
                                  { IF_LEFT
                                      { DUP ;
                                        CAR ;
                                        DIP { CDR } ;
                                        DIP { DIP { DUP } ; SWAP } ;
-                                       DUP ;
-                                       DIP { PAIR % % ; CDR ; CDR ; CAR ; SOME } ;
-                                       PAIR % % ;
+                                       PAIR ;
+                                       CDR ;
+                                       CDR ;
+                                       CAR ;
                                        DIP { AMOUNT } ;
                                        TRANSFER_TOKENS ;
                                        NIL operation ;
                                        SWAP ;
                                        CONS ;
-                                       PAIR % % }
+                                       PAIR }
                                      { IF_LEFT
                                          { DIP { DUP ;
                                                  CDR ;
@@ -461,7 +459,7 @@ code { DUP ;
                                                INT ;
                                                EQ ;
                                                IF { NONE (pair nat (map address nat)) }
-                                                  { DUP ; CDR ; DIP { EMPTY_MAP address nat } ; PAIR % % ; SOME } }
+                                                  { DUP ; CDR ; DIP { EMPTY_MAP address nat } ; PAIR ; SOME } }
                                              { DIP { DUP } ;
                                                SWAP ;
                                                CDR ;
@@ -469,7 +467,7 @@ code { DUP ;
                                                ADD ;
                                                DIP { DUP ; DIP { CDR } ; CAR } ;
                                                DIP { DROP } ;
-                                               PAIR % % ;
+                                               PAIR ;
                                                SOME } ;
                                            SWAP ;
                                            DIP { DIP { DUP ; CAR } } ;
@@ -478,7 +476,7 @@ code { DUP ;
                                                  UPDATE ;
                                                  DIP { DUP ; DIP { CDR } ; CAR } ;
                                                  DIP { DROP } ;
-                                                 PAIR % % } ;
+                                                 PAIR } ;
                                            DUP ;
                                            DIP { CDR ;
                                                  INT ;
@@ -494,16 +492,16 @@ code { DUP ;
                                                  DIP { DUP ; DIP { CAR } ; CDR } ;
                                                  DIP { DROP } ;
                                                  SWAP ;
-                                                 PAIR % % ;
+                                                 PAIR ;
                                                  SWAP ;
-                                                 PAIR % % ;
+                                                 PAIR ;
                                                  DIP { DUP ; DIP { CAR } ; CDR } ;
                                                  DIP { DROP } ;
                                                  SWAP ;
-                                                 PAIR % % } ;
+                                                 PAIR } ;
                                            DROP ;
                                            NIL operation ;
-                                           PAIR % % }
+                                           PAIR }
                                          { DIP { DUP ;
                                                  CDR ;
                                                  CAR ;
@@ -522,9 +520,9 @@ code { DUP ;
                                              { CDR ;
                                                PUSH nat 0 ;
                                                SWAP ;
-                                               PAIR % % ;
+                                               PAIR ;
                                                PUSH string "NotEnoughBalance" ;
-                                               PAIR % % ;
+                                               PAIR ;
                                                FAILWITH }
                                              {} ;
                                            DUP ;
@@ -540,14 +538,14 @@ code { DUP ;
                                                DIP { DUP } ;
                                                SWAP ;
                                                CDR ;
-                                               PAIR % % ;
+                                               PAIR ;
                                                PUSH string "NotEnoughBalance" ;
-                                               PAIR % % ;
+                                               PAIR ;
                                                FAILWITH }
                                              {} ;
                                            DIP { DUP ; DIP { CDR } ; CAR } ;
                                            DIP { DROP } ;
-                                           PAIR % % ;
+                                           PAIR ;
                                            DIP { DUP } ;
                                            SWAP ;
                                            DIP { DUP ;
@@ -567,7 +565,7 @@ code { DUP ;
                                                  UPDATE ;
                                                  DIP { DUP ; DIP { CDR } ; CAR } ;
                                                  DIP { DROP } ;
-                                                 PAIR % % } ;
+                                                 PAIR } ;
                                            DUP ;
                                            DIP { CDR ;
                                                  NEG ;
@@ -583,13 +581,13 @@ code { DUP ;
                                                  DIP { DUP ; DIP { CAR } ; CDR } ;
                                                  DIP { DROP } ;
                                                  SWAP ;
-                                                 PAIR % % ;
+                                                 PAIR ;
                                                  SWAP ;
-                                                 PAIR % % ;
+                                                 PAIR ;
                                                  DIP { DUP ; DIP { CAR } ; CDR } ;
                                                  DIP { DROP } ;
                                                  SWAP ;
-                                                 PAIR % % } ;
+                                                 PAIR } ;
                                            DROP ;
                                            NIL operation ;
-                                           PAIR % % } } } } } } } } } }
+                                           PAIR } } } } } } } } } }
