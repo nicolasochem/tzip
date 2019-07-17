@@ -3,8 +3,8 @@ tzip: FA1
 title: Unsafe Ledger
 status: WIP
 type: Financial Application
-author: John Burnham
-advocate: John Burnham
+author: John Burnham, Konstantin Ivanov
+advocate: John Burnham, Konstantin Ivanov
 created: 2019-04-12
 ---
 
@@ -32,26 +32,15 @@ standard.
 
 ## Unsafe Ledger Interface
 
-```
-parameter
-  ( (address, nat)             %transfer
-  | view unit nat              %getTotalSupply
-  | view address (option nat)  %getBalance
-  );
-```
+This interface relies on [multiple entrypoints feature](https://gitlab.com/nomadic-labs/tezos/merge_requests/59). According to it, parameter of any contract implementing the interface should be a tree of `Or`s, some of its leaves should correspond to interface methods.
 
-## Unsafe Ledger Storage
+For FA1, parameter should contain the following leaves:
 
-```
-storage (big_map address nat, nat :total_supply);
-```
+1. `(address :to, nat :value) %transfer`
+2. `view unit nat             %getTotalSupply`
+3. `view address nat          %getBalance`
 
-The storage maintains a map of addresses to balances. 
-
-The `nat :total_supply` is to be supplied by the originator and must correctly
-equal the sum of all balances in the `big_map` at origination. Any changes to
-the sum of balances must be reflected by a corresponding changing the `nat
-:total_supply`
+See also [syntax explanation](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#adt-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#view-entry-points).
 
 ## Entry-points
 
@@ -64,39 +53,9 @@ no state will be mutated.
 
 ### getTotalSupply
 
-This view simply returns the `nat :total_supply` in the storage. 
+This view returns the sum of all participants' balances.
 
 ### getBalance
 
-This view will return `None` if the address is not in the ledger and
-otherwise will return `Some x` where `x` is the corresponding balance.
-
-## Variants
-
-The above standard can be modified with the following variants. Implementations
-which comply with one of these variants are still compliant with this standard
-overall.
-
-### Pruning Zero-balance accounts
-
-A useful variant for efficiency is implement `transfer` such that accounts with
-balances of `0` are removed from the ledger. This can reduce storage
-costs in exchange possibly increasing the computational complexity of looking up
-balances.
-
-If this variant is implemented, the entry-point for `getBalance` should be
-changed to
-
-```
-view address nat  %getBalance
-```
-
-Which should return `0` for any address not in the ledger.
-
-### Generic Identities
-
-All instance of `address` in the contract parameter and storage can be replaced
-by `bytes`, which may be useful if a different notion of idenity is needed, such
-as, for example, in implementing "Know your customer" (KYC) functionality.
-
-
+This view will return balance of the given address, or zero if no such address
+is registered.

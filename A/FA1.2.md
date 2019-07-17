@@ -29,7 +29,7 @@ parameter
 ```
 for some `x`.
 
-There is a proposal that standardizes multiple entry points, and it requires a contract parameter to have such a form.
+Note that this parameter is consitent with [multiple entrypoints feature](https://gitlab.com/nomadic-labs/tezos/merge_requests/59).
 Once implemented, the contract's extension point can be used to add new entry points in a backward-compatible way.
 
 See also [syntax explanation](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#adt-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#view-entry-points).
