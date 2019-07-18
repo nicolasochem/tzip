@@ -1,9 +1,6 @@
 ---
 tzip: FA1.2
-title: Managed Ledger
-type: Financial Application
 author: Konstantin Ivanov, Ivan Gromakovskii
-advocate: Konstantin Ivanov, Ivan Gromakovskii
 created: 2019-06-24
 ---
 
