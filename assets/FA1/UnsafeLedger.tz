@@ -1,0 +1,107 @@
+# This contract was generated from
+# https://gitlab.com/morley-framework/morley/blob/b70c1e4e61594bbb657531f787dd37e31de0b6c1/lorentz-contracts/src/Lorentz/Contracts/UnsafeLedger.hs
+
+parameter (or (pair %transfer
+                    (address :to)
+                    (nat :value))
+              (or (pair %getTotalSupply
+                        unit
+                        (contract nat))
+                  (pair %getBalance
+                        address
+                        (contract nat))));
+storage (pair (big_map address
+                       nat)
+              nat);
+code { DUP;
+       CAR;
+       DIP { CDR };
+       IF_LEFT { DIP { DUP;
+                       CAR;
+                       SENDER;
+                       GET;
+                       IF_NONE { PUSH string "Sender address is not in ledger";
+                                 FAILWITH }
+                               {  } };
+                 SWAP;
+                 DIP { DUP;
+                       CDR };
+                 SUB;
+                 DUP;
+                 GE;
+                 IF {  }
+                    { PUSH string "Transferred value is greater than balance";
+                      FAILWITH };
+                 DUP;
+                 EQ;
+                 IF { DROP;
+                      NONE nat }
+                    { ISNAT };
+                 SWAP;
+                 DIP { DIP { DUP;
+                             CAR };
+                       SENDER;
+                       UPDATE;
+                       DIP { DUP;
+                             DIP { CDR };
+                             CAR };
+                       DIP { DROP };
+                       PAIR };
+                 DUP;
+                 CAR;
+                 SWAP;
+                 DIP { DIP { DUP;
+                             CAR };
+                       GET };
+                 SWAP;
+                 IF_NONE { DUP;
+                           CDR }
+                         { DIP { DUP;
+                                 CDR };
+                           ADD };
+                 SOME;
+                 DIP { CAR };
+                 SWAP;
+                 DIP { DIP { DUP;
+                             CAR } };
+                 UPDATE;
+                 DIP { DUP;
+                       DIP { CDR };
+                       CAR };
+                 DIP { DROP };
+                 PAIR;
+                 NIL operation;
+                 PAIR }
+               { IF_LEFT { DUP;
+                           CAR;
+                           DIP { CDR };
+                           DIP { DIP { DUP };
+                                 SWAP };
+                           PAIR;
+                           CDR;
+                           CDR;
+                           DIP { AMOUNT };
+                           TRANSFER_TOKENS;
+                           NIL operation;
+                           SWAP;
+                           CONS;
+                           PAIR }
+                         { DUP;
+                           CAR;
+                           DIP { CDR };
+                           DIP { DIP { DUP };
+                                 SWAP };
+                           PAIR;
+                           DUP;
+                           CAR;
+                           DIP { CDR };
+                           DIP { CAR };
+                           GET;
+                           IF_NONE { PUSH nat 0 }
+                                   {  };
+                           DIP { AMOUNT };
+                           TRANSFER_TOKENS;
+                           NIL operation;
+                           SWAP;
+                           CONS;
+                           PAIR } } };
