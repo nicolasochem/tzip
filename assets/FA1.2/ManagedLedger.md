@@ -40,7 +40,7 @@ See also [syntax explanation](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#a
 ## Errors
 
 This contract follows exactly the same format for errors as described in
-[FA1.2](/A/FA1.2.md#Errors).
+[FA1.2](/A/FA1.2.md#errors).
 
 For example, if an entry point is stated to fail with `SenderIsNotAdmin` error,
 then a client should expect contract to fail with `("SenderIsNotAdmin", Unit)` pair.
