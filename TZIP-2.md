@@ -115,7 +115,7 @@ As a worked example, let us imagine where we would classify a port of the
 
 `ERC-20` instantiates an asset by maintaining a ledger of accounts and balances
 and providing an interface to transfer balances between accounts. Since
-`ERC-20` balances are fungible (all units of the asset are interchangeable and 
+`ERC-20` balances are fungible (all units of the asset are interchangeable and
 without distinction, aside from their ownership).
 
 Let's suppose that the code `A` is mapped to the topic "Application", and its
@@ -222,8 +222,8 @@ of active TZIP types in [TZIP-2: TZIP Index][TZIP-2].
 [issue-16]: https://github.com/ethereum/EIPs/issues/16
 [pubprocess]: https://www.rfc-editor.org/pubprocess/
 [EIP]: https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1.md
-[RFCs]: https://en.wikipedia.org/wiki/List_of_RFCs,
-[Internet Standard]: (https://en.wikipedia.org/wiki/Internet_Standard).
+[RFCs]: https://en.wikipedia.org/wiki/List_of_RFCs
+[Internet Standard]: https://en.wikipedia.org/wiki/Internet_Standard
 [ERC20]: https://en.wikipedia.org/wiki/ERC-20
 
 ## Copyright

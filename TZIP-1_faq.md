@@ -10,7 +10,7 @@ created: 2019-04-12
 
 ## What is a TZIP?
 
-Response copied from [TZIP-1](/TZIP-1#what-is-a-TZIP):
+Response copied from [TZIP-1](/TZIP-1.md#what-is-a-tzip):
 
 An TZIP is a design document providing information to the Tezos community,
 describing a feature for Tezos or its processes or environment, and supporting
@@ -71,7 +71,3 @@ might be to have an in-person election at some future Tezos conference.
 Whatever the mechanism, we think it should be democratic and transparent:
 If the composition of TZIP editors ends up looking analogous the composition of
 EIP editors, we will consider this entire proposal to have been a failure.
-
-
-
-
