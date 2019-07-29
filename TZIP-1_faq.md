@@ -35,8 +35,7 @@ that a formal standards process is the best way to do this.
 ## Wouldn't it be simpler to just write the application standards first?
 
 We are developing the application standards [A1: Michelson Contract Interfaces
-and Conventions], [FA1: Abstract Ledger], [FA1.1: Transfer Approvals on an
-Abstract Ledger] at the same time as the Meta-level TZIPs.
+and Conventions], [FA1: Abstract Ledger] at the same time as the Meta-level TZIPs.
 
 This is a lot more work, but we think it's a fairer and more fruitful
 alternative to just unilaterally promulgating our own standards.
