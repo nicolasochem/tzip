@@ -16,8 +16,7 @@ mistake, they can lose their entire balance. Do not use this unless you know
 what you are doing and have extended it by adding appropriate safety features.
 
 ## Isn't that bad branding?
-Yes, intentionally so. If you need a smart contract with friendly branding, please
-use [FA1.1: Safe Ledger](/A/FA1.md) instead.
+Yes, intentionally so.
 
 This standard is intended to be used by experienced smart contract developers
 internally in their applications and for no other purpose.
