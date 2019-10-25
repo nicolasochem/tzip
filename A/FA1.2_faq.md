@@ -4,16 +4,6 @@ author: Konstantin Ivanov, Ivan Gromakovskii
 created: 2019-04-12
 ---
 
-## Why are there two similar approvable ledger standards?
-
-The standard is proposed during the period when a new version of Michelson (Babylon) is already finalized and approved, but is not available in Mainnet yet.
-This new version has one important feature which can make the standard much more elegant and flexible: entrypoints.
-If this feature is not available (which is the case in current Mainnet version — Athens) and we want to call some FA1.2 from another contract, we must know contract's parameter type.
-That's why we need FA1.2.1.
-
-In theory, we can have only FA1.2.1 and always require concrete parameter type.
-However, we consider it too restrictive and impractical (see [below](#why-do-not-you-require-contract-parameter-type-to-be-concrete)).
-
 ## Why do not you require contract parameter type to be concrete?
 
 Parameter is the only easy way for a caller to pass some data to a contract.
@@ -27,7 +17,8 @@ In particular, special care should be taken to make sure that proper `SENDER` va
 We can add one more leaf to this tree of `or`s with type `(string, bytes)` where the first item denotes method name and the second one carries method's argument in serialized form.
 However, this approach adds a certain degree of unsafety (one may supply non-existing method name or incorrectly packed data), consumes more gas (unpacking is not a cheap operation) and makes parameter type less descriptive.
 
-Fortunately, after the addition of the entrypoints feature we are not forced to require a concrete parameter type anymore.
+Rather, we rely on the entrypoints feature available since Tezos Babylon upgrade.
+Since the caller of a contract can specify an entrypoint she wants to invoke, we are not forced to require a concrete parameter type anymore.
 
 ## Why do not you require concrete shape of parameter tree?
 

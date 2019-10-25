@@ -30,23 +30,6 @@ See also:
 * [Syntax sugar explanation](./A1.md#pairs-and-ors-syntax-sugar).
 * [Explanation of `view`](./A1.md#view-entry-points).
 
-## Entrypoints in Michelson
-
-Entrypoints are added to Michelson in Babylon update which should become available in Mainnet on October 15.
-Since our proposed interface relies on this feature, it can not be used in the previous version before Babylon — Athens.
-Hence we propose a temporary approvable ledger standard in another TZIP — [FA1.2.1](./FA1.2.1.md).
-That TZIP has a stricter requirement on the parameter type.
-
-Our guidance is the following:
-1. First of all, if you develop a simple Approvable Ledger which does not have any entrypoints apart from required by this document,
-your contract should comply with [FA1.2.1](./FA1.2.1.md) even if you do not plan to use it in Athens.
-2. If you develop an "Approvable Ledger" contract which is not supposed to be used in Mainnet until Babylon is available, you can ignore FA1.2.1 and adhere to this document.
-3. If you develop an "Approvable Ledger" smart contract and want to use it in Athens, please refer to [FA1.2.1](./FA1.2.1.md).
-Once Babylon is available in Mainnet, you are encouraged to ask users of your contract to update their code so that it uses the entrypoints feature of Michelson and can rely on FA1.2 instead.
-4. If you develop an application or a smart contract which should work with an arbitrary Approvable Ledger and do not plan to use it in Mainnet until Babylon, you MUST use the entrypoints feature of Michelson to call FA1.2 methods and rely only on this document (FA1.2).
-You can use a network running Babylon for testing (e. g. Zeronet).
-5. If you develop an application or a smart contract which should work with an arbitrary Approvable Ledger and want to use it in Athens, you MUST require that smart contracts you work with comply with FA1.2.1.
-
 ## Errors
 
 This document definines additional error types while following the approach for signalling errors described in FA1.
