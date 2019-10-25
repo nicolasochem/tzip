@@ -114,9 +114,9 @@ As a worked example, let us imagine where we would classify a port of the
 `ERC-20` standard to Michelson as a Tezos Standard index code.
 
 `ERC-20` instantiates an asset by maintaining a ledger of accounts and balances
-and providing an interface to transfer balances between accounts. Since
-`ERC-20` balances are fungible (all units of the asset are interchangeable and
-without distinction, aside from their ownership).
+and providing an interface to transfer balances between accounts. `ERC-20`
+balances are fungible (all units of the asset are interchangeable and without
+distinction, aside from their ownership).
 
 Let's suppose that the code `A` is mapped to the topic "Application", and its
 extension `FA` is mapped to "Financial Application"  in our Domain Prefix Registry
@@ -124,8 +124,8 @@ extension `FA` is mapped to "Financial Application"  in our Domain Prefix Regist
 for our `ERC-20` port is thus `FA`.
 
 Serial numbers are assigned in the same approval queue as the RFC process, so if
-is already a standard with the code `FA1`, which our `ERC-20` port is not an
-extension of, our index code will then be `FA2`.
+there is already a standard with the code `FA1`, which our `ERC-20` port is not
+an extension of, our index code will then be `FA2.`.
 
 Crucially, domain prefixes export distinct namespaces, so `A1` and `FA1` are
 not necessarily related and might be completely independent. Whether or not

@@ -3,8 +3,8 @@ tzip: FA1.2
 title: Approvable Ledger
 status: WIP
 type: Financial Application
-author: Konstantin Ivanov, Ivan Gromakovskii
-advocate: Konstantin Ivanov, Ivan Gromakovskii
+author: Konstantin Ivanov, Ivan Gromakovskii, Kirill Kuvshinov
+advocate: Konstantin Ivanov, Ivan Gromakovskii, Kirill Kuvshinov
 created: 2019-06-20
 ---
 
@@ -22,6 +22,9 @@ A contract which implements approvable ledger must have the following entrypoint
 * `(view (address :owner, address :spender) nat) %getAllowance`
 * `(view (address :owner) nat)                   %getBalance`
 * `(view unit nat)                               %getTotalSupply`
+
+`%getBalance` and `%getTotalSupply` entrypoints have the same semantics as they do in FA1.
+This standard specifies additional authorization checks for `%transfer` entrypoint, as explicitly allowed by FA1.
 
 See also:
 * [Syntax sugar explanation](./A1.md#pairs-and-ors-syntax-sugar).
@@ -46,34 +49,23 @@ You can use a network running Babylon for testing (e. g. Zeronet).
 
 ## Errors
 
-Failures of this contract are represented as
-`(string, d)` pairs, the first element of which
-is an identifier of an error and the second element keeps details of this error,
-or `unit` if no details required.
-
-For example, attempt to withdraw `5` tokens when only `3` is present
-will result in the following error:
-`("NotEnoughBalance", (5, 3))`
+This document definines additional error types while following the approach for signalling errors described in FA1.
+The error details are annotated in this document for the sake of clarity, the annotations in errors are not required by this standard.
 
 ## Entrypoints
 
 ### transfer
 
-This entrypoint will credit the account of the address passed in the
+As specified by FA1, this entrypoint credits the account of the address passed in the
 `"to"` parameter, while debiting the account corresponding to the `"from"` parameter.
-Should the `"from"` address have insufficient funds, the transaction will fail and
-no state will be mutated.
 
-This entrypoint serves multiple purposes:
+This standard requires additional authorization checks to be performed prior to transfer:
 * When called with `"from"` account equal to the transaction sender, we assume that
 the user transfers their own money and this does not require approval.
 * Otherwise, the transaction sender must be previously authorized to transfer at least the requested number of tokens from the `"from"` account using the `approve` entrypoint.
 In this case current number of tokens that sender is allowed to withdraw from the `"from"` address is decreased by the number of transferred tokens.
 
-This entrypoint can fail with the following errors:
-* `NotEnoughBalance` - insufficient funds on the sender account to perform a given
-transfer. The error will contain a `(nat :required, nat :present)` pair, where
-`required` is the requested amount of tokens, `present` is the available amount.
+In addition to `NotEnoughBalance` error specified by FA1, this enrypoint can fail with:
 * `NotEnoughAllowance` - a given account has no permission to withdraw a given
 amount of funds. The error will contain a `(nat :required, nat :present)` pair,
 where `required` is the requested amount of tokens, `present` is the current allowance.
@@ -98,15 +90,7 @@ non-zero was performed. The error will contain `nat :previous` value, where
 
 ### getAllowance
 
-This view will return the approval value between two given addresses.
-
-### getBalance
-
-This view will return the balance of the address in the ledger.
-
-### getTotalSupply
-
-This view will return the total number of tokens.
+This view returns the approval value between two given addresses.
 
 ## Related work
 

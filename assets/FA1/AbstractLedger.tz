@@ -1,22 +1,28 @@
 # This contract was generated from
-# https://gitlab.com/morley-framework/morley/blob/b70c1e4e61594bbb657531f787dd37e31de0b6c1/lorentz-contracts/src/Lorentz/Contracts/UnsafeLedger.hs
+# https://gitlab.com/morley-framework/morley/blob/08c80b441e5a2d0117d34279e5124485765a14ff/lorentz-contracts/src/Lorentz/Contracts/AbstractLedger.hs
 
-parameter (or (pair %transfer
-                    (address :to)
-                    (nat :value))
-              (or (pair %getTotalSupply
-                        unit
-                        (contract nat))
-                  (pair %getBalance
-                        address
-                        (contract nat))));
+parameter (or (pair %transfer address
+                              (pair address
+                                    nat))
+              (or (pair %getTotalSupply unit
+                                        (contract nat))
+                  (pair %getBalance address
+                                    (contract nat))));
 storage (pair (big_map address
                        nat)
               nat);
 code { DUP;
        CAR;
        DIP { CDR };
-       IF_LEFT { DIP { DUP;
+       IF_LEFT { DUP;
+                 CAR;
+                 SENDER;
+                 COMPARE;
+                 EQ;
+                 IF {  }
+                    { PUSH string "Sender is not equal to \"from\"";
+                      FAILWITH };
+                 DIP { DUP;
                        CAR;
                        SENDER;
                        GET;
@@ -25,6 +31,7 @@ code { DUP;
                                {  } };
                  SWAP;
                  DIP { DUP;
+                       CDR;
                        CDR };
                  SUB;
                  DUP;
@@ -48,6 +55,7 @@ code { DUP;
                        DIP { DROP };
                        PAIR };
                  DUP;
+                 CDR;
                  CAR;
                  SWAP;
                  DIP { DIP { DUP;
@@ -55,12 +63,15 @@ code { DUP;
                        GET };
                  SWAP;
                  IF_NONE { DUP;
+                           CDR;
                            CDR }
                          { DIP { DUP;
+                                 CDR;
                                  CDR };
                            ADD };
                  SOME;
-                 DIP { CAR };
+                 DIP { CDR;
+                       CAR };
                  SWAP;
                  DIP { DIP { DUP;
                              CAR } };
