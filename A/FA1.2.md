@@ -28,7 +28,7 @@ This standard specifies additional authorization checks for `%transfer` entrypoi
 
 See also:
 * [Syntax sugar explanation](./A1.md#pairs-and-ors-syntax-sugar).
-* [Explanation of `view`](./A1.md#view-entry-points).
+* [Explanation of `view`](./A1.md#view-entrypoints).
 
 ## Errors
 

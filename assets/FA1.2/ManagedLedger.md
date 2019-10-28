@@ -22,7 +22,7 @@ The contract compiled to Michelson is provided in [ManagedLedger.tz](/assets/FA1
 
 See also:
 * [Syntax sugar explanation](/A/A1.md#pairs-and-ors-syntax-sugar).
-* [Explanation of `view`](/A/A1.md#view-entry-points).
+* [Explanation of `view`](/A/A1.md#view-entrypoints).
 
 ## Deployment
 
