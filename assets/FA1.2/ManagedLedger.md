@@ -87,13 +87,10 @@ The error will contain a `(nat :required, nat :present)` pair, where
 The contract has been written in Lorentz eDSL - a [language over Haskell](https://hackage.haskell.org/package/morley-0.3.0.1) which provides some extensions to basic Michelson and generally improves development experience.
 
 The contract code can be found
-[here](https://gitlab.com/morley-framework/morley/tree/0b649ef128f7282b4bcc985792cf70ad58d8c7b5/lorentz-contracts/src/Lorentz/Contracts/ManagedLedger.hs).
+[here](https://gitlab.com/morley-framework/morley/tree/ce28076a79b93d48aa7745271e6a1395b8b9e50d/lorentz-contracts/src/Lorentz/Contracts/ManagedLedger.hs).
 
 ### Compiling Lorentz contract
 
-Currently, in order to compile Lorentz implementation of Managed Ledger into Michelson the following steps should be performed:
-1. [Build the project](https://gitlab.com/morley-framework/morley/blob/0b649ef128f7282b4bcc985792cf70ad58d8c7b5/README.md#running-and-building).
+In order to compile Lorentz implementation of Managed Ledger into Michelson the following steps should be performed:
+1. [Build the project](https://gitlab.com/morley-framework/morley/blob/ce28076a79b93d48aa7745271e6a1395b8b9e50d/README.md#running-and-building).
 2. Run `stack exec lorentz-contracts -- print -n ManagedLedger -o ManagedLedger.tz`.
-3. Add necessary annotations to contract parameter type.
-At the moment, this step has to be performed manually because Lorentz does not support annotations (it provides similar safety guarantees in a different way). We are [planning to implement this feature](https://issues.serokell.io/issue/TM-64), after which annotations will be set automatically.
-4. After step 3 contract may stop compiling, reporting mismatch of some annotations. Insert required `CAST` instructions.
