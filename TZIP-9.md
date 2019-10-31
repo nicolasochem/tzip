@@ -44,7 +44,7 @@ Information about the purpose of the payment will use a field called `info` with
 
 ## Appendix
 
-### TIP8 Implementations Supporting the Standard
+### TZIP-8 Implementations Supporting the Standard
 * TBA
 
 ### Wallets Implementing the Standard
