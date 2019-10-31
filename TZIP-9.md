@@ -13,7 +13,7 @@ Miscellaneous information extension for payment requests.
 
 ## Abstract
 
-This document describes an extension to TIP8 that adds an extra field to Tezos payment requests. The field can contain simple description of payment or their purpose. Wallets can dispay this in transaction history or when approving the payment.
+This document describes an extension to TZIP-8 that adds an extra field to Tezos payment requests. The field can contain simple description of payment or their purpose. Wallets can dispay this in transaction history or when approving the payment.
 
 ## Motivation
 
