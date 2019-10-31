@@ -257,7 +257,7 @@ Decoding usually involves the following:
 ### Extensions
 Some use cases would benefit from being able to transmit more information in the payment requests. This can be done by extending the standard. The extensions should be described by a separate standard and use a field based on the name of the standard to store their data. This will help avoid collisions with other extensions.
 
-For example, an extension described in TIP9 that adds an information field could store its data like this:
+For example, an extension described in TZIP-9 that adds an information field could store its data like this:
 
 ```json
 [
