@@ -51,6 +51,10 @@ Test cases for an implementation are strongly recommended as are any proofs of c
 
 Any implementation must be completed before any TZIP is given status “Last Call”, but it need not be completed before the TZIP is merged as draft.
 
+## Apendix
+
+A list of references relevant to the proposal.
+
 ## Copyright
 
 All TZIPs must be in the public domain, or a under a permissive license substantially identical to placement in the public domain. Example of a copyright waiver.
