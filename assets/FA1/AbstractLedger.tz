@@ -1,17 +1,18 @@
 # This contract was generated from
-# https://gitlab.com/morley-framework/morley/blob/08c80b441e5a2d0117d34279e5124485765a14ff/lorentz-contracts/src/Lorentz/Contracts/AbstractLedger.hs
+# https://gitlab.com/morley-framework/morley/tree/ce28076a79b93d48aa7745271e6a1395b8b9e50d/lorentz-contracts/src/Lorentz/Contracts/AbstractLedger.hs
 
-parameter (or (pair %transfer address
-                              (pair address
-                                    nat))
+parameter (or (pair %transfer (address :from)
+                              (pair (address :to)
+                                    (nat :val)))
               (or (pair %getTotalSupply unit
                                         (contract nat))
-                  (pair %getBalance address
+                  (pair %getBalance (address :owner)
                                     (contract nat))));
 storage (pair (big_map address
                        nat)
               nat);
-code { DUP;
+code { CAST (pair (or (pair address (pair address nat)) (or (pair unit (contract nat)) (pair address (contract nat)))) (pair (big_map address nat) nat));
+       DUP;
        CAR;
        DIP { CDR };
        IF_LEFT { DUP;
@@ -73,8 +74,7 @@ code { DUP;
                  DIP { CDR;
                        CAR };
                  SWAP;
-                 DIP { DIP { DUP;
-                             CAR } };
+                 DIP 2 { DUP; CAR };
                  UPDATE;
                  DIP { DUP;
                        DIP { CDR };
