@@ -26,7 +26,7 @@ A TZIP is a design document providing information to the Tezos community, descri
 
 
 
-## TZIP Formats and Templates
+## Contribute
 
 TZIPs should be written in [Markdown] format. You can find a template in the [Templates] folder.
 
