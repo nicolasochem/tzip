@@ -5,7 +5,9 @@ TZIP (pronounce "tee-zip") stands for Tezos Improvement Proposal, which are docu
 
 ## What is a TZIP?
 
-A TZIP is a design document providing information to the Tezos community, describing a feature for Tezos or its processes or environment, and supporting the formal protocol governance process. A TZIP should contain a concise technical specification and rationale which unambiguously articulates what the proposal is, how it may be implemented, and why the proposal is an improvement. A TZIP should additionally contain an FAQ, which which documents, compares and answers alternative options, opinions and objections.
+A TZIP is a design document providing information to the Tezos community, describing a feature for Tezos or its processes or environment, and supporting the formal protocol governance process. A TZIP should contain a concise technical specification and rationale which unambiguously articulates what the proposal is, how it may be implemented, and why the proposal is an improvement.
+
+A TZIP should additionally contain an FAQ, which which documents, compares and answers alternative options, opinions and objections.
 
 
 
@@ -28,8 +30,9 @@ A TZIP is a design document providing information to the Tezos community, descri
 
 ## Contribute
 
-TZIPs should be written in [Markdown] format. You can find a template in the [Templates] folder.
-
+If you want to contribute, you can find TZIP templates in the [Templates] folder.  
+Note that TZIPs should be written in [Markdown](https://docs.gitlab.com/ee/user/markdown.html) format.  
+You can find more details about the TZIP structure in [TZIP-0001](Proposals/TZIP-0001/TZIP-0001.md)
 
 [TZIP-0001]: Proposals/TZIP-0001
 [TZIP-0002]: Proposals/TZIP-0002
@@ -40,6 +43,5 @@ TZIPs should be written in [Markdown] format. You can find a template in the [Te
 [TZIP-0007]: Proposals/TZIP-0007
 [TZIP-0008]: Proposals/TZIP-0008
 [TZIP-0009]: Proposals/TZIP-0009
-[Markdown]: https://docs.gitlab.com/ee/user/markdown.html
 [Templates]: Templates
 
