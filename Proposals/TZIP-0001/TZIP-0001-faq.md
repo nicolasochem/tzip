@@ -1,6 +1,6 @@
 ---
 tzip: 1
-title: TZIP-1 (TZIP Purpose and Guidelines) FAQ
+title: TZIP-0001 (TZIP Purpose and Guidelines) FAQ
 status: WIP
 type: Meta
 author: John Burnham, Jacob Arluck
@@ -10,7 +10,7 @@ created: 2019-04-12
 
 ## What is a TZIP?
 
-Response copied from [TZIP-1](/Proposals/TZIP-0001/TZIP-0001.md#what-is-a-tzip):
+Response copied from [TZIP-0001](/Proposals/TZIP-0001/TZIP-0001.md#what-is-a-tzip):
 
 An TZIP is a design document providing information to the Tezos community,
 describing a feature for Tezos or its processes or environment, and supporting
