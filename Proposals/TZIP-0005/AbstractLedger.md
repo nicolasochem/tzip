@@ -6,9 +6,9 @@ created: 2019-07-17
 
 ## Summary
 
-This document describes an implementation of [FA1 interface](/A/FA1.md).
+This document describes an implementation of [FA1 interface](/Proposals/TZIP-0005/FA1.md).
 
-Michelson code of resulting contract can be found [here](AbstractLedger.tz).
+Michelson code of resulting contract can be found [here](/Proposals/TZIP-0005/AbstractLedger.tz).
 
 ## Unsafe Ledger Parameter
 
@@ -20,7 +20,7 @@ parameter
   );
 ```
 
-See also [syntax explanation](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#adt-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](https://gitlab.com/tzip/tzip/blob/master/A/A1.md#view-entrypoints).
+See also [syntax explanation](/Proposals/TZIP-0004/A1.md#pairs-and-ors-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](/Proposals/TZIP-0004/A1.md#view-entrypoints).
 
 ## Unsafe Ledger Storage
 
@@ -40,7 +40,7 @@ the sum of balances must be reflected by a corresponding changing the `nat
 This contract has been written in Lorentz eDSL - a [language over Haskell](https://hackage.haskell.org/package/morley-0.3.0.1) which provides some extensions to basic Michelson and generally improves development experience.
 
 The contract code can be found
-[here](https://gitlab.com/morley-framework/morley/blob/ce28076a79b93d48aa7745271e6a1395b8b9e50d/lorentz-contracts/src/Lorentz/Contracts/AbstractLedger.hs), resulting Michelson code resides [here](AbstractLedger.tz).
+[here](https://gitlab.com/morley-framework/morley/blob/ce28076a79b93d48aa7745271e6a1395b8b9e50d/lorentz-contracts/src/Lorentz/Contracts/AbstractLedger.hs), resulting Michelson code resides [here](/Proposals/TZIP-0005/AbstractLedger.tz).
 
 ### Compiling Lorentz contract
 
