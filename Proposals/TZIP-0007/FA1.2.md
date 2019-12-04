@@ -27,8 +27,8 @@ A contract which implements approvable ledger must have the following entrypoint
 This standard specifies additional authorization checks for `%transfer` entrypoint, as explicitly allowed by FA1.
 
 See also:
-* [Syntax sugar explanation](./A1.md#pairs-and-ors-syntax-sugar).
-* [Explanation of `view`](./A1.md#view-entrypoints).
+* [Syntax sugar explanation](/Proposals/TZIP-0004/A1.md#pairs-and-ors-syntax-sugar).
+* [Explanation of `view`](/Proposals/TZIP-0004/A1.md#view-entrypoints).
 
 ## Errors
 
