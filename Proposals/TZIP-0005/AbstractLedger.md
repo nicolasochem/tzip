@@ -20,7 +20,7 @@ parameter
   );
 ```
 
-See also [syntax explanation](/Proposals/TZIP-0004/A1.md#adt-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](/Proposals/TZIP-0004/A1.md#view-entrypoints).
+See also [syntax explanation](/Proposals/TZIP-0004/A1.md#pairs-and-ors-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](/Proposals/TZIP-0004/A1.md#view-entrypoints).
 
 ## Unsafe Ledger Storage
 
