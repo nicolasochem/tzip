@@ -25,7 +25,7 @@ A TZIP should additionally contain an FAQ, which which documents, compares and a
 | [TZIP-0007]  | FA1.2 - Approvable Ledger                          | 06/20/2019    | Proposal         |
 | [TZIP-0008]  | Payment Request Format                             | 06/25/2019    | Proposal         |
 | [TZIP-0009]  | Info Field for Payment Requests                    | 06/25/2019    | Proposal         |
-| [TZIP-0010]  | Wallet Integration                                 | -             | Work In Progress |
+| [TZIP-0010]  | Wallet Interaction Standard                        | -             | Work In Progress |
 | [TZIP-0011]  | Contract Specification Schema                      | -             | Work In Progress |
 | [TZIP-0012]  | FA2 - Multi-Asset Contract (MAC)                   | -             | Work In Progress |
 
