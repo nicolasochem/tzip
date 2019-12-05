@@ -48,7 +48,7 @@ them in the context of a larger standards process.
 ## What's to prevent TZIP from becoming a centralized authority like EIP?
 
 EIP has power in Ethereum because it acts as [Schelling
-point](https://en.wikipedia.org/wiki/Focal_point_(game_theory) in their system
+point](https://en.wikipedia.org/wiki/Focal_point_(game_theory)) in their system
 of hard fork governance. This is reinforced by the fact that the EIP editors
 are substantially the most influential or notable members of the Ethereum core
 developer community.
