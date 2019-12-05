@@ -1,5 +1,5 @@
 ---
-tzip: FA1.2
+tzip: 7 (FA1.2)
 title: Approvable Ledger
 status: WIP
 type: Financial Application

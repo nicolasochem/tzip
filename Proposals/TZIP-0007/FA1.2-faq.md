@@ -1,5 +1,5 @@
 ---
-tzip: FA1.2
+tzip: 7 (FA1.2)
 author: Konstantin Ivanov, Ivan Gromakovskii
 created: 2019-04-12
 ---
