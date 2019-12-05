@@ -15,8 +15,8 @@ A TZIP should additionally contain an FAQ, which which documents, compares and a
 ## Current TZIPs
 
 | TZIP         | Title                                              | Creation Date | Status           |
-| :---         | :---                                               | :---          | :---             |
-| [TZIP-0001]  | TZIP Purpose and Guidelines                        | 04/10/2019    | Proposal         |
+| :---:        | :---                                               | :---:         | :---             |
+| [TZIP-0001]  | TZIP Purpose and Guidelines                        | 04/10/2019    | Improvements in progress        |
 | [TZIP-0002]  | TZIP Index                                         | 04/10/2019    | Proposal         |
 | [TZIP-0003]  | TZIP Code of Conduct                               | 04/10/2019    | Proposal         |
 | [TZIP-0004]  | A1 - Michelson Contract Interfaces and Conventions | 04/11/2019    | Proposal         |
