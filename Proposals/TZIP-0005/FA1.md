@@ -35,7 +35,7 @@ This interface relies on [multiple entrypoints feature](https://gitlab.com/nomad
 
 For FA1, parameter should contain the following leaves:
 
-1. `(assress :from, (address :to, nat :value)) %transfer`
+1. `(address :from, (address :to, nat :value)) %transfer`
 3. `view (address :owner) nat                  %getBalance`
 2. `view unit nat                              %getTotalSupply`
 
