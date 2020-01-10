@@ -1,7 +1,7 @@
 ---
 tzip: 1
 title: TZIP Purpose and Guidelines
-status: Submitted
+status: Final
 type: Meta
 author: John Burnham, Jacob Arluck (@governancy), Julien Hamilton (@julien.hamilton)
 created: 2019-04-10

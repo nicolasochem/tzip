@@ -1,7 +1,7 @@
 ---
 tzip: 2
 title: TZIP Types and Naming
-status: Submitted
+status: Final
 type: Meta
 author: John Burnham, Julien Hamilton (@julien.hamilton)
 created: 2019-04-10
