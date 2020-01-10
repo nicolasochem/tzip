@@ -12,9 +12,9 @@ A TZIP should additionally contain an FAQ which documents, compares, and answers
 
 |    TZIP   | Title                                                      | Creation Date | Status             |
 | :-------: | :--------------------------------------------------------- | :-----------: | :----------------- |
-| [TZIP-1]  | TZIP Purpose and Guidelines                                |  04/10/2019   | Submitted          |
-| [TZIP-2]  | TZIP Types and Naming                                      |  04/10/2019   | Submitted          |
-| [TZIP-3]  | TZIP Code of Conduct                                       |  04/10/2019   | Submitted          |
+| [TZIP-1]  | TZIP Purpose and Guidelines                                |  04/10/2019   | Final              |
+| [TZIP-2]  | TZIP Types and Naming                                      |  04/10/2019   | Final              |
+| [TZIP-3]  | TZIP Code of Conduct                                       |  04/10/2019   | Final              |
 | [TZIP-4]  | **A1** - Michelson Contract Interfaces and Conventions     |  04/11/2019   | Submitted          |
 | [TZIP-5]  | **FA1** - Abstract Ledger                                  |  04/12/2019   | Submitted          |
 | [TZIP-6]  | **A1.1** - Balanced Trees for nested or and pair types     |  05/04/2019   | Submitted          |
@@ -24,6 +24,7 @@ A TZIP should additionally contain an FAQ which documents, compares, and answers
 | [TZIP-10] | **LA1** - Wallet Interaction Standard                      |  09/17/2019   | Work In Progress   |
 | [TZIP-11] | Contract Specification Schema                              |       -       | Draft              |
 | [TZIP-12] | **FA2** - Multi-Asset Contract (MAC)                       |       -       | Draft              |
+| [TZIP-13] | **FA1.3** - Fungible Asset Standard                        |  01/02/2020   | Work In Progress   |
 
 ## How to Contribute
 
@@ -45,3 +46,4 @@ Once you have written your proposal, please open a merge request with your propo
 [TZIP-10]: proposals/tzip-10
 [TZIP-11]: proposals/tzip-11
 [TZIP-12]: proposals/tzip-12
+[TZIP-13]: proposals/tzip-13

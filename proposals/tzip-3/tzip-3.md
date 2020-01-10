@@ -1,7 +1,7 @@
 ---
 tzip: 3
 title: TZIP Code of Conduct
-status: Submitted
+status: Final
 type: Meta
 author: John Burnham, Julien Hamilton (@julien.hamilton)
 created: 2019-04-10
