@@ -1,17 +1,18 @@
 ---
-tzip: 6 (A1.1)
-title: Balanced Trees for nested or and pair types
+tzip: 6
+title: A1.1 - Balanced Trees for nested or and pair types
+status: Submitted
 type: Application
-author: John Burnham, Konstantin Ivanov
-advocate: John Burnham, Konstantin Ivanov
+author: John Burnham, Konstantin Ivanov <kivanov@serokell.io>
+advocate: John Burnham, Konstantin Ivanov <kivanov@serokell.io>
 created: 2019-05-04
 ---
 
 ## Summary
 
-This standard extends `TZIP-0004 (A1)` by defining a right-hand balance tree structure
+This standard extends `TZIP-4 (A1)` by defining a right-hand balance tree structure
 for `or` and `pair` types. Structure of comb defined in
-[TZIP-0004 (A1)](/Proposals/TZIP-0004/A1.md#entrypoints) is the most obvious one, but the worst-case
+[TZIP-4](/proposals/tzip-4/tzip-4.md#entrypoints) is the most obvious one, but the worst-case
 performance of operations on it scales linearly with number of elements
 in the comb which is suboptimal. Whereas tree structure allows reaching better
 average performance of access and update operations.
@@ -58,7 +59,7 @@ If we insert a new node `f` into the above tree:
 
 ## ADT Syntax sugar
 
-The [`Pair`s and `Or`s syntax sugar](/Proposals/TZIP-0004/A1.md#pairs-and-ors-syntax-sugar) is
+The [`Pair`s and `Or`s syntax sugar](/proposals/tzip-4/tzip-4.md#pairs-and-ors-syntax-sugar) is
 extended to work for tuples and unions of arbitrary size:
 
 ```

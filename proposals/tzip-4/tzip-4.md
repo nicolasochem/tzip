@@ -1,10 +1,10 @@
 ---
-tzip: 4 (A1)
-title: Michelson Contract Interfaces and Conventions
-status: WIP
+tzip: 4
+title: A1 - Michelson Contract Interfaces and Conventions
+status: Submitted
 type: Application
-author: John Burnham, Konstantin Ivanov
-advocate: John Burnham, Konstantin Ivanov
+author: John Burnham, Konstantin Ivanov <kivanov@serokell.io>
+advocate: John Burnham, Konstantin Ivanov <kivanov@serokell.io>
 created: 2019-04-11
 ---
 
@@ -73,7 +73,7 @@ with field annotations, and all top-level union type arguments are unannotated.
 
 Nevertheless, it is advisable that specific implementations adhere to a
 consistent tree-struct convention, examples of which can be seen in various
-extensions of this standard (such as [`TZIP-0006 (A1.1)`](/Proposals/TZIP-0006/A1.1.md)).
+extensions of this standard (such as [`TZIP-6`](/proposals/tzip-6/tzip-6.md)).
 
 ### Example
 
@@ -186,7 +186,7 @@ indentation and whitespacing rules.
 This standard defines only tuples and unions of size two.
 Introduced syntax sugar becomes especially useful in extensions of the
 standard where this syntax is generalized
-(see [`TZIP-0006 (A1.1)`](/Proposals/TZIP-0006/A1.1.md) for example).
+(see [`TZIP-6`](/proposals/tzip-6/tzip-6.md) for example).
 
 # CASE macro
 

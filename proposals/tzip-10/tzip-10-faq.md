@@ -1,13 +1,11 @@
 ---
-tzip: 10 (LA1)
-title: Wallet Interaction Standard
+tzip: 10
+title: LA1 - Wallet Interaction Standard
 author: Alessandro De Carli <a.decarli@papers.ch>, Mike Godenzi <m.godenzi@papers.ch>, Andreas Gassmann <a.gassmann@papers.ch>, Pascal Brun <@pascuin>
 discussions-to: https://forum.tezosagora.org/t/wallet-interaction-standard/1399
-status: WIP
-review-period-end: <date review period ends>
+status: Work In Progress
 type: LA
 created: 2019-09-17
-updated: 2019-10-09, 2019-10-12, 2019-10-24, 2019-12-09
 ---
 
 ## What has been discussed in the first workshop - 2019-09-29?
@@ -138,5 +136,5 @@ The unedited meeting notes from the call on October 24th which will be reviewed 
 ### Next steps
 
 - share dockerhub link & documentation
-- iterate over feedback, include in pull request
+- iterate over feedback, include in merge request
   -- include glossary and scenarios

@@ -2,12 +2,12 @@
 tzip: 8
 title: Payment Request Format
 status: Draft
-type: TRC
+type: Interface
 author: Martin Pospěch <martin@smartcontractlabs.ee>
 created: 2019-06-25
 ---
 
-## Simple Summary
+## Summary
 
 URI scheme for Tezos payment requests.
 
@@ -296,8 +296,7 @@ The payload format closely mirrors the format expected by Tezos RPC, so that it 
 To make the standard as simple to implement as possible, we have decided against a more abstract payload format.
 
 ### Misc. Information Field
-The requests only include a subset of fields from the RPC format. To keep the standard simple, there are no extra fields such as a miscellaneous information field to describe a transaction. This could then be displayed by users' wallet, but wouldn't be sent anywhere. Extensions to the standard are possible, and a misc. information field is described by [TZIP-0009](/Proposals/TZIP-0009/TZIP-0009.md).
-
+The requests only include a subset of fields from the RPC format. To keep the standard simple, there are no extra fields such as a miscellaneous information field to describe a transaction. This could then be displayed by users' wallet, but wouldn't be sent anywhere. Extensions to the standard are possible, and a misc. information field is described by [TZIP-9](/proposals/tzip-9/tzip-9.md).
 ## Implementation
 
 JavaScript implementation is provided as an [npm package called tezos-uri](https://www.npmjs.com/package/tezos-uri). The code can be viewed [at gitlab](https://gitlab.com/smartcontractlabs/tezos-uri). This section contains advice and ideas related to implementing the standard and integrating it with wallets.
@@ -313,7 +312,7 @@ Implementers are advised to verify during encoding and decoding that the content
 When processing an array of requests, if one of the requests is malformed or contains invalid data, all of the requests should be treated as invalid.
 
 #### Validate Michelson Data
-Don't forget to validate Michelson data in `parameters` and `script` fields. The types are described in the [Tezos RPC index](https://tezos.gitlab.io/mainnet/api/rpc.html#post-block-id-helpers-forge-operations). The script can be legal according to the RPC specification and still fail during interpretation. This happens e.g. when an instruction has too few or too many arguments. Validating the Michelson data won't ensure that the script can be interpreted, but it will help catch mistakes sooner.
+Don't forget to validate Michelson data in `parameters` and `script` fields. The types are described in the [Tezos RPC index](https://tezos.gitlab.io/api/rpc.html#post-block-id-helpers-forge-operations). The script can be legal according to the RPC specification and still fail during interpretation. This happens e.g. when an instruction has too few or too many arguments. Validating the Michelson data won't ensure that the script can be interpreted, but it will help catch mistakes sooner.
 
 ### Wallets
 Integrating the standard in a wallet enables UX improvements, such as pre-filling transaction dialogs for users so that they just need to confirm. This is important for application UX, as users can't be expected to copy-paste parameters or gas and storage limits.

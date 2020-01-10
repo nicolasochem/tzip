@@ -6,44 +6,42 @@ TZIP (pronounce "tee-zip") stands for Tezos Improvement Proposal, which are docu
 
 A TZIP is a design document providing information to the Tezos community, describing a feature for Tezos or its processes or environment, and supporting the formal protocol governance process. A TZIP should contain a concise technical specification and rationale which unambiguously articulates what the proposal is, how it may be implemented, and why the proposal is an improvement.
 
-A TZIP should additionally contain an FAQ, which which documents, compares and answers alternative options, opinions and objections.
+A TZIP should additionally contain an FAQ which documents, compares, and answers alternative options, opinions, and objections.
 
 ## Current TZIPs
 
-|    TZIP     | Title                                              | Creation Date | Status                   |
-| :---------: | :------------------------------------------------- | :-----------: | :----------------------- |
-| [TZIP-0001] | TZIP Purpose and Guidelines                        |  04/10/2019   | Improvements in progress |
-| [TZIP-0002] | TZIP Index                                         |  04/10/2019   | Proposal                 |
-| [TZIP-0003] | TZIP Code of Conduct                               |  04/10/2019   | Proposal                 |
-| [TZIP-0004] | A1 - Michelson Contract Interfaces and Conventions |  04/11/2019   | Proposal                 |
-| [TZIP-0005] | FA1 - Abstract Ledger                              |  04/12/2019   | Proposal                 |
-| [TZIP-0006] | A1.1 - Balanced Trees for nested or and pair types |  05/04/2019   | Proposal                 |
-| [TZIP-0007] | FA1.2 - Approvable Ledger                          |  06/20/2019   | Proposal                 |
-| [TZIP-0008] | Payment Request Format                             |  06/25/2019   | Proposal                 |
-| [TZIP-0009] | Info Field for Payment Requests                    |  06/25/2019   | Proposal                 |
-| [TZIP-0010] | LA1 - Wallet Interaction Standard                  |  09/17/2019   | Work In Progress         |
-| [TZIP-0011] | Contract Specification Schema                      |       -       | Work In Progress         |
-| [TZIP-0012] | FA2 - Multi-Asset Contract (MAC)                   |       -       | Work In Progress         |
+|    TZIP   | Title                                                      | Creation Date | Status             |
+| :-------: | :--------------------------------------------------------- | :-----------: | :----------------- |
+| [TZIP-1]  | TZIP Purpose and Guidelines                                |  04/10/2019   | Submitted          |
+| [TZIP-2]  | TZIP Types and Naming                                      |  04/10/2019   | Submitted          |
+| [TZIP-3]  | TZIP Code of Conduct                                       |  04/10/2019   | Submitted          |
+| [TZIP-4]  | **A1** - Michelson Contract Interfaces and Conventions     |  04/11/2019   | Submitted          |
+| [TZIP-5]  | **FA1** - Abstract Ledger                                  |  04/12/2019   | Submitted          |
+| [TZIP-6]  | **A1.1** - Balanced Trees for nested or and pair types     |  05/04/2019   | Submitted          |
+| [TZIP-7]  | **FA1.2** - Approvable Ledger                              |  06/20/2019   | Submitted          |
+| [TZIP-8]  | Payment Request Format                                     |  06/25/2019   | Draft              |
+| [TZIP-9]  | Info Field for Payment Requests                            |  06/25/2019   | Draft              |
+| [TZIP-10] | **LA1** - Wallet Interaction Standard                      |  09/17/2019   | Work In Progress   |
+| [TZIP-11] | Contract Specification Schema                              |       -       | Draft              |
+| [TZIP-12] | **FA2** - Multi-Asset Contract (MAC)                       |       -       | Draft              |
 
-## Contribute
+## How to Contribute
 
-If you want to contribute a proposal, please review the TZIP structure in [TZIP-0001](Proposals/TZIP-0001/TZIP-0001.md). You may find TZIP templates in the [Templates] folder helpful.
+If you want to contribute a proposal, please review the TZIP structure in [TZIP-1](/proposals/tzip-1/tzip-1.md). You may find TZIP templates in the [templates](/templates) folder helpful.
 
-Create a new subfolder in [Proposals] named for your TZIP, and include the proposal, faq, and any assets (e.g. contracts) in that subfolder. Note that TZIPs and faqs should be written in [Markdown](https://docs.gitlab.com/ee/user/markdown.html) format.
+Create a new subfolder in [proposals](/proposals) named for your TZIP, and include the proposal, FAQ, and any assets (e.g. contracts) in that subfolder. Note that TZIPs and FAQs should be written in [Markdown](https://docs.gitlab.com/ee/user/markdown.html) format.
 
-Once you have written your proposal, please open a merge request with your proposal for review. Please remember to update the `Current TZIPs` table in the README in your MR.
+Once you have written your proposal, please open a merge request with your proposal for review. Please remember to update the *Current TZIPs* table (see above) in your merge request.
 
-[tzip-0001]: Proposals/TZIP-0001
-[tzip-0002]: Proposals/TZIP-0002
-[tzip-0003]: Proposals/TZIP-0003
-[tzip-0004]: Proposals/TZIP-0004
-[tzip-0005]: Proposals/TZIP-0005
-[tzip-0006]: Proposals/TZIP-0006
-[tzip-0007]: Proposals/TZIP-0007
-[tzip-0008]: Proposals/TZIP-0008
-[tzip-0009]: Proposals/TZIP-0009
-[tzip-0010]: Proposals/TZIP-0010
-[tzip-0011]: Proposals/TZIP-0011
-[tzip-0012]: Proposals/TZIP-0012
-[templates]: Templates
-[proposals]: Proposals
+[TZIP-1]: proposals/tzip-1
+[TZIP-2]: proposals/tzip-2
+[TZIP-3]: proposals/tzip-3
+[TZIP-4]: proposals/tzip-4
+[TZIP-5]: proposals/tzip-5
+[TZIP-6]: proposals/tzip-6
+[TZIP-7]: proposals/tzip-7
+[TZIP-8]: proposals/tzip-8
+[TZIP-9]: proposals/tzip-9
+[TZIP-10]: proposals/tzip-10
+[TZIP-11]: proposals/tzip-11
+[TZIP-12]: proposals/tzip-12

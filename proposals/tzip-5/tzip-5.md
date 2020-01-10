@@ -1,10 +1,10 @@
 ---
-tzip: 5 (FA1)
-title: Abstract Ledger
-status: WIP
+tzip: 5
+title: FA1 - Abstract Ledger
+status: Submitted
 type: Financial Application
-author: John Burnham, Konstantin Ivanov, Kirill Kuvshinov
-advocate: John Burnham, Konstantin Ivanov, Kirill Kuvshinov
+author: John Burnham, Konstantin Ivanov <kivanov@serokell.io>, Kirill Kuvshinov (@kkirka)
+advocate: John Burnham, Konstantin Ivanov <kivanov@serokell.io>, Kirill Kuvshinov (@kkirka)
 created: 2019-04-12
 ---
 
@@ -39,7 +39,7 @@ For FA1, parameter should contain the following leaves:
 3. `view (address :owner) nat                  %getBalance`
 2. `view unit nat                              %getTotalSupply`
 
-See also [syntax explanation](/Proposals/TZIP-0004/A1.md#pairs-and-ors-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](/Proposals/TZIP-0004/A1.md#view-entrypoints).
+See also [syntax explanation](/proposals/tzip-4/tzip-4.md#pairs-and-ors-syntax-sugar) and [Michelson Contract Interfaces and Conventions Document](/proposals/tzip-4/tzip-4.md#view-entrypoints).
 
 ## Errors
 

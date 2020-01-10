@@ -1,19 +1,19 @@
 ---
-tzip: FA1.2
-author: Konstantin Ivanov, Ivan Gromakovskii
+tzip: 7
+author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak)
 created: 2019-06-24
 ---
 
 ## Summary
 
-This document describes a smart contract that implements [FA1.2 interface](/Proposals/TZIP-0007/FA1.2.md).
+This document describes a smart contract that implements [TZIP-7](/proposals/tzip-7/tzip-7.md) inteface.
 The contract also maintains an entity called _administrator_ which has an exclusive right to perform management operations like `Mint` and `Pause`.
 
-The contract compiled to Michelson is provided in [ManagedLedger.tz](/Proposals/TZIP-0007/ManagedLedger.tz).
+The contract compiled to Michelson is provided in [ManagedLedger.tz](/proposals/tzip-7/ManagedLedger.tz).
 
 ## Managed Ledger interface
 
-`ManagedLedger.md` has entrypoints specified in FA1.2 along with additional entrypoints which make the ledger _managed_:
+`ManagedLedger.md` has entrypoints specified in TZIP-7 along with additional entrypoints which make the ledger _managed_:
   * `bool %setPause`
   * `address %setAdministrator`
   * `(view () address) %getAdministrator`
@@ -21,8 +21,8 @@ The contract compiled to Michelson is provided in [ManagedLedger.tz](/Proposals/
   * `(address :from, nat :value) %burn`
 
 See also:
-* [Syntax sugar explanation](/Proposals/TZIP-0004/A1.md#pairs-and-ors-syntax-sugar).
-* [Explanation of `view`](/Proposals/TZIP-0004/A1.md#view-entrypoints).
+* [Syntax sugar explanation](/proposals/tzip-4/tzip-4.md#pairs-and-ors-syntax-sugar).
+* [Explanation of `view`](/proposals/tzip-4/tzip-4.md#view-entrypoints).
 
 ## Deployment
 
@@ -33,7 +33,7 @@ Here `MANAGER_ADDR` is the address of the manager, `False` means that operations
 ## Errors
 
 The contract follows exactly the same format for errors as described in
-[FA1](/Proposals/TZIP-0005/FA1.md#errors).
+[TZIP-5](/proposals/tzip-5/tzip-5.md#errors).
 
 For example, if an entrypoint is stated to fail with `SenderIsNotAdmin` error,
 then a client should expect contract to fail with `("SenderIsNotAdmin", Unit)` pair.
@@ -41,7 +41,7 @@ The second element of this pair may vary depending on the kind of error.
 
 ## Entrypoints
 
-Along with entrypoints described in FA1.2, the contract exposes basic management operations.
+Along with entrypoints described in TZIP-7, the contract exposes basic management operations.
 
 ### setPause
 

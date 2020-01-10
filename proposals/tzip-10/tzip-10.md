@@ -1,16 +1,14 @@
 ---
-tzip: 10 (LA1)
+tzip: 10
 title: Wallet Interaction Standard
 author: Alessandro De Carli <a.decarli@papers.ch>, Mike Godenzi <m.godenzi@papers.ch>, Andreas Gassmann <a.gassmann@papers.ch>, Pascal Brun <@pascuin>
 discussions-to: https://forum.tezosagora.org/t/wallet-interaction-standard/1399
-status: WIP
-review-period-end: <date review period ends>
+status: Work In Progress
 type: LA
 created: 2019-09-17
-updated: 2019-10-09, 2019-10-12, 2019-10-24
 ---
 
-## Simple Summary
+## Summary
 
 Communication between wallets and decentralised applications.
 
