@@ -1,10 +1,10 @@
 ---
-tzip: 7 (FA1.2)
-title: Approvable Ledger
-status: WIP
+tzip: 7
+title: FA1.2 - Approvable Ledger
+status: Submitted
 type: Financial Application
-author: Konstantin Ivanov, Ivan Gromakovskii, Kirill Kuvshinov
-advocate: Konstantin Ivanov, Ivan Gromakovskii, Kirill Kuvshinov
+author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka)
+advocate: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka)
 created: 2019-06-20
 ---
 
@@ -27,8 +27,8 @@ A contract which implements approvable ledger must have the following entrypoint
 This standard specifies additional authorization checks for `%transfer` entrypoint, as explicitly allowed by FA1.
 
 See also:
-* [Syntax sugar explanation](/Proposals/TZIP-0004/A1.md#pairs-and-ors-syntax-sugar).
-* [Explanation of `view`](/Proposals/TZIP-0004/A1.md#view-entrypoints).
+* [Syntax sugar explanation](/proposals/tzip-4/tzip-4.md#pairs-and-ors-syntax-sugar).
+* [Explanation of `view`](/proposals/tzip-4/tzip-4.md#view-entrypoints).
 
 ## Errors
 
