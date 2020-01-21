@@ -10,15 +10,20 @@ created: 2019-04-10
 
 ## Summary
 
-TZIP (pronounced "tee-zip") stands for Tezos Improvement Proposal, which are documents that explain how the Tezos blockchain works or how it ought to work.
-This document is a TZIP which explains how we make more TZIPs.
-
+TZIP (pronounce "tee-zip") stands for Tezos Interoperability Proposal, which are documents that explain how the Tezos blockchain can be improved with new and updated standards and concepts, such as smart contract specifications.
 
 ## Abstract
 
 Tezos is now a large and decentralized project, which can silo information and inhibit collaboration across different projects, companies and continents. This can lead to duplication of effort and low attention density on specific issues. Poor information flow leads to resource misallocation and can cause confusion in users and outside observers. At the same time, the distributed nature of Tezos gives the project vitality and dynamism.
 
-This document proposes a central clearinghouse for standards documents by modifying the Ethereum Improvement Process to be a descriptive rather than a prescriptive social institution. Unlike Ethereum, Tezos already has a prescriptive decentralized governance institution: the quorum of Tezos bakers and delegates. The goal of this proposal is to support that institution by encouraging high-quality technical discussion, documentation and, where appropriate, non-binding standardization.
+## Why do we need TZIPs?
+
+Let's start from the assumption that Tezos needs some sort of asset standards comparable to the role "ERC" plays on Ethereum, which is something a lot of people have asked for. If we accept this premise, then there are two options:
+
+1. Informal standards with no standards process
+2. Formal standards with a standards process
+
+There are examples of both kinds of standards in the blockchain community, but in our opinion informal standards are much more common. In general, informal standards make decision-making processes opaque and result in poorer quality standards documents. High-quality standards don't just appear overnight; they are public goods that have to be carefully and thoughtfully *built*. We think that a formal standards process is the best way to do this.
 
 
 ## What is a TZIP?
@@ -147,7 +152,7 @@ It occasionally becomes necessary to transfer primary authorship of a TZIP to a 
 
 This document was derived from Ethereum's [EIP-1] which was in turn derived from Bitcoin's [BIP-0001] written by Amir Taaki and Python's [PEP-0001], written by Barry Warsaw, Jeremy Hylton, and David Goodger. A further influence from TZIP-1 was Martin Pospěch's [tip-1].
 
-None of the authors of [EIP-1], [BIP-0001], [PEP-0001] or [tip-1] text are responsible for its use in the Tezos Improvement Process, and should not be bothered with technical questions specific to TZIP.
+None of the authors of [EIP-1], [BIP-0001], [PEP-0001] or [tip-1] text are responsible for its use in the Tezos Interoperability Process, and should not be bothered with technical questions specific to TZIP.
 
 
 ## Copyright

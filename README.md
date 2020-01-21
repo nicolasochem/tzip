@@ -1,6 +1,6 @@
-# Tezos Improvement Proposals (TZIPs)
+# Tezos Interoperability Proposals (TZIPs)
 
-TZIP (pronounce "tee-zip") stands for Tezos Improvement Proposal, which are documents that explain how the Tezos blockchain works or how it ought to work.
+TZIP (pronounce "tee-zip") stands for Tezos Interoperability Proposal, which are documents that explain how the Tezos blockchain can be improved with new and updated standards and concepts, such as smart contract specifications.
 
 ## What is a TZIP?
 
@@ -23,16 +23,16 @@ A TZIP should additionally contain an FAQ which documents, compares, and answers
 | [TZIP-9]  | Info Field for Payment Requests                            |  06/25/2019   | Draft              |
 | [TZIP-10] | **LA1** - Wallet Interaction Standard                      |  09/17/2019   | Work In Progress   |
 | [TZIP-11] | Contract Specification Schema                              |       -       | Draft              |
-| [TZIP-12] | **FA2** - Multi-Asset Contract (MAC)                       |       -       | Draft              |
+| [TZIP-12] | **FA2** - Multi-Asset Interface                            |       -       | Draft              |
 | [TZIP-13] | **FA1.3** - Fungible Asset Standard                        |  01/02/2020   | Work In Progress   |
 
 ## How to Contribute
 
 If you want to contribute a proposal, please review the TZIP structure in [TZIP-1](/proposals/tzip-1/tzip-1.md). You may find TZIP templates in the [templates](/templates) folder helpful.
 
-Create a new subfolder in [proposals](/proposals) named for your TZIP, and include the proposal, FAQ, and any assets (e.g. contracts) in that subfolder. Note that TZIPs and FAQs should be written in [Markdown](https://docs.gitlab.com/ee/user/markdown.html) format.
+Create a new subfolder in [proposals](/proposals) named for your TZIP, and include the proposal, FAQ, and any assets (e.g. contract implementation) in that subfolder. Note that TZIPs and FAQs should be written in [Markdown](https://docs.gitlab.com/ee/user/markdown.html) format.
 
-Once you have written your proposal, please open a merge request with your proposal for review. Please remember to update the *Current TZIPs* table (see above) in your merge request.
+Once you have written your proposal, please open a merge request with your proposal for review. Please remember to update the *Current TZIPs* table (see above) in your merge request. The exact TZIP workflow is explained in [TZIP-1](/proposals/tzip-1/tzip-1.md).
 
 [TZIP-1]: proposals/tzip-1
 [TZIP-2]: proposals/tzip-2
