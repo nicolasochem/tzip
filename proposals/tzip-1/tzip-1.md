@@ -64,8 +64,8 @@ A TZIP can have the following statuses:
 
 | Status             | Actor         | Description                                                                                                           | GitLab Actions to get that Status                         | Next Statuses               |
 | :----------------- | :------------ | :-------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- | :-------------------------- |
-| `DRAFT`            | Author        | This covers the initial work being done to create the TZIP and its accompanying resources                             | 1. Author submits a MR to reserve a TZIP number in the [README table](/README.md#current-tzips) and creates the *tzip-xx* folder (where *xx* is the new TZIP number) in [proposals](/proposals).<br/>2. Author creates a new branch, *tzip-xx*, to work and iterate on the new TZIP      | WORK IN PROGRESS, WITHDRAWN |
-| `WORK IN PROGRESS` | Author        | The TZIP is now in good shape, and is ready to be shared with the community to get iterative feedback                 | 1. Author submits a MR from the *tzip-xx* branch<br/>2. Author updates the [README table](/README.md#current-tzips)                 | SUBMITTED, WITHDRAWN        |
+| `WORK IN PROGRESS`            | Author        | This covers the initial work being done to create the TZIP and its accompanying resources                             | 1. Author submits a MR to reserve a TZIP number in the [README table](/README.md#current-tzips) and creates the *tzip-xx* folder (where *xx* is the new TZIP number) in [proposals](/proposals).<br/>2. Author creates a new branch, *tzip-xx*, to work and iterate on the new TZIP      | DRAFT, WITHDRAWN |
+| `DRAFT` | Author        | The TZIP is now in good shape, and is ready to be shared with the community to get iterative feedback                 | 1. Author submits a MR from the *tzip-xx* branch<br/>2. Author updates the [README table](/README.md#current-tzips)                 | SUBMITTED, WITHDRAWN        |
 | `WITHDRAWN`        | -             | The authors decide that the TZIP is no longer needed, or the reviewers decide to reject it (e.g. for non-compliance)  | 1. Author or Reviewer closes the *tzip-xx* branch<br/>2. Author or Reviewer updates the [README table](/README.md#current-tzips)                            | -                           | 
 | `SUBMITTED`        | Reviewer      | The TZIP has been approved by the community and is submitted to the reviewers                                         | 1. Author updates the [README table](/README.md#current-tzips)                                                              | FINAL, WITHDRAWN            |
 | `FINAL`            | Reviewer      | The TZIP has been approved by the reviewers                                                                           | 1. Reviewer merges the *tzip-xx* branch from the Author's merge request<br/>2. Reviewer updates the [README table](/README.md#current-tzips)       | SUPERSEDED                  |
@@ -75,7 +75,7 @@ Note: We might automate the README table updates in the future.
 
 ### TZIP Authors
 
-Once the authors are happy with the initial work on their TZIP, they will move its status from *DRAFT* to *WORK IN PROGRESS*. At that point, the authors should solicit feedback from the Tezos community before submitting the TZIP to the reviewers. As prior work on the same or similar topics may not be immediately apparent or accessible from publicly available information, inviting community advice can both save time and effort, and result in a stronger proposal.
+Once the authors are happy with the initial work on their TZIP, they will move its status from *WORK IN PROGRESS* to *DRAFT*. At that point, the authors should solicit feedback from the Tezos community before submitting the TZIP to the reviewers. As prior work on the same or similar topics may not be immediately apparent or accessible from publicly available information, inviting community advice can both save time and effort, and result in a stronger proposal.
 
 Examples of appropriate public forums to gauge response to a TZIP:
 
@@ -92,7 +92,7 @@ Once the TZIP moves to *SUBMITTED*, the reviewers will:
 - Review any accompanying resources, such as implementations, proofs, papers, links, etc.
 - When relevant, determine whether the FAQ fairly expresses and responds to criticisms of the proposal.
 
-If the TZIP does not meet the standards, the reviewers will send it back to *WORK IN PROGRESS*, with specific instructions, so the authors can update it. This process may repeat as many times as necessary. The reviewers may additionally refer the TZIP to outside reviewers with relevant knowledge. Reviewers may also outright reject a TZIP submission that is unsuitable for review or is otherwise non-compliant with the standards outlined in relevant active TZIPs.
+If the TZIP does not meet the standards, the reviewers will send it back to *DRAFT*, with specific instructions, so the authors can update it. This process may repeat as many times as necessary. The reviewers may additionally refer the TZIP to outside reviewers with relevant knowledge. Reviewers may also outright reject a TZIP submission that is unsuitable for review or is otherwise non-compliant with the standards outlined in relevant active TZIPs.
 
 Should the reviewers approve the TZIP, they will:
 
@@ -112,7 +112,7 @@ Each TZIP should have the following sections:
 - **Rationale**: The rationale fleshes out the specification by describing what motivated the design and why particular design decisions were made. It should describe alternate designs that were considered and related work, e.g. how the feature is supported in other languages. The rationale may also provide evidence of consensus within the community, and should discuss important objections or concerns raised during discussion.
 - **Backwards Compatibility**: All TZIPs that introduce backwards incompatibilities or supersede other TZIPs must include a section describing these incompatibilities, their severity, and solutions.
 - **Test Cases**: Test cases for an implementation are strongly recommended as are any proofs of correctness via formal methods.
-- **Implementations**: Any implementation must be completed before the TZIP is given the status Submitted, but is not mandatory in *Draft* and *Work In Progress* status.
+- **Implementations**: Any implementation must be completed before the TZIP is given the status Submitted, but is not mandatory in *Work In Progress* and *Draft* status.
 - **Appendix**: A list of references relevant to the proposal.
 - **Copyright**: All TZIPs must be in the public domain, or under a permissive license substantially identical to placement in the public domain. See the bottom of this TZIP for an example copyright waiver.
 
@@ -127,13 +127,13 @@ Additionally, the authors agree to follow and enforce the TZIP Code of Conduct, 
 
 Each TZIP must begin with an RFC 822 style header preamble, preceded and followed by three hyphens (`---`). The headers must appear in the following order.
 
-- `tzip:` TZIP number. The number should be requested via a merge request as soon as the TZIP is in *Draft* status
+- `tzip:` TZIP number. The number should be requested via a merge request as soon as the TZIP is in *Work In Progress* status
 - `title:` A short descriptive title, maximum 44 characters. If the TZIP has a *name* (see [TZIP-2](/proposals/tzip-2/tzip-2.md)), then it is added as a title prefix (e.g. *FA1 - Abstract Ledger*)
 - `author:` Name(s) of author(s), ideally with their username(s) or email address(es). Examples: *John Doe*, *John Doe (@username)*, *John Doe &lt;address@dom.ain&gt;*
 - `advocate:` Optional. Name(s) of advocate(s), ideally with their username(s) or email address(es)
 - `gratuity:` Optional. A Tezos address controlled by an author capable of receiving gratuities from grateful Tezos users
 - `discussions-to:` Optional. A url pointing to the official discussion thread
-- `status:` Can be: Draft | Work In Progress | Withdrawn | Submitted | Superseded
+- `status:` Can be: Work In Progress | Draft | Withdrawn | Submitted | Superseded
 - `type:` TZIP type as defined in [TZIP-2](/proposals/tzip-2/tzip-2.md)
 - `created:` Date the TZIP was created, format yyyy-mm-dd
 - `requires:` Optional. TZIP numbers, representing TZIPs that this TZIP depends on
