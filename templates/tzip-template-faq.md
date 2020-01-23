@@ -6,7 +6,7 @@ author: Name(s) of author(s), ideally with their username(s) or email address(es
 advocate: Optional. Name(s) of advocate(s), ideally with their username(s) or email address(es)
 gratuity: Optional. A Tezos address controlled by an author capable of receiving gratuities from grateful Tezos users
 discussions-to: Optional. A url pointing to the official discussion thread
-status: <Draft | Work In Progress | Withdrawn | Submitted | Superseded>
+status: <Work In Progress | Draft | Withdrawn | Submitted | Superseded>
 type: Defined in TZIP-2
 created: Date created on, format yyyy-mm-dd
 requires: Optional. Comma-separated TZIP numbers

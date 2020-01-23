@@ -1,7 +1,7 @@
 ---
 tzip: 9
 title: Info Field for Payment Requests
-status: Draft
+status: Work In Progress
 type: Informational
 author: Martin Pospěch <martin@smartcontractlabs.ee>
 created: 2019-06-25

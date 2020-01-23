@@ -1,7 +1,7 @@
 ---
 tzip: 8
 title: Payment Request Format
-status: Draft
+status: Work In Progress
 type: Interface
 author: Martin Pospěch <martin@smartcontractlabs.ee>
 created: 2019-06-25
