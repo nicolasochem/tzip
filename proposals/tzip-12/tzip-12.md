@@ -91,7 +91,7 @@ type hook_param = {
   operator : address;
 }
 
-type add_hook_param = hook_param contract
+type set_hook_param = hook_param contract
 
 
 type fa2_entry_points =
@@ -99,11 +99,11 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Add_sender_hook of add_hook_param
+  | Set_sender_hook of set_hook_param
   | Remove_sender_hook of address
-  | Add_receiver_hook of add_hook_param
+  | Set_receiver_hook of set_hook_param
   | Remove_receiver_hook of address
-  | Add_admin_hook of add_hook_param
+  | Set_admin_hook of set_hook_param
   | Remove_admin_hook of unit
 ```
 
@@ -150,14 +150,14 @@ Using transfer hooks, it is possible to model different transfer permissioning
 schemes like white lists, operator lists etc.
 
 The standard supports three types of hooks (all with the same parameter type).
-All hooks are optional and have two entry points (add/remove hook) per each type.
+All hooks are optional and have two entry points (set/remove hook) per each type.
 The concrete token contract implementation MAY impose additional restrictions on
-who may add and/or remove hooks. If add/remove hook operation is not permissioned,
+who may set and/or remove hooks. If set/remove hook operation is not permissioned,
 it MUST fail without changing registered hook state.
 
 The following table provides a description of each hook type and its semantics:
 
-| Hook  | Who can add/remove | When to invoke | Comments                       |
+| Hook  | Who can set/remove | When to invoke | Comments                       |
 | :---  | :----------------- | :------------- | :----------------------------- |
 | Admin | contract admin     | on every transfer operation | There is one or zero admin hooks per FA2 contract |
 | Sender| token owner        | on transfer operation where `from_` parameter is the address of a hook owner | There is one or zero sender hooks per each token owner address |
