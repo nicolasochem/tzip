@@ -51,7 +51,7 @@ type hook_param = {
   operator : address;
 }
 
-type add_hook_param = hook_param contract
+type set_hook_param = hook_param contract
 
 
 type fa2_entry_points =
@@ -59,9 +59,9 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Add_sender_hook of add_hook_param
+  | Set_sender_hook of set_hook_param
   | Remove_sender_hook of address
-  | Add_receiver_hook of add_hook_param
+  | Set_receiver_hook of set_hook_param
   | Remove_receiver_hook of address
-  | Add_admin_hook of add_hook_param
+  | Set_admin_hook of set_hook_param
   | Remove_admin_hook of unit
