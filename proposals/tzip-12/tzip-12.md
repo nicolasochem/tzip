@@ -15,13 +15,13 @@ permissioning schemas can be used to define who can initiate a transfer and who
 can receive tokens. Token contract can support a single token type or multiple
 token types to optimize batch transfer and atomic swaps of the tokens. Those
 considerations can lead to the proliferation of multiple token standards, each optimized
-for a particular use case. This dynamic is apparent in the Ethereum ecosystem, where 
+for a particular token type or use case. This dynamic is apparent in the Ethereum ecosystem, where 
 many standards have been proposed but ERC-20 (fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
 
-Token wallets, token exchanges, and other clients then need to support multiple interface standards
+Token wallets, token exchanges, and other clients then need to support multiple standards
 and multiple token APIs. This standard proposes a unified token contract interface
 which accommodates all mentioned concerns. It aims to provide significant expressivity 
-to developers to create new types of tokens while also offering ease of integration for wallets and other external developers.
+to developers to create new types of tokens while maintaining a common interface standard for wallet integrations and other external developers.
 
 ## Specification
 
