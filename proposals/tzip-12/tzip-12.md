@@ -16,7 +16,7 @@ can receive tokens. Token contract can support a single token type or multiple
 token types to optimize batch transfer and atomic swaps of the tokens. Those
 considerations can lead to the proliferation of multiple token standards, each optimized
 for a particular use case. This dynamic is apparent in the Ethereum ecosystem, where 
-ERC-20 (fungible tokens) and ERC-721 (non-fungible tokens) are the dominant standards. 
+many standards have been proposed but ERC-20 (fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
 
 Token wallets, token exchanges, and other clients then need to support multiple interface standards
 and multiple token APIs. This standard proposes a unified token contract interface
