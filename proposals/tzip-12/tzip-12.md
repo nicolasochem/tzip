@@ -15,7 +15,7 @@ permissioning schemas can be used to define who can initiate a transfer and who
 can receive tokens. Token contract can support a single token type or multiple
 token types to optimize batch transfer and atomic swaps of the tokens. Those
 considerations can lead to the proliferation of multiple token standards, each optimized
-for a particular use case. This dynamic is widely on display in the Ethereum ecosystem, where 
+for a particular use case. This dynamic is apparent in the Ethereum ecosystem, where 
 ERC-20 (fungible tokens) and ERC-721 (non-fungible tokens) are the dominant standards. 
 
 Token wallets, token exchanges, and other clients then need to support multiple interface standards
