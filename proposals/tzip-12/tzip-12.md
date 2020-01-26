@@ -14,24 +14,26 @@ token smart contract. Tokens might be fungible or non-fungible. Different
 permissioning schemas can be used to define who can initiate a transfer and who
 can receive tokens. Token contract can support a single token type or multiple
 token types to optimize batch transfer and atomic swaps of the tokens. Those
-considerations lead to proliferation of multiple token standards, each optimized
-for a particular use case.
+considerations can lead to the proliferation of multiple token standards, each optimized
+for a particular use case. This dynamic is widely on display in the Ethereum ecosystem, where 
+ERC-20 (fungible tokens) and ERC-721 (non-fungible tokens) are the dominant standards. 
 
-Token wallets, token exchanges and other clients need to support multiple standards
-and multiple token API. This standard proposes a unified token contract interface
-which accommodates all mentioned concerns.
+Token wallets, token exchanges, and other clients then need to support multiple interface standards
+and multiple token APIs. This standard proposes a unified token contract interface
+which accommodates all mentioned concerns. It aims to provide significant expressivity 
+to developers to create new types of tokens while also offering ease of integration for wallets and other external developers.
 
 ## Specification
 
 Token type is uniquely identified by a pair of the token contract address and
 sub-token id. If the underlying contract implementation supports only a single
-token type (FA1.2 like contract), sub-token id is represented by `unit`. If the
-underlying contract implementation supports multiple sub-tokens (MAC), sub-token
+token type (ERC-20-like contract), sub-token id is represented by `unit`. If the
+underlying contract implementation supports multiple sub-tokens (in a Multi-Asset Contract or MAC), sub-token
 id is represented by `nat`.
 
 All entry points are batch operations which allow to query or transfer multiple
 sub-token types atomically. If the underlying contract implementation supports
-only a single token type, the batch will alway contain a single entry and sub-token
+only a single token type, the batch will always contain a single entry and sub-token
 id would be fixed `Single unit` value.
 
 Token contract MUST implement the following entry points (notation is given in
