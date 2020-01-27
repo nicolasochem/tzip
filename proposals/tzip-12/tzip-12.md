@@ -14,22 +14,24 @@ token smart contract. Tokens might be fungible or non-fungible. Different
 permissioning schemas can be used to define who can initiate a transfer and who
 can receive tokens. Token contract can support a single token type or multiple
 token types to optimize batch transfer and atomic swaps of the tokens. Those
-considerations can lead to the proliferation of multiple token standards, each optimized
-for a particular token type or use case. This dynamic is apparent in the Ethereum ecosystem, where 
-many standards have been proposed but ERC-20 (fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
+considerations can lead to the proliferation of multiple token standards, each
+optimized for a particular token type or use case. This dynamic is apparent in
+the Ethereum ecosystem, where many standards have been proposed but ERC-20
+(fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
 
-Token wallets, token exchanges, and other clients then need to support multiple standards
-and multiple token APIs. This standard proposes a unified token contract interface
-which accommodates all mentioned concerns. It aims to provide significant expressivity 
-to developers to create new types of tokens while maintaining a common interface standard for wallet integrations and other external developers.
+Token wallets, token exchanges, and other clients then need to support multiple
+standards and multiple token APIs. This standard proposes a unified token contract
+interface which accommodates all mentioned concerns. It aims to provide significant
+expressivity to developers to create new types of tokens while maintaining a common
+interface standard for wallet integrations and other external developers.
 
 ## Specification
 
 Token type is uniquely identified by a pair of the token contract address and
 sub-token id. If the underlying contract implementation supports only a single
 token type (ERC-20-like contract), sub-token id is represented by `unit`. If the
-underlying contract implementation supports multiple sub-tokens (in a Multi-Asset Contract or MAC), sub-token
-id is represented by `nat`.
+underlying contract implementation supports multiple sub-tokens (in a Multi-Asset
+Contract or MAC), sub-token id is represented by `nat`.
 
 All entry points are batch operations which allow to query or transfer multiple
 sub-token types atomically. If the underlying contract implementation supports
@@ -66,14 +68,9 @@ type balance_of_param = {
   balance_view : ((balance_request * nat) list) contract;
 }
 
-type total_supply_request = {
-  owner : address; 
-  token_id : sub_token_id;  
-}
-
 type total_supply_param = {
-  total_supply_requests : total_supply_request list;
-  total_supply_view : ((total_supply_request * nat) list) contract;
+  total_supply_requests : sub_token_id list;
+  total_supply_view : ((sub_token_id * nat) list) contract;
 }
 
 type token_descriptor = {
