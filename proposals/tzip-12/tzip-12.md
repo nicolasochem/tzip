@@ -1,4 +1,12 @@
-# TZIP-12 - FA2
+---
+tzip: 12
+title: FA2 - Multi-Asset Interface
+status: Work In Progress
+type: Financial Application (FA)
+author: Eugene Mishura (@e-mishura)
+advocate: Jacob Arluck (@governancy)
+created: 2020-01-24
+---
 
 ## Summary
 
