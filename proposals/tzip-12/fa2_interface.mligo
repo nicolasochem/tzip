@@ -69,9 +69,6 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Set_sender_hook of set_hook_param
-  | Remove_sender_hook of address
-  | Set_receiver_hook of set_hook_param
-  | Remove_receiver_hook of address
-  | Set_admin_hook of set_hook_param
-  | Remove_admin_hook of unit
+  | Set_sender_hook of set_hook_param option
+  | Set_receiver_hook of set_hook_param option
+  | Set_admin_hook of set_hook_param option
