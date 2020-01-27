@@ -4,12 +4,12 @@ type sub_token_id =
 
 
 type transfer = {
+  from_ : address;
+  to_ : address;
   token_id : sub_token_id;
   amount : nat;
 }
 type transfer_param = {
-  from_ : address;
-  to_ : address;
   batch : transfer list;
   data : bytes option;
 }
@@ -40,7 +40,10 @@ type total_supply_param = {
 }
 
 type token_descriptor = {
-  url : string;
+  symbol: string;
+  name : string;
+  decimals : nat;
+  extras : (string, string) map;
 }
 
 type token_descriptor_response = {
