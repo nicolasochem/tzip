@@ -56,12 +56,12 @@ type sub_token_id =
 
 
 type transfer = {
+  from_ : address;
+  to_ : address;
   token_id : sub_token_id;
   amount : nat;
 }
 type transfer_param = {
-  from_ : address;
-  to_ : address;
   batch : transfer list;
   data : bytes option;
 }
@@ -92,7 +92,10 @@ type total_supply_param = {
 }
 
 type token_descriptor = {
-  url : string;
+  symbol: string;
+  name : string;
+  decimals : nat;
+  extras : (string, string) map;
 }
 
 type token_descriptor_response = {
@@ -130,7 +133,7 @@ type fa2_entry_points =
 
 #### `transfer`
 
-Transfers amounts specified in the batch between two given addresses. Transfers
+Transfers amounts specified in the batch between given addresses. Transfers
 should happen atomically: if at least one specified transfer cannot be completed,
 the whole transaction MUST fail.
 
@@ -191,9 +194,12 @@ Transfer operation MUST pass optional `data` parameter to hooks unaltered.
 
 `operator` parameter for hook invocation MUST be set to `SENDER`.
 
-`from_` parameter for hook invocation MUST be set to `Some(transaction_param.from_)`.
+`from_` parameter for hook invocation MUST be set to `Some(transaction.from_)`.
 
-`to_` parameter for hook invocation MUST be set to `Some(transaction_param.to_)`.
+`to_` parameter for hook invocation MUST be set to `Some(transaction.to_)`.
+
+If the same `from_` and/or `to_` addresses appear in more than one transfer in
+the batch, corresponding sender/receiver hook MUST be called only once.
 
 If the token contract implements mint and burn operations, they MUST invoke relevant
 hooks as well.
