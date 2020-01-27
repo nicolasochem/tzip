@@ -63,23 +63,38 @@ type balance_request = {
   token_id : sub_token_id;  
 }
 
+type balance_response = {
+  request : balance_request;
+  balance : nat;
+}
+
 type balance_of_param = {
   balance_requests : balance_request list;
-  balance_view : ((balance_request * nat) list) contract;
+  balance_view : (balance_response list) contract;
+}
+
+type total_supply_response = {
+  token_id : sub_token_id;
+  supply : nat;
 }
 
 type total_supply_param = {
   total_supply_requests : sub_token_id list;
-  total_supply_view : ((sub_token_id * nat) list) contract;
+  total_supply_view : (total_supply_response list) contract;
 }
 
 type token_descriptor = {
   url : string;
 }
 
+type token_descriptor_response = {
+  token_id : sub_token_id;
+  descriptor : token_descriptor;
+}
+
 type token_descriptor_param = {
   token_ids : sub_token_id list;
-  token_descriptor_view : ((sub_token_id * token_descriptor) list) contract
+  token_descriptor_view : (token_descriptor_response list) contract
 }
 
 type hook_param = {
