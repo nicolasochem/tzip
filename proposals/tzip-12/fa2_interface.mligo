@@ -24,14 +24,9 @@ type balance_of_param = {
   balance_view : ((balance_request * nat) list) contract;
 }
 
-type total_supply_request = {
-  owner : address; 
-  token_id : sub_token_id;  
-}
-
 type total_supply_param = {
-  total_supply_requests : total_supply_request list;
-  total_supply_view : ((total_supply_request * nat) list) contract;
+  total_supply_requests : sub_token_id list;
+  total_supply_view : ((sub_token_id * nat) list) contract;
 }
 
 type token_descriptor = {
