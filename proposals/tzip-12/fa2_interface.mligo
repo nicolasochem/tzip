@@ -11,7 +11,7 @@ type transfer_param = {
   from_ : address;
   to_ : address;
   batch : transfer list;
-  data : bytes;
+  data : bytes option;
 }
 
 type balance_request = {
@@ -57,7 +57,7 @@ type hook_param = {
   from_ : address option;
   to_ : address option;
   batch : transfer list;
-  data : bytes;
+  data : bytes option;
   operator : address;
 }
 
