@@ -4,7 +4,6 @@ title: FA2 - Multi-Asset Interface
 status: Work In Progress
 type: Financial Application (FA)
 author: Eugene Mishura (@e-mishura)
-advocate: Jacob Arluck (@governancy)
 created: 2020-01-24
 ---
 
@@ -235,7 +234,7 @@ If input parameter is `None`, receiver hook is to be removed. If input parameter
 is `Some` hook entry point, a new receiver hook is to be associated with the token
 owner address (`SENDER`).
 
-If present, receier hook is invoked when `to_` parameter of the `transfer` operation
+If present, receiver hook is invoked when `to_` parameter of the `transfer` operation
 is the same as the address of the receiver hook owner.
 
 ### `set_admin_hook`
