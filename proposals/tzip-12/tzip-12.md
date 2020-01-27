@@ -158,7 +158,7 @@ Get the total supply for multiple token types. Accepts a list of `sub_token_id`s
 and callback contract `token_descriptor_view` which accepts a list of pairs of
 `sub_token_id` and `token_descriptor`.
 
-#### Transfer Hooks
+### Transfer Hooks
 
 Using transfer hooks, it is possible to model different transfer permissioning
 schemes like white lists, operator lists etc.
@@ -198,3 +198,42 @@ hooks as well.
 | Admin | Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
 | Sender | Never invoked. | Invoked if there is a registered hook for an owner address which received minted tokens.  `to_` parameter MUST be `None` |
 | Receiver | Invoked if there is a registered hook for an owner address from which tokens are burnt.  `from_` parameter MUST be `None` | Never invoked.|
+
+### `set_sender_hook`
+
+Set or remove a sender hook for a token owner. FA2 contract can have one or zero
+sender hooks per token owner. Only token owner can set its own sender hook.
+Token owner address is an implicit parameter, FA2 implementation MUST use `SENDER`
+address to be associated with the hook.
+
+If input parameter is `None`, sender hook is to be removed. If input parameter is
+`Some` hook entry point, a new sender hook is to be associated with the token owner
+address (`SENDER`).
+
+If present, sender hook is invoked when `from_` parameter of the `transfer` operation
+is the same as the address of the sender hook owner.
+
+### `set_receiver_hook`
+
+Set or remove a receiver hook for a token owner. FA2 contract can have one or zero
+receiver hooks per token owner. Only token owner can set its own receiver hook.
+Token owner address is an implicit parameter, FA2 implementation MUST use `SENDER`
+address to be associated with the hook.
+
+If input parameter is `None`, receiver hook is to be removed. If input parameter
+is `Some` hook entry point, a new receiver hook is to be associated with the token
+owner address (`SENDER`).
+
+If present, receier hook is invoked when `to_` parameter of the `transfer` operation
+is the same as the address of the receiver hook owner.
+
+### `set_admin_hook`
+
+Set or remove an admin hook. FA2 contract can have one or zero admin hooks.
+FA2 implementation MAY restrict access to this operation to a contract administrator
+address only.
+
+If input parameter is `None`, admin hook is to be removed. If input parameter
+is `Some` hook entry point, a new admin hook is to be associated with the FA2 contract.
+
+If present, admin hook is always invoked from the `transfer` operation.
