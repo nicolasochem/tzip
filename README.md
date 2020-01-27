@@ -23,7 +23,7 @@ A TZIP should additionally contain an FAQ which documents, compares, and answers
 | [TZIP-9]  | Info Field for Payment Requests                            |  06/25/2019   | Work In Progress   |
 | [TZIP-10] | **LA1** - Wallet Interaction Standard                      |  09/17/2019   | Draft              |
 | [TZIP-11] | Contract Specification Schema                              |       -       | Work In Progress   |
-| [TZIP-12] | **FA2** - Multi-Asset Interface                            |       -       | Work In Progress   |
+| [TZIP-12] | **FA2** - Multi-Asset Interface                            |  01/24/2020   | Work In Progress   |
 | [TZIP-13] | **FA1.3** - Fungible Asset Standard                        |  01/02/2020   | Draft              |
 
 ## How to Contribute
