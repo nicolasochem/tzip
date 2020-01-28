@@ -3,7 +3,6 @@ All headers are required unless otherwise stated.
 tzip: TZIP number
 title: TZIP title, with an optional name as a prefix (e.g. 'FA1 - Abstract Ledger')
 author: Name(s) of author(s), ideally with their username(s) or email address(es)
-advocate: Optional. Name(s) of advocate(s), ideally with their username(s) or email address(es)
 gratuity: Optional. A Tezos address controlled by an author capable of receiving gratuities from grateful Tezos users
 discussions-to: Optional. A url pointing to the official discussion thread
 status: <Work In Progress | Draft | Withdrawn | Submitted | Superseded>

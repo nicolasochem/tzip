@@ -4,7 +4,6 @@ title: FA1.2 - Approvable Ledger
 status: Submitted
 type: Financial Application
 author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka)
-advocate: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka)
 created: 2019-06-20
 ---
 
