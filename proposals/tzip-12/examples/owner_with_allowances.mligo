@@ -43,7 +43,7 @@ non-comparable record which cannot be used as a key in the big_map.
  *)
 type allowances = (allowance_key, nat) big_map
 
-let get_allowance_key (operator : address) (tx : transfer) : allowance_key =
+let get_allowance_key (operator : address) (tx : hook_transfer) : allowance_key =
   let tid : global_token_id = {
     manager = sender;
     token_id = tx.token_id;
@@ -59,19 +59,22 @@ let get_current_allowance (key : allowance_key) (a : allowances) : nat =
   | Some a -> a
   | None -> 0n
 
-let track_allowances (operator : address) (a_tx : allowances * transfer) : allowances =
-  if Current.self_address <> a_tx.1.from_
-  then a_tx.0 
-  else
-    let akey = get_allowance_key operator a_tx.1 in
-    let allowance = get_current_allowance akey a_tx.0 in
-    let new_a = Michelson.is_nat (allowance - a_tx.1.amount) in
-    let new_allowance = match new_a with
-    | None -> (failwith "Insufficient allowance" : nat)
-    | Some a -> a
-    in
-    let new_a = Big_map.update akey (Some new_allowance) a_tx.0 in
-    new_a
+let track_allowances (operator : address) (a_tx : allowances * hook_transfer) : allowances =
+  match a_tx.1.from_ with
+  | None -> a_tx.0 
+  | Some from_ ->
+    if Current.self_address <> from_
+    then a_tx.0 
+    else
+      let akey = get_allowance_key operator a_tx.1 in
+      let allowance = get_current_allowance akey a_tx.0 in
+      let new_a = Michelson.is_nat (allowance - a_tx.1.amount) in
+      let new_allowance = match new_a with
+      | None -> (failwith "Insufficient allowance" : nat)
+      | Some a -> a
+      in
+      let new_a = Big_map.update akey (Some new_allowance) a_tx.0 in
+      new_a
 
 let main (param, s : entry_points * allowances) : (operation list) * allowances =
   match param with
