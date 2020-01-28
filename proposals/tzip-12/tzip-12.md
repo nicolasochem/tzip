@@ -173,7 +173,7 @@ schemes like white lists, operator lists etc.
 The standard supports three types of hooks (all with the same parameter type).
 All hooks are optional and have a single entry points (set/reset hook) per each
 type. The concrete token contract implementation MAY impose additional restrictions
-on who may set and/or remove hooks. If set/remove hook operation is not permissioned,
+on who may set and/or remove hooks. If set/remove hook operation is not permitted,
 it MUST fail without changing registered hook state.
 
 The following table provides a description of each hook type and its semantics:
