@@ -4,7 +4,6 @@ title: FA1 - Abstract Ledger
 status: Submitted
 type: Financial Application
 author: John Burnham, Konstantin Ivanov <kivanov@serokell.io>, Kirill Kuvshinov (@kkirka)
-advocate: John Burnham, Konstantin Ivanov <kivanov@serokell.io>, Kirill Kuvshinov (@kkirka)
 created: 2019-04-12
 ---
 
