@@ -19,6 +19,10 @@ type allowance_response = {
   allowance : nat;
 }
 
+(**
+This will not work with babylon/LIGO since `allowance_key` is a composite
+non-comparable record which cannot be used as a key in the big_map.
+ *)
 type allowances = (allowance_key, nat) big_map
 
 type change_allowance_param = {
