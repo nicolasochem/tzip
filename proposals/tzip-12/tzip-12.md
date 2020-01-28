@@ -146,27 +146,27 @@ tokens of type `token_id`, holder's balance is interpreted as zero.
 All registered hooks relevant for this transfer MUST be invoked and operations
 returned by the hooks invocation MUST be returned by `transfer` entry point among
 other operations it might create. Optional `data` parameter MUST be passed unaltered
-to the hooks. `SENDER` MUST be passed as an `operator` parameter to a hooks invocation.
+to the hooks. `SENDER` MUST be passed as an `operator` parameter to any hook invocation.
 If any of the invoked hooks fails, the whole transfer transaction MUST fail.
 For more details on hooks semantics see "Transfer Hooks" section of this document.
 
 #### `balance_of`
 
 Get the balance of multiple account/token pairs. Accepts a list of `balance_request`s
-and callback contract `balance_view` which accepts a list of pairs of `balance_request`
-and balance amount.
+and a callback contract `balance_view` which accepts a list of `balance_response`
+records.
 
 #### `total_supply`
 
 Get the total supply for multiple token types. Accepts a list of `total_supply_request`s
-and callback contract `total_supply_view` which accepts a list of pairs of
-`total_supply_request` and total supply amount.
+and a callback contract `total_supply_view` which accepts a list of
+`total_supply_response` records.
 
 #### `token_descriptor`
 
 Get the total supply for multiple token types. Accepts a list of `token_id`s
-and callback contract `token_descriptor_view` which accepts a list of pairs of
-`token_id` and `token_descriptor`.
+and a callback contract `token_descriptor_view` which accepts a list of
+`token_descriptor_response` records.
 
 ### Transfer Hooks
 
@@ -174,9 +174,9 @@ Using transfer hooks, it is possible to model different transfer permissioning
 schemes like white lists, operator lists etc.
 
 The standard supports three types of hooks (all with the same parameter type).
-All hooks are optional and have a single entry points (set/reset hook) per each
+All hooks are optional and have a single entry point (set/reset hook) per each hook
 type. The concrete token contract implementation MAY impose additional restrictions
-on who may set and/or remove hooks. If set/remove hook operation is not permitted,
+on who may set and/or reset hooks. If set/reset hook operation is not permitted,
 it MUST fail without changing registered hook state.
 
 The following table provides a description of each hook type and its semantics:
@@ -184,8 +184,8 @@ The following table provides a description of each hook type and its semantics:
 | Hook  | Who can set/remove | When to invoke | Comments                       |
 | :---  | :----------------- | :------------- | :----------------------------- |
 | Admin | contract admin     | on every transfer operation | There is one or zero admin hooks per FA2 contract |
-| Sender| token owner        | on transfer operation where `from_` parameter is the address of a hook owner | There is one or zero sender hooks per each token owner address |
-| Receiver| token owner      | on transfer operation where `to_` parameter is the address of a hook owner | There is one or zero receiver hooks per each token owner address |
+| Sender| token owner        | on transfer operation where at  least one of `from_` parameters is the address of a hook owner | There is one or zero sender hooks per each token owner address |
+| Receiver| token owner      | on transfer operation where at least one of `to_` parameter is the address of a hook owner | There is one or zero receiver hooks per each token owner address |
 
 For each transfer operation token contract MUST invoke corresponding admin, sender
 and receiver hooks and return corresponding operations as part of the transfer entry
@@ -196,9 +196,9 @@ Transfer operation MUST pass optional `data` parameter to hooks unaltered.
 
 `operator` parameter for hook invocation MUST be set to `SENDER`.
 
-`from_` parameter for hook invocation MUST be set to `Some(transaction.from_)`.
+`from_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.from_)`.
 
-`to_` parameter for hook invocation MUST be set to `Some(transaction.to_)`.
+`to_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.to_)`.
 
 If the same `from_` and/or `to_` addresses appear in more than one transfer in
 the batch, corresponding sender/receiver hook MUST be called only once.
@@ -223,8 +223,9 @@ If input parameter is `None`, sender hook is to be removed. If input parameter i
 `Some` hook entry point, a new sender hook is to be associated with the token owner
 address (`SENDER`).
 
-If present, sender hook is invoked when `from_` parameter of the `transfer` operation
-is the same as the address of the sender hook owner.
+If present, sender hook is invoked when at least one of the `from_` parameters in
+the batch of the `transfer` operation is the same as the address of the sender
+hook owner.
 
 ### `set_receiver_hook`
 
@@ -237,8 +238,9 @@ If input parameter is `None`, receiver hook is to be removed. If input parameter
 is `Some` hook entry point, a new receiver hook is to be associated with the token
 owner address (`SENDER`).
 
-If present, receiver hook is invoked when `to_` parameter of the `transfer` operation
-is the same as the address of the receiver hook owner.
+If present, receiver hook is invoked when at least one of the `to_` parameters in
+the batch of the `transfer` operation is the same as the address of the receiver
+hook owner.
 
 ### `set_admin_hook`
 
