@@ -1,4 +1,4 @@
-type sub_token_id =
+type token_id =
   | Single of unit
   | Mac of nat
 
@@ -6,7 +6,7 @@ type sub_token_id =
 type transfer = {
   from_ : address;
   to_ : address;
-  token_id : sub_token_id;
+  token_id : token_id;
   amount : nat;
 }
 type transfer_param = {
@@ -16,7 +16,7 @@ type transfer_param = {
 
 type balance_request = {
   owner : address; 
-  token_id : sub_token_id;  
+  token_id : token_id;  
 }
 
 type balance_response = {
@@ -30,12 +30,12 @@ type balance_of_param = {
 }
 
 type total_supply_response = {
-  token_id : sub_token_id;
+  token_id : token_id;
   supply : nat;
 }
 
 type total_supply_param = {
-  total_supply_requests : sub_token_id list;
+  total_supply_requests : token_id list;
   total_supply_view : (total_supply_response list) contract;
 }
 
@@ -47,12 +47,12 @@ type token_descriptor = {
 }
 
 type token_descriptor_response = {
-  token_id : sub_token_id;
+  token_id : token_id;
   descriptor : token_descriptor;
 }
 
 type token_descriptor_param = {
-  token_ids : sub_token_id list;
+  token_ids : token_id list;
   token_descriptor_view : (token_descriptor_response list) contract
 }
 

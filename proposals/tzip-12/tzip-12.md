@@ -35,21 +35,21 @@ interface standard for wallet integrations and other external developers.
 ## Specification
 
 Token type is uniquely identified by a pair of the token contract address and
-sub-token id. If the underlying contract implementation supports only a single
-token type (ERC-20-like contract), sub-token id is represented by `unit`. If the
-underlying contract implementation supports multiple sub-tokens (in a Multi-Asset
-Contract or MAC), sub-token id is represented by `nat`.
+token id. If the underlying contract implementation supports only a single
+token type (ERC-20-like contract), token id is represented by `unit`. If the
+underlying contract implementation supports multiple tokens (in a Multi-Asset
+Contract or MAC), token id is represented by `nat`.
 
 All entry points are batch operations which allow to query or transfer multiple
-sub-token types atomically. If the underlying contract implementation supports
-only a single token type, the batch will always contain a single entry and sub-token
+token types atomically. If the underlying contract implementation supports
+only a single token type, the batch will always contain a single entry and token
 id would be fixed `Single unit` value.
 
 Token contract MUST implement the following entry points (notation is given in
 [cameLIGO language](https://ligolang.org)):
 
 ```ocaml
-type sub_token_id =
+type token_id =
   | Single of unit
   | Mac of nat
 
@@ -57,7 +57,7 @@ type sub_token_id =
 type transfer = {
   from_ : address;
   to_ : address;
-  token_id : sub_token_id;
+  token_id : token_id;
   amount : nat;
 }
 type transfer_param = {
@@ -67,7 +67,7 @@ type transfer_param = {
 
 type balance_request = {
   owner : address; 
-  token_id : sub_token_id;  
+  token_id : token_id;  
 }
 
 type balance_response = {
@@ -81,12 +81,12 @@ type balance_of_param = {
 }
 
 type total_supply_response = {
-  token_id : sub_token_id;
+  token_id : token_id;
   supply : nat;
 }
 
 type total_supply_param = {
-  total_supply_requests : sub_token_id list;
+  total_supply_requests : token_id list;
   total_supply_view : (total_supply_response list) contract;
 }
 
@@ -98,12 +98,12 @@ type token_descriptor = {
 }
 
 type token_descriptor_response = {
-  token_id : sub_token_id;
+  token_id : token_id;
   descriptor : token_descriptor;
 }
 
 type token_descriptor_param = {
-  token_ids : sub_token_id list;
+  token_ids : token_id list;
   token_descriptor_view : (token_descriptor_response list) contract
 }
 
@@ -161,9 +161,9 @@ and callback contract `total_supply_view` which accepts a list of pairs of
 
 #### `token_descriptor`
 
-Get the total supply for multiple token types. Accepts a list of `sub_token_id`s
+Get the total supply for multiple token types. Accepts a list of `token_id`s
 and callback contract `token_descriptor_view` which accepts a list of pairs of
-`sub_token_id` and `token_descriptor`.
+`token_id` and `token_descriptor`.
 
 ### Transfer Hooks
 
