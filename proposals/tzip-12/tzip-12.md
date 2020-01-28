@@ -19,7 +19,7 @@ approval schemas.
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. Different
 permissioning schemas can be used to define who can initiate a transfer and who
-can receive tokens. Token contract can support a single token type or multiple
+can receive tokens. A token contract can support a single token type or multiple
 token types to optimize batch transfer and atomic swaps of the tokens. Those
 considerations can lead to the proliferation of multiple token standards, each
 optimized for a particular token type or use case. This dynamic is apparent in
