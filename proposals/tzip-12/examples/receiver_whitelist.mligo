@@ -26,8 +26,12 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     ([] : operation list),  new_s
 
   | On_admin_hook p ->
-    let u = List.iter (fun (tx : transfer) ->
-      if Set.mem tx.to_ s
+    let u = List.iter (fun (tx : hook_transfer) ->
+      let allowed = match tx.to_ with
+      | None -> true
+      | Some to_ -> Set.mem to_ s
+      in
+      if allowed 
       then unit
       else failwith "receiver is not whitelisted"
     ) p.batch in

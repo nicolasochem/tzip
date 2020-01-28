@@ -42,8 +42,8 @@ Contract or MAC), token id is represented by `nat`.
 
 All entry points are batch operations which allow to query or transfer multiple
 token types atomically. If the underlying contract implementation supports
-only a single token type, the batch will always contain a single entry and token
-id would be fixed `Single unit` value.
+only a single token type, the batch may contain single or multiple entries where
+token id will always be fixed `Single unit` value.
 
 Token contract MUST implement the following entry points (notation is given in
 [cameLIGO language](https://ligolang.org)):
