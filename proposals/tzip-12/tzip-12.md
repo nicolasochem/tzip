@@ -53,7 +53,6 @@ type token_id =
   | Single of unit
   | Mac of nat
 
-
 type transfer = {
   from_ : address;
   to_ : address;
@@ -106,11 +105,15 @@ type token_descriptor_param = {
   token_ids : token_id list;
   token_descriptor_view : (token_descriptor_response list) contract
 }
+type hook_transfer = {
+  from_ : address option; (* None for minting *)
+  to_ : address option;   (* None for burning *)
+  token_id : token_id;
+  amount : nat;
+}
 
 type hook_param = {
-  from_ : address option;
-  to_ : address option;
-  batch : transfer list;
+  batch : hook_transfer list;
   data : bytes option;
   operator : address;
 }
