@@ -4,13 +4,13 @@
 
 #include "../fa2_interface.mligo"
 
-type token_id = {
+type global_token_id = {
   manager : address;
-  sub_token_id : sub_token_id;
+  sub_token_id : token_id;
 }
 
 type allowance_key = {
-  token_id : token_id;
+  token_id : global_token_id;
   spender : address;
 }
 
@@ -41,9 +41,9 @@ type  entry_points =
 
 
 let get_allowance_key (tx : transfer) : allowance_key =
-  let tid : token_id = {
+  let tid : global_token_id = {
     manager = sender;
-    sub_token_id = transfer.token_id;
+    token_id = transfer.token_id;
   } in
   {
     token_id = tid;
