@@ -6,7 +6,7 @@
 
 type global_token_id = {
   manager : address;
-  sub_token_id : token_id;
+  token_id : token_id;
 }
 
 type allowance_key = {
@@ -15,15 +15,9 @@ type allowance_key = {
 }
 
 type allowance_response = {
-  request: allowance_key;
+  key: allowance_key;
   allowance : nat;
 }
-
-(**
-This will not work with babylon/LIGO since `allowance_key` is a composite
-non-comparable record which cannot be used as a key in the big_map.
- *)
-type allowances = (allowance_key, nat) big_map
 
 type change_allowance_param = {
   key : allowance_key;
@@ -43,59 +37,58 @@ type  entry_points =
   | On_send_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
+(**
+This will not work with babylon/LIGO since `allowance_key` is a composite
+non-comparable record which cannot be used as a key in the big_map.
+ *)
+type allowances = (allowance_key, nat) big_map
 
-let get_allowance_key (tx : transfer) : allowance_key =
+let get_allowance_key (operator : address) (tx : transfer) : allowance_key =
   let tid : global_token_id = {
     manager = sender;
-    token_id = transfer.token_id;
+    token_id = tx.token_id;
   } in
   {
     token_id = tid;
-    spender = tx.operator;
+    spender = operator;
   }
 
-let track_allowances (a : allowances) (tx: transfer) : allowances =
-  if Current.self_address <> tx.from_
-  then a 
+let get_current_allowance (key : allowance_key) (a : allowances) : nat =
+  let a = Big_map.find_opt key a in
+  match a with
+  | Some a -> a
+  | None -> 0n
+
+let track_allowances (operator : address) (a_tx : allowances * transfer) : allowances =
+  if Current.self_address <> a_tx.1.from_
+  then a_tx.0 
   else
-    let akey = get_allowance_key tx in
-    let a = Big_map.find_opt akey a in
-    let allowance = match a with
-    | Some a -> a
-    | None -> 0n
-    in
-    let new_a = Michelson.is_nat (allowance - tx.amount) in
+    let akey = get_allowance_key operator a_tx.1 in
+    let allowance = get_current_allowance akey a_tx.0 in
+    let new_a = Michelson.is_nat (allowance - a_tx.1.amount) in
     let new_allowance = match new_a with
-    | None -> (failwith "Insufficient allowance" : allowances)
+    | None -> (failwith "Insufficient allowance" : nat)
     | Some a -> a
     in
-    Big_map.update akey Some(new_allowance) a
+    let new_a = Big_map.update akey (Some new_allowance) a_tx.0 in
+    new_a
 
-
-
-let main (param : entry_points) (s : allowances) : (operation list) * allowances =
+let main (param, s : entry_points * allowances) : (operation list) * allowances =
   match param with
 
   | Change_allowance p ->
-    let a = Big_map.find_opt p.key s in
-    let allowance = match a with
-    | Some a -> a
-    | None -> 0n
-    in
+    (* compare and swap *)
+    let allowance = get_current_allowance p.key s in
     if allowance <> p.prev_allowance
     then (failwith "cannot update allowance" : (operation list) * allowances)
     else
-      let new_s = Big_map.update akey Some(p.new-new_allowance) s in
+      let new_s = Big_map.update p.key (Some p.new_allowance) s in
       ([] : operation list),  new_s
 
   | View_allowance p ->
-    let a = Big_map.find_opt p.request s in
-    let allowance = match a with
-    | Some a -> a
-    | None -> 0n
-    in
+    let allowance = get_current_allowance p.key s in
     let resp : allowance_response = {
-      request = p.request;
+      key = p.key;
       allowance = allowance;
     } in
     let op = Operation.transaction resp 0mutez p.view in
@@ -104,12 +97,14 @@ let main (param : entry_points) (s : allowances) : (operation list) * allowances
   | On_send_hook p ->
     if p.operator = Current.self_address
     then ([] : operation list),  s
-    else 
-      let new_s = List.fold track_allowances p.batch s in
+    else
+      let new_s = List.fold (track_allowances p.operator) p.batch s in
       ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
     let hook : set_hook_param = 
       Operation.get_entrypoint "%on_send_hook" Current.self_address in
-    let pp = Some (Set_sender_hook hook)
-    let op = Operation.transaction pp 0mutez fa2
+    let pp = Set_sender_hook (Some hook) in
+    let op = Operation.transaction pp 0mutez fa2 in
+    [op], s
+
