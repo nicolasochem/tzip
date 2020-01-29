@@ -187,7 +187,7 @@ Transfer operation MUST pass optional `data` parameter to hooks unaltered.
 
 `to_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.to_)`.
 
-FA2 does not specify an interface for mint and burn operations. However, if an FA2 token contract implements mint and burn operations, it MUST invoke transfer
+FA2 does NOT specify an interface for mint and burn operations. However, if an FA2 token contract implements mint and burn operations, it MUST invoke transfer
 hooks as well.
 
 |  Mint | Burn |
