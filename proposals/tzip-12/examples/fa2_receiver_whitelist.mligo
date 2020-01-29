@@ -1,5 +1,10 @@
 (**
-Example of receiver whitelist implementation using admin hook of FA2
+This is a sample implementation of the FA2 transfer hook which supports receiver
+whitelist.
+
+Only addresses which are whitelisted can receive tokens. If one or more `to_`
+addresses in FA2 transfer batch are not whitelisted the whole transfer operation
+MUST fail.
 
  *)
 

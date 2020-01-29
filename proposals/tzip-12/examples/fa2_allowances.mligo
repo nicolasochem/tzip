@@ -1,5 +1,12 @@
 (**
-  This is a sample token owner which supports token allowances
+  This is a sample implementation of the FA2 transfer hook which supports transfer
+  allowances for token spenders.
+  Spender is a Tezos address which initiates token transfer operation.
+  Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+  Spender, other than the owner, MUST be approved to withdraw specific tokens held by
+  the owner up to the allowance amount.
+  Only token owner can set allowances for specific token types and spenders. 
+  The owner does not need to be approved to transfer its own tokens.
  *)
 
 #include "../fa2_interface.mligo"

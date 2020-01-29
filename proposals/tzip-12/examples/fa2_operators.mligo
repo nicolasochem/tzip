@@ -1,5 +1,12 @@
 (**
-  This is a sample token owner which supports operators
+  This is a sample implementation of the FA2 transfer hook which supports transfer
+  operators.
+  Operator is a Tezos address which initiates token transfer operation.
+  Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+  Operator, other than the owner, MUST be approved to manage all tokens held by
+  the owner to make a transfer from the owner account.
+  Only token owner can add or remove its operators. The owner does not need to be
+  approved to transfer its own tokens.
  *)
 
 #include "../fa2_interface.mligo"
