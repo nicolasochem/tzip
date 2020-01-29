@@ -126,9 +126,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Set_sender_hook of set_hook_param option
-  | Set_receiver_hook of set_hook_param option
-  | Set_admin_hook of set_hook_param option
+  | Set_transfer_hook of set_hook_param option
 ```
 
 ### Entry Point Semantics
@@ -170,28 +168,17 @@ and a callback contract `token_descriptor_view` which accepts a list of
 
 ### Transfer Hooks
 
-Using transfer hooks, it is possible to model different transfer permissioning
+Using transfer hook, it is possible to model different transfer permissioning
 schemes like white lists, operator lists etc.
 
-The standard supports three types of hooks (all with the same parameter type).
-All hooks are optional and have a single entry point (set/reset hook) per each hook
-type. The concrete token contract implementation MAY impose additional restrictions
-on who may set and/or reset hooks. If set/reset hook operation is not permitted,
+Transfer hook is optional and have a single entry point to set or reset the hook.
+If transfer hook is not set, FA2 MUST fall back on default behavior.
+The concrete token contract implementation MAY impose additional restrictions on
+who may set and/or reset the hook. If set/reset hook operation is not permitted,
 it MUST fail without changing registered hook state.
 
-The following table provides a description of each hook type and its semantics:
-
-| Hook  | Who can set/remove | When to invoke | Comments                       |
-| :---  | :----------------- | :------------- | :----------------------------- |
-| Admin | contract admin     | on every transfer operation | There is one or zero admin hooks per FA2 contract |
-| Sender| token owner        | on transfer operation where at  least one of `from_` parameters is the address of a hook owner | There is one or zero sender hooks per each token owner address |
-| Receiver| token owner      | on transfer operation where at least one of `to_` parameter is the address of a hook owner | There is one or zero receiver hooks per each token owner address |
-
-For each transfer operation token contract MUST invoke corresponding admin, sender
-and receiver hooks and return corresponding operations as part of the transfer entry
-point result in this exact order. If one or more hooks are not registered, they
-are skipped.
-
+For each transfer operation token contract MUST invoke corresponding transfer hook
+hook and return corresponding operation as part of the transfer entry point result.
 Transfer operation MUST pass optional `data` parameter to hooks unaltered.
 
 `operator` parameter for hook invocation MUST be set to `SENDER`.
@@ -200,55 +187,33 @@ Transfer operation MUST pass optional `data` parameter to hooks unaltered.
 
 `to_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.to_)`.
 
-If the same `from_` and/or `to_` addresses appear in more than one transfer in
-the batch, corresponding sender/receiver hook MUST be called only once.
-
-If the token contract implements mint and burn operations, they MUST invoke relevant
+If the token contract implements mint and burn operations, they MUST invoke transfer
 hooks as well.
 
-| Hook |  Mint | Burn |
-| :--- | :---- | :--- |
-| Admin | Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
-| Sender | Never invoked. | Invoked if there is a registered hook for an owner address which received minted tokens.  `to_` parameter MUST be `None` |
-| Receiver | Invoked if there is a registered hook for an owner address from which tokens are burnt.  `from_` parameter MUST be `None` | Never invoked.|
+|  Mint | Burn |
+| :---- | :--- |
+| Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
 
-### `set_sender_hook`
+The default behavior of FA2 when transfer hook is not set:
 
-Set or remove a sender hook for a token owner. FA2 contract can have one or zero
-sender hooks per token owner. Only token owner can set its own sender hook.
-Token owner address is an implicit parameter, FA2 implementation MUST use `SENDER`
-address to be associated with the hook.
+1. Only token owners can initiate transfer of the tokens from their accounts
+( `from_` MUST equal `SENDER`)
+2. Any address can be a recipient of the token transfer
 
-If input parameter is `None`, sender hook is to be removed. If input parameter is
-`Some` hook entry point, a new sender hook is to be associated with the token owner
-address (`SENDER`).
+The default behavior represents minimal permissioning schema. By seting a transfer
+hook this default schema can be replaced with a different one. For instance, custom
+permissioning schema may support operators, allowances, sender and receiver interface
+invocation for token owners etc.
 
-If present, sender hook is invoked when at least one of the `from_` parameters in
-the batch of the `transfer` operation is the same as the address of the sender
-hook owner.
+### `set_transfer_hook`
 
-### `set_receiver_hook`
-
-Set or remove a receiver hook for a token owner. FA2 contract can have one or zero
-receiver hooks per token owner. Only token owner can set its own receiver hook.
-Token owner address is an implicit parameter, FA2 implementation MUST use `SENDER`
-address to be associated with the hook.
-
-If input parameter is `None`, receiver hook is to be removed. If input parameter
-is `Some` hook entry point, a new receiver hook is to be associated with the token
-owner address (`SENDER`).
-
-If present, receiver hook is invoked when at least one of the `to_` parameters in
-the batch of the `transfer` operation is the same as the address of the receiver
-hook owner.
-
-### `set_admin_hook`
-
-Set or remove an admin hook. FA2 contract can have one or zero admin hooks.
+Set or remove a transfer hook. FA2 contract can have one or zero transfer hooks.
 FA2 implementation MAY restrict access to this operation to a contract administrator
 address only.
 
-If input parameter is `None`, admin hook is to be removed. If input parameter
-is `Some` hook entry point, a new admin hook is to be associated with the FA2 contract.
+If input parameter is `None`, transfer hook is to be removed. If input parameter
+is `Some` hook entry point, a new transfer hook is to be associated with the FA2
+contract.
 
-If present, admin hook is always invoked from the `transfer` operation.
+If present, the transfer hook is always invoked from the `transfer` operation.
+Otherwise, FA2 MUST fallback to the default behavior.

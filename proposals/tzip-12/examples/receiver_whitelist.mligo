@@ -39,7 +39,7 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
 
   | Register_with_fa2 fa2 ->
     let hook : set_hook_param = 
-      Operation.get_entrypoint "%on_admin_hook" Current.self_address in
+      Operation.get_entrypoint "%on_transfer_hook" Current.self_address in
     let pp  = Set_admin_hook (Some hook) in
     let op = Operation.transaction pp 0mutez fa2 in
     [op], s
