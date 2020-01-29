@@ -34,12 +34,10 @@ The role of a TZIP is purely supplementary, hortative, or descriptive; the Tezos
 
 A TZIP should contain a concise technical specification and rationale which unambiguously articulates what the proposal is, how it may be implemented, and why the proposal is an improvement. A TZIP should additionally contain an FAQ which documents, compares, and answers alternative options, opinions, and objections.
 
-Each TZIP has both authors and advocates, who may be (but are not required to be) the same individuals. Whereas the *TZIP author* is responsible for generating the proposal and any necessary accompanying materials, the *TZIP advocate* is responsible for communicating the proposal to the community and maintaining the TZIP FAQ. Healthy proposals should have multiple independent advocates and a robust accompanying FAQ.
-
 
 ## TZIP Rationale
 
-We intend TZIPs to be one possible mechanism for proposing new features, for collecting community technical input on an issue, and for documenting the design decisions that have gone into Tezos. TZIPs are maintained as text files in a versioned repository; their revision history is a (possibly incomplete) historical record of the feature proposal.
+We intend TZIPs to be one possible mechanism for proposing new features, for collecting community technical input on an issue, and for documenting the design decisions that have gone into Tezos. TZIPs are maintained as text files in a versioned repository; their revision history is a historical record of the feature proposal.
 
 For Tezos developers, TZIPs can be a useful way to generate feedback, clearly communicate functionality to users, and track the progress of their work. Maintainers of Tezos tools and libraries can list the TZIPs that they have implemented, which can give the community a convenient way to know the current status of a given project.
 
@@ -62,42 +60,41 @@ A TZIP will always move along the following workflow:
 A TZIP can have the following statuses:
 
 
-| Status             | Actor         | Description                                                                                                           | GitLab Actions to get that Status                         | Next Statuses               |
-| :----------------- | :------------ | :-------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- | :-------------------------- |
-| `WORK IN PROGRESS`            | Author        | This covers the initial work being done to create the TZIP and its accompanying resources                             | 1. Author submits a MR to reserve a TZIP number in the [README table](/README.md#current-tzips) and creates the *tzip-xx* folder (where *xx* is the new TZIP number) in [proposals](/proposals).<br/>2. Author creates a new branch, *tzip-xx*, to work and iterate on the new TZIP      | DRAFT, WITHDRAWN |
-| `DRAFT` | Author        | The TZIP is now in good shape, and is ready to be shared with the community to get iterative feedback                 | 1. Author submits a MR from the *tzip-xx* branch<br/>2. Author updates the [README table](/README.md#current-tzips)                 | SUBMITTED, WITHDRAWN        |
-| `WITHDRAWN`        | -             | The authors decide that the TZIP is no longer needed, or the reviewers decide to reject it (e.g. for non-compliance)  | 1. Author or Reviewer closes the *tzip-xx* branch<br/>2. Author or Reviewer updates the [README table](/README.md#current-tzips)                            | -                           | 
-| `SUBMITTED`        | Reviewer      | The TZIP has been approved by the community and is submitted to the reviewers                                         | 1. Author updates the [README table](/README.md#current-tzips)                                                              | FINAL, WITHDRAWN            |
-| `FINAL`            | Reviewer      | The TZIP has been approved by the reviewers                                                                           | 1. Reviewer merges the *tzip-xx* branch from the Author's merge request<br/>2. Reviewer updates the [README table](/README.md#current-tzips)       | SUPERSEDED                  |
-| `SUPERSEDED`       | -             | The TZIP has been replaced by a more recent TZIP                                                                      | 1. Reviewer updates the [README table](/README.md#current-tzips)   | -                           |
+| Status             | Actor    | Description                                                                                                          | Action(s) to get that Status                             | Next Status(es)  |
+| :----------------- | :------- | :------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- | :--------------- |
+| `Work In Progress` | Author   | This covers the initial work being done to create the TZIP and its accompanying resources                            | 1. Author submits a MR to:<br/>&nbsp;&nbsp;- reserve a TZIP number, say *xx*, in the [README](/README.md#current-tzips)<br/>&nbsp;&nbsp;- add the *Work In Progress* status in the README<br/>&nbsp;&nbsp;- create a *tzip-xx* folder in [proposals](/proposals)<br/>2. Author creates a new branch, *tzip-xx*, to work on it      | Draft, Withdrawn |
+| `Draft`            | Author   | The TZIP is now in good shape, and is ready to be shared with the community to get iterative feedback                | 1. Author submits a MR from the *tzip-xx* branch, including the status change to *Draft* in the README<br/>2. Reviewer merges the MR to *master* | Submitted, Withdrawn |
+| `Withdrawn`        | -        | The authors decide that the TZIP is no longer needed, or the reviewers decide to reject it (e.g. for non-compliance) | 1. Author or Reviewer closes the *tzip-xx* branch<br/>2. Author or Reviewer updates the README with the *Withdrawn* status                       | -                    | 
+| `Submitted`        | Reviewer | The TZIP has been approved by the community and is submitted to the reviewers                                        | Author updates the README with the *Submitted* status    | Final, Withdrawn |
+| `Final`            | Reviewer | The TZIP has been approved by the reviewers                                                                          | Reviewer updates the README with the *Final* status      | Superseded       |
+| `Superseded`       | -        | The TZIP has been replaced by a more recent TZIP                                                                     | Reviewer updates the README with the *Superseded* status | -                |
 
-Note: We might automate the README table updates in the future.
 
 ### TZIP Authors
 
-Once the authors are happy with the initial work on their TZIP, they will move its status from *WORK IN PROGRESS* to *DRAFT*. At that point, the authors should solicit feedback from the Tezos community before submitting the TZIP to the reviewers. As prior work on the same or similar topics may not be immediately apparent or accessible from publicly available information, inviting community advice can both save time and effort, and result in a stronger proposal.
+Once the authors are happy with the initial work on their TZIP, they will move its status from *Work In Progress* to *Draft*. At that point, the authors should solicit feedback from the Tezos community before submitting the TZIP to the reviewers. As prior work on the same or similar topics may not be immediately apparent or accessible from publicly available information, inviting community advice can both save time and effort, and result in a stronger proposal.
 
 Examples of appropriate public forums to gauge response to a TZIP:
 
 - [The Tezos subreddit](https://www.reddit.com/r/tezos/)
 - [The Issues page of this repository](https://gitlab.com/tzip/tzip/issues)
 
-Once the authors have gotten enough feedback from the community and updated the TZIP accordingly, they will move its status to *SUBMITTED* for the reviewers to review.
+Once the authors have gotten enough feedback from the community and updated the TZIP accordingly, they will move its status to *Submitted* for the reviewers to review.
 
 ### TZIP Reviewers
 
-Once the TZIP moves to *SUBMITTED*, the reviewers will:
+Once the TZIP moves to *Submitted*, the reviewers will:
 - Read the TZIP to check if it complies with all relevant standards articulated in this document and elsewhere, both global TZIP standards and those particular to the TZIP type.
 - Edit the TZIP for prose (spelling, grammar, sentence structure, etc.), markup (GitLab Flavored Markdown).
 - Review any accompanying resources, such as implementations, proofs, papers, links, etc.
 - When relevant, determine whether the FAQ fairly expresses and responds to criticisms of the proposal.
 
-If the TZIP does not meet the standards, the reviewers will send it back to *DRAFT*, with specific instructions, so the authors can update it. This process may repeat as many times as necessary. The reviewers may additionally refer the TZIP to outside reviewers with relevant knowledge. Reviewers may also outright reject a TZIP submission that is unsuitable for review or is otherwise non-compliant with the standards outlined in relevant active TZIPs.
+If the TZIP does not meet the standards, the reviewers will send it back to *Draft*, with specific instructions, so the authors can update it. This process may repeat as many times as necessary. The reviewers may additionally refer the TZIP to outside reviewers with relevant knowledge. Reviewers may also outright reject a TZIP submission that is unsuitable for review or is otherwise non-compliant with the standards outlined in relevant active TZIPs.
 
 Should the reviewers approve the TZIP, they will:
 
 - Merge the corresponding merge request. The TZIP reviewers have sole ownership over the [tzip](https://gitlab.com/tzip/tzip) GitLab repository.
-- Coordinate any further steps with the TZIP authors and advocates, as required by the specific TZIP type.
+- Coordinate any further steps with the TZIP authors, as required by the specific TZIP type.
 
 
 ## TZIP Sections
@@ -130,7 +127,6 @@ Each TZIP must begin with an RFC 822 style header preamble, preceded and followe
 - `tzip:` TZIP number. The number should be requested via a merge request as soon as the TZIP is in *Work In Progress* status
 - `title:` A short descriptive title, maximum 44 characters. If the TZIP has a *name* (see [TZIP-2](/proposals/tzip-2/tzip-2.md)), then it is added as a title prefix (e.g. *FA1 - Abstract Ledger*)
 - `author:` Name(s) of author(s), ideally with their username(s) or email address(es). Examples: *John Doe*, *John Doe (@username)*, *John Doe &lt;address@dom.ain&gt;*
-- `advocate:` Optional. Name(s) of advocate(s), ideally with their username(s) or email address(es)
 - `gratuity:` Optional. A Tezos address controlled by an author capable of receiving gratuities from grateful Tezos users
 - `discussions-to:` Optional. A url pointing to the official discussion thread
 - `status:` Can be: Work In Progress | Draft | Withdrawn | Submitted | Superseded
