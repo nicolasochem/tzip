@@ -4,14 +4,10 @@
 
 #include "../fa2_interface.mligo"
 
-type operator_param = {
-  owner : address;
-  operator : address;
-}
 
  type  entry_points =
-  | Add_operator of operator_param
-  | Remove_operator of operator_param
+  | Add_operator of address
+  | Remove_operator of address
   | On_transfer_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
@@ -35,22 +31,24 @@ let is_allowed (owner : address) (operator : address) (operators : operators) : 
 
 let main (param, s : entry_points * operators) : (operation list) * operators =
   match param with
-  | Add_operator p ->
-    let ops = match Big_map.find_opt p.owner s with
+  | Add_operator operator ->
+    let owner = Current.sender in
+    let ops = match Big_map.find_opt owner s with
     | Some os -> os
     | None -> (Set.empty : address set)
     in
-    let new_ops = Set.add p.operator ops in
-    let new_s = Big_map.update p.owner (Some new_ops) s in
+    let new_ops = Set.add operator ops in
+    let new_s = Big_map.update owner (Some new_ops) s in
     ([] : operation list),  new_s
 
-  | Remove_operator p ->
-    let ops = match Big_map.find_opt p.owner s with
+  | Remove_operator operator ->
+    let owner = Current.sender in
+    let ops = match Big_map.find_opt owner s with
     | Some os -> os
     | None -> (Set.empty : address set)
     in
-    let new_ops = Set.remove p.operator ops in
-    let new_s = Big_map.update p.owner (Some new_ops) s in
+    let new_ops = Set.remove operator ops in
+    let new_s = Big_map.update owner (Some new_ops) s in
     ([] : operation list),  new_s
   
   | On_transfer_hook p ->
@@ -68,6 +66,6 @@ let main (param, s : entry_points * operators) : (operation list) * operators =
   | Register_with_fa2 fa2 ->
     let hook : set_hook_param = 
       Operation.get_entrypoint "%on_transfer_hook" Current.self_address in
-    let pp = Set_sender_hook (Some hook) in
+    let pp = Set_transfer_hook (Some hook) in
     let op = Operation.transaction pp 0mutez fa2 in
     [op], s
