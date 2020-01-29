@@ -245,11 +245,45 @@ contract.
 If present, the transfer hook is always invoked from the `transfer` operation.
 Otherwise, FA2 MUST fallback to the default behavior.
 
-
 #### Hooks Examples
 
-[Transfer allowances](./examples/fa2_allowances.mligo)
+##### Transfer allowances
 
-[Transfer operators](./examples/fa2_operators.mligo)
+This is a sample implementation of the FA2 transfer hook which supports transfer
+allowances for token spenders.
 
-[Receiver whitelisting](./examples/fa2_receiver_whitelist.mligo)
+Spender is a Tezos address which initiates token transfer operation.
+Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+Spender, other than the owner, MUST be approved to withdraw specific tokens held by
+the owner up to the allowance amount.
+
+Only token owner can set allowances for specific token types and spenders. 
+The owner does not need to be approved to transfer its own tokens.
+
+[Hook contract](./examples/fa2_allowances.mligo)
+
+##### Transfer operators
+
+This is a sample implementation of the FA2 transfer hook which supports transfer
+operators.
+
+Operator is a Tezos address which initiates token transfer operation.
+Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+Operator, other than the owner, MUST be approved to manage all tokens held by
+the owner to make a transfer from the owner account.
+
+Only token owner can add or remove its operators. The owner does not need to be
+approved to transfer its own tokens.
+
+[Hook contract](./examples/fa2_operators.mligo)
+
+##### Receiver whitelisting
+
+This is a sample implementation of the FA2 transfer hook which supports receiver
+whitelist.
+
+Only addresses which are whitelisted can receive tokens. If one or more `to_`
+addresses in FA2 transfer batch are not whitelisted the whole transfer operation
+MUST fail.
+
+[Hook contract](./examples/fa2_receiver_whitelist.mligo)
