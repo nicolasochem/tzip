@@ -177,54 +177,55 @@ but nobody else. In some financial token exchange application tokens are to be
 transferred by special exchange operator account, but not directly by token owners
 themselves.
 
-Support of different permissioning strategies usually require to customize
+Support for different permissioning schemas usually require to customize
 existing contract code. This standard proposes different approach with on-chain
 composition of the core FA2 contract implementation which does not change and plugable
-permission hook implemented as a separate contract to be registered with FA2.
+permission hook implemented as a separate contract and registered with the core FA2.
 Every time FA2 performs a transfer it invokes hook contract which may validate a
 transaction and approve it by finishing execution successfully  or reject it by
 failing. Using transfer hook, it is possible to model different transfer permissioning
-schemes like white lists, operator lists etc. Although this approach introduces
+schemas like white lists, operator lists etc. Although this approach introduces
 gas consumption overhead by requiring an extra inter-contract call, it has some
 other advantages:
 
 - FA2 core implementation can be verified once and certain properties (not related
 to permissioning schema) remain unchanged.
-- Most likely core transfer semantic will remain unchanged. If modificatoin of the
+- Most likely core transfer semantic will remain unchanged. If modification of the
 permissioning schema is required for an existing contract, it can be done by replacing
-a transfer hook only. No storage migration of the FA2 ledger is required
-- Transfer hook may be used not only for permissioning, but to implement some
-custom logic required by a particular token application.
+a transfer hook only. No storage migration of the FA2 ledger is required.
+- Transfer hook may be used not only for permissioning, but to implement additional
+custom logic required by the particular token application.
 
 #### Hooks Specification
 
-Transfer hook is optional and have a single entry point to set or reset the hook.
-If transfer hook is not set, FA2 MUST fall back on default behavior.
-The concrete token contract implementation MAY impose additional restrictions on
-who may set and/or reset the hook. If set/reset hook operation is not permitted,
-it MUST fail without changing registered hook state.
+Transfer hook is optional. FA2 token contract has a single entry point to set or
+reset the hook. If transfer hook is not set, FA2 token contract MUST fall back on
+default behavior. The concrete token contract implementation MAY impose additional
+restrictions on who may set and/or reset the hook. If set/reset hook operation is
+not permitted, it MUST fail without changing existing hook state.
 
 For each transfer operation token contract MUST invoke corresponding transfer hook
-hook and return corresponding operation as part of the transfer entry point result.
-Transfer operation MUST pass optional `data` parameter to hooks unaltered.
+and return corresponding operation as part of the transfer entry point result.
+Transfer operation MUST pass optional `data` parameter to the hook unaltered.
 
-`operator` parameter for hook invocation MUST be set to `SENDER`.
+`operator` parameter for the hook invocation MUST be set to `SENDER`.
 
 `from_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.from_)`.
 
 `to_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.to_)`.
 
-FA2 does NOT specify an interface for mint and burn operations. However, if an FA2 token contract implements mint and burn operations, it MUST invoke transfer
+FA2 does NOT specify an interface for mint and burn operations. However, if an
+FA2 token contract implements mint and burn operations, it MUST invoke transfer
 hooks as well.
 
 |  Mint | Burn |
 | :---- | :--- |
 | Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
 
-The default behavior of FA2 when transfer hook is not set:
+The default behavior of FA2 token contract when transfer hook is not set:
 
-1. Only token owners can initiate transfer of the tokens from their accounts
-( `from_` MUST equal `SENDER`)
+1. Only token owner can initiate a transfer of tokens from their accounts
+( `from_` MUST be equal to `SENDER`)
 2. Any address can be a recipient of the token transfer
 
 The default behavior represents minimal permissioning schema. By setting a transfer
