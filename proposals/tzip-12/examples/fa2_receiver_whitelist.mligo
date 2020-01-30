@@ -20,6 +20,11 @@ MUST fail.
 
 type whitelist = address set
 
+let get_hook (hook_contract : address) (u : unit) : hook_param contract =
+  let hook_entry : hook_param contract = 
+    Operation.get_entrypoint "%on_transfer_hook" hook_contract in
+  hook_entry
+
 let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
   match param with
   | Add_receiver op -> 
@@ -43,8 +48,7 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let hook : set_hook_param = 
-      Operation.get_entrypoint "%on_transfer_hook" Current.self_address in
-    let pp  = Set_admin_hook (Some hook) in
+    let hook : set_hook_param = get_hook Current.self_address in
+    let pp = Set_transfer_hook (Some hook) in
     let op = Operation.transaction pp 0mutez fa2 in
     [op], s

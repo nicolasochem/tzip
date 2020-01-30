@@ -35,6 +35,10 @@ let is_allowed (owner : address) (operator : address) (operators : operators) : 
     then true
     else false
 
+let get_hook (hook_contract : address) (u : unit) : hook_param contract =
+  let hook_entry : hook_param contract = 
+    Operation.get_entrypoint "%on_transfer_hook" hook_contract in
+  hook_entry
 
 let main (param, s : entry_points * operators) : (operation list) * operators =
   match param with
@@ -71,8 +75,7 @@ let main (param, s : entry_points * operators) : (operation list) * operators =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let hook : set_hook_param = 
-      Operation.get_entrypoint "%on_transfer_hook" Current.self_address in
+    let hook : set_hook_param = get_hook Current.self_address in
     let pp = Set_transfer_hook (Some hook) in
     let op = Operation.transaction pp 0mutez fa2 in
     [op], s

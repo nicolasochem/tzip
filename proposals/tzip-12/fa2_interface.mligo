@@ -68,7 +68,7 @@ type hook_param = {
   operator : address;
 }
 
-type set_hook_param = hook_param contract
+type set_hook_param = unit -> hook_param contract
 
 
 type fa2_entry_points =
