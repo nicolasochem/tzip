@@ -119,7 +119,7 @@ type hook_param = {
   operator : address;
 }
 
-type set_hook_param = hook_param contract
+type set_hook_param = unit -> hook_param contract
 
 
 type fa2_entry_points =
@@ -175,44 +175,15 @@ address only.
 
 If input parameter is `None`, transfer hook is to be removed. If input parameter
 is `Some` hook entry point, a new transfer hook is to be associated with the FA2
-contract.
+contract. The parameter is a lambda which returns hook contract entry point of
+type `unit -> hook_param contract`
 
 If present, the transfer hook is always invoked from the `transfer` operation.
 Otherwise, FA2 MUST fallback to the default behavior.
 
-For more details see "Transfer Hooks" section.
+For more details see "Transfer Hook Specification" section.
 
-## Transfer Hooks
-
-### Hooks Motivation
-
-Usually different tokens require different permissioning schemas which define who
-can transfer and receive tokens. There is no single permissioning schema which fits
-all scenarios. For instance, some game tokens can be transferred by token owners,
-but nobody else. In some financial token exchange application tokens are to be
-transferred by special exchange operator account, but not directly by token owners
-themselves.
-
-Support for different permissioning schemas usually require to customize
-existing contract code. This standard proposes different approach with on-chain
-composition of the core FA2 contract implementation which does not change and plugable
-permission hook implemented as a separate contract and registered with the core FA2.
-Every time FA2 performs a transfer it invokes hook contract which may validate a
-transaction and approve it by finishing execution successfully  or reject it by
-failing. Using transfer hook, it is possible to model different transfer permissioning
-schemas like white lists, operator lists etc. Although this approach introduces
-gas consumption overhead by requiring an extra inter-contract call, it has some
-other advantages:
-
-- FA2 core implementation can be verified once and certain properties (not related
-to permissioning schema) remain unchanged.
-- Most likely core transfer semantic will remain unchanged. If modification of the
-permissioning schema is required for an existing contract, it can be done by replacing
-a transfer hook only. No storage migration of the FA2 ledger is required.
-- Transfer hook may be used not only for permissioning, but to implement additional
-custom logic required by the particular token application.
-
-### Hooks Specification
+### Transfer Hook Specification
 
 Transfer hook is optional. FA2 token contract has a single entry point to set or
 reset the hook. If transfer hook is not set, FA2 token contract MUST fall back on
@@ -249,7 +220,37 @@ hook this default schema can be replaced with a different one. For instance, cus
 permissioning schema may support operators, allowances, sender and receiver interface
 invocation for token owners etc.
 
-### Hooks Examples
+## Transfer Hooks
+
+### Transfer Hooks Motivation
+
+Usually different tokens require different permissioning schemas which define who
+can transfer and receive tokens. There is no single permissioning schema which fits
+all scenarios. For instance, some game tokens can be transferred by token owners,
+but nobody else. In some financial token exchange application tokens are to be
+transferred by special exchange operator account, but not directly by token owners
+themselves.
+
+Support for different permissioning schemas usually require to customize
+existing contract code. This standard proposes different approach with on-chain
+composition of the core FA2 contract implementation which does not change and plugable
+permission hook implemented as a separate contract and registered with the core FA2.
+Every time FA2 performs a transfer it invokes hook contract which may validate a
+transaction and approve it by finishing execution successfully  or reject it by
+failing. Using transfer hook, it is possible to model different transfer permissioning
+schemas like white lists, operator lists etc. Although this approach introduces
+gas consumption overhead by requiring an extra inter-contract call, it has some
+other advantages:
+
+- FA2 core implementation can be verified once and certain properties (not related
+to permissioning schema) remain unchanged.
+- Most likely core transfer semantic will remain unchanged. If modification of the
+permissioning schema is required for an existing contract, it can be done by replacing
+a transfer hook only. No storage migration of the FA2 ledger is required.
+- Transfer hook may be used not only for permissioning, but to implement additional
+custom logic required by the particular token application.
+
+### Transfer Hooks Examples
 
 #### Transfer allowances
 
