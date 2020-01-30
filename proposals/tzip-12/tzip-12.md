@@ -105,9 +105,10 @@ type token_descriptor_param = {
   token_ids : token_id list;
   token_descriptor_view : (token_descriptor_response list) contract
 }
+
 type hook_transfer = {
-  from_ : address option; (* None for minting *)
-  to_ : address option;   (* None for burning *)
+  from_ : address option;
+  to_ : address option;
   token_id : token_id;
   amount : nat;
 }
@@ -166,9 +167,24 @@ Get the total supply for multiple token types. Accepts a list of `token_id`s
 and a callback contract `token_descriptor_view` which accepts a list of
 `token_descriptor_response` records.
 
-### Transfer Hooks
+#### `set_transfer_hook`
 
-#### Hooks Motivation
+Set or remove a transfer hook. FA2 contract can have one or zero transfer hooks.
+FA2 implementation MAY restrict access to this operation to a contract administrator
+address only.
+
+If input parameter is `None`, transfer hook is to be removed. If input parameter
+is `Some` hook entry point, a new transfer hook is to be associated with the FA2
+contract.
+
+If present, the transfer hook is always invoked from the `transfer` operation.
+Otherwise, FA2 MUST fallback to the default behavior.
+
+For more details see "Transfer Hooks" section.
+
+## Transfer Hooks
+
+### Hooks Motivation
 
 Usually different tokens require different permissioning schemas which define who
 can transfer and receive tokens. There is no single permissioning schema which fits
@@ -196,7 +212,7 @@ a transfer hook only. No storage migration of the FA2 ledger is required.
 - Transfer hook may be used not only for permissioning, but to implement additional
 custom logic required by the particular token application.
 
-#### Hooks Specification
+### Hooks Specification
 
 Transfer hook is optional. FA2 token contract has a single entry point to set or
 reset the hook. If transfer hook is not set, FA2 token contract MUST fall back on
@@ -233,22 +249,9 @@ hook this default schema can be replaced with a different one. For instance, cus
 permissioning schema may support operators, allowances, sender and receiver interface
 invocation for token owners etc.
 
-#### `set_transfer_hook`
+### Hooks Examples
 
-Set or remove a transfer hook. FA2 contract can have one or zero transfer hooks.
-FA2 implementation MAY restrict access to this operation to a contract administrator
-address only.
-
-If input parameter is `None`, transfer hook is to be removed. If input parameter
-is `Some` hook entry point, a new transfer hook is to be associated with the FA2
-contract.
-
-If present, the transfer hook is always invoked from the `transfer` operation.
-Otherwise, FA2 MUST fallback to the default behavior.
-
-#### Hooks Examples
-
-##### Transfer allowances
+#### Transfer allowances
 
 This is a sample implementation of the FA2 transfer hook which supports transfer
 allowances for token spenders.
@@ -263,7 +266,7 @@ The owner does not need to be approved to transfer its own tokens.
 
 [Hook contract](./examples/fa2_allowances.mligo)
 
-##### Transfer operators
+#### Transfer operators
 
 This is a sample implementation of the FA2 transfer hook which supports transfer
 operators.
@@ -278,7 +281,7 @@ approved to transfer its own tokens.
 
 [Hook contract](./examples/fa2_operators.mligo)
 
-##### Receiver whitelisting
+#### Receiver whitelisting
 
 This is a sample implementation of the FA2 transfer hook which supports receiver
 whitelist.

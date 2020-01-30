@@ -54,9 +54,10 @@ type token_descriptor_param = {
   token_ids : token_id list;
   token_descriptor_view : (token_descriptor_response list) contract
 }
+
 type hook_transfer = {
-  from_ : address option; (* None for minting *)
-  to_ : address option;   (* None for burning *)
+  from_ : address option;
+  to_ : address option;
   token_id : token_id;
   amount : nat;
 }
