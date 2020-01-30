@@ -142,12 +142,13 @@ The transaction MUST fail if any of the balance(s) of the holder for token(s) in
 the batch is lower than the respective amount(s) sent. If holder does not hold any
 tokens of type `token_id`, holder's balance is interpreted as zero.
 
-All registered hooks relevant for this transfer MUST be invoked and operations
-returned by the hooks invocation MUST be returned by `transfer` entry point among
-other operations it might create. Optional `data` parameter MUST be passed unaltered
-to the hooks. `SENDER` MUST be passed as an `operator` parameter to any hook invocation.
-If any of the invoked hooks fails, the whole transfer transaction MUST fail.
-For more details on hooks semantics see "Transfer Hooks" section of this document.
+If registered, transfer hook MUST be invoked and operation returned by the hook
+invocation MUST be returned by `transfer` entry point among other operations it
+might create. Optional `data` parameter MUST be passed unaltered to the hook.
+`SENDER` MUST be passed as an `operator` parameter to any hook invocation.
+If invoked hook fails, the whole transfer transaction MUST fail.
+For more details on transfer hook semantics see "Transfer Hook Specification"
+section of this document.
 
 #### `balance_of`
 
@@ -203,7 +204,7 @@ Transfer operation MUST pass optional `data` parameter to the hook unaltered.
 
 FA2 does NOT specify an interface for mint and burn operations. However, if an
 FA2 token contract implements mint and burn operations, it MUST invoke transfer
-hooks as well.
+hook as well.
 
 |  Mint | Burn |
 | :---- | :--- |
@@ -220,9 +221,9 @@ hook this default schema can be replaced with a different one. For instance, cus
 permissioning schema may support operators, allowances, sender and receiver interface
 invocation for token owners etc.
 
-## Transfer Hooks
+## Transfer Hook
 
-### Transfer Hooks Motivation
+### Transfer Hook Motivation
 
 Usually different tokens require different permissioning schemas which define who
 can transfer and receive tokens. There is no single permissioning schema which fits
@@ -250,7 +251,7 @@ a transfer hook only. No storage migration of the FA2 ledger is required.
 - Transfer hook may be used not only for permissioning, but to implement additional
 custom logic required by the particular token application.
 
-### Transfer Hooks Examples
+### Transfer Hook Examples
 
 #### Transfer allowances
 
