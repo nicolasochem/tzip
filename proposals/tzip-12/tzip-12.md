@@ -12,13 +12,13 @@ created: 2020-01-24
 This document proposes a standard for a unified token contract interface to support
 different token types and/or token contract implementations.
 This standard focuses on token transfer semantics and support for various transfer
-approval schemas.
+approval policies.
 
 ## Abstract
 
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. Different
-permissioning schemas can be used to define who can initiate a transfer and who
+permissioning policies can be used to define who can initiate a transfer and who
 can receive tokens. A token contract can support a single token type or multiple
 token types to optimize batch transfer and atomic swaps of the tokens. Those
 considerations can lead to the proliferation of multiple token standards, each
@@ -130,14 +130,14 @@ type fa2_entry_points =
   | Get_config_entry_points of permission_config contract
 ```
 
-### FA2 permissiniong schemas and configuration
+### FA2 permissiniong policies and configuration
 
-Often proposed token standards specify either a single schema (like allowances
-in ERC-20) or multiple non-compatible schemas (like ERC-777 which has both allowances
+Often proposed token standards specify either a single policy (like allowances
+in ERC-20) or multiple non-compatible policies (like ERC-777 which has both allowances
 and operators APIs; two versions of the transfer entry point, one which invokes
 sender/receiver hooks and one which does not).
 
-FA2 implementation may use different permissioning schemas to define who can initiate
+FA2 implementation may use different permissioning policies to define who can initiate
 a transfer and who can receive tokens. This specification defines a set of standard
 configuration APIs. The concrete implementation of FA2 token contract MUST support
 one of the standard config APIs, which can be discovered by FA2 token contract
@@ -151,7 +151,7 @@ defines all standard config APIs.
 #### `no_config`
 
 Represent non-configurable FA2 implementation with the following default behavior
-which represents minimal permissioning schema.
+which represents minimal permissioning policy.
 
 1. Only token owner can initiate a transfer of tokens from their accounts
 ( `from_` MUST be equal to `SENDER`)
@@ -257,7 +257,7 @@ The transaction MUST fail if any of the balance(s) of the holder for token(s) in
 the batch is lower than the respective amount(s) sent. If holder does not hold any
 tokens of type `token_id`, holder's balance is interpreted as zero.
 
-Transfer implementation must apply permissioning schema logic. If permissining logic
+Transfer implementation must apply permissioning policy logic. If permissining logic
 rejects a transfer, the whole MUST fail.
 
 FA2 does NOT specify an interface for mint and burn operations. However, if an
@@ -303,32 +303,32 @@ implementation pattern using transfer hook).
 ## Transfer Hook
 
 Transfer hook is a recommended design pattern to implement FA2. The idea is to separate
-core token transfer logic and permissioning schema.
+core token transfer logic and permissioning policy.
 
 ### Transfer Hook Motivation
 
-Usually different tokens require different permissioning schemas which define who
-can transfer and receive tokens. There is no single permissioning schema which fits
+Usually different tokens require different permissioning policies which define who
+can transfer and receive tokens. There is no single permissioning policy which fits
 all scenarios. For instance, some game tokens can be transferred by token owners,
 but nobody else. In some financial token exchange application tokens are to be
 transferred by special exchange operator account, but not directly by token owners
 themselves.
 
-Support for different permissioning schemas usually require to customize
+Support for different permissioning policies usually require to customize
 existing contract code. This standard proposes different approach with on-chain
 composition of the core FA2 contract implementation which does not change and plugable
 permission hook implemented as a separate contract and registered with the core FA2.
 Every time FA2 performs a transfer it invokes hook contract which may validate a
 transaction and approve it by finishing execution successfully  or reject it by
 failing. Using transfer hook, it is possible to model different transfer permissioning
-schemas like white lists, operator lists etc. Although this approach introduces
+policies like white lists, operator lists etc. Although this approach introduces
 gas consumption overhead (compared to an all-in-one contract) by requiring an extra
 inter-contract call, it has some other advantages:
 
 - FA2 core implementation can be verified once and certain properties (not related
-to permissioning schema) remain unchanged.
+to permissioning policy) remain unchanged.
 - Most likely core transfer semantic will remain unchanged. If modification of the
-permissioning schema is required for an existing contract, it can be done by replacing
+permissioning policy is required for an existing contract, it can be done by replacing
 a transfer hook only. No storage migration of the FA2 ledger is required.
 - Transfer hook may be used not only for permissioning, but to implement additional
 custom logic required by the particular token application.

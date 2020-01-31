@@ -43,7 +43,7 @@ type total_supply_param = {
 }
 
 type token_descriptor = {
-  symbol: string;
+  symbol : string;
   name : string;
   decimals : nat;
   extras : (string, string) map;
@@ -85,10 +85,10 @@ type fa2_entry_points =
   | Set_transfer_hook of set_hook_param 
 
 
-(** Different permissioning schema interfaces *)
+(** Different permissioning policy interfaces *)
 
 (**
-  Operator permissioning schema.
+  Operator permissioning policy.
   Operator is a Tezos address which initiates token transfer operation.
   Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
   Operator, other than the owner, MUST be approved to manage all tokens held by
@@ -119,7 +119,7 @@ type fa2_operator_config_entry_points =
 
 
 (**
-  Allowance permissioning schemas.
+  Allowance permissioning policy.
   Spender is a Tezos address which initiates token transfer operation.
   Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
   Spender, other than the owner, MUST be approved to withdraw specific tokens held
@@ -158,7 +158,7 @@ type get_allowance_response = {
 
 
 (** 
-  Receiver whitelist permissioning schema.
+  Receiver whitelist permissioning policy.
   Only addresses which are whitelisted can receive tokens. If one or more `to_`
   addresses in FA2 transfer batch are not whitelisted the whole transfer operation
   MUST fail.
