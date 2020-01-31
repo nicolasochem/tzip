@@ -247,7 +247,6 @@ type fa2_whitelist_config_entry_points =
 
 ### Entry Point Semantics
 
-
 #### `transfer`
 
 Transfers amounts specified in the batch between given addresses. Transfers
@@ -390,6 +389,15 @@ Otherwise, FA2 MUST fail.
 For more details see "Transfer Hook Specification" section.
 
 ### Transfer Hook Examples
+
+### Default permissioning
+
+Only token owner can initiate a transfer of tokens from their accounts
+( `from_` MUST be equal to `SENDER`).
+
+Any address can be a recipient of the token transfer.
+
+[Hook contract](./examples/fa2_default.mligo)
 
 #### Transfer allowances
 

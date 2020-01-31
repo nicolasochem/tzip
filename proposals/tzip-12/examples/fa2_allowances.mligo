@@ -121,11 +121,8 @@ let main (param, s : entry_points * allowances) : (operation list) * allowances 
     [op], s
 
   | On_transfer_hook p ->
-    if p.operator = Current.self_address
-    then ([] : operation list),  s
-    else
-      let new_s = List.fold (track_allowances p.operator) p.batch s in
-      ([] : operation list),  new_s
+    let new_s = List.fold (track_allowances p.operator) p.batch s in
+    ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
     let hook : unit -> hook_param contract = get_hook Current.self_address in
