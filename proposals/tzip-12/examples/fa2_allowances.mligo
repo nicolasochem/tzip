@@ -128,8 +128,11 @@ let main (param, s : entry_points * allowances) : (operation list) * allowances 
       ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
-    let hook : set_hook_param = get_hook Current.self_address in
-    let pp = Set_transfer_hook hook in
-    let op = Operation.transaction pp 0mutez fa2 in
+    let hook : unit -> hook_param contract = get_hook Current.self_address in
+    let pp : set_hook_param = {
+      hook = hook;
+      config = Allowance_config Current.self_address;
+    } in
+    let op = Operation.transaction (Set_transfer_hook pp) 0mutez fa2 in
     [op], s
 

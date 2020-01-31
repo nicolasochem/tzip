@@ -169,7 +169,7 @@ The owner does not need to be approved to transfer its own tokens.
 Config API provides the following entry points:
 
 ```ocaml
-type set_allowance_param {
+type set_allowance_param = {
   owner : address;
   token_id : token_id;
   spender : address;
@@ -188,7 +188,7 @@ type get_allowance_response = {
   allowance : nat;
 }
 
- type get_allowance_param {
+ type get_allowance_param = {
    allowance_ids : allowance_id list;
    view : (get_allowance_response list) contract;
  }
@@ -220,7 +220,7 @@ type is_operator_response = {
   is_operator : bool;
 }
 
-type is_operator_param {
+type is_operator_param = {
   operator : operator_param list;
   view : (is_operator_response list) contract;
 }
@@ -367,7 +367,16 @@ hook as well.
 
 ### `set_transfer_hook`
 
-FA2 entry point with the following signature: `Set_transfer_hook of (unit -> hook_param contract)`
+FA2 entry point with the following signature:
+
+```ocaml
+type set_hook_param = {
+  hook : unit -> hook_param contract;
+  config : permission_config;
+}
+
+Set_transfer_hook of set_hook_param
+```
 
 FA2 implementation MAY restrict access to this operation to a contract administrator
 address only.

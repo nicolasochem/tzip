@@ -71,13 +71,18 @@ type hook_param = {
   operator : address;
 }
 
+type set_hook_param = {
+  hook : unit -> hook_param contract;
+  config : permission_config;
+}
+
 type fa2_entry_points =
   | Transfer of transfer_param
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
   | Get_config_entry_points of permission_config contract
-  (* | Set_transfer_hook of (unit -> hook_param contract)  *)
+  | Set_transfer_hook of set_hook_param 
 
 
 (** Different permissioning schema interfaces *)
@@ -102,7 +107,7 @@ type is_operator_response = {
   is_operator : bool;
 }
 
-type is_operator_param {
+type is_operator_param = {
   operator : operator_param list;
   view : (is_operator_response list) contract;
 }
@@ -123,7 +128,7 @@ type fa2_operator_config_entry_points =
   The owner does not need to be approved to transfer its own tokens.
  *)
 
- type set_allowance_param {
+ type set_allowance_param = {
   owner : address;
   token_id : token_id;
   spender : address;
@@ -142,7 +147,7 @@ type get_allowance_response = {
   allowance : nat;
 }
 
- type get_allowance_param {
+ type get_allowance_param = {
    allowance_ids : allowance_id list;
    view : (get_allowance_response list) contract;
  }
