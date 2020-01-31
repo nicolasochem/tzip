@@ -8,10 +8,8 @@ type transfer = {
   token_id : token_id;
   amount : nat;
 }
-type transfer_param = {
-  batch : transfer list;
-  data : bytes option;
-}
+
+type transfer_param = transfer list
 
 type balance_request = {
   owner : address; 
@@ -64,7 +62,6 @@ type hook_transfer = {
 
 type hook_param = {
   batch : hook_transfer list;
-  data : bytes option;
   operator : address;
 }
 

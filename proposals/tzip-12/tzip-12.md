@@ -59,10 +59,8 @@ type transfer = {
   token_id : token_id;
   amount : nat;
 }
-type transfer_param = {
-  batch : transfer list;
-  data : bytes option;
-}
+
+type transfer_param = transfer list
 
 type balance_request = {
   owner : address; 
@@ -115,7 +113,6 @@ type hook_transfer = {
 
 type hook_param = {
   batch : hook_transfer list;
-  data : bytes option;
   operator : address;
 }
 
@@ -144,9 +141,9 @@ tokens of type `token_id`, holder's balance is interpreted as zero.
 
 If registered, transfer hook MUST be invoked and operation returned by the hook
 invocation MUST be returned by `transfer` entry point among other operations it
-might create. Optional `data` parameter MUST be passed unaltered to the hook.
-`SENDER` MUST be passed as an `operator` parameter to any hook invocation.
+might create. `SENDER` MUST be passed as an `operator` parameter to any hook invocation.
 If invoked hook fails, the whole transfer transaction MUST fail.
+
 For more details on transfer hook semantics see "Transfer Hook Specification"
 section of this document.
 
@@ -194,7 +191,6 @@ not permitted, it MUST fail without changing existing hook state.
 
 For each transfer operation token contract MUST invoke corresponding transfer hook
 and return corresponding operation as part of the transfer entry point result.
-Transfer operation MUST pass optional `data` parameter to the hook unaltered.
 
 `operator` parameter for the hook invocation MUST be set to `SENDER`.
 
