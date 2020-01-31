@@ -129,7 +129,7 @@ let main (param, s : entry_points * allowances) : (operation list) * allowances 
 
   | Register_with_fa2 fa2 ->
     let hook : set_hook_param = get_hook Current.self_address in
-    let pp = Set_transfer_hook (Some hook) in
+    let pp = Set_transfer_hook hook in
     let op = Operation.transaction pp 0mutez fa2 in
     [op], s
 

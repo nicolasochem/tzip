@@ -62,6 +62,12 @@ type transfer = {
 
 type transfer_param = transfer list
 
+type permission_config = 
+  | No_config of address
+  | Allowance_config of address
+  | Operator_config of address
+  | Whitelist_config of address
+
 type balance_request = {
   owner : address; 
   token_id : token_id;  
@@ -116,18 +122,131 @@ type hook_param = {
   operator : address;
 }
 
-type set_hook_param = unit -> hook_param contract
-
-
 type fa2_entry_points =
   | Transfer of transfer_param
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Set_transfer_hook of set_hook_param option
+  | Get_config_entry_points of permission_config contract
+```
+
+### FA2 permissiniong schemas and configuration
+
+Often proposed token standards specify either a single schema (like allowances
+in ERC-20) or multiple non-compatible schemas (like ERC-777 which has both allowances
+and operators APIs; two versions of the transfer entry point, one which invokes
+sender/receiver hooks and one which does not).
+
+FA2 implementation may use different permissioning schemas to define who can initiate
+a transfer and who can receive tokens. This specification defines a set of standard
+configuration APIs. The concrete implementation of FA2 token contract MUST support
+one of the standard config APIs, which can be discovered by FA2 token contract
+clients such as wallets. For more details see description of `Get_config_entry_points`
+entry point.
+
+The particular implementation of FA2 token contract MAY extend one of the standard
+configuration APIs with additional custom entry points. `permission_config` type
+defines all standard config APIs.
+
+#### `no_config`
+
+Represent non-configurable FA2 implementation with the following default behavior
+which represents minimal permissioning schema.
+
+1. Only token owner can initiate a transfer of tokens from their accounts
+( `from_` MUST be equal to `SENDER`)
+2. Any address can be a recipient of the token transfer
+
+#### `allowance_config`
+
+Spender is a Tezos address which initiates token transfer operation.
+Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+Spender, other than the owner, MUST be approved to withdraw specific tokens held
+by the owner up to the allowance amount.
+
+The owner does not need to be approved to transfer its own tokens.
+
+Config API provides the following entry points:
+
+```ocaml
+type set_allowance_param {
+  owner : address;
+  token_id : token_id;
+  spender : address;
+  prev_allowance : nat;
+  new_allowance : nat;
+ }
+
+ type allowance_id = {
+  owner : address;
+  token_id : token_id;
+  spender : address;
+ }
+
+type get_allowance_response = {
+  allowance_id : allowance_id;
+  allowance : nat;
+}
+
+ type get_allowance_param {
+   allowance_ids : allowance_id list;
+   view : (get_allowance_response list) contract;
+ }
+
+ type fa2_allowance_config_entry_points =
+  | Set_allowance of set_allowance_param list
+  | Get_allowance of get_allowance_param
+```
+
+#### `operator_config`
+
+Operator is a Tezos address which initiates token transfer operation.
+Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+Operator, other than the owner, MUST be approved to manage all tokens held by
+the owner to make a transfer from the owner account.
+
+The owner does not need to be approved to transfer its own tokens.
+
+Config API provides the following entry points:
+
+```ocaml
+type operator_param = {
+  owner : address;
+  operator : address;
+}
+
+type is_operator_response = {
+  operator : operator_param;
+  is_operator : bool;
+}
+
+type is_operator_param {
+  operator : operator_param list;
+  view : (is_operator_response list) contract;
+}
+
+type fa2_operator_config_entry_points =
+  | Add_operators of operator_param list
+  | Remove_operators of operator_param list
+  | Is_operator of is_operator_param
+```
+
+#### `whitelist_config`
+
+Only addresses which are whitelisted can receive tokens. If one or more `to_`
+addresses in FA2 transfer batch are not whitelisted the whole transfer operation
+MUST fail.
+
+Config API provides the following entry points:
+
+```ocaml
+type fa2_whitelist_config_entry_points =
+  | Add_to_white_list of address list
+  | Remove_from_white_list of address list
 ```
 
 ### Entry Point Semantics
+
 
 #### `transfer`
 
@@ -139,13 +258,12 @@ The transaction MUST fail if any of the balance(s) of the holder for token(s) in
 the batch is lower than the respective amount(s) sent. If holder does not hold any
 tokens of type `token_id`, holder's balance is interpreted as zero.
 
-If registered, transfer hook MUST be invoked and operation returned by the hook
-invocation MUST be returned by `transfer` entry point among other operations it
-might create. `SENDER` MUST be passed as an `operator` parameter to any hook invocation.
-If invoked hook fails, the whole transfer transaction MUST fail.
+Transfer implementation must apply permissioning schema logic. If permissining logic
+rejects a transfer, the whole MUST fail.
 
-For more details on transfer hook semantics see "Transfer Hook Specification"
-section of this document.
+FA2 does NOT specify an interface for mint and burn operations. However, if an
+FA2 token contract implements mint and burn operations, it MUST apply permissioning
+logic as well.
 
 #### `balance_of`
 
@@ -165,59 +283,28 @@ Get the total supply for multiple token types. Accepts a list of `token_id`s
 and a callback contract `token_descriptor_view` which accepts a list of
 `token_descriptor_response` records.
 
-#### `set_transfer_hook`
+#### `get_config_entry_points`
 
-Set or remove a transfer hook. FA2 contract can have one or zero transfer hooks.
-FA2 implementation MAY restrict access to this operation to a contract administrator
-address only.
+Get the address of the contract which provides permission configuration entry
+points for the FA2 token contract. The particular option of the `permission_config`
+type specifies one of the standard config API which MUST be implemented by the
+permission configuration contract.
 
-If input parameter is `None`, transfer hook is to be removed. If input parameter
-is `Some` hook entry point, a new transfer hook is to be associated with the FA2
-contract. The parameter is a lambda which returns hook contract entry point of
-type `unit -> hook_param contract`
+| `permission_config` option | config entry points type |
+| :------------------------- | :----------------------- |
+| `No_config`                | `unit` (there are no config entry poinst for this option) |
+| `Allowance_config`         | `fa2_allowance_config_entry_points` |
+| `Operator_config`          | `fa2_operator_config_entry_points`  |
+| `Whitelist_config`         | `fa2_whitelist_config_entry_points` |
 
-If present, the transfer hook is always invoked from the `transfer` operation.
-Otherwise, FA2 MUST fallback to the default behavior.
-
-For more details see "Transfer Hook Specification" section.
-
-### Transfer Hook Specification
-
-Transfer hook is optional. FA2 token contract has a single entry point to set or
-reset the hook. If transfer hook is not set, FA2 token contract MUST fall back on
-default behavior. The concrete token contract implementation MAY impose additional
-restrictions on who may set and/or reset the hook. If set/reset hook operation is
-not permitted, it MUST fail without changing existing hook state.
-
-For each transfer operation token contract MUST invoke corresponding transfer hook
-and return corresponding operation as part of the transfer entry point result.
-
-`operator` parameter for the hook invocation MUST be set to `SENDER`.
-
-`from_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.from_)`.
-
-`to_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.to_)`.
-
-FA2 does NOT specify an interface for mint and burn operations. However, if an
-FA2 token contract implements mint and burn operations, it MUST invoke transfer
-hook as well.
-
-|  Mint | Burn |
-| :---- | :--- |
-| Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
-
-The default behavior of FA2 token contract when transfer hook is not set:
-
-1. Only token owner can initiate a transfer of tokens from their accounts
-( `from_` MUST be equal to `SENDER`)
-2. Any address can be a recipient of the token transfer
-
-The default behavior represents minimal permissioning schema. By setting a transfer
-hook this default schema can be replaced with a different one. For instance, custom
-permissioning schema may support operators, allowances, sender and receiver interface
-invocation for token owners etc.
+Config entry points may be implemented either by FA2 token contract (then the
+returned address will be `SELF`), or by a separate contract (see recommended
+implementation pattern using transfer hook).
 
 ## Transfer Hook
+
+Transfer hook is a recommended design pattern to implement FA2. The idea is to separate
+core token transfer logic and permissioning schema.
 
 ### Transfer Hook Motivation
 
@@ -236,8 +323,8 @@ Every time FA2 performs a transfer it invokes hook contract which may validate a
 transaction and approve it by finishing execution successfully  or reject it by
 failing. Using transfer hook, it is possible to model different transfer permissioning
 schemas like white lists, operator lists etc. Although this approach introduces
-gas consumption overhead (compared to an all-in-one contract) by requiring an extra inter-contract call, it has some
-other advantages:
+gas consumption overhead (compared to an all-in-one contract) by requiring an extra
+inter-contract call, it has some other advantages:
 
 - FA2 core implementation can be verified once and certain properties (not related
 to permissioning schema) remain unchanged.
@@ -246,6 +333,52 @@ permissioning schema is required for an existing contract, it can be done by rep
 a transfer hook only. No storage migration of the FA2 ledger is required.
 - Transfer hook may be used not only for permissioning, but to implement additional
 custom logic required by the particular token application.
+
+### Transfer Hook Specification
+
+Transfer hook is required to perform transfer operation. FA2 token contract has
+a single entry point to set the hook. If transfer hook is not set, FA2 token
+contract transfer operation MUST fail. Transfer hook is to be set by the token
+contract administrator before any transfers can happen. The concrete token contract
+implementation MAY impose additional restrictions on who may set the hook. 
+If set hook operation is not permitted, it MUST fail without changing existing hook state.
+
+For each transfer operation token contract MUST invoke transfer hook
+and return corresponding operation as part of the transfer entry point result.
+
+`operator` parameter for the hook invocation MUST be set to `SENDER`.
+
+`from_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.from_)`.
+
+`to_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.to_)`.
+
+Transfer hook MUST be invoked and operation returned by the hook
+invocation MUST be returned by `transfer` entry point among other operations it
+might create. `SENDER` MUST be passed as an `operator` parameter to any hook invocation.
+If invoked hook fails, the whole transfer transaction MUST fail.
+
+FA2 does NOT specify an interface for mint and burn operations. However, if an
+FA2 token contract implements mint and burn operations, it MUST invoke transfer
+hook as well.
+
+|  Mint | Burn |
+| :---- | :--- |
+| Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
+
+### `set_transfer_hook`
+
+FA2 entry point with the following signature: `Set_transfer_hook of (unit -> hook_param contract)`
+
+FA2 implementation MAY restrict access to this operation to a contract administrator
+address only.
+
+The parameter is a lambda which returns hook contract entry point of
+type `unit -> hook_param contract`
+
+The transfer hook is always invoked from the `transfer` operation.
+Otherwise, FA2 MUST fail.
+
+For more details see "Transfer Hook Specification" section.
 
 ### Transfer Hook Examples
 
@@ -256,10 +389,10 @@ allowances for token spenders.
 
 Spender is a Tezos address which initiates token transfer operation.
 Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
-Spender, other than the owner, MUST be approved to withdraw specific tokens held by
-the owner up to the allowance amount.
+Spender, other than the owner, MUST be approved to withdraw specific tokens held
+by the owner up to the allowance amount.
 
-Only token owner can set allowances for specific token types and spenders. 
+Only token owner can set allowances for specific token types and spenders.
 The owner does not need to be approved to transfer its own tokens.
 
 [Hook contract](./examples/fa2_allowances.mligo)

@@ -11,6 +11,12 @@ type transfer = {
 
 type transfer_param = transfer list
 
+type permission_config = 
+  | No_config of address
+  | Allowance_config of address
+  | Operator_config of address
+  | Whitelist_config of address
+
 type balance_request = {
   owner : address; 
   token_id : token_id;  
@@ -65,12 +71,94 @@ type hook_param = {
   operator : address;
 }
 
-type set_hook_param = unit -> hook_param contract
-
-
 type fa2_entry_points =
   | Transfer of transfer_param
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Set_transfer_hook of set_hook_param option
+  | Get_config_entry_points of permission_config contract
+  (* | Set_transfer_hook of (unit -> hook_param contract)  *)
+
+
+(** Different permissioning schema interfaces *)
+
+(**
+  Operator permissioning schema.
+  Operator is a Tezos address which initiates token transfer operation.
+  Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+  Operator, other than the owner, MUST be approved to manage all tokens held by
+  the owner to make a transfer from the owner account.
+
+  The owner does not need to be approved to transfer its own tokens. 
+ *)
+
+type operator_param = {
+  owner : address;
+  operator : address; 
+}
+
+type is_operator_response = {
+  operator : operator_param;
+  is_operator : bool;
+}
+
+type is_operator_param {
+  operator : operator_param list;
+  view : (is_operator_response list) contract;
+}
+
+type fa2_operator_config_entry_points =
+  | Add_operators of operator_param list
+  | Remove_operators of operator_param list
+  | Is_operator of is_operator_param
+
+
+(**
+  Allowance permissioning schemas.
+  Spender is a Tezos address which initiates token transfer operation.
+  Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+  Spender, other than the owner, MUST be approved to withdraw specific tokens held
+  by the owner up to the allowance amount.
+
+  The owner does not need to be approved to transfer its own tokens.
+ *)
+
+ type set_allowance_param {
+  owner : address;
+  token_id : token_id;
+  spender : address;
+  prev_allowance : nat;
+  new_allowance : nat;
+ }
+
+ type allowance_id = {
+  owner : address;
+  token_id : token_id;
+  spender : address;
+ }
+
+type get_allowance_response = {
+  allowance_id : allowance_id;
+  allowance : nat;
+}
+
+ type get_allowance_param {
+   allowance_ids : allowance_id list;
+   view : (get_allowance_response list) contract;
+ }
+
+ type fa2_allowance_config_entry_points =
+  | Set_allowance of set_allowance_param list
+  | Get_allowance of get_allowance_param
+
+
+(** 
+  Receiver whitelist permissioning schema.
+  Only addresses which are whitelisted can receive tokens. If one or more `to_`
+  addresses in FA2 transfer batch are not whitelisted the whole transfer operation
+  MUST fail.
+*)
+
+type fa2_whitelist_config_entry_points = 
+  | Add_to_white_list of address list
+  | Remove_from_white_list of address list
