@@ -236,7 +236,7 @@ Every time FA2 performs a transfer it invokes hook contract which may validate a
 transaction and approve it by finishing execution successfully  or reject it by
 failing. Using transfer hook, it is possible to model different transfer permissioning
 schemas like white lists, operator lists etc. Although this approach introduces
-gas consumption overhead by requiring an extra inter-contract call, it has some
+gas consumption overhead (compared to an all-in-one contract) by requiring an extra inter-contract call, it has some
 other advantages:
 
 - FA2 core implementation can be verified once and certain properties (not related
