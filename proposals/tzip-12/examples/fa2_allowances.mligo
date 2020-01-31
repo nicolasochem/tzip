@@ -9,7 +9,7 @@
   The owner does not need to be approved to transfer its own tokens.
  *)
 
-#include "../fa2_interface.mligo"
+#include "hook_lib.mligo"
 
 type global_token_id = {
   token_manager : address;
@@ -88,12 +88,6 @@ let track_allowances (operator : address) (a_tx : allowances * hook_transfer) : 
       let new_a = Big_map.update akey (Some new_allowance) a in
       new_a
 
-
-let get_hook (hook_contract : address) (u : unit) : hook_param contract =
-  let hook_entry : hook_param contract = 
-    Operation.get_entrypoint "%on_transfer_hook" hook_contract in
-  hook_entry
-
 let main (param, s : entry_points * allowances) : (operation list) * allowances =
   match param with
 
@@ -125,11 +119,5 @@ let main (param, s : entry_points * allowances) : (operation list) * allowances 
     ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
-    let hook : unit -> hook_param contract = get_hook Current.self_address in
-    let pp : set_hook_param = {
-      hook = hook;
-      config = Allowance_config Current.self_address;
-    } in
-    let op = Operation.transaction (Set_transfer_hook pp) 0mutez fa2 in
+    let op = create_register_hook_op fa2 (Operator_config Current.self_address) in
     [op], s
-

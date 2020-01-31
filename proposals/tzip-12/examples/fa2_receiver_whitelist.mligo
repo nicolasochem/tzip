@@ -8,7 +8,7 @@ MUST fail.
 
  *)
 
-#include "../fa2_interface.mligo"
+#include "hook_lib.mligo"
 
 
  type entry_points =
@@ -19,11 +19,6 @@ MUST fail.
 
 
 type whitelist = address set
-
-let get_hook (hook_contract : address) (u : unit) : hook_param contract =
-  let hook_entry : hook_param contract = 
-    Operation.get_entrypoint "%on_transfer_hook" hook_contract in
-  hook_entry
 
 let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
   match param with
@@ -48,10 +43,5 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let hook : unit -> hook_param contract = get_hook Current.self_address in
-    let pp : set_hook_param = {
-      hook = hook;
-      config = Whitelist_config Current.self_address;
-    } in
-    let op = Operation.transaction (Set_transfer_hook pp) 0mutez fa2 in
+    let op = create_register_hook_op fa2 (Operator_config Current.self_address) in
     [op], s

@@ -9,7 +9,7 @@
   approved to transfer its own tokens.
  *)
 
-#include "../fa2_interface.mligo"
+#include "hook_lib.mligo"
 
 
  type  entry_points =
@@ -34,11 +34,6 @@ let is_allowed (owner : address) (operator : address) (operators : operators) : 
     if Set.mem operator ops
     then true
     else false
-
-let get_hook (hook_contract : address) (u : unit) : hook_param contract =
-  let hook_entry : hook_param contract = 
-    Operation.get_entrypoint "%on_transfer_hook" hook_contract in
-  hook_entry
 
 let main (param, s : entry_points * operators) : (operation list) * operators =
   match param with
@@ -75,10 +70,5 @@ let main (param, s : entry_points * operators) : (operation list) * operators =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let hook : unit -> hook_param contract = get_hook Current.self_address in
-    let pp : set_hook_param = {
-      hook = hook;
-      config = Operator_config Current.self_address;
-    } in
-    let op = Operation.transaction (Set_transfer_hook pp) 0mutez fa2 in
+    let op = create_register_hook_op fa2 (Operator_config Current.self_address) in
     [op], s
