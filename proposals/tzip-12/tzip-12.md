@@ -130,7 +130,7 @@ type fa2_entry_points =
   | Get_config_entry_points of permission_config contract
 ```
 
-### FA2 permissiniong policies and configuration
+### FA2 permissioning policies and configuration
 
 Often proposed token standards specify either a single policy (like allowances
 in ERC-20) or multiple non-compatible policies (like ERC-777 which has both allowances
