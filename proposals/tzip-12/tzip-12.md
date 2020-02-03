@@ -62,14 +62,14 @@ type transfer = {
 
 type transfer_param = transfer list
 
-type permission_config =
+type permission_policy_config =
   | Custom_config of address
   | Allowance_config of address
   | Operator_config of address
   | Whitelist_config of address
 
 type balance_request = {
-  owner : address;
+  owner : address; 
   token_id : token_id;  
 }
 
@@ -94,7 +94,7 @@ type total_supply_param = {
 }
 
 type token_descriptor = {
-  symbol: string;
+  symbol : string;
   name : string;
   decimals : nat;
   extras : (string, string) map;
@@ -122,12 +122,18 @@ type hook_param = {
   operator : address;
 }
 
+type set_hook_param = {
+  hook : unit -> hook_param contract;
+  config : permission_policy_config;
+}
+
 type fa2_entry_points =
   | Transfer of transfer_param
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_policy of permission_config contract
+  | Get_permissions_policy of permission_policy_config
+  | Set_transfer_hook of set_hook_param
 ```
 
 ### FA2 permissioning policies and configuration
@@ -145,8 +151,8 @@ clients such as wallets. For more details see description of `Get_permissions_po
 entry point.
 
 The particular implementation of FA2 token contract MAY extend one of the standard
-configuration APIs with additional custom entry points. `permission_config` type
-defines all standard config APIs.
+configuration APIs with additional custom entry points. `permission_policy_config`
+type defines all standard config APIs.
 
 #### `custom_config`
 
@@ -285,11 +291,11 @@ and a callback contract `token_descriptor_view` which accepts a list of
 #### `get_permissions_policy`
 
 Get the address of the contract which provides permission configuration entry
-points for the FA2 token contract. The particular option of the `permission_config`
+points for the FA2 token contract. The particular option of the `permission_policy_config`
 type specifies one of the standard config API which MUST be implemented by the
 permission configuration contract.
 
-| `permission_config` option | config entry points type |
+| `permission_policy_config` option | config entry points type |
 | :------------------------- | :----------------------- |
 | `Custom_config`                | `unit` (there are no config entry poinst for this option) |
 | `Allowance_config`         | `fa2_allowance_config_entry_points` |
@@ -371,7 +377,7 @@ FA2 entry point with the following signature:
 ```ocaml
 type set_hook_param = {
   hook : unit -> hook_param contract;
-  config : permission_config;
+  config : permission_policy_config;
 }
 
 Set_transfer_hook of set_hook_param

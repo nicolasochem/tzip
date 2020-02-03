@@ -11,7 +11,7 @@ type transfer = {
 
 type transfer_param = transfer list
 
-type permission_config = 
+type permission_policy_config = 
   | Custom_config of address
   | Allowance_config of address
   | Operator_config of address
@@ -73,7 +73,7 @@ type hook_param = {
 
 type set_hook_param = {
   hook : unit -> hook_param contract;
-  config : permission_config;
+  config : permission_policy_config;
 }
 
 type fa2_entry_points =
@@ -81,7 +81,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_policy of permission_config contract
+  | Get_permissions_policy of permission_policy_config
   | Set_transfer_hook of set_hook_param 
 
 
