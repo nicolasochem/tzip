@@ -62,14 +62,14 @@ type transfer = {
 
 type transfer_param = transfer list
 
-type permission_config = 
+type permission_config =
   | No_config of address
   | Allowance_config of address
   | Operator_config of address
   | Whitelist_config of address
 
 type balance_request = {
-  owner : address; 
+  owner : address;
   token_id : token_id;  
 }
 
@@ -127,7 +127,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_config_entry_points of permission_config contract
+  | Get_permissions_policy of permission_config contract
 ```
 
 ### FA2 permissioning policies and configuration
@@ -141,7 +141,7 @@ FA2 implementation may use different permissioning policies to define who can in
 a transfer and who can receive tokens. This specification defines a set of standard
 configuration APIs. The concrete implementation of FA2 token contract MUST support
 one of the standard config APIs, which can be discovered by FA2 token contract
-clients such as wallets. For more details see description of `Get_config_entry_points`
+clients such as wallets. For more details see description of `Get_permissions_policy`
 entry point.
 
 The particular implementation of FA2 token contract MAY extend one of the standard
@@ -282,7 +282,7 @@ Get the total supply for multiple token types. Accepts a list of `token_id`s
 and a callback contract `token_descriptor_view` which accepts a list of
 `token_descriptor_response` records.
 
-#### `get_config_entry_points`
+#### `get_permissions_policy`
 
 Get the address of the contract which provides permission configuration entry
 points for the FA2 token contract. The particular option of the `permission_config`

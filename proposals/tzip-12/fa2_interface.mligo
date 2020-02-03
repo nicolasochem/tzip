@@ -81,7 +81,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_config_entry_points of permission_config contract
+  | Get_permissions_policy of permission_config contract
   | Set_transfer_hook of set_hook_param 
 
 
