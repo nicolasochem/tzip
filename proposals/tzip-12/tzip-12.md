@@ -63,7 +63,7 @@ type transfer = {
 type transfer_param = transfer list
 
 type permission_config =
-  | No_config of address
+  | Custom_config of address
   | Allowance_config of address
   | Operator_config of address
   | Whitelist_config of address
@@ -148,7 +148,7 @@ The particular implementation of FA2 token contract MAY extend one of the standa
 configuration APIs with additional custom entry points. `permission_config` type
 defines all standard config APIs.
 
-#### `no_config`
+#### `custom_config`
 
 Represent non-configurable FA2 implementation with the following default behavior
 which represents minimal permissioning policy.
@@ -291,7 +291,7 @@ permission configuration contract.
 
 | `permission_config` option | config entry points type |
 | :------------------------- | :----------------------- |
-| `No_config`                | `unit` (there are no config entry poinst for this option) |
+| `Custom_config`                | `unit` (there are no config entry poinst for this option) |
 | `Allowance_config`         | `fa2_allowance_config_entry_points` |
 | `Operator_config`          | `fa2_operator_config_entry_points`  |
 | `Whitelist_config`         | `fa2_whitelist_config_entry_points` |

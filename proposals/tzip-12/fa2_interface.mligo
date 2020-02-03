@@ -12,7 +12,7 @@ type transfer = {
 type transfer_param = transfer list
 
 type permission_config = 
-  | No_config of address
+  | Custom_config of address
   | Allowance_config of address
   | Operator_config of address
   | Whitelist_config of address
