@@ -72,7 +72,7 @@ type hook_param = {
 }
 
 type set_hook_param = {
-  hook : unit -> hook_param contract;
+  hook : address;
   config : permission_policy_config;
 }
 

@@ -376,7 +376,7 @@ FA2 entry point with the following signature:
 
 ```ocaml
 type set_hook_param = {
-  hook : unit -> hook_param contract;
+  hook : address;
   config : permission_policy_config;
 }
 
@@ -386,8 +386,7 @@ Set_transfer_hook of set_hook_param
 FA2 implementation MAY restrict access to this operation to a contract administrator
 address only.
 
-The parameter is a lambda which returns hook contract entry point of
-type `unit -> hook_param contract`
+The parameter is an address plus hook entry point of type `hook_param`.
 
 The transfer hook is always invoked from the `transfer` operation.
 Otherwise, FA2 MUST fail.
