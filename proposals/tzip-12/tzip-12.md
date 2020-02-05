@@ -284,7 +284,7 @@ and a callback contract `total_supply_view` which accepts a list of
 
 #### `token_descriptor`
 
-Get the total supply for multiple token types. Accepts a list of `token_id`s
+Get the metadata for multiple token types. Accepts a list of `token_id`s
 and a callback contract `token_descriptor_view` which accepts a list of
 `token_descriptor_response` records.
 
