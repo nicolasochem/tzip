@@ -433,14 +433,14 @@ This behavior specifies of the token owner can transfer its own tokens.
 
 #### `Operator` Permissioning Behavior
 
-This behavior specifies if tokens transfer can be initiated by someone else than
+This behavior specifies if a tokens transfer can be initiated by someone other than
 token owner (operator).
 
 |  Possible value |  Required config API | Comment |
 | --------------- | -------------------- | ------- |
 | Operator(None)  | No (`Custom_config`) | Nobody can transfer on behalf of the token owner |
 | Operator(Op)    | `Operator_config`    | Each token owner has a list of operators who can transfer on behalf of the token owner. Operator can transfer any tokens and any amount on behalf of the owner |
-| Operator(Allowance) | `Allowance_config` | Each token owner has a list of operators who can transfer on behalf of the token owner. Each operator has allowance for the each token type and amount, it can transfer. |
+| Operator(Allowance) | `Allowance_config` | Each token owner has a list of operators who can transfer on behalf of the token owner. Each operator has allowance for each token type and amount, it can transfer. |
 
 #### `Whitelist` Permissioning Behavior
 
@@ -459,7 +459,7 @@ token receiver addresses only.
 ##### "Owner_hook` permissioning behavior
 
 Token owner contract MAY implement additional hooks which are invoked when tokens
-are send from or receiver to the owner's account. If such a hook is invoked and
+are send from or received to the owner's account. If such a hook is invoked and
 failed, the whole transfer operation MUST fail.
 
 |  Possible value |  Required config API | Comment |
@@ -469,8 +469,8 @@ failed, the whole transfer operation MUST fail.
 | `Owner_hook(Required)` | No (`Custom_config`) | Owner hook is required. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST fail. |
 
 There are two kinds of the owner hook. Sender hook (`Sender_Owner_Hook`) is invoked
-where tokens are transferred **from** the owners account. Receiver hook 
-(`Receiver_Owner_Hook`) is invoked where tokens are transferred **to** the owners
+when tokens are transferred **from** the owners account. Receiver hook 
+(`Receiver_Owner_Hook`) is invoked when tokens are transferred **to** the owners
 account.
 
 ### Permission Policy Formulae
@@ -478,9 +478,9 @@ account.
 Each concrete implementation of the permission policy can be described by a formulate
 listing combination of permission behaviors in the following form:
 
-`Self(?) * Operator(?) * Whitelist(?) * Receiver_owner_hook(?) * Sender_owner_hook(*)`
+`Self(?) * Operator(?) * Whitelist(?) * Receiver_owner_hook(?) * Sender_owner_hook(?)`
 
-or in abbreviated form:
+or in the abbreviated form:
 
 `S(?) * O(?) * WL(?) * ROH(?) * SOW(?)`
 
