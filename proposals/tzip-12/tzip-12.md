@@ -51,7 +51,7 @@ Token contract MUST implement the following entry points (notation is given in
 ```ocaml
 type token_id =
   | Single of unit
-  | Mac of nat
+  | Multi of nat
 
 type transfer = {
   from_ : address;

@@ -1,6 +1,6 @@
 type token_id =
   | Single of unit
-  | Mac of nat
+  | Multi of nat
 
 type transfer = {
   from_ : address;
