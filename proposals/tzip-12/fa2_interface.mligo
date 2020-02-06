@@ -11,14 +11,14 @@ type transfer = {
 
 type transfer_param = transfer list
 
-type permission_policy_config = 
-  | Custom_config of address
+type permission_policy_config =
+  | No_config of address
   | Allowance_config of address
   | Operator_config of address
   | Whitelist_config of address
 
 type balance_request = {
-  owner : address; 
+  owner : address;
   token_id : token_id;  
 }
 
@@ -73,7 +73,7 @@ type hook_param = {
 
 type set_hook_param = {
   hook : address;
-  config : permission_policy_config;
+  config : permission_policy_config list;
 }
 
 type fa2_entry_points =

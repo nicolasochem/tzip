@@ -26,5 +26,5 @@ type  entry_points =
     ([] : operation list),  unit
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (Custom_config Current.self_address) in
+    let op = create_register_hook_op fa2 (No_config Current.self_address) in
     [op], s

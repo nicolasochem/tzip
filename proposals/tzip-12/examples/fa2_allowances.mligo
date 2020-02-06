@@ -119,5 +119,5 @@ let main (param, s : entry_points * allowances) : (operation list) * allowances 
     ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (Operator_config Current.self_address) in
+    let op = create_register_hook_op fa2 (Allowance_config Current.self_address) in
     [op], s

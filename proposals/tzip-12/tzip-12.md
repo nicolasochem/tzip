@@ -63,7 +63,7 @@ type transfer = {
 type transfer_param = transfer list
 
 type permission_policy_config =
-  | Custom_config of address
+  | No_config of address
   | Allowance_config of address
   | Operator_config of address
   | Whitelist_config of address
@@ -123,8 +123,8 @@ type hook_param = {
 }
 
 type set_hook_param = {
-  hook : unit -> hook_param contract;
-  config : permission_policy_config;
+  hook : address;
+  config : permission_policy_config list;
 }
 
 type fa2_entry_points =
@@ -136,7 +136,7 @@ type fa2_entry_points =
   | Set_transfer_hook of set_hook_param
 ```
 
-### FA2 permission policies and configuration
+### FA2 Permission Policies and Configuration
 
 Often proposed token standards specify either a single policy (like allowances
 in ERC-20) or multiple non-compatible policies (like ERC-777 which has both allowances
@@ -153,11 +153,12 @@ implementation of FA2 token contract MUST support one of the standard config API
 which can be discovered by FA2 token contract clients such as wallets. For more
 details see description of `Get_permissions_policy` entry point.
 
-The particular implementation of FA2 token contract MAY extend one of the standard
-configuration APIs with additional custom entry points. `permission_policy_config`
-type defines all standard config APIs.
+`permission_policy_config` type defines all standard config APIs. The particular
+implementation of FA2 token contract MAY extend one of the standard configuration
+APIs with additional custom entry points. Definition and interaction with such
+custom config entry points is out of scope of this standard.
 
-#### `custom_config`
+#### `no_config`
 
 Represent non-configurable FA2 implementation with the following default behavior
 which represents minimal permission policy.
@@ -300,7 +301,7 @@ permission configuration contract.
 
 | `permission_policy_config` option | config entry points type |
 | :------------------------- | :----------------------- |
-| `Custom_config`                | `unit` (there are no config entry poinst for this option) |
+| `No_config`                | `unit` (there are no config entry points for this option) |
 | `Allowance_config`         | `fa2_allowance_config_entry_points` |
 | `Operator_config`          | `fa2_operator_config_entry_points`  |
 | `Whitelist_config`         | `fa2_whitelist_config_entry_points` |
@@ -428,8 +429,8 @@ This behavior specifies of the token owner can transfer its own tokens.
 
 |  Possible value |  Required config API | Comment |
 | --------------- | -------------------- | ------- |
-| `Self(true)`    | No (`Custom_config`) | Token owner can transfer own tokens|
-| `Self(false)`   | No (`Custom_config`) | Token owner cannot transfer own |
+| `Self(true)`    | No (`No_config`) | Token owner can transfer own tokens|
+| `Self(false)`   | No (`No_config`) | Token owner cannot transfer own |
 
 #### `Operator` Permissioning Behavior
 
@@ -438,7 +439,7 @@ token owner (operator).
 
 |  Possible value |  Required config API | Comment |
 | --------------- | -------------------- | ------- |
-| Operator(None)  | No (`Custom_config`) | Nobody can transfer on behalf of the token owner |
+| Operator(None)  | No (`No_config`) | Nobody can transfer on behalf of the token owner |
 | Operator(Op)    | `Operator_config`    | Each token owner has a list of operators who can transfer on behalf of the token owner. Operator can transfer any tokens and any amount on behalf of the owner |
 | Operator(Allowance) | `Allowance_config` | Each token owner has a list of operators who can transfer on behalf of the token owner. Each operator has allowance for each token type and amount, it can transfer. |
 
@@ -449,14 +450,14 @@ owner addresses.
 
 |  Possible value |  Required config API | Comment |
 | --------------- | -------------------- | ------- |
-| `Whitelist(false)` | No (`Custom_config`)  | No whitelisting. Owner's address is not checked against white list |
+| `Whitelist(false)` | No (`No_config`)  | No whitelisting. Owner's address is not checked against white list |
 | `Whilelist(true)` | `Whitelist_config` | If owner's address is not present in the white list, the transfer MUST fail. |
 
 It is possible to have white lists for both token sender and token receiver addresses.
 But for practical reasons this specification limits whitelisting behavior to the
 token receiver addresses only.
 
-##### "Owner_hook` permissioning behavior
+##### "Owner_hook` Permissioning Behavior
 
 Token owner contract MAY implement additional hooks which are invoked when tokens
 are send from or received to the owner's account. If such a hook is invoked and
@@ -464,9 +465,9 @@ failed, the whole transfer operation MUST fail.
 
 |  Possible value |  Required config API | Comment |
 | --------------- | -------------------- | ------- |
-| `Owner_hook(None)` | No (`Custom_config`) | Permission policy does not invoke owner's hooks and does not check if token owner address implements owner hook API |
-| `Owner_hook(Optional)` | No (`Custom_config`) | Owner hook is optional. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST continue. |
-| `Owner_hook(Required)` | No (`Custom_config`) | Owner hook is required. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST fail. |
+| `Owner_hook(None)` | No (`No_config`) | Permission policy does not invoke owner's hooks and does not check if token owner address implements owner hook API |
+| `Owner_hook(Optional)` | No (`No_config`) | Owner hook is optional. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST continue. |
+| `Owner_hook(Required)` | No (`No_config`) | Owner hook is required. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST fail. |
 
 There are two kinds of the owner hook. Sender hook (`Sender_Owner_Hook`) is invoked
 when tokens are transferred **from** the owners account. Receiver hook 
@@ -503,7 +504,7 @@ Any address can be a recipient of the token transfer.
 
 [Hook contract](./examples/fa2_default.mligo)
 
-#### Transfer allowances
+#### Transfer Allowances
 
 This is a sample implementation of the FA2 transfer hook which supports transfer
 allowances for token spenders.
@@ -520,7 +521,7 @@ Permission policy formula `S(true) * O(Allowance) * WL(false) * ROH(None) * SOH(
 
 [Hook contract](./examples/fa2_allowances.mligo)
 
-#### Transfer operators
+#### Transfer Operators
 
 This is a sample implementation of the FA2 transfer hook which supports transfer
 operators.
@@ -537,7 +538,7 @@ Permission policy formula `S(true) * O(Op) * WL(false) * ROH(None) * SOH(None)`.
 
 [Hook contract](./examples/fa2_operators.mligo)
 
-#### Receiver whitelisting
+#### Receiver Whitelisting
 
 This is a sample implementation of the FA2 transfer hook which supports receiver
 whitelist.
