@@ -9,12 +9,12 @@ Any address can be a recipient of the token transfer
 #include "hook_lib.mligo"
 
 type  entry_points =
-  | On_transfer_hook of hook_param
+  | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
  let main (param, s : entry_points * unit) : (operation list) * unit =
   match param with
-  | On_transfer_hook p ->
+  | Tokens_transferred_hook p ->
     let u = List.iter ( fun (tx : hook_transfer) ->
       match tx.from_ with
       | None -> unit
@@ -26,5 +26,5 @@ type  entry_points =
     ([] : operation list),  unit
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (No_config Current.self_address) in
+    let op = create_register_hook_op fa2 (None : permission_policy_config option) in
     [op], s

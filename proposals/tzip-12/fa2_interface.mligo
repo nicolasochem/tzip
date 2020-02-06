@@ -11,11 +11,16 @@ type transfer = {
 
 type transfer_param = transfer list
 
+type custom_config_param = {
+  entrypoint : address;
+  tag : string;
+}
+
 type permission_policy_config =
-  | No_config of address
   | Allowance_config of address
   | Operator_config of address
   | Whitelist_config of address
+  | Custom_config of custom_config_param
 
 type balance_request = {
   owner : address;
@@ -82,6 +87,7 @@ type fa2_entry_points =
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
   | Get_permissions_policy of permission_policy_config
+  (* Recommended design pattern. Not part of FA2 standard. *)
   | Set_transfer_hook of set_hook_param 
 
 

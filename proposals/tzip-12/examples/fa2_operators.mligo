@@ -15,7 +15,7 @@
  type  entry_points =
   | Add_operator of address
   | Remove_operator of address
-  | On_transfer_hook of hook_param
+  | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
 
@@ -57,7 +57,7 @@ let main (param, s : entry_points * operators) : (operation list) * operators =
     let new_s = Big_map.update owner (Some new_ops) s in
     ([] : operation list),  new_s
   
-  | On_transfer_hook p ->
+  | Tokens_transferred_hook p ->
     let u = List.iter (fun (tx : hook_transfer) ->
       let allowed = match tx.from_ with
       | None -> true
@@ -70,5 +70,5 @@ let main (param, s : entry_points * operators) : (operation list) * operators =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (Operator_config Current.self_address) in
+    let op = create_register_hook_op fa2 (Some (Operator_config Current.self_address)) in
     [op], s

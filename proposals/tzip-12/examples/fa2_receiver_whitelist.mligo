@@ -14,7 +14,7 @@ MUST fail.
  type entry_points =
   | Add_receiver of address
   | Remove_receiver of address
-  | On_admin_hook of hook_param
+  | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
 
@@ -30,7 +30,7 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     let new_s = Set.remove op s in
     ([] : operation list),  new_s
 
-  | On_admin_hook p ->
+  | Tokens_transferred_hook p ->
     let u = List.iter (fun (tx : hook_transfer) ->
       let allowed = match tx.to_ with
       | None -> true
@@ -43,5 +43,5 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (Whitelist_config Current.self_address) in
+    let op = create_register_hook_op fa2 (Some (Whitelist_config Current.self_address)) in
     [op], s

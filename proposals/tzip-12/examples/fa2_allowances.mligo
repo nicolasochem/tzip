@@ -43,7 +43,7 @@ type view_allowance_param = {
 type  entry_points =
   | Change_allowance of change_allowance_param
   | View_allowance of view_allowance_param
-  | On_transfer_hook of hook_param
+  | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
 (**
@@ -114,10 +114,10 @@ let main (param, s : entry_points * allowances) : (operation list) * allowances 
     let op = Operation.transaction resp 0mutez p.view in
     [op], s
 
-  | On_transfer_hook p ->
+  | Tokens_transferred_hook p ->
     let new_s = List.fold (track_allowances p.operator) p.batch s in
     ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (Allowance_config Current.self_address) in
+    let op = create_register_hook_op fa2 (Some (Allowance_config Current.self_address)) in
     [op], s
