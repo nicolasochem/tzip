@@ -399,7 +399,7 @@ For more details see "Transfer Hook Specification" section.
 
 ## The Taxonomy of Permission Policy
 
-Permission policy semantics can be broken into several orthogonal behavior patterns.
+Permission policy semantics can be broken down into several orthogonal behavior patterns.
 The concrete policy can be expressed as a combination of those behaviors. The standard
 itself cannot enforce and/or validate the particular permission policy implementation,
 but the proposed taxonomy framework can guide the implementation of permission
