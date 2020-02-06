@@ -484,10 +484,10 @@ or in the abbreviated form:
 
 `S(?) * O(?) * WL(?) * ROH(?) * SOW(?)`
 
-For instance, `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)` formulae
+For instance, `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)` formula
 describes the policy which allows only token owners to transfer their own tokens.
 
-`S(false) * O(None) * WL(false) * ROH(None) * ROH(None)` formulae represents
+`S(false) * O(None) * WL(false) * ROH(None) * ROH(None)` formula represents
 non-transferable token (neither token owner, nor operators can transfer tokens).
 
 ### Transfer Hook Examples
@@ -497,7 +497,7 @@ non-transferable token (neither token owner, nor operators can transfer tokens).
 Only token owner can initiate a transfer of tokens from their accounts
 ( `from_` MUST be equal to `SENDER`). 
 
-Permission policy formulae `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)`.
+Permission policy formula `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)`.
 
 Any address can be a recipient of the token transfer.
 
@@ -516,7 +516,7 @@ by the owner up to the allowance amount.
 Only token owner can set allowances for specific token types and spenders.
 The owner does not need to be approved to transfer its own tokens.
 
-Permission policy formulae `S(true) * O(Allowance) * WL(false) * ROH(None) * SOH(None)`.
+Permission policy formula `S(true) * O(Allowance) * WL(false) * ROH(None) * SOH(None)`.
 
 [Hook contract](./examples/fa2_allowances.mligo)
 
@@ -533,7 +533,7 @@ the owner to make a transfer from the owner account.
 Only token owner can add or remove its operators. The owner does not need to be
 approved to transfer its own tokens.
 
-Permission policy formulae `S(true) * O(Op) * WL(false) * ROH(None) * SOH(None)`.
+Permission policy formula `S(true) * O(Op) * WL(false) * ROH(None) * SOH(None)`.
 
 [Hook contract](./examples/fa2_operators.mligo)
 
@@ -546,6 +546,6 @@ Only addresses which are whitelisted can receive tokens. If one or more `to_`
 addresses in FA2 transfer batch are not whitelisted the whole transfer operation
 MUST fail.
 
-Permission policy formulae `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`.
+Permission policy formula `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`.
 
 [Hook contract](./examples/fa2_receiver_whitelist.mligo)
