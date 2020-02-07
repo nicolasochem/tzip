@@ -62,6 +62,17 @@ type transfer = {
 
 type transfer_param = transfer list
 
+type custom_config_param = {
+  entrypoint : address;
+  tag : string;
+}
+
+type permission_policy_config =
+  | Allowances_config of address
+  | Operators_config of address
+  | Whitelist_config of address
+  | Custom_config of custom_config_param
+
 type balance_request = {
   owner : address;
   token_id : token_id;  
@@ -102,34 +113,6 @@ type token_descriptor_response = {
 type token_descriptor_param = {
   token_ids : token_id list;
   token_descriptor_view : (token_descriptor_response list) contract
-}
-
-type hook_transfer = {
-  from_ : address option;
-  to_ : address option;
-  token_id : token_id;
-  amount : nat;
-}
-
-type hook_param = {
-  batch : hook_transfer list;
-  operator : address;
-}
-
-type custom_config_param = {
-  entrypoint : address;
-  tag : string;
-}
-
-type permission_policy_config =
-  | Allowances_config of (fa2_allowances_config_entry_points contract)
-  | Operators_config of (fa2_operators_config_entry_points contract)
-  | Whitelist_config of (fa2_whitelist_config_entry_points contract)
-  | Custom_config of custom_config_param
-
-type set_hook_param = {
-  hook : address;
-  config : permission_policy_config list;
 }
 
 type fa2_entry_points =
@@ -216,7 +199,7 @@ Config API provides the following entry points:
 ```ocaml
 type operator_param = {
   owner : address;
-  operator : address; 
+  operator : address;
 }
 
 type is_operator_response = {
@@ -302,8 +285,8 @@ permission configuration contract.
 
 | `permission_policy_config` option | config entry points type |
 | :------------------------- | :----------------------- |
-| `Allowance_config`         | `fa2_allowance_config_entry_points` |
-| `Operator_config`          | `fa2_operator_config_entry_points`  |
+| `Allowances_config`         | `fa2_allowances_config_entry_points` |
+| `Operators_config`          | `fa2_operators_config_entry_points`  |
 | `Whitelist_config`         | `fa2_whitelist_config_entry_points` |
 | `Custom_config`            | Not specified                       |
 
@@ -380,6 +363,18 @@ hook as well.
 FA2 entry point with the following signature:
 
 ```ocaml
+type hook_transfer = {
+  from_ : address option;
+  to_ : address option;
+  token_id : token_id;
+  amount : nat;
+}
+
+type hook_param = {
+  batch : hook_transfer list;
+  operator : address;
+}
+
 type set_hook_param = {
   hook : address;
   config : permission_policy_config;

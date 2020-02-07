@@ -13,7 +13,7 @@
 
 
  type  entry_points =
-  | Operators_config of fa2_operators_config_entry_points
+  | Operators of fa2_operators_config_entry_points
   | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
@@ -87,7 +87,7 @@ let config_operators (param : fa2_operators_config_entry_points) (s : operators)
 
 let main (param, s : entry_points * operators) : (operation list) * operators =
   match param with  
-  | Operators_config oc -> config_operators oc s
+  | Operators oc -> config_operators oc s
   
   | Tokens_transferred_hook p ->
     let u = List.iter (fun (tx : hook_transfer) ->
@@ -102,8 +102,5 @@ let main (param, s : entry_points * operators) : (operation list) * operators =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let config_entrypoint : fa2_operators_config_entry_points contract =
-      Operation.get_entrypoint "%operators_config" Current.self_address in
-    let config = Operators_config config_entrypoint in
-    let op = create_register_hook_op fa2 [config] in
+    let op = create_register_hook_op fa2 [Operators_config Current.self_address] in
     [op], s

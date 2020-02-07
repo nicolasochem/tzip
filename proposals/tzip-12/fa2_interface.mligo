@@ -11,6 +11,17 @@ type transfer = {
 
 type transfer_param = transfer list
 
+type custom_config_param = {
+  entrypoint : address;
+  tag : string;
+}
+
+type permission_policy_config =
+  | Allowances_config of address
+  | Operators_config of address
+  | Whitelist_config of address
+  | Custom_config of custom_config_param
+
 type balance_request = {
   owner : address;
   token_id : token_id;  
@@ -64,6 +75,23 @@ type hook_param = {
   batch : hook_transfer list;
   operator : address;
 }
+
+type set_hook_param = {
+  hook : address;
+  config : permission_policy_config list;
+}
+
+type fa2_entry_points =
+  | Transfer of transfer_param
+  | Balance_of of balance_of_param
+  | Total_supply of total_supply_param
+  | Token_descriptor of token_descriptor_param
+  | Get_permissions_policy of permission_policy_config
+  (* Recommended design pattern. Not part of FA2 standard. *)
+  | Set_transfer_hook of set_hook_param 
+
+
+(** Different permissioning policy interfaces *)
 
 (** Different permissioning policy interfaces *)
 
@@ -146,28 +174,3 @@ type get_allowance_response = {
 type fa2_whitelist_config_entry_points = 
   | Add_to_white_list of address list
   | Remove_from_white_list of address list
-
-type custom_config_param = {
-  entrypoint : address;
-  tag : string;
-}
-
-type permission_policy_config =
-  | Allowances_config of (fa2_allowances_config_entry_points contract)
-  | Operators_config of (fa2_operators_config_entry_points contract)
-  | Whitelist_config of (fa2_whitelist_config_entry_points contract)
-  | Custom_config of custom_config_param
-
-type set_hook_param = {
-  hook : address;
-  config : permission_policy_config list;
-}
-
-type fa2_entry_points =
-  | Transfer of transfer_param
-  | Balance_of of balance_of_param
-  | Total_supply of total_supply_param
-  | Token_descriptor of token_descriptor_param
-  | Get_permissions_policy of permission_policy_config
-  (* Recommended design pattern. Not part of FA2 standard. *)
-  | Set_transfer_hook of set_hook_param 

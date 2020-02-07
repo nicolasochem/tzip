@@ -12,7 +12,7 @@ MUST fail.
 
 
  type entry_points =
-  | Whitelist_config of fa2_whitelist_config_entry_points
+  | Whitelist of fa2_whitelist_config_entry_points
   | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
@@ -32,7 +32,7 @@ let config_whitelist (param : fa2_whitelist_config_entry_points) (s : whitelist)
 
 let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
   match param with
-  | Whitelist_config p -> config_whitelist p s
+  | Whitelist p -> config_whitelist p s
 
   | Tokens_transferred_hook p ->
     let u = List.iter (fun (tx : hook_transfer) ->
@@ -47,8 +47,5 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let config_entrypoint : fa2_whitelist_config_entry_points contract =
-      Operation.get_entrypoint "%whitelist_config" Current.self_address in
-    let config = Whitelist_config config_entrypoint in
-    let op = create_register_hook_op fa2 [config] in
+    let op = create_register_hook_op fa2 [Whitelist_config Current.self_address] in
     [op], s

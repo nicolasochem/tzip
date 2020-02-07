@@ -13,7 +13,7 @@
 
 
 type  entry_points =
-  | Allowances_config of fa2_allowances_config_entry_points
+  | Allowances of fa2_allowances_config_entry_points
   | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
@@ -90,15 +90,12 @@ let config_allowances (param : fa2_allowances_config_entry_points) (s : allowanc
 let main (param, s : entry_points * allowances) : (operation list) * allowances =
   match param with
 
-  | Allowances_config p -> config_allowances p s
+  | Allowances p -> config_allowances p s
 
   | Tokens_transferred_hook p ->
     let new_s = List.fold (track_allowances p.operator) p.batch s in
     ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
-    let config_entrypoint : fa2_allowances_config_entry_points contract =
-      Operation.get_entrypoint "%allowances_config" Current.self_address in
-    let config = Allowances_config config_entrypoint in
-    let op = create_register_hook_op fa2 [config] in
+    let op = create_register_hook_op fa2 [Allowances_config Current.self_address] in
     [op], s
