@@ -13,8 +13,7 @@
 
 
  type  entry_points =
-  | Add_operator of address
-  | Remove_operator of address
+  | Operators_config of fa2_operators_config_entry_points
   | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
@@ -35,27 +34,60 @@ let is_allowed (owner : address) (operator : address) (operators : operators) : 
     then true
     else false
 
-let main (param, s : entry_points * operators) : (operation list) * operators =
-  match param with
-  | Add_operator operator ->
-    let owner = Current.sender in
-    let ops = match Big_map.find_opt owner s with
-    | Some os -> os
-    | None -> (Set.empty : address set)
-    in
-    let new_ops = Set.add operator ops in
-    let new_s = Big_map.update owner (Some new_ops) s in
-    ([] : operation list),  new_s
+let validate_owner_and_get_operators (owner : address) (ops : operator_param list)
+    (s : operators) : address set =
+  let u = List.iter (fun (op : operator_param) ->
+    if op.owner = owner
+    then unit
+    else failwith "only token owner can modify its operators") ops in
+  match Big_map.find_opt owner s with
+  | Some os -> os
+  | None -> (Set.empty : address set)
 
-  | Remove_operator operator ->
+let config_operators (param : fa2_operators_config_entry_points) (s : operators)
+    : (operation list) * operators =
+  match param with
+  | Add_operators p ->
     let owner = Current.sender in
-    let ops = match Big_map.find_opt owner s with
-    | Some os -> os
-    | None -> (Set.empty : address set)
-    in
-    let new_ops = Set.remove operator ops in
+    let ops = validate_owner_and_get_operators owner p s in
+    let new_ops = List.fold 
+      (fun (so, cur : (address set) * operator_param) 
+        -> Set.add cur.operator so)
+      p ops  in
     let new_s = Big_map.update owner (Some new_ops) s in
-    ([] : operation list),  new_s
+    ([] : operation list), new_s
+
+  | Remove_operators p ->
+    let owner = Current.sender in
+    let ops = validate_owner_and_get_operators owner p s in
+    let new_ops = List.fold 
+      (fun (so, cur : (address set) * operator_param) 
+        -> Set.remove cur.operator so)
+      p ops  in
+    let new_s = Big_map.update owner (Some new_ops) s in
+    ([] : operation list), new_s
+
+  | Is_operator p ->
+    let r : is_operator_response list = List.map 
+      (fun (op : operator_param) ->
+        let is_op = match Big_map.find_opt op.owner s with
+        | None -> false
+        | Some ops -> Set.mem op.operator ops
+        in 
+        let resp : is_operator_response = { 
+          operator = op;
+          is_operator = is_op;
+        } in
+        resp
+      )
+      p.operators in
+      let view_op = Operation.transaction r 0mutez p.view in
+      [view_op], s
+      (* ([] : operation list), s *)
+
+let main (param, s : entry_points * operators) : (operation list) * operators =
+  match param with  
+  | Operators_config oc -> config_operators oc s
   
   | Tokens_transferred_hook p ->
     let u = List.iter (fun (tx : hook_transfer) ->
@@ -70,5 +102,8 @@ let main (param, s : entry_points * operators) : (operation list) * operators =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (Some (Operator_config Current.self_address)) in
+    let config_entrypoint : fa2_operators_config_entry_points contract =
+      Operation.get_entrypoint "%operators_config" Current.self_address in
+    let config = Operators_config config_entrypoint in
+    let op = create_register_hook_op fa2 [config] in
     [op], s

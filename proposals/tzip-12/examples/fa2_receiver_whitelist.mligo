@@ -12,23 +12,27 @@ MUST fail.
 
 
  type entry_points =
-  | Add_receiver of address
-  | Remove_receiver of address
+  | Whitelist_config of fa2_whitelist_config_entry_points
   | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_entry_points contract
 
 
 type whitelist = address set
 
+let config_whitelist (param : fa2_whitelist_config_entry_points) (s : whitelist)
+    : (operation list) * whitelist =
+  match param with
+  | Add_to_white_list owners ->
+    let new_s = List.fold (fun (w, cur : whitelist * address) -> Set.add cur w) owners s in
+    ([] : operation list), new_s
+
+  | Remove_from_white_list owners ->
+    let new_s = List.fold (fun (w, cur : whitelist * address) -> Set.remove cur w) owners s in
+    ([] : operation list), new_s
+
 let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
   match param with
-  | Add_receiver op -> 
-    let new_s = Set.add op s in
-    ([] : operation list),  new_s
-
-  | Remove_receiver op ->
-    let new_s = Set.remove op s in
-    ([] : operation list),  new_s
+  | Whitelist_config p -> config_whitelist p s
 
   | Tokens_transferred_hook p ->
     let u = List.iter (fun (tx : hook_transfer) ->
@@ -43,5 +47,8 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (Some (Whitelist_config Current.self_address)) in
+    let config_entrypoint : fa2_whitelist_config_entry_points contract =
+      Operation.get_entrypoint "%whitelist_config" Current.self_address in
+    let config = Whitelist_config config_entrypoint in
+    let op = create_register_hook_op fa2 [config] in
     [op], s

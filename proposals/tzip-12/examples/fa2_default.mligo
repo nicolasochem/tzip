@@ -26,5 +26,5 @@ type  entry_points =
     ([] : operation list),  unit
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 (None : permission_policy_config option) in
+    let op = create_register_hook_op fa2 ([] : permission_policy_config list) in
     [op], s

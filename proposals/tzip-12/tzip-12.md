@@ -62,17 +62,6 @@ type transfer = {
 
 type transfer_param = transfer list
 
-type custom_config_param = {
-  entrypoint : address;
-  tag : string;
-}
-
-type permission_policy_config =
-  | Allowance_config of address
-  | Operator_config of address
-  | Whitelist_config of address
-  | Custom_config of custom_config_param
-
 type balance_request = {
   owner : address;
   token_id : token_id;  
@@ -127,6 +116,17 @@ type hook_param = {
   operator : address;
 }
 
+type custom_config_param = {
+  entrypoint : address;
+  tag : string;
+}
+
+type permission_policy_config =
+  | Allowances_config of (fa2_allowances_config_entry_points contract)
+  | Operators_config of (fa2_operators_config_entry_points contract)
+  | Whitelist_config of (fa2_whitelist_config_entry_points contract)
+  | Custom_config of custom_config_param
+
 type set_hook_param = {
   hook : address;
   config : permission_policy_config list;
@@ -174,18 +174,17 @@ The owner does not need to be approved to transfer its own tokens.
 Config API provides the following entry points:
 
 ```ocaml
-type set_allowance_param = {
-  owner : address;
-  token_id : token_id;
-  spender : address;
-  prev_allowance : nat;
-  new_allowance : nat;
- }
-
  type allowance_id = {
   owner : address;
   token_id : token_id;
+  token_manager : address;
   spender : address;
+ }
+
+ type set_allowance_param = {
+  allowance_id : allowance_id;
+  prev_allowance : nat;
+  new_allowance : nat;
  }
 
 type get_allowance_response = {
@@ -198,9 +197,9 @@ type get_allowance_response = {
    view : (get_allowance_response list) contract;
  }
 
- type fa2_allowance_config_entry_points =
-  | Set_allowance of set_allowance_param list
-  | Get_allowance of get_allowance_param
+ type fa2_allowances_config_entry_points =
+  | Set_allowances of set_allowance_param list
+  | Get_allowances of get_allowance_param
 ```
 
 #### `operator_config`
@@ -217,7 +216,7 @@ Config API provides the following entry points:
 ```ocaml
 type operator_param = {
   owner : address;
-  operator : address;
+  operator : address; 
 }
 
 type is_operator_response = {
@@ -226,11 +225,11 @@ type is_operator_response = {
 }
 
 type is_operator_param = {
-  operator : operator_param list;
+  operators : operator_param list;
   view : (is_operator_response list) contract;
 }
 
-type fa2_operator_config_entry_points =
+type fa2_operators_config_entry_points =
   | Add_operators of operator_param list
   | Remove_operators of operator_param list
   | Is_operator of is_operator_param
