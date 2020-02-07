@@ -97,5 +97,8 @@ let main (param, s : entry_points * allowances) : (operation list) * allowances 
     ([] : operation list),  new_s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 [Allowances_config Current.self_address] in
+    let c : fa2_allowances_config_entry_points contract = 
+      Operation.get_entrypoint "%allowances" Current.self_address in
+    let config_address = Current.address c in
+    let op = create_register_hook_op fa2 [Allowances_config config_address] in
     [op], s

@@ -47,5 +47,8 @@ let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
     ([] : operation list),  s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 [Whitelist_config Current.self_address] in
+    let c : fa2_whitelist_config_entry_points contract = 
+      Operation.get_entrypoint "%whitelist" Current.self_address in
+    let config_address = Current.address c in
+    let op = create_register_hook_op fa2 [Whitelist_config config_address] in
     [op], s
