@@ -71,12 +71,10 @@ type fa2_entry_points =
   | Token_descriptor of token_descriptor_param
   | Get_permissions_policy of permission_policy_config
 
-(** Different permissioning policy interfaces *)
-
-(** Different permissioning policy interfaces *)
+(** Different permission policy interfaces *)
 
 (**
-  Operator permissioning policy.
+  Operator permission policy.
   Operator is a Tezos address which initiates token transfer operation.
   Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
   Operator, other than the owner, MUST be approved to manage all tokens held by
@@ -107,7 +105,7 @@ type fa2_operators_config_entry_points =
 
 
 (**
-  Allowance permissioning policy.
+  Allowance permission policy.
   Spender is a Tezos address which initiates token transfer operation.
   Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
   Spender, other than the owner, MUST be approved to withdraw specific tokens held
@@ -145,7 +143,7 @@ type get_allowance_response = {
 
 
 (** 
-  Receiver whitelist permissioning policy.
+  Receiver whitelist permission policy.
   Only addresses which are whitelisted can receive tokens. If one or more `to_`
   addresses in FA2 transfer batch are not whitelisted the whole transfer operation
   MUST fail.
