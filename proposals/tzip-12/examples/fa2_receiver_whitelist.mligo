@@ -14,7 +14,7 @@ MUST fail.
  type entry_points =
   | Whitelist of fa2_whitelist_config_entry_points
   | Tokens_transferred_hook of hook_param
-  | Register_with_fa2 of fa2_entry_points contract
+  | Register_with_fa2 of fa2_with_hook_entry_points contract
 
 
 type whitelist = address set

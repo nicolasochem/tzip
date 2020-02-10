@@ -15,7 +15,7 @@
 type  entry_points =
   | Allowances of fa2_allowances_config_entry_points
   | Tokens_transferred_hook of hook_param
-  | Register_with_fa2 of fa2_entry_points contract
+  | Register_with_fa2 of fa2_with_hook_entry_points contract
 
 (**
 This will not work with babylon/LIGO since `allowance_key` is a composite
