@@ -220,7 +220,7 @@ type fa2_operators_config_entry_points =
 
 #### `whitelist_config`
 
-Only addresses which are whitelisted can receive tokens. If one or more `to_`
+Allows a whitelisting policy (i.e. who can receive tokens). If one or more `to_`
 addresses in FA2 transfer batch are not whitelisted the whole transfer operation
 MUST fail.
 
