@@ -120,7 +120,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_policy of permission_policy_config
+  | Get_permissions_policy of ((permission_policy_config list) contract)
 ```
 
 ### FA2 Permission Policies and Configuration
@@ -281,7 +281,10 @@ and a callback contract `token_descriptor_view` which accepts a list of
 Get the address of the contract which provides permission configuration API for
 the FA2 token contract. The particular option of the `permission_policy_config`
 type specifies one of the standard config API which MUST be implemented by the
-permission configuration contract.
+permission configuration contract. Since single FA2 token contract may support
+more than one orthogonal config APIs simultaneously, `get_permissions_policy`
+parameter has type `((permission_policy_config list) contract)` - view contract
+which accepts a list of supported config APIs.
 
 | `permission_policy_config` option | config entry points type |
 | :------------------------- | :----------------------- |

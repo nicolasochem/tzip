@@ -69,7 +69,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_policy of permission_policy_config
+  | Get_permissions_policy of ((permission_policy_config list) contract)
 
 (** Different permission policy interfaces *)
 
