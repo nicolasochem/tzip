@@ -149,6 +149,17 @@ type get_allowance_response = {
   MUST fail.
 *)
 
+type is_whitelisted_response = {
+  owner : address;
+  is_whitelisted : bool;
+}
+
+type is_whitelisted_param = {
+  owners : address list;
+  whitelist_view : ((is_whitelisted_response list) contract);
+}
+
 type fa2_whitelist_config_entry_points = 
   | Add_to_white_list of address list
   | Remove_from_white_list of address list
+  | Is_whitelisted of is_whitelisted_param

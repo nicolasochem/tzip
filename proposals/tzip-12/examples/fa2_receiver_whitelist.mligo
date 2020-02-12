@@ -30,6 +30,17 @@ let config_whitelist (param : fa2_whitelist_config_entry_points) (s : whitelist)
     let new_s = List.fold (fun (w, cur : whitelist * address) -> Set.remove cur w) owners s in
     ([] : operation list), new_s
 
+  | Is_whitelisted p ->
+    let responses : is_whitelisted_response list =
+      List.map (fun (owner : address) -> 
+        { 
+          owner = owner; 
+          is_whitelisted = Set.mem owner s; 
+        })
+      p.owners in
+    let op = Operation.transaction responses 0mutez p.whitelist_view in
+    [op], s
+
 let main (param, s : entry_points * whitelist) : (operation list) * whitelist =
   match param with
   | Whitelist p -> config_whitelist p s

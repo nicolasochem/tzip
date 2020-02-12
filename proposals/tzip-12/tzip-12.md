@@ -18,20 +18,22 @@ approval policies.
 
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. A variety of
-permission policies can be used to define how many tokens can be transferred, who can initiate a transfer, and who
-can receive tokens. A token contract can be designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple
-token types (e.g. ERC-1155) to optimize batch transfer and atomic swaps of the tokens. 
+permission policies can be used to define how many tokens can be transferred,
+who can initiate a transfer, and who can receive tokens. A token contract can be
+designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple
+token types (e.g. ERC-1155) to optimize batch transfer and atomic swaps of the
+tokens.
 
-Such considerations can easily lead to the proliferation of many token standard proposals, each
-optimized for a particular token type or use case. This dynamic is apparent in
-the Ethereum ecosystem, where many standards have been proposed but ERC-20
-(fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
+Such considerations can easily lead to the proliferation of many token standard
+proposals, each optimized for a particular token type or use case. This dynamic
+is apparent in the Ethereum ecosystem, where many standards have been proposed but
+ERC-20 (fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
 
 Token wallets, token exchanges, and other clients then need to support multiple
 standards and multiple token APIs. This standard proposes a unified token contract
 interface which accommodates all mentioned concerns. It aims to provide significant
-expressivity to contract developers to create new types of tokens while maintaining a common
-interface standard for wallet integrators and external developers.
+expressivity to contract developers to create new types of tokens while maintaining
+a common interface standard for wallet integrators and external developers.
 
 ## Specification
 
@@ -47,7 +49,8 @@ only a single token type, the batch may contain single or multiple entries where
 token id will always be fixed `Single unit` value.
 
 Token contract MUST implement the following entry points. Notation is given in
-[cameLIGO language](https://ligolang.org) for readability but a Michelson interface will also be provided:
+[cameLIGO language](https://ligolang.org) for readability but a Michelson interface
+will also be provided:
 
 ```ocaml
 type token_id =
@@ -131,17 +134,18 @@ in ERC-20) or multiple non-compatible policies (e.g. ERC-777 which has both allo
 and operator APIs and two versions of the transfer entry point, one which invokes
 sender/receiver hooks and one which does not).
 
-FA2 offers an a set of *permission policies* by which to define 
-who can initiate a transfer, how much can be transferred, and who can receive tokens.
+FA2 offers an a set of *permission policies* by which to define who can initiate
+a transfer, how much can be transferred, and who can receive tokens.
 
-A particular permission policy defines the semantics (logic which defines if a transfer operation permitted or not) and
-MAY require additional data (like operators and allowances). If the permission policy
-requires additional data, it also requires the standard configuration API to manage that data.
+A particular permission policy defines the semantics (logic which defines if a
+transfer operation permitted or not) and MAY require additional data (like operators
+and allowances). If the permission policy requires additional data, it also requires
+the standard configuration API to manage that data.
 
 This specification defines a set of standard configuration APIs. The concrete
-implementation of FA2 token contract MUST support one of the standard configuration APIs,
-which can be discovered by FA2 token contract clients such as wallets. For greater
-detail, see description of `Get_permissions_policy` entry point.
+implementation of FA2 token contract MUST support one of the standard configuration
+APIs, which can be discovered by FA2 token contract clients such as wallets.
+For greater detail, see description of `Get_permissions_policy` entry point.
 
 `permission_policy_config` type defines all standard config APIs. The particular
 implementation of FA2 token contract MAY extend one of the standard configuration
@@ -230,9 +234,20 @@ MUST fail.
 Config API provides the following entry points:
 
 ```ocaml
+type is_whitelisted_response = {
+  owner : address;
+  is_whitelisted : bool;
+}
+
+type is_whitelisted_param = {
+  owners : address list;
+  whitelist_view : ((is_whitelisted_response list) contract);
+}
+
 type fa2_whitelist_config_entry_points =
   | Add_to_white_list of address list
   | Remove_from_white_list of address list
+  | Is_whitelisted of is_whitelisted_param
 ```
 
 #### `custom_config`
