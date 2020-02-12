@@ -9,19 +9,20 @@ created: 2020-01-24
 
 ## Summary
 
-This document proposes a standard for a unified token contract interface to support
-different token types and/or token contract implementations.
+This document proposes a standard for a unified token contract interface, supporting
+a wide range of token types and implementations.
 This standard focuses on token transfer semantics and support for various transfer
 approval policies.
 
 ## Abstract
 
 There are multiple dimensions and considerations while implementing a particular
-token smart contract. Tokens might be fungible or non-fungible. Different
-permission policies can be used to define who can initiate a transfer and who
-can receive tokens. A token contract can support a single token type or multiple
-token types to optimize batch transfer and atomic swaps of the tokens. Those
-considerations can lead to the proliferation of multiple token standards, each
+token smart contract. Tokens might be fungible or non-fungible. A variety of
+permission policies can be used to define how many tokens can be transferred, who can initiate a transfer, and who
+can receive tokens. A token contract can be designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple
+token types (e.g. ERC-1155) to optimize batch transfer and atomic swaps of the tokens. 
+
+Such considerations can easily lead to the proliferation of many token standard proposals, each
 optimized for a particular token type or use case. This dynamic is apparent in
 the Ethereum ecosystem, where many standards have been proposed but ERC-20
 (fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
@@ -29,24 +30,24 @@ the Ethereum ecosystem, where many standards have been proposed but ERC-20
 Token wallets, token exchanges, and other clients then need to support multiple
 standards and multiple token APIs. This standard proposes a unified token contract
 interface which accommodates all mentioned concerns. It aims to provide significant
-expressivity to developers to create new types of tokens while maintaining a common
-interface standard for wallet integrations and other external developers.
+expressivity to contract developers to create new types of tokens while maintaining a common
+interface standard for wallet integrators and external developers.
 
 ## Specification
 
 Token type is uniquely identified by a pair of the token contract address and
 token id. If the underlying contract implementation supports only a single
-token type (ERC-20-like contract), token id is represented by `unit`. If the
+token type (e.g. ERC-20-like contract), token id is represented by `unit`. If the
 underlying contract implementation supports multiple tokens (in a Multi-Asset
 Contract or MAC), token id is represented by `nat`.
 
-All entry points are batch operations which allow to query or transfer multiple
+All entry points are batch operations which allow querying or transfer multiple
 token types atomically. If the underlying contract implementation supports
 only a single token type, the batch may contain single or multiple entries where
 token id will always be fixed `Single unit` value.
 
-Token contract MUST implement the following entry points (notation is given in
-[cameLIGO language](https://ligolang.org)):
+Token contract MUST implement the following entry points. Notation is given in
+[cameLIGO language](https://ligolang.org) for readability but a Michelson interface will also be provided:
 
 ```ocaml
 type token_id =
@@ -125,20 +126,22 @@ type fa2_entry_points =
 
 ### FA2 Permission Policies and Configuration
 
-Often proposed token standards specify either a single policy (like allowances
-in ERC-20) or multiple non-compatible policies (like ERC-777 which has both allowances
-and operators APIs; two versions of the transfer entry point, one which invokes
+Often proposed token standards specify either a single policy (e.g. allowances
+in ERC-20) or multiple non-compatible policies (e.g. ERC-777 which has both allowance
+and operator APIs and two versions of the transfer entry point, one which invokes
 sender/receiver hooks and one which does not).
 
-FA2 implementation may use different permission policies to define who can initiate
-a transfer and who can receive tokens. The particular permission policy defines
-the semantics (logic which defines if a transfer operation permitted or not) and
-MAY require additional data (like operators and allowances). If permission policy
-requires additional data, it also requires configuration API to manage that data.
+FA2 offers an a set of *permission policies* by which to define 
+who can initiate a transfer, how much can be transferred, and who can receive tokens.
+
+A particular permission policy defines the semantics (logic which defines if a transfer operation permitted or not) and
+MAY require additional data (like operators and allowances). If the permission policy
+requires additional data, it also requires the standard configuration API to manage that data.
+
 This specification defines a set of standard configuration APIs. The concrete
-implementation of FA2 token contract MUST support one of the standard config APIs,
-which can be discovered by FA2 token contract clients such as wallets. For more
-details see description of `Get_permissions_policy` entry point.
+implementation of FA2 token contract MUST support one of the standard configuration APIs,
+which can be discovered by FA2 token contract clients such as wallets. For greater
+detail, see description of `Get_permissions_policy` entry point.
 
 `permission_policy_config` type defines all standard config APIs. The particular
 implementation of FA2 token contract MAY extend one of the standard configuration
@@ -147,8 +150,8 @@ custom config entry points is out of scope of this standard.
 
 #### `allowance_config`
 
-Spender is a Tezos address which initiates token transfer operation.
-Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+*Spender* is a Tezos address which initiates a token transfer operation.
+*Owner* is a Tezos address which can hold tokens. Owner can transfer its own tokens.
 Spender, other than the owner, MUST be approved to withdraw specific tokens held
 by the owner up to the allowance amount.
 
@@ -251,7 +254,7 @@ The transaction MUST fail if any of the balance(s) of the holder for token(s) in
 the batch is lower than the respective amount(s) sent. If holder does not hold any
 tokens of type `token_id`, holder's balance is interpreted as zero.
 
-Transfer implementation must apply permission policy logic. If permission logic
+Transfer implementations must apply permission policy logic. If permission logic
 rejects a transfer, the whole MUST fail.
 
 FA2 does NOT specify an interface for mint and burn operations. However, if an
@@ -278,10 +281,10 @@ and a callback contract `token_descriptor_view` which accepts a list of
 
 #### `get_permissions_policy`
 
-Get the address of the contract which provides permission configuration API for
+Gets the address of the contract which provides permission configuration API for
 the FA2 token contract. The particular option of the `permission_policy_config`
 type specifies one of the standard config API which MUST be implemented by the
-permission configuration contract. Since single FA2 token contract may support
+permission configuration contract. Since a single FA2 token contract may support
 more than one orthogonal config APIs simultaneously, `get_permissions_policy`
 parameter has type `((permission_policy_config list) contract)` - view contract
 which accepts a list of supported config APIs.
@@ -293,19 +296,19 @@ which accepts a list of supported config APIs.
 | `Whitelist_config`         | `fa2_whitelist_config_entry_points` |
 | `Custom_config`            | Not specified                       |
 
-Config entry points may be implemented either by FA2 token contract (then the
-returned address will be `SELF`), or by a separate contract (see recommended
+Config entry points may be implemented either within the FA2 token contract itelf (then the
+returned address will be `SELF`), or in a separate contract (see recommended
 implementation pattern using transfer hook).
 
 ## Transfer Hook
 
-Transfer hook is a recommended design pattern to implement FA2. The idea is to separate
+Transfer hook is a recommended design pattern to implement FA2, enabling separation of
 core token transfer logic and permission policy.
 
 ### Transfer Hook Motivation
 
 Usually different tokens require different permission policies which define who
-can transfer and receive tokens. There is no single permission policy which fits
+can transfer and receive tokens. There is no single permission policy which can fit
 all scenarios. For instance, some game tokens can be transferred by token owners,
 but nobody else. In some financial token exchange application tokens are to be
 transferred by special exchange operator account, but not directly by token owners
@@ -313,14 +316,16 @@ themselves.
 
 Support for different permission policies usually require to customize
 existing contract code. This standard proposes different approach with on-chain
-composition of the core FA2 contract implementation which does not change and plugable
+composition of the core FA2 contract implementation which does not change and pluggable
 permission hook implemented as a separate contract and registered with the core FA2.
-Every time FA2 performs a transfer it invokes hook contract which may validate a
-transaction and approve it by finishing execution successfully  or reject it by
-failing. Using transfer hook, it is possible to model different transfer permission
-policies like white lists, operator lists etc. Although this approach introduces
+Every time FA2 performs a transfer it invokes a hook contract which may validate a
+transaction and approve it by finishing execution successfully or reject it by
+failing. 
+
+Using transfer hook, it is possible to model different transfer permission
+policies like whitelists, operator lists, etc. Although this approach introduces
 gas consumption overhead (compared to an all-in-one contract) by requiring an extra
-inter-contract call, it has some other advantages:
+inter-contract call, it offers some other advantages:
 
 - FA2 core implementation can be verified once and certain properties (not related
 to permission policy) remain unchanged.
@@ -332,7 +337,7 @@ custom logic required by the particular token application.
 
 ### Transfer Hook Specification
 
-Transfer hook is required to perform transfer operation. FA2 token contract has
+The transfer hook is required to perform transfer operations. FA2 token contract has
 a single entry point to set the hook. If transfer hook is not set, FA2 token
 contract transfer operation MUST fail. Transfer hook is to be set by the token
 contract administrator before any transfers can happen. The concrete token contract
@@ -555,3 +560,7 @@ MUST fail.
 Permission policy formula `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`.
 
 [Hook contract](./examples/fa2_receiver_whitelist.mligo)
+
+## Future directions
+
+Future amendments to Tezos are likely to enable new functionality by which this standard can be upgraded. Namely, [read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227), event logging, and [embedded signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
