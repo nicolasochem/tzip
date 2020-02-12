@@ -563,4 +563,6 @@ Permission policy formula `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`
 
 ## Future directions
 
-Future amendments to Tezos are likely to enable new functionality by which this standard can be upgraded. Namely, [read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227), event logging, and [embedded signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
+Future amendments to Tezos are likely to enable new functionality by which this standard can be upgraded. Namely, [read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227), event logging, and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
+
+
