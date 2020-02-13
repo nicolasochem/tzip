@@ -17,11 +17,19 @@ type  entry_points =
   | Tokens_transferred_hook of hook_param
   | Register_with_fa2 of fa2_with_hook_entry_points contract
 
+(* registered FA2 contracts which can call this policy contract *)
+type fa2_registry = address set
+
 (**
 This will not work with babylon/LIGO since `allowance_key` is a composite
 non-comparable record which cannot be used as a key in the big_map.
  *)
 type allowances = (allowance_id, nat) big_map
+
+type storage = {
+  fa2_registry : fa2_registry;
+  allowances : allowances;
+}
 
 let get_current_allowance (id : allowance_id) (a : allowances) : nat =
   let a = Big_map.find_opt id a in
@@ -87,18 +95,31 @@ let config_allowances (param : fa2_allowances_config_entry_points) (s : allowanc
     let op = Operation.transaction resp 0mutez p.view in
     [op], s
 
-let main (param, s : entry_points * allowances) : (operation list) * allowances =
+let main (param, s : entry_points * storage) : (operation list) * storage =
   match param with
 
-  | Allowances p -> config_allowances p s
+  | Allowances p -> 
+    let ops, new_a = config_allowances p s.allowances in
+    let new_s = { s with allowances = new_a; } in
+    ops, new_s
 
   | Tokens_transferred_hook p ->
-    let new_s = List.fold (track_allowances p.operator) p.batch s in
-    ([] : operation list),  new_s
+    if Set.mem Current.sender s.fa2_registry
+    then
+      let new_a = List.fold (track_allowances p.operator) p.batch s.allowances in
+      let new_s = { s with allowances = new_a } in
+      ([] : operation list),  new_s
+    else
+      (failwith "unknown FA2 caller" : (operation list) * storage)
 
   | Register_with_fa2 fa2 ->
     let c : fa2_allowances_config_entry_points contract = 
       Operation.get_entrypoint "%allowances" Current.self_address in
     let config_address = Current.address c in
     let op = create_register_hook_op fa2 [Allowances_config config_address] in
-    [op], s
+
+    let fa2_address = Current.address fa2 in
+    let new_fa2s = Set.add fa2_address s.fa2_registry in
+    let new_s = { s with fa2_registry = new_fa2s; } in
+    
+    [op], new_s
