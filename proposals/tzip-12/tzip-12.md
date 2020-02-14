@@ -12,7 +12,7 @@ created: 2020-01-24
 This document proposes a standard for a unified token contract interface, supporting
 a wide range of token types and implementations.
 This standard focuses on token transfer semantics and support for various transfer
-approval policies.
+permission policies.
 
 ## Abstract
 
@@ -128,30 +128,128 @@ type fa2_entry_points =
 
 ### FA2 Permission Policies and Configuration
 
+Most token standards specify some logic which defines who can initiate a transfer,
+how much can be transferred, and who can receive tokens etc. This standard
+calls such logic *permission policy* and defines a framework to compose and configure
+such permission policies from the standard behaviors and configuration APIs.
+
+A particular permission policy defines the semantics (logic which defines if a
+transfer operation permitted or not) and MAY require additional internal data
+(like operators). If the permission policy requires additional internal data, it
+also requires the standard configuration API to manage that data.
+
 Often proposed token standards specify either a single policy (e.g. allowances
 in ERC-20) or multiple non-compatible policies (e.g. ERC-777 which has both allowance
 and operator APIs and two versions of the transfer entry point, one which invokes
 sender/receiver hooks and one which does not).
 
-FA2 offers an a set of *permission policies* by which to define who can initiate
-a transfer, how much can be transferred, and who can receive tokens.
+#### The Taxonomy of Permission Policy
 
-A particular permission policy defines the semantics (logic which defines if a
-transfer operation permitted or not) and MAY require additional data (like operators).
-If the permission policy requires additional data, it also requires the standard
-configuration API to manage that data.
+Permission policy semantics can be broken down into several orthogonal behavior patterns.
+The concrete policy can be expressed as a combination of those behaviors. The standard
+itself cannot enforce and/or validate the particular permission policy implementation,
+but the proposed taxonomy framework can guide the implementation of permission
+policies and allows to discover and/or configure a concrete combination on the chain.
 
-This specification defines a set of standard configuration APIs. The concrete
-implementation of FA2 token contract MUST support one of the standard configuration
-APIs, which can be discovered by FA2 token contract clients such as wallets.
-For greater detail, see description of `Get_permissions_policy` entry point.
+##### Core Transfer behavior
 
-`permission_policy_config` type defines all standard config APIs. The particular
-implementation of FA2 token contract MAY extend one of the standard configuration
-APIs with additional custom entry points. Definition and interaction with such
-custom config entry points is out of scope of this standard.
+This behavior MUST be implemented by any FA2 token contract. If a token contract
+implementation uses transfer hook design pattern, core transfer behavior is to be
+part of the core transfer logic contract.
 
-#### `operator_config`
+- Every transfer operation MUST be atomic. If operation fails, all token transfers
+MUST be reverted and token balances MUST remain unchanged.
+- The amount of a token transfer MUST not exceed existing token owner's balance.
+If transfer amount for the particular token type and token owner exceeds existing
+balance, whole transfer operation MUST fail.
+- Core transfer behavior MAY be extended. If additional constrains on tokens transfer
+is required, FA2 token contract implementation MAY invoke additional permission policy
+(transfer hook is the recommended design pattern to implement core behavior extension).
+If additional permission hook fails, the whole transfer operation MUST fail.
+- Core transfer behavior MUST update token balances exactly how it is specified by
+the operation parameters. No amount adjustments and/or additional transfers are
+allowed.
+
+##### Behavior Patterns
+
+###### `Self` Permissioning Behavior
+
+This behavior specifies of the token owner can transfer its own tokens.
+
+|  Possible value |  Required config API | Comment |
+| --------------- | -------------------- | ------- |
+| `Self(true)`    | None                 | Token owner can transfer own tokens|
+| `Self(false)`   | None                 | Token owner cannot transfer own |
+
+###### `Operator` Permissioning Behavior
+
+This behavior specifies if a tokens transfer can be initiated by someone other than
+token owner (operator).
+
+|  Possible value |  Required config API   | Comment |
+| --------------- | ---------------------- | ------- |
+| Operator(None)  | None                   | Nobody can transfer on behalf of the token owner |
+| Operator(Op)    | `Operator_config`      | Each token owner has a list of operators who can transfer on behalf of the token owner. Operator can transfer any tokens and any amount on behalf of the owner |
+
+###### `Whitelist` Permissioning Behavior
+
+This behavior specifies if token transfer should be permitted by whitelisting token
+owner addresses.
+
+|  Possible value |  Required config API  | Comment |
+| --------------- | --------------------- | ------- |
+| `Whitelist(false)` | None               | No whitelisting. Owner's address is not checked against white list |
+| `Whilelist(true)`  | `Whitelist_config` | If owner's address is not present in the white list, the transfer MUST fail. |
+
+It is possible to have white lists for both token sender and token receiver addresses.
+But for practical reasons this specification limits whitelisting behavior to the
+token receiver addresses only.
+
+###### "Owner_hook` Permissioning Behavior
+
+Token owner contract MAY implement additional hooks which are invoked when tokens
+are send from or received to the owner's account. If such a hook is invoked and
+failed, the whole transfer operation MUST fail.
+
+|  Possible value |  Required config API | Comment |
+| --------------- | -------------------- | ------- |
+| `Owner_hook(None)` | None | Permission policy does not invoke owner's hooks and does not check if token owner address implements owner hook API |
+| `Owner_hook(Optional)` | None | Owner hook is optional. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST continue. |
+| `Owner_hook(Required)` | None | Owner hook is required. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST fail. |
+
+There are two kinds of the owner hook. Sender hook (`Sender_Owner_Hook`) is invoked
+when tokens are transferred **from** the owners account. Receiver hook
+(`Receiver_Owner_Hook`) is invoked when tokens are transferred **to** the owners
+account.
+
+##### Extending Behavior Patterns
+
+It is possible to extend permission policy with custom behavior patterns. If such
+new behavior patters require configuration API, `Custom_config` options of
+`permission_policy_config` can be used to expose then to FA2 contract clients.
+
+##### Permission Policy Formulae
+
+Each concrete implementation of the permission policy can be described by a formulate
+listing combination of permission behaviors in the following form:
+
+`Self(?) * Operator(?) * Whitelist(?) * Receiver_owner_hook(?) * Sender_owner_hook(?)`
+
+or in the abbreviated form:
+
+`S(?) * O(?) * WL(?) * ROH(?) * SOW(?)`
+
+For instance, `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)` formula
+describes the policy which allows only token owners to transfer their own tokens.
+
+`S(false) * O(None) * WL(false) * ROH(None) * ROH(None)` formula represents
+non-transferable token (neither token owner, nor operators can transfer tokens).
+
+#### Permission Policy Standard Configuration APIs
+
+`permission_policy_config` TBD
+
+##### `operator_config`
 
 Operator is a Tezos address which initiates token transfer operation.
 Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
@@ -184,7 +282,7 @@ type fa2_operators_config_entry_points =
   | Is_operator of is_operator_param
 ```
 
-#### `whitelist_config`
+##### `whitelist_config`
 
 Allows a whitelisting policy (i.e. who can receive tokens). If one or more `to_`
 addresses in FA2 transfer batch are not whitelisted the whole transfer operation
@@ -209,7 +307,7 @@ type fa2_whitelist_config_entry_points =
   | Is_whitelisted of is_whitelisted_param
 ```
 
-#### `custom_config`
+##### `custom_config`
 
 Custom config API is an extension point to support custom permission policy behavior
 and its possible configuration. This standard does not specify exact types for
@@ -297,7 +395,7 @@ composition of the core FA2 contract implementation which does not change and pl
 permission hook implemented as a separate contract and registered with the core FA2.
 Every time FA2 performs a transfer it invokes a hook contract which may validate a
 transaction and approve it by finishing execution successfully or reject it by
-failing. 
+failing.
 
 Using transfer hook, it is possible to model different transfer permission
 policies like whitelists, operator lists, etc. Although this approach introduces
@@ -376,107 +474,6 @@ The parameter is an address plus hook entry point of type `hook_param`.
 The transfer hook is always invoked from the `transfer` operation.
 Otherwise, FA2 MUST fail.
 
-For more details see "Transfer Hook Specification" section.
-
-## The Taxonomy of Permission Policy
-
-Permission policy semantics can be broken down into several orthogonal behavior patterns.
-The concrete policy can be expressed as a combination of those behaviors. The standard
-itself cannot enforce and/or validate the particular permission policy implementation,
-but the proposed taxonomy framework can guide the implementation of permission
-policies.
-
-### Core Transfer behavior
-
-This behavior MUST be implemented by any FA2 token contract. If a token contract
-implementation uses transfer hook design pattern, core transfer behavior is to be
-part of the core transfer logic contract.
-
-- Every transfer operation MUST be atomic. If operation fails, all token transfers
-MUST be reverted and token balances MUST remain unchanged.
-- The amount of a token transfer MUST not exceed existing token owner's balance.
-If transfer amount for the particular token type and token owner exceeds existing
-balance, whole transfer operation MUST fail.
-- Core transfer behavior MAY be extended. If additional constrains on tokens transfer
-is required, FA2 token contract implementation MAY invoke additional permission policy
-(transfer hook is the recommended design pattern to implement core behavior extension).
-If additional permission hook fails, the whole transfer operation MUST fail.
-
-### Behavior Patterns
-
-#### `Self` Permissioning Behavior
-
-This behavior specifies of the token owner can transfer its own tokens.
-
-|  Possible value |  Required config API | Comment |
-| --------------- | -------------------- | ------- |
-| `Self(true)`    | None                 | Token owner can transfer own tokens|
-| `Self(false)`   | None                 | Token owner cannot transfer own |
-
-#### `Operator` Permissioning Behavior
-
-This behavior specifies if a tokens transfer can be initiated by someone other than
-token owner (operator).
-
-|  Possible value |  Required config API   | Comment |
-| --------------- | ---------------------- | ------- |
-| Operator(None)  | None                   | Nobody can transfer on behalf of the token owner |
-| Operator(Op)    | `Operator_config`      | Each token owner has a list of operators who can transfer on behalf of the token owner. Operator can transfer any tokens and any amount on behalf of the owner |
-
-#### `Whitelist` Permissioning Behavior
-
-This behavior specifies if token transfer should be permitted by whitelisting token
-owner addresses.
-
-|  Possible value |  Required config API  | Comment |
-| --------------- | --------------------- | ------- |
-| `Whitelist(false)` | None               | No whitelisting. Owner's address is not checked against white list |
-| `Whilelist(true)`  | `Whitelist_config` | If owner's address is not present in the white list, the transfer MUST fail. |
-
-It is possible to have white lists for both token sender and token receiver addresses.
-But for practical reasons this specification limits whitelisting behavior to the
-token receiver addresses only.
-
-##### "Owner_hook` Permissioning Behavior
-
-Token owner contract MAY implement additional hooks which are invoked when tokens
-are send from or received to the owner's account. If such a hook is invoked and
-failed, the whole transfer operation MUST fail.
-
-|  Possible value |  Required config API | Comment |
-| --------------- | -------------------- | ------- |
-| `Owner_hook(None)` | None | Permission policy does not invoke owner's hooks and does not check if token owner address implements owner hook API |
-| `Owner_hook(Optional)` | None | Owner hook is optional. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST continue. |
-| `Owner_hook(Required)` | None | Owner hook is required. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST fail. |
-
-There are two kinds of the owner hook. Sender hook (`Sender_Owner_Hook`) is invoked
-when tokens are transferred **from** the owners account. Receiver hook
-(`Receiver_Owner_Hook`) is invoked when tokens are transferred **to** the owners
-account.
-
-### Extending Behavior Patterns
-
-It is possible to extend permission policy with custom behavior patterns. If such
-new behavior patters require configuration API, `Custom_config` options of
-`permission_policy_config` can be used to expose then to FA2 contract clients.
-
-### Permission Policy Formulae
-
-Each concrete implementation of the permission policy can be described by a formulate
-listing combination of permission behaviors in the following form:
-
-`Self(?) * Operator(?) * Whitelist(?) * Receiver_owner_hook(?) * Sender_owner_hook(?)`
-
-or in the abbreviated form:
-
-`S(?) * O(?) * WL(?) * ROH(?) * SOW(?)`
-
-For instance, `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)` formula
-describes the policy which allows only token owners to transfer their own tokens.
-
-`S(false) * O(None) * WL(false) * ROH(None) * ROH(None)` formula represents
-non-transferable token (neither token owner, nor operators can transfer tokens).
-
 ### Transfer Hook Examples
 
 ### Default Permissioning
@@ -522,6 +519,6 @@ Permission policy formula `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`
 
 ## Future directions
 
-Future amendments to Tezos are likely to enable new functionality by which this standard can be upgraded. Namely, [read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227), event logging, and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
-
-
+Future amendments to Tezos are likely to enable new functionality by which this
+standard can be upgraded. Namely,
+[read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227), event logging, and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
