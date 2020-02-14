@@ -228,8 +228,12 @@ The transaction MUST fail if any of the balance(s) of the holder for token(s) in
 the batch is lower than the respective amount(s) sent. If holder does not hold any
 tokens of type `token_id`, holder's balance is interpreted as zero.
 
-Transfer implementations must apply permission policy logic. If permission logic
-rejects a transfer, the whole MUST fail.
+Transfer implementations MUST apply permission policy logic. If permission logic
+rejects a transfer, the whole operation MUST fail.
+
+Transfer operation MUST update token owners balances exactly how it is specified
+by its parameters. Transfer operation should not try to adjust transfer amounts
+and/or try to add/remove additional transfers like transaction fees.
 
 FA2 does NOT specify an interface for mint and burn operations. However, if an
 FA2 token contract implements mint and burn operations, it MUST apply permission
