@@ -143,11 +143,16 @@ in ERC-20) or multiple non-compatible policies (e.g. ERC-777 which has both allo
 and operator APIs and two versions of the transfer entry point, one which invokes
 sender/receiver hooks and one which does not).
 
+FA2 specifies an interface ```get_permissions_policy``` allowing external contracts 
+(e.g. an auction) to discover an FA2 contract's permissioning policy and its configuration. 
+This serves as a more modular alternative to the existing approaches in ERC-20 or FA1.2.
+
 #### The Taxonomy of Permission Policy
 
 Permission policy semantics can be broken down into several orthogonal behavior patterns.
-The concrete policy can be expressed as a combination of those behaviors. The standard
-itself cannot enforce and/or validate the particular permission policy implementation,
+The concrete policy can be expressed as a combination of those behaviors.  
+
+The standard itself does not enforce and/or validate a particular permission policy implementation,
 but the proposed taxonomy framework can guide the implementation of permission
 policies and allows to discover and/or configure a concrete combination on the chain.
 
