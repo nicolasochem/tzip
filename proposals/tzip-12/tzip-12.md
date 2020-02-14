@@ -72,7 +72,6 @@ type custom_config_param = {
 }
 
 type permission_policy_config =
-  | Allowances_config of address
   | Operators_config of address
   | Whitelist_config of address
   | Custom_config of custom_config_param
@@ -138,9 +137,9 @@ FA2 offers an a set of *permission policies* by which to define who can initiate
 a transfer, how much can be transferred, and who can receive tokens.
 
 A particular permission policy defines the semantics (logic which defines if a
-transfer operation permitted or not) and MAY require additional data (like operators
-and allowances). If the permission policy requires additional data, it also requires
-the standard configuration API to manage that data.
+transfer operation permitted or not) and MAY require additional data (like operators).
+If the permission policy requires additional data, it also requires the standard
+configuration API to manage that data.
 
 This specification defines a set of standard configuration APIs. The concrete
 implementation of FA2 token contract MUST support one of the standard configuration
@@ -151,46 +150,6 @@ For greater detail, see description of `Get_permissions_policy` entry point.
 implementation of FA2 token contract MAY extend one of the standard configuration
 APIs with additional custom entry points. Definition and interaction with such
 custom config entry points is out of scope of this standard.
-
-#### `allowance_config`
-
-*Spender* is a Tezos address which initiates a token transfer operation.
-*Owner* is a Tezos address which can hold tokens. Owner can transfer its own tokens.
-Spender, other than the owner, MUST be approved to withdraw specific tokens held
-by the owner up to the allowance amount.
-
-The owner does not need to be approved to transfer its own tokens.
-
-Config API provides the following entry points:
-
-```ocaml
- type allowance_id = {
-  owner : address;
-  token_id : token_id;
-  token_manager : address;
-  spender : address;
- }
-
- type set_allowance_param = {
-  allowance_id : allowance_id;
-  prev_allowance : nat;
-  new_allowance : nat;
- }
-
-type get_allowance_response = {
-  allowance_id : allowance_id;
-  allowance : nat;
-}
-
- type get_allowance_param = {
-   allowance_ids : allowance_id list;
-   view : (get_allowance_response list) contract;
- }
-
- type fa2_allowances_config_entry_points =
-  | Set_allowances of set_allowance_param list
-  | Get_allowances of get_allowance_param
-```
 
 #### `operator_config`
 
@@ -306,7 +265,6 @@ which accepts a list of supported config APIs.
 
 | `permission_policy_config` option | config entry points type |
 | :------------------------- | :----------------------- |
-| `Allowances_config`         | `fa2_allowances_config_entry_points` |
 | `Operators_config`          | `fa2_operators_config_entry_points`  |
 | `Whitelist_config`         | `fa2_whitelist_config_entry_points` |
 | `Custom_config`            | Not specified                       |
@@ -460,7 +418,6 @@ token owner (operator).
 | --------------- | ---------------------- | ------- |
 | Operator(None)  | None                   | Nobody can transfer on behalf of the token owner |
 | Operator(Op)    | `Operator_config`      | Each token owner has a list of operators who can transfer on behalf of the token owner. Operator can transfer any tokens and any amount on behalf of the owner |
-| Operator(Allowance) | `Allowance_config` | Each token owner has a list of operators who can transfer on behalf of the token owner. Each operator has allowance for each token type and amount, it can transfer. |
 
 #### `Whitelist` Permissioning Behavior
 
@@ -528,23 +485,6 @@ Permission policy formula `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)
 Any address can be a recipient of the token transfer.
 
 [Hook contract](./examples/fa2_default.mligo)
-
-#### Transfer Allowances
-
-This is a sample implementation of the FA2 transfer hook which supports transfer
-allowances for token spenders.
-
-Spender is a Tezos address which initiates token transfer operation.
-Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
-Spender, other than the owner, MUST be approved to withdraw specific tokens held
-by the owner up to the allowance amount.
-
-Only token owner can set allowances for specific token types and spenders.
-The owner does not need to be approved to transfer its own tokens.
-
-Permission policy formula `S(true) * O(Allowance) * WL(false) * ROH(None) * SOH(None)`.
-
-[Hook contract](./examples/fa2_allowances.mligo)
 
 #### Transfer Operators
 
