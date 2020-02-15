@@ -179,7 +179,7 @@ allowed.
 
 ###### `Self` Permissioning Behavior
 
-This behavior specifies of the token owner can transfer its own tokens.
+This behavior specifies if the token owner can transfer its own tokens.
 
 |  Possible value |  Required config API | Comment |
 | --------------- | -------------------- | ------- |
