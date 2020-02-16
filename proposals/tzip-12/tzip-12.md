@@ -371,14 +371,14 @@ which accepts a list of supported config APIs.
 | `Whitelist_config`         | `fa2_whitelist_config_entry_points` |
 | `Custom_config`            | Not specified                       |
 
-Config entry points may be implemented either within the FA2 token contract itelf (then the
-returned address will be `SELF`), or in a separate contract (see recommended
+Config entry points may be implemented either within the FA2 token contract itself
+(then the returned address will be `SELF`), or in a separate contract (see recommended
 implementation pattern using transfer hook).
 
 ## Transfer Hook
 
-Transfer hook is a recommended design pattern to implement FA2, enabling separation of
-core token transfer logic and permission policy.
+Transfer hook is a recommended design pattern to implement FA2, enabling separation
+of core token transfer logic and permission policy.
 
 ### Transfer Hook Motivation
 
@@ -412,15 +412,17 @@ custom logic required by the particular token application.
 
 ### Transfer Hook Specification
 
-The transfer hook is required to perform transfer operations. FA2 token contract has
-a single entry point to set the hook. If transfer hook is not set, FA2 token
+The transfer hook is required to perform transfer operations. FA2 token contract
+has a single entry point to set the hook. If transfer hook is not set, FA2 token
 contract transfer operation MUST fail. Transfer hook is to be set by the token
 contract administrator before any transfers can happen. The concrete token contract
-implementation MAY impose additional restrictions on who may set the hook. 
-If set hook operation is not permitted, it MUST fail without changing existing hook state.
+implementation MAY impose additional restrictions on who may set the hook.
+If set hook operation is not permitted, it MUST fail without changing existing
+hook state.
 
 For each transfer operation token contract MUST invoke transfer hook
 and return corresponding operation as part of the transfer entry point result.
+(For more details see [`set_transfer_hook`](#`set_transfer_hook`) )
 
 `operator` parameter for the hook invocation MUST be set to `SENDER`.
 
