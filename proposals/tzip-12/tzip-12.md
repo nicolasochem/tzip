@@ -143,24 +143,25 @@ in ERC-20) or multiple non-compatible policies (e.g. ERC-777 which has both allo
 and operator APIs and two versions of the transfer entry point, one which invokes
 sender/receiver hooks and one which does not).
 
-FA2 specifies an interface ```get_permissions_policy``` allowing external contracts 
-(e.g. an auction) to discover an FA2 contract's permissioning policy and its configuration. 
-This serves as a more modular alternative to the existing approaches in ERC-20 or FA1.2.
+FA2 specifies an interface `get_permissions_descriptor` allowing external contracts
+(e.g. an auction) to discover an FA2 contract's permissioning policy and configure it.
+This serves as a more modular alternative to the existing approaches in ERC-20 or
+FA1.2 and helps to define consistent and non-self-contradictory policies.
 
 #### The Taxonomy of Permission Policy
 
 Permission policy semantics can be broken down into several orthogonal behavior patterns.
 The concrete policy can be expressed as a combination of those behaviors.  
 
-The standard itself does not enforce and/or validate a particular permission policy implementation,
-but the proposed taxonomy framework can guide the implementation of permission
-policies and allows to discover and/or configure a concrete combination on the chain.
+The proposed taxonomy framework and API allows to discover what are the properties
+(behaviors) of the particular FA2 token contract permission policy and/or to configure
+it on the chain.
 
 ##### Core Transfer behavior
 
 This behavior MUST be implemented by any FA2 token contract. If a token contract
-implementation uses transfer hook design pattern, core transfer behavior is to be
-part of the core transfer logic contract.
+implementation uses [transfer hook](#Transfer Hook) design pattern, core transfer
+behavior is to be part of the core transfer logic of the FA2 contract.
 
 - Every transfer operation MUST be atomic. If operation fails, all token transfers
 MUST be reverted and token balances MUST remain unchanged.
@@ -383,24 +384,28 @@ implementation pattern using transfer hook).
 ## Transfer Hook
 
 Transfer hook is a recommended design pattern to implement FA2, enabling separation
-of core token transfer logic and permission policy.
+of the core token transfer logic and a permission policy. Instead of implementing
+FA2 as a monolithic contract, a (permission policy)[#FA2 Permission Policies and Configuration]
+is implemented as a separate contract. Permission policy contract provides an
+entry point invoked by the core FA2 contract to accept or reject a particular
+transfer operation (such entry point is called **transfer hook**).
 
 ### Transfer Hook Motivation
 
 Usually different tokens require different permission policies which define who
-can transfer and receive tokens. There is no single permission policy which can fit
-all scenarios. For instance, some game tokens can be transferred by token owners,
-but nobody else. In some financial token exchange application tokens are to be
-transferred by special exchange operator account, but not directly by token owners
+can transfer and receive tokens. There is no single permission policy which can
+fit all scenarios. For instance, some game tokens can be transferred by token owners,
+but nobody else. In some financial token exchange applications tokens are to be
+transferred by special exchange operator account, but not directly by the token owners
 themselves.
 
 Support for different permission policies usually require to customize
 existing contract code. This standard proposes different approach with on-chain
-composition of the core FA2 contract implementation which does not change and pluggable
-permission hook implemented as a separate contract and registered with the core FA2.
-Every time FA2 performs a transfer it invokes a hook contract which may validate a
-transaction and approve it by finishing execution successfully or reject it by
-failing.
+composition of the core FA2 contract implementation which does not change and a
+pluggable permission transfer hook implemented as a separate contract and registered
+with the core FA2. Every time FA2 performs a transfer it invokes a hook contract
+which may validate a transaction and approve it by finishing execution successfully
+or reject it by failing.
 
 Using transfer hook, it is possible to model different transfer permission
 policies like whitelists, operator lists, etc. Although this approach introduces
