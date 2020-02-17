@@ -11,16 +11,6 @@ type transfer = {
 
 type transfer_param = transfer list
 
-type custom_config_param = {
-  entrypoint : address;
-  tag : string;
-}
-
-type permission_policy_config =
-  | Operators_config of address
-  | Whitelist_config of address
-  | Custom_config of custom_config_param
-
 type balance_request = {
   owner : address;
   token_id : token_id;  
@@ -63,23 +53,80 @@ type token_descriptor_param = {
   token_descriptor_view : (token_descriptor_response list) contract;
 }
 
+(* permission policy and config definition *)
+
+type transfer_descriptor = {
+  from_ : address option;
+  to_ : address option;
+  token_id : token_id;
+  amount : nat;
+}
+
+type transfer_descriptor_param = {
+  batch : transfer_descriptor list;
+  operator : address;
+}
+
+type fa2_token_receiver =
+  | Tokens_received of transfer_descriptor_param
+
+type fa2_token_sender =
+  | Tokens_sent of transfer_descriptor_param
+
+
+type policy_config_api = address
+
+type custom_permission_policy = {
+  tag : string;
+  config_api: policy_config_api option;
+}
+
+type self_transfer_policy =
+  | Self_transfer_permitted
+  | Self_transfer_denied
+
+type operator_transfer_policy =
+  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_denied
+  | Operator_transfer_custom of custom_permission_policy
+
+type receiver_transfer_policy =
+  | Receiver_no_op
+  | Optional_receiver_interface
+  | Required_receiver_interface
+  | Receiver_whitelist of policy_config_api
+  | Receiver_custom of custom_permission_policy
+
+type sender_transfer_policy =
+  | Sender_no_op
+  | Optional_sender_interface
+  | Required_sender_interface
+  | Sender_whitelist of policy_config_api
+  | Sender_custom of custom_permission_policy
+
+type permission_policy_descriptor = {
+  self : self_transfer_policy;
+  operator : operator_transfer_policy;
+  receiver : receiver_transfer_policy;
+  sender : sender_transfer_policy;
+  custom : custom_permission_policy;
+}
+
 type fa2_entry_points =
   | Transfer of transfer_param
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_policy of ((permission_policy_config list) contract)
+  | Get_permissions_descriptor of permission_policy_descriptor contract
 
-(** Different permission policy interfaces *)
+(** Different permission policy config interfaces *)
 
 (**
-  Operator permission policy.
+  Operator permission policy config API.
   Operator is a Tezos address which initiates token transfer operation.
-  Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+  Owner is a Tezos address which can hold tokens.
   Operator, other than the owner, MUST be approved to manage all tokens held by
   the owner to make a transfer from the owner account.
-
-  The owner does not need to be approved to transfer its own tokens. 
  *)
 
 type operator_param = {
@@ -103,10 +150,11 @@ type fa2_operators_config_entry_points =
   | Is_operator of is_operator_param
 
 (** 
-  Receiver whitelist permission policy.
-  Only addresses which are whitelisted can receive tokens. If one or more `to_`
-  addresses in FA2 transfer batch are not whitelisted the whole transfer operation
+  Whitelist permission policy.
+  Only addresses which are whitelisted can participate in tokens transfer. If one
+  or more addresses in FA2 transfer batch are not whitelisted the whole transfer operation
   MUST fail.
+  White list can be applied to either token sender or token receiver.
 *)
 
 type is_whitelisted_response = {

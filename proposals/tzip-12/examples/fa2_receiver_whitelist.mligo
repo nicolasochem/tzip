@@ -10,7 +10,6 @@ MUST fail.
 
 #include "hook_lib.mligo"
 
-
  type entry_points =
   | Whitelist of fa2_whitelist_config_entry_points
   | Tokens_transferred_hook of hook_param
