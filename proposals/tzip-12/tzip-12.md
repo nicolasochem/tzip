@@ -178,24 +178,37 @@ allowed.
 
 ##### Behavior Patterns
 
-###### `Self` Permissioning Behavior
+###### `Self` Transfer Behavior
 
 This behavior specifies if the token owner can transfer its own tokens.
 
-|  Possible value |  Required config API | Comment |
-| --------------- | -------------------- | ------- |
-| `Self(true)`    | None                 | Token owner can transfer own tokens|
-| `Self(false)`   | None                 | Token owner cannot transfer own |
+```ocaml
+type self_transfer_policy =
+  | Self_transfer_permitted
+  | Self_transfer_denied
+```
 
-###### `Operator` Permissioning Behavior
+###### `Operator` Transfer Behavior
 
 This behavior specifies if a tokens transfer can be initiated by someone other than
-token owner (operator).
+token owner (an operator). Operator can transfer any tokens and any amount on
+behalf of the owner.
 
-|  Possible value |  Required config API   | Comment |
-| --------------- | ---------------------- | ------- |
-| Operator(None)  | None                   | Nobody can transfer on behalf of the token owner |
-| Operator(Op)    | `Operator_config`      | Each token owner has a list of operators who can transfer on behalf of the token owner. Operator can transfer any tokens and any amount on behalf of the owner |
+```ocaml
+type operator_transfer_policy =
+  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_denied
+  | Operator_transfer_custom of custom_permission_policy
+```
+
+If operator transfer is permitted, the policy provides an entry point for the
+operator config API which let add and remove operators on behalf the token owner
+(see (`operator_config`)[#`operator_config`]).
+
+The behavior has an extension point `Operator_transfer_custom`. If required, a
+custom operator policy can be created and used instead of the standard ones.
+For instance, more granular control of token types and allowance amounts per
+operator may be supported.
 
 ###### `Whitelist` Permissioning Behavior
 
@@ -258,11 +271,9 @@ non-transferable token (neither token owner, nor operators can transfer tokens).
 ##### `operator_config`
 
 Operator is a Tezos address which initiates token transfer operation.
-Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
+Owner is a Tezos address which can hold tokens.
 Operator, other than the owner, MUST be approved to manage all tokens held by
 the owner to make a transfer from the owner account.
-
-The owner does not need to be approved to transfer its own tokens.
 
 Config API provides the following entry points:
 
