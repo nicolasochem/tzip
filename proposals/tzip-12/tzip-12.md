@@ -548,21 +548,21 @@ transfer hook as well.
 FA2 entry point with the following signature:
 
 ```ocaml
-type hook_transfer = {
+type transfer_descriptor = {
   from_ : address option;
   to_ : address option;
   token_id : token_id;
   amount : nat;
 }
 
-type hook_param = {
-  batch : hook_transfer list;
+type transfer_descriptor_param = {
+  batch : transfer_descriptor list;
   operator : address;
 }
 
 type set_hook_param = {
   hook : address;
-  config : permission_policy_config;
+  permissions_descriptor : permission_policy_descriptor;
 }
 
 Set_transfer_hook of set_hook_param
@@ -571,7 +571,7 @@ Set_transfer_hook of set_hook_param
 FA2 implementation MAY restrict access to this operation to a contract administrator
 address only.
 
-The parameter is an address plus hook entry point of type `hook_param`.
+The parameter is an address plus hook entry point of type `transfer_descriptor_param`.
 
 The transfer hook is always invoked from the `transfer` operation.
 Otherwise, FA2 MUST fail.
