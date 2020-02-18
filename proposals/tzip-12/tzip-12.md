@@ -11,8 +11,8 @@ created: 2020-01-24
 
 This document proposes a standard for a unified token contract interface, supporting
 a wide range of token types and implementations.
-This standard focuses on token transfer semantics and support for various transfer
-permission policies.
+This standard focuses on the interface, token transfer semantics and support for
+various transfer permission policies.
 
 ## Abstract
 
@@ -205,16 +205,17 @@ This behavior MUST be implemented by any FA2 token contract. If a token contract
 implementation uses [transfer hook](#Transfer Hook) design pattern, core transfer
 behavior is to be part of the core transfer logic of the FA2 contract.
 
-- Every transfer operation MUST be atomic. If operation fails, all token transfers
+- Every transfer operation MUST be atomic. If the operation fails, all token transfers
 MUST be reverted and token balances MUST remain unchanged.
 - The amount of a token transfer MUST not exceed existing token owner's balance.
 If transfer amount for the particular token type and token owner exceeds existing
 balance, whole transfer operation MUST fail.
-- Core transfer behavior MAY be extended. If additional constrains on tokens transfer
-is required, FA2 token contract implementation MAY invoke additional permission policy
-(transfer hook is the recommended design pattern to implement core behavior extension).
-If additional permission hook fails, the whole transfer operation MUST fail.
-- Core transfer behavior MUST update token balances exactly how it is specified by
+- Core transfer behavior MAY be extended. If additional constraints on tokens transfer
+is required, FA2 token contract implementation MAY invoke additional permission
+policies (transfer hook is the recommended design pattern to implement core behavior
+extension). If additional permission hook fails, the whole transfer operation MUST
+fail.
+- Core transfer behavior MUST update token balances exactly as it is specified by
 the operation parameters. No amount adjustments and/or additional transfers are
 allowed.
 
@@ -270,8 +271,8 @@ it gets ignored.
 corresponding hook interface, it gets invoked. If hook interface is not implements,
 whole transfer transaction gets rejected).
 4. White list controlled. Permission policy has configurable token owner white list.
-If token owner account specified by transfer operation is in the while list, the
-transaction MUST continue, otherwise the transaction MUST fail.
+If token owner's account specified by the transfer operation is in the while list,
+the transaction MUST continue, otherwise the transaction MUST fail.
 
 Token owner behavior is defined as following:
 
@@ -355,8 +356,8 @@ support custom config entry points must know their types a priori and/or use a
 
 ##### `operator_config`
 
-Operator is a Tezos address which initiates token transfer operation.
-Owner is a Tezos address which can hold tokens.
+Operator is a Tezos address which initiates token transfer operation on behalf of
+the owner. Owner is a Tezos address which can hold tokens.
 Operator, other than the owner, MUST be approved to manage all tokens held by
 the owner to make a transfer from the owner account.
 
@@ -429,8 +430,9 @@ by its parameters. Transfer operation should not try to adjust transfer amounts
 and/or try to add/remove additional transfers like transaction fees.
 
 FA2 does NOT specify an interface for mint and burn operations. However, if an
-FA2 token contract implements mint and burn operations, it MUST apply permission
-logic as well.
+FA2 token contract implements mint and burn operations, it MUST apply the same
+permission logic as for the token transfer operation. Mint and burn can be considered
+special cases of the transfer.
 
 #### `balance_of`
 
@@ -484,29 +486,29 @@ Usually different tokens require different permission policies which define who
 can transfer and receive tokens. There is no single permission policy which can
 fit all scenarios. For instance, some game tokens can be transferred by token owners,
 but nobody else. In some financial token exchange applications tokens are to be
-transferred by special exchange operator account, but not directly by the token owners
-themselves.
+transferred by special exchange operator account, but not directly by the token
+owners themselves.
 
 Support for different permission policies usually require to customize
-existing contract code. This standard proposes different approach with on-chain
-composition of the core FA2 contract implementation which does not change and a
-pluggable permission transfer hook implemented as a separate contract and registered
+existing contract code. The FA2 standard proposes different approach where the on-chain
+composition of the core FA2 contract implementation does not change and a
+pluggable permission transfer hook is implemented as a separate contract and registered
 with the core FA2. Every time FA2 performs a transfer it invokes a hook contract
-which may validate a transaction and approve it by finishing execution successfully
-or reject it by failing.
+which validates a transaction and approves it by finishing execution successfully
+or rejects it by failing.
 
 Using transfer hook, it is possible to model different transfer permission
 policies like whitelists, operator lists, etc. Although this approach introduces
 gas consumption overhead (compared to an all-in-one contract) by requiring an extra
-inter-contract call, it offers some other advantages:
+inter-contract call, it offers some other advantages such as:
 
 - FA2 core implementation can be verified once and certain properties (not related
 to permission policy) remain unchanged.
 - Most likely core transfer semantic will remain unchanged. If modification of the
 permission policy is required for an existing contract, it can be done by replacing
 a transfer hook only. No storage migration of the FA2 ledger is required.
-- Transfer hook may be used not only for permissioning, but to implement additional
-custom logic required by the particular token application.
+- Transfer hooks could be used for purposes beyond permissioning such as implementing
+custom logic for a particular token application..
 
 ### Transfer Hook Specification
 
@@ -515,8 +517,8 @@ has a single entry point to set the hook. If transfer hook is not set, FA2 token
 contract transfer operation MUST fail. Transfer hook is to be set by the token
 contract administrator before any transfers can happen. The concrete token contract
 implementation MAY impose additional restrictions on who may set the hook.
-If set hook operation is not permitted, it MUST fail without changing existing
-hook state.
+If the set hook operation is not permitted, it MUST fail without changing existing
+hook configuration.
 
 For each transfer operation token contract MUST invoke transfer hook
 and return corresponding operation as part of the transfer entry point result.
@@ -534,8 +536,8 @@ might create. `SENDER` MUST be passed as an `operator` parameter to any hook inv
 If invoked hook fails, the whole transfer transaction MUST fail.
 
 FA2 does NOT specify an interface for mint and burn operations. However, if an
-FA2 token contract implements mint and burn operations, it MUST invoke transfer
-hook as well.
+FA2 token contract implements mint and burn operations, these operations MUST invoke
+transfer hook as well.
 
 |  Mint | Burn |
 | :---- | :--- |
@@ -621,4 +623,5 @@ Permission policy formula `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`
 
 Future amendments to Tezos are likely to enable new functionality by which this
 standard can be upgraded. Namely,
-[read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227), event logging, and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
+[read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227),
+event logging, and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
