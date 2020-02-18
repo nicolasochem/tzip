@@ -90,26 +90,19 @@ type operator_transfer_policy =
   | Operator_transfer_denied
   | Operator_transfer_custom of custom_permission_policy
 
-type receiver_transfer_policy =
-  | Receiver_no_op
-  | Optional_receiver_interface
-  | Required_receiver_interface
-  | Receiver_whitelist of policy_config_api
-  | Receiver_custom of custom_permission_policy
-
-type sender_transfer_policy =
-  | Sender_no_op
-  | Optional_sender_interface
-  | Required_sender_interface
-  | Sender_whitelist of policy_config_api
-  | Sender_custom of custom_permission_policy
+type owner_transfer_policy =
+  | Owner_no_op
+  | Optional_owner_hook
+  | Required_owner_hook
+  | Owner_whitelist of policy_config_api
+  | Owner_custom of custom_permission_policy
 
 type permission_policy_descriptor = {
   self : self_transfer_policy;
   operator : operator_transfer_policy;
-  receiver : receiver_transfer_policy;
-  sender : sender_transfer_policy;
-  custom : custom_permission_policy;
+  receiver : owner_transfer_policy;
+  sender : owner_transfer_policy;
+  custom : custom_permission_policy option;
 }
 
 type fa2_entry_points =

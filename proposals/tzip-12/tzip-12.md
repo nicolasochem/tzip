@@ -66,16 +66,6 @@ type transfer = {
 
 type transfer_param = transfer list
 
-type custom_config_param = {
-  entrypoint : address;
-  tag : string;
-}
-
-type permission_policy_config =
-  | Operators_config of address
-  | Whitelist_config of address
-  | Custom_config of custom_config_param
-
 type balance_request = {
   owner : address;
   token_id : token_id;  
@@ -115,7 +105,59 @@ type token_descriptor_response = {
 
 type token_descriptor_param = {
   token_ids : token_id list;
-  token_descriptor_view : (token_descriptor_response list) contract
+  token_descriptor_view : (token_descriptor_response list) contract;
+}
+
+(* permission policy and config definition *)
+
+type transfer_descriptor = {
+  from_ : address option;
+  to_ : address option;
+  token_id : token_id;
+  amount : nat;
+}
+
+type transfer_descriptor_param = {
+  batch : transfer_descriptor list;
+  operator : address;
+}
+
+type fa2_token_receiver =
+  | Tokens_received of transfer_descriptor_param
+
+type fa2_token_sender =
+  | Tokens_sent of transfer_descriptor_param
+
+
+type policy_config_api = address
+
+type custom_permission_policy = {
+  tag : string;
+  config_api: policy_config_api option;
+}
+
+type self_transfer_policy =
+  | Self_transfer_permitted
+  | Self_transfer_denied
+
+type operator_transfer_policy =
+  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_denied
+  | Operator_transfer_custom of custom_permission_policy
+
+type owner_transfer_policy =
+  | Owner_no_op
+  | Optional_owner_hook
+  | Required_owner_hook
+  | Owner_whitelist of policy_config_api
+  | Owner_custom of custom_permission_policy
+
+type permission_policy_descriptor = {
+  self : self_transfer_policy;
+  operator : operator_transfer_policy;
+  receiver : owner_transfer_policy;
+  sender : owner_transfer_policy;
+  custom : custom_permission_policy option;
 }
 
 type fa2_entry_points =
@@ -123,7 +165,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_policy of ((permission_policy_config list) contract)
+  | Get_permissions_descriptor of permission_policy_descriptor contract
 ```
 
 ### FA2 Permission Policies and Configuration
@@ -203,70 +245,113 @@ type operator_transfer_policy =
 
 If operator transfer is permitted, the policy provides an entry point for the
 operator config API which let add and remove operators on behalf the token owner
-(see (`operator_config`)[#`operator_config`]).
+(see [`operator_config`](#`operator_config`)).
 
-The behavior has an extension point `Operator_transfer_custom`. If required, a
+The policy has an extension point `Operator_transfer_custom`. If required, a
 custom operator policy can be created and used instead of the standard ones.
 For instance, more granular control of token types and allowance amounts per
 operator may be supported.
 
-###### `Whitelist` Permissioning Behavior
+###### Token owner Permission Behavior
 
-This behavior specifies if token transfer should be permitted by whitelisting token
-owner addresses.
+Each transfer operation defines a set of tokens owners which send tokens (senders)
+and a set of token owners that receive tokens (receivers). Token owner contract
+MAY implement either `fa2_token_sender` or `fa2_token_receiver` hook interface.
+Permission behavior MAY call sender and/or receiver hooks which can approve the
+transaction or reject it by failing. If such a hook is invoked and failed, the
+whole transfer operation MUST fail. Token owner permission may be configured
+to behave in one of the following ways:
 
-|  Possible value |  Required config API  | Comment |
-| --------------- | --------------------- | ------- |
-| `Whitelist(false)` | None               | No whitelisting. Owner's address is not checked against white list |
-| `Whilelist(true)`  | `Whitelist_config` | If owner's address is not present in the white list, the transfer MUST fail. |
+1. Ignore owner hook interface;
+2. Treat owner hook interface as optional. If token owner contract implements
+corresponding hook interface, it gets invoked. If hook interface is not implements,
+it gets ignored.
+3. Treat owner hook interface as required. If token owner contract implements
+corresponding hook interface, it gets invoked. If hook interface is not implements,
+whole transfer transaction gets rejected).
+4. White list controlled. Permission policy has configurable token owner white list.
+If token owner account specified by transfer operation is in the while list, the
+transaction MUST continue, otherwise the transaction MUST fail.
 
-It is possible to have white lists for both token sender and token receiver addresses.
-But for practical reasons this specification limits whitelisting behavior to the
-token receiver addresses only.
+Token owner behavior is defined as following:
 
-###### "Owner_hook` Permissioning Behavior
+```ocaml
+type owner_transfer_policy =
+  | owner_no_op
+  | Optional_owner_hook
+  | Required_owner_hook
+  | Owner_whitelist of policy_config_api
+  | Owner_custom of custom_permission_policy
+```
 
-Token owner contract MAY implement additional hooks which are invoked when tokens
-are send from or received to the owner's account. If such a hook is invoked and
-failed, the whole transfer operation MUST fail.
+This policy can be applied to both token senders and token receivers. Only white
+list option provides an entry point for the config API which let add and remove
+token owners from the white list (see [`whitelist_config`](#`whitelist_config`)).
 
-|  Possible value |  Required config API | Comment |
-| --------------- | -------------------- | ------- |
-| `Owner_hook(None)` | None | Permission policy does not invoke owner's hooks and does not check if token owner address implements owner hook API |
-| `Owner_hook(Optional)` | None | Owner hook is optional. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST continue. |
-| `Owner_hook(Required)` | None | Owner hook is required. If owner address implenents owner hook API, owner hook MUST be invoked. If owner hook fails, whole transfer operation MUST fail. If owner address does not implements owner hook API, transfer operation MUST fail. |
-
-There are two kinds of the owner hook. Sender hook (`Sender_Owner_Hook`) is invoked
-when tokens are transferred **from** the owners account. Receiver hook
-(`Receiver_Owner_Hook`) is invoked when tokens are transferred **to** the owners
-account.
-
-##### Extending Behavior Patterns
-
-It is possible to extend permission policy with custom behavior patterns. If such
-new behavior patters require configuration API, `Custom_config` options of
-`permission_policy_config` can be used to expose then to FA2 contract clients.
+The policy has an extension point `Owner_custom`. If required, a custom owner policy
+can be created and used instead of the standard ones.
+For instance, a behavior which combines owner hook and white list may be supported.
 
 ##### Permission Policy Formulae
 
 Each concrete implementation of the permission policy can be described by a formulate
 listing combination of permission behaviors in the following form:
 
-`Self(?) * Operator(?) * Whitelist(?) * Receiver_owner_hook(?) * Sender_owner_hook(?)`
+`Self(?) * Operator(?) *  Receiver(?) * Sender(?)`
 
-or in the abbreviated form:
+For instance, 
+`Self(Self_transfer_permitted) * Operator(Operator_transfer_denied) * Receiver(Owner_no_op) * Sender(Owner_no_op)`
+formula describes the policy which allows only token owners to transfer their own
+tokens.
 
-`S(?) * O(?) * WL(?) * ROH(?) * SOW(?)`
+`Self(Self_transfer_denied) * Operator(Operator_transfer_denied) * Receiver(Owner_no_op) * Sender(Owner_no_op)`
+formula represents non-transferable token (neither token owner, nor operators can
+transfer tokens.
 
-For instance, `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)` formula
-describes the policy which allows only token owners to transfer their own tokens.
+Permission token policy formula is expressed by the `permission_policy_descriptor`
+returned by the [`get_permissions_descriptor`](#`get_permissions_descriptor`)
+entry point.
 
-`S(false) * O(None) * WL(false) * ROH(None) * ROH(None)` formula represents
-non-transferable token (neither token owner, nor operators can transfer tokens).
+```ocaml
+type policy_config_api = address
+
+type custom_permission_policy = {
+  tag : string;
+  config_api: policy_config_api option;
+}
+
+type self_transfer_policy =
+  | Self_transfer_permitted
+  | Self_transfer_denied
+
+type operator_transfer_policy =
+  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_denied
+  | Operator_transfer_custom of custom_permission_policy
+
+type owner_transfer_policy =
+  | Owner_no_op
+  | Optional_owner_hook
+  | Required_owner_hook
+  | Owner_whitelist of policy_config_api
+  | Owner_custom of custom_permission_policy
+
+type permission_policy_descriptor = {
+  self : self_transfer_policy;
+  operator : operator_transfer_policy;
+  receiver : owner_transfer_policy;
+  sender : owner_transfer_policy;
+  custom : custom_permission_policy option;
+}
+```
+
+It is possible to extend permission policy with a `custom` behavior which does not
+overlap with already existing standard policies. This standard does not specify
+exact types for custom config entry points. FA2 token contract clients which
+support custom config entry points must know their types a priori and/or use a
+`tag` hint of `custom_permission_policy`.
 
 #### Permission Policy Standard Configuration APIs
-
-`permission_policy_config` TBD
 
 ##### `operator_config`
 
@@ -324,13 +409,6 @@ type fa2_whitelist_config_entry_points =
   | Is_whitelisted of is_whitelisted_param
 ```
 
-##### `custom_config`
-
-Custom config API is an extension point to support custom permission policy behavior
-and its possible configuration. This standard does not specify exact types for
-custom config entry points. FA2 token contract clients which support custom config
-entry points must know their types a priori and/or use `tag` hint.
-
 ### Entry Point Semantics
 
 #### `transfer`
@@ -372,31 +450,30 @@ Get the metadata for multiple token types. Accepts a list of `token_id`s
 and a callback contract `token_descriptor_view` which accepts a list of
 `token_descriptor_response` records.
 
-#### `get_permissions_policy`
+#### `get_permissions_descriptor`
 
-Gets the address of the contract which provides permission configuration API for
-the FA2 token contract. The particular option of the `permission_policy_config`
-type specifies one of the standard config API which MUST be implemented by the
-permission configuration contract. Since a single FA2 token contract may support
-more than one orthogonal config APIs simultaneously, `get_permissions_policy`
-parameter has type `((permission_policy_config list) contract)` - view contract
-which accepts a list of supported config APIs.
+Gets the descriptor of the transfer permission policy.
 
-| `permission_policy_config` option | config entry points type |
-| :------------------------- | :----------------------- |
-| `Operators_config`          | `fa2_operators_config_entry_points`  |
-| `Whitelist_config`         | `fa2_whitelist_config_entry_points` |
-| `Custom_config`            | Not specified                       |
+```ocaml
+type permission_policy_descriptor = {
+  self : self_transfer_policy;
+  operator : operator_transfer_policy;
+  receiver : owner_transfer_policy;
+  sender : owner_transfer_policy;
+  custom : custom_permission_policy option;
+}
+```
 
-Config entry points may be implemented either within the FA2 token contract itself
-(then the returned address will be `SELF`), or in a separate contract (see recommended
-implementation pattern using transfer hook).
+Some of the permission options require config API. Config entry points may be
+implemented either within the FA2 token contract itself (then the returned address
+will be `SELF`), or in a separate contract (see recommended implementation pattern
+using [transfer hook](#Transfer Hook)).
 
 ## Transfer Hook
 
 Transfer hook is a recommended design pattern to implement FA2, enabling separation
 of the core token transfer logic and a permission policy. Instead of implementing
-FA2 as a monolithic contract, a (permission policy)[#FA2 Permission Policies and Configuration]
+FA2 as a monolithic contract, a [permission policy](#FA2 Permission Policies and Configuration)
 is implemented as a separate contract. Permission policy contract provides an
 entry point invoked by the core FA2 contract to accept or reject a particular
 transfer operation (such entry point is called **transfer hook**).
