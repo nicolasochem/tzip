@@ -16,7 +16,7 @@ type  entry_points =
   | Config_operators of fa2_operators_config_entry_points
 
  let main (param, s : entry_points * storage) 
-    : (operation list) * fa2_registry =
+    : (operation list) * storage =
   match param with
   | Tokens_transferred_hook p ->
     let u = validate_hook_call (Current.sender, s.fa2_registry) in
@@ -24,13 +24,13 @@ type  entry_points =
     ops, s
 
   | Register_with_fa2 fa2 ->
-    let descriptor = policy_to_descriptor(s.policy) in
+    let descriptor = policy_to_descriptor s.policy in
     let op , new_registry = register_with_fa2 (fa2, descriptor, s.fa2_registry) in
     let new_s = { s with fa2_registry = new_registry; } in
     [op], new_s
 
   | Config_operators cfg ->
-    let u = match s.policy.self with
+    let u = match s.policy.self_ with
     (* assume if self transfers permitted only owner can config its own operators *)
     | Self_transfer_permitted -> asset_operator_config_by_owner cfg
     (* assume it is called by the admin *)

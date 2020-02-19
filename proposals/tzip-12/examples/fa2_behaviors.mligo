@@ -8,7 +8,7 @@ type operator_policy =
 
 type permission_policy = {
   self_: self_transfer_policy;
-  operators_ : operator_policy;
+  operator_ : operator_policy;
   sender_ : owner_transfer_policy;
   receiver_ : owner_transfer_policy;
 }
@@ -19,7 +19,7 @@ type permission_policy = {
 let validate_operators (p, policy
     : transfer_descriptor_param * permission_policy) : unit =
 
-  let operators = match policy.operators_ with
+  let operators = match policy.operator_ with
   | Operator_permitted ops -> ops
   | Operator_denied -> (Big_map.empty : operators)
   in
@@ -194,21 +194,23 @@ let asset_operator_config_by_owner (p : fa2_operators_config_entry_points) : uni
 let configure_operators (p, policy
     : fa2_operators_config_entry_points * permission_policy)
     : (operation list) * permission_policy =
-  match policy.operators_ with
+  match policy.operator_ with
   | Operator_denied -> 
     (failwith "operators are not supported" : (operation list) * permission_policy)
   | Operator_permitted ops ->
     let ops, new_operators = configure_operators_impl (p, ops) in
-    let new_policy = { policy with operators_ = Operator_permitted new_operators; } in
+    let new_policy = { policy with operator_ = Operator_permitted new_operators; } in
     ops, new_policy
 
 let policy_to_descriptor (p : permission_policy) : permission_policy_descriptor =
-  let operators = match p.operators_ with
+  let operator = match p.operator_ with
   | Operator_permitted os -> Operator_transfer_permitted Current.self_address
   | Operator_denied -> Operator_transfer_denied
-  in {
+  in 
+  {
     self = p.self_;
-    operators = operators;
+    operator = operator;
     receiver = p.receiver_;
     sender = p.sender_;
+    custom = (None : custom_permission_policy option);
   }

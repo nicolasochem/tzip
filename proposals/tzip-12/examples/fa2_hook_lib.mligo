@@ -24,7 +24,7 @@ let register_with_fa2 (fa2, descriptor, registry :
   let op = create_register_hook_op (fa2, descriptor) in
   let fa2_address = Current.address fa2 in
   let new_registry = Set.add fa2_address registry in
-  [op], new_registry
+  op, new_registry
 
 let validate_hook_call (fa2, registry: address * fa2_registry) : unit =
   if Set.mem fa2 registry
