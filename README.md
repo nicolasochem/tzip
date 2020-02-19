@@ -25,6 +25,7 @@ A TZIP should additionally contain an FAQ which documents, compares, and answers
 | [TZIP-11] | Contract Specification Schema                              |       -       | Work In Progress   |
 | [TZIP-12] | **FA2** - Multi-Asset Interface                            |       -       | Work In Progress   |
 | [TZIP-13] | **FA1.3** - Fungible Asset Standard                        |  01/02/2020   | Draft              |
+| [TZIP-14] | GraphQL interface to Tezos node data                       |  02/03/2020   | Work In Progress   |
 
 ## How to Contribute
 
@@ -47,3 +48,4 @@ Once you have written your proposal, please open a merge request with your propo
 [TZIP-11]: proposals/tzip-11
 [TZIP-12]: proposals/tzip-12
 [TZIP-13]: proposals/tzip-13
+[TZIP-14]: proposals/tzip-14
