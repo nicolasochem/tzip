@@ -1,43 +1,64 @@
 (**
-Implementation of the default permissioning hook.
+Implementation of the permission transfer hook, which behavior is driven
+by a particular settings of `permission_policy`.
+*)
 
-Only token owner can initiate a transfer of tokens from their accounts
-( `from_` MUST be equal to `SENDER`)
-Any address can be a recipient of the token transfer
- *)
+#include "fa2_behaviors.mligo"
 
-#include "hook_lib.mligo"
-
-(* registered FA2 contracts which can call this policy contract *)
-type fa2_registry = address set
-
-let validate_operator (p : hook_param) : unit =
-  List.iter ( fun (tx : hook_transfer) ->
-        match tx.from_ with
-        | None -> unit
-        | Some from_ -> 
-          if from_ = p.operator
-          then unit
-          else failwith "cannot transfer tokens on behalf of other owner"
-      ) p.batch
+type storage = {
+  fa2_registry : fa2_registry;
+  policy : permission_policy;
+}
 
 type  entry_points =
-  | Tokens_transferred_hook of hook_param
+  | Tokens_transferred_hook of transfer_descriptor_param
   | Register_with_fa2 of fa2_with_hook_entry_points contract
+  | Config_operators of fa2_operators_config_entry_points
 
- let main (param, s : entry_points * fa2_registry) 
+ let main (param, s : entry_points * storage) 
     : (operation list) * fa2_registry =
   match param with
   | Tokens_transferred_hook p ->
-    if Set.mem Current.sender s
-    then
-      let u = validate_operator p in
-      ([] : operation list),  s
-    else
-      (failwith "unknown FA2 caller" : (operation list) * fa2_registry)
+    let u = validate_hook_call (Current.sender, s.fa2_registry) in
+    let ops = standard_transfer_hook (p, s.policy) in
+    ops, s
 
   | Register_with_fa2 fa2 ->
-    let op = create_register_hook_op fa2 ([] : permission_policy_config list) in
-    let fa2_address = Current.address fa2 in
-    let new_s = Set.add fa2_address s in
+    let descriptor = policy_to_descriptor(s.policy) in
+    let op , new_registry = register_with_fa2 (fa2, descriptor, s.fa2_registry) in
+    let new_s = { s with fa2_registry = new_registry; } in
     [op], new_s
+
+  | Config_operators cfg ->
+    let u = match s.policy.self with
+    (* assume if self transfers permitted only owner can config its own operators *)
+    | Self_transfer_permitted -> asset_operator_config_by_owner cfg
+    (* assume it is called by the admin *)
+    | Self_transfer_denied -> unit
+    in
+    let ops, new_policy = configure_operators (cfg, s.policy) in
+    let new_s = { s with policy = new_policy; } in
+    ops, new_s
+
+
+
+(** example policies *)
+
+(* the policy which allows only token owners to transfer their own tokens. *)
+(* let own_policy : permission_policy = {
+  self = Self_transfer_permitted;
+  operators = Operator_transfer_denied;
+  sender = Owner_no_op;
+  receiver = Owner_no_op;
+}
+
+(* non-transferable token (neither token owner, nor operators can transfer tokens. *)
+  let own_policy : permission_policy = {
+  self = Self_transfer_denied;
+  operators = Operator_transfer_denied;
+  sender = Owner_no_op;
+  receiver = Owner_no_op;
+} *)
+
+
+let test (p : unit) = unit
