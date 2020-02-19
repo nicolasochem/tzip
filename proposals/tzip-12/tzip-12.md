@@ -149,7 +149,6 @@ type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_whitelist of policy_config_api
   | Owner_custom of custom_permission_policy
 
 type permission_policy_descriptor = {
@@ -270,9 +269,6 @@ it gets ignored.
 3. Treat owner hook interface as required. If token owner contract implements
 corresponding hook interface, it gets invoked. If hook interface is not implements,
 whole transfer transaction gets rejected).
-4. White list controlled. Permission policy has configurable token owner white list.
-If token owner's account specified by the transfer operation is in the while list,
-the transaction MUST continue, otherwise the transaction MUST fail.
 
 Token owner behavior is defined as following:
 
@@ -281,13 +277,10 @@ type owner_transfer_policy =
   | owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_whitelist of policy_config_api
   | Owner_custom of custom_permission_policy
 ```
 
-This policy can be applied to both token senders and token receivers. Only white
-list option provides an entry point for the config API which let add and remove
-token owners from the white list (see [`whitelist_config`](#`whitelist_config`)).
+This policy can be applied to both token senders and token receivers.
 
 The policy has an extension point `Owner_custom`. If required, a custom owner policy
 can be created and used instead of the standard ones.
@@ -300,7 +293,7 @@ listing combination of permission behaviors in the following form:
 
 `Self(?) * Operator(?) *  Receiver(?) * Sender(?)`
 
-For instance, 
+For instance,
 `Self(Self_transfer_permitted) * Operator(Operator_transfer_denied) * Receiver(Owner_no_op) * Sender(Owner_no_op)`
 formula describes the policy which allows only token owners to transfer their own
 tokens.
@@ -334,7 +327,6 @@ type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_whitelist of policy_config_api
   | Owner_custom of custom_permission_policy
 
 type permission_policy_descriptor = {
@@ -383,31 +375,6 @@ type fa2_operators_config_entry_points =
   | Add_operators of operator_param list
   | Remove_operators of operator_param list
   | Is_operator of is_operator_param
-```
-
-##### `whitelist_config`
-
-Allows a whitelisting policy (i.e. who can receive tokens). If one or more `to_`
-addresses in FA2 transfer batch are not whitelisted the whole transfer operation
-MUST fail.
-
-Config API provides the following entry points:
-
-```ocaml
-type is_whitelisted_response = {
-  owner : address;
-  is_whitelisted : bool;
-}
-
-type is_whitelisted_param = {
-  owners : address list;
-  whitelist_view : ((is_whitelisted_response list) contract);
-}
-
-type fa2_whitelist_config_entry_points =
-  | Add_to_white_list of address list
-  | Remove_from_white_list of address list
-  | Is_whitelisted of is_whitelisted_param
 ```
 
 ### Entry Point Semantics

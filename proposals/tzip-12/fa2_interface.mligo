@@ -94,7 +94,6 @@ type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_whitelist of policy_config_api
   | Owner_custom of custom_permission_policy
 
 type permission_policy_descriptor = {
@@ -141,26 +140,3 @@ type fa2_operators_config_entry_points =
   | Add_operators of operator_param list
   | Remove_operators of operator_param list
   | Is_operator of is_operator_param
-
-(** 
-  Whitelist permission policy.
-  Only addresses which are whitelisted can participate in tokens transfer. If one
-  or more addresses in FA2 transfer batch are not whitelisted the whole transfer operation
-  MUST fail.
-  White list can be applied to either token sender or token receiver.
-*)
-
-type is_whitelisted_response = {
-  owner : address;
-  is_whitelisted : bool;
-}
-
-type is_whitelisted_param = {
-  owners : address list;
-  whitelist_view : ((is_whitelisted_response list) contract);
-}
-
-type fa2_whitelist_config_entry_points = 
-  | Add_to_white_list of address list
-  | Remove_from_white_list of address list
-  | Is_whitelisted of is_whitelisted_param
