@@ -7,10 +7,10 @@ type operator_policy =
   | Operator_denied
 
 type permission_policy = {
-  self_: self_transfer_policy;
-  operator_ : operator_policy;
-  sender_ : owner_transfer_policy;
-  receiver_ : owner_transfer_policy;
+  self: self_transfer_policy;
+  operator : operator_policy;
+  sender : owner_transfer_policy;
+  receiver : owner_transfer_policy;
 }
 
 
@@ -19,11 +19,11 @@ type permission_policy = {
 let validate_operators (p, policy
     : transfer_descriptor_param * permission_policy) : unit =
 
-  let operators = match policy.operator_ with
+  let operators = match policy.operator with
   | Operator_permitted ops -> ops
   | Operator_denied -> (Big_map.empty : operators)
   in
-  let can_self_transfer : bool = match policy.self_ with
+  let can_self_transfer : bool = match policy.self with
   | Self_transfer_permitted -> true
   | Self_transfer_denied -> false
   in
@@ -92,7 +92,7 @@ let validate_receivers (p, policy : transfer_descriptor_param * permission_polic
     Operation.get_entrypoint_opt "%tokens_received" a in
     c 
   in
-  validate_owner (p, policy.receiver_, get_receiver, to_receiver_hook)
+  validate_owner (p, policy.receiver, get_receiver, to_receiver_hook)
 
 let validate_senders (p, policy : transfer_descriptor_param * permission_policy)
     : operation list =
@@ -102,7 +102,7 @@ let validate_senders (p, policy : transfer_descriptor_param * permission_policy)
     Operation.get_entrypoint_opt "%tokens_sent" a in
     c 
   in
-  validate_owner (p, policy.sender_, get_sender, to_sender_hook)
+  validate_owner (p, policy.sender, get_sender, to_sender_hook)
 
 let standard_transfer_hook (p, policy : transfer_descriptor_param * permission_policy)
     : operation list =
@@ -194,23 +194,23 @@ let asset_operator_config_by_owner (p : fa2_operators_config_entry_points) : uni
 let configure_operators (p, policy
     : fa2_operators_config_entry_points * permission_policy)
     : (operation list) * permission_policy =
-  match policy.operator_ with
+  match policy.operator with
   | Operator_denied -> 
     (failwith "operators are not supported" : (operation list) * permission_policy)
   | Operator_permitted ops ->
     let ops, new_operators = configure_operators_impl (p, ops) in
-    let new_policy = { policy with operator_ = Operator_permitted new_operators; } in
+    let new_policy = { policy with operator = Operator_permitted new_operators; } in
     ops, new_policy
 
 let policy_to_descriptor (p : permission_policy) : permission_policy_descriptor =
-  let operator = match p.operator_ with
+  let operator = match p.operator with
   | Operator_permitted os -> Operator_transfer_permitted Current.self_address
   | Operator_denied -> Operator_transfer_denied
   in 
   {
-    self = p.self_;
+    self = p.self;
     operator = operator;
-    receiver = p.receiver_;
-    sender = p.sender_;
+    receiver = p.receiver;
+    sender = p.sender;
     custom = (None : custom_permission_policy option);
   }

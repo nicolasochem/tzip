@@ -30,7 +30,7 @@ type  entry_points =
     [op], new_s
 
   | Config_operators cfg ->
-    let u = match s.policy.self_ with
+    let u = match s.policy.self with
     (* assume if self transfers permitted only owner can config its own operators *)
     | Self_transfer_permitted -> asset_operator_config_by_owner cfg
     (* assume it is called by the admin *)
@@ -45,9 +45,9 @@ type  entry_points =
 (** example policies *)
 
 (* the policy which allows only token owners to transfer their own tokens. *)
-(* let own_policy : permission_policy = {
+let own_policy : permission_policy = {
   self = Self_transfer_permitted;
-  operators = Operator_transfer_denied;
+  operator = Operator_denied;
   sender = Owner_no_op;
   receiver = Owner_no_op;
 }
@@ -55,10 +55,7 @@ type  entry_points =
 (* non-transferable token (neither token owner, nor operators can transfer tokens. *)
   let own_policy : permission_policy = {
   self = Self_transfer_denied;
-  operators = Operator_transfer_denied;
+  operator = Operator_denied;
   sender = Owner_no_op;
   receiver = Owner_no_op;
-} *)
-
-
-let test (p : unit) = unit
+}
