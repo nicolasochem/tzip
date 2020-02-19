@@ -543,7 +543,7 @@ The parameter is an address plus hook entry point of type `transfer_descriptor_p
 The transfer hook is always invoked from the `transfer` operation.
 Otherwise, FA2 MUST fail.
 
-### Transfer Hook Examples
+### Transfer Hook Examples (WIP/TBD)
 
 ### Default Permissioning
 
@@ -571,7 +571,6 @@ approved to transfer its own tokens.
 
 Permission policy formula `S(true) * O(Op) * WL(false) * ROH(None) * SOH(None)`.
 
-[Hook contract](./examples/fa2_operators.mligo)
 
 #### Receiver Whitelisting
 
@@ -584,7 +583,6 @@ MUST fail.
 
 Permission policy formula `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`.
 
-[Hook contract](./examples/fa2_receiver_whitelist.mligo)
 
 ## Future directions
 
