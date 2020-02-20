@@ -55,25 +55,6 @@ type token_descriptor_param = {
 
 (* permission policy and config definition *)
 
-type transfer_descriptor = {
-  from_ : address option;
-  to_ : address option;
-  token_id : token_id;
-  amount : nat;
-}
-
-type transfer_descriptor_param = {
-  batch : transfer_descriptor list;
-  operator : address;
-}
-
-type fa2_token_receiver =
-  | Tokens_received of transfer_descriptor_param
-
-type fa2_token_sender =
-  | Tokens_sent of transfer_descriptor_param
-
-
 type policy_config_api = address
 
 type custom_permission_policy = {
@@ -110,6 +91,24 @@ type fa2_entry_points =
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
   | Get_permissions_descriptor of permission_policy_descriptor contract
+
+  type transfer_descriptor = {
+  from_ : address option;
+  to_ : address option;
+  token_id : token_id;
+  amount : nat;
+}
+
+type transfer_descriptor_param = {
+  batch : transfer_descriptor list;
+  operator : address;
+}
+
+type fa2_token_receiver =
+  | Tokens_received of transfer_descriptor_param
+
+type fa2_token_sender =
+  | Tokens_sent of transfer_descriptor_param
 
 (** Different permission policy config interfaces *)
 

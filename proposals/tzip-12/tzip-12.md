@@ -110,25 +110,6 @@ type token_descriptor_param = {
 
 (* permission policy and config definition *)
 
-type transfer_descriptor = {
-  from_ : address option;
-  to_ : address option;
-  token_id : token_id;
-  amount : nat;
-}
-
-type transfer_descriptor_param = {
-  batch : transfer_descriptor list;
-  operator : address;
-}
-
-type fa2_token_receiver =
-  | Tokens_received of transfer_descriptor_param
-
-type fa2_token_sender =
-  | Tokens_sent of transfer_descriptor_param
-
-
 type policy_config_api = address
 
 type custom_permission_policy = {
@@ -280,7 +261,30 @@ type owner_transfer_policy =
   | Owner_custom of custom_permission_policy
 ```
 
-This policy can be applied to both token senders and token receivers.
+This policy can be applied to both token senders and token receivers. There are
+two owner hook interfaces `fa2_token_receiver` and `fa2_token_sender` that need
+to be implemented by token owner contracts, to expose owner's hooks to FA2 token
+contract.
+
+```ocaml
+type transfer_descriptor = {
+  from_ : address option;
+  to_ : address option;
+  token_id : token_id;
+  amount : nat;
+}
+
+type transfer_descriptor_param = {
+  batch : transfer_descriptor list;
+  operator : address;
+}
+
+type fa2_token_receiver =
+  | Tokens_received of transfer_descriptor_param
+
+type fa2_token_sender =
+  | Tokens_sent of transfer_descriptor_param
+```
 
 The policy has an extension point `Owner_custom`. If required, a custom owner policy
 can be created and used instead of the standard ones.
@@ -438,7 +442,9 @@ implemented either within the FA2 token contract itself (then the returned addre
 will be `SELF`), or in a separate contract (see recommended implementation pattern
 using [transfer hook](#Transfer Hook)).
 
-## Transfer Hook
+## Implementing FA2 token contract
+
+### Transfer Hook
 
 Transfer hook is a recommended design pattern to implement FA2, enabling separation
 of the core token transfer logic and a permission policy. Instead of implementing
@@ -447,7 +453,7 @@ is implemented as a separate contract. Permission policy contract provides an
 entry point invoked by the core FA2 contract to accept or reject a particular
 transfer operation (such entry point is called **transfer hook**).
 
-### Transfer Hook Motivation
+#### Transfer Hook Motivation
 
 Usually different tokens require different permission policies which define who
 can transfer and receive tokens. There is no single permission policy which can
@@ -477,7 +483,7 @@ a transfer hook only. No storage migration of the FA2 ledger is required.
 - Transfer hooks could be used for purposes beyond permissioning such as implementing
 custom logic for a particular token application.
 
-### Transfer Hook Specification
+#### Transfer Hook Specification
 
 FA2 token contract has a single entry point to set the hook. If transfer hook is
 not set, FA2 token contract transfer operation MUST fail. Transfer hook is to be
@@ -509,7 +515,7 @@ transfer hook as well.
 | :---- | :--- |
 | Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
 
-### `set_transfer_hook`
+#### `set_transfer_hook`
 
 FA2 entry point with the following signature:
 
@@ -547,45 +553,40 @@ of type `transfer_descriptor_param`. It allows policy contract implementor to
 choose a name for the hook entry point or even implement several transfer hooks
 in the same contract.
 
-### Transfer Hook Examples (WIP/TBD)
+#### Transfer Hook Examples
 
-### Default Permissioning
+##### Default Permission Policy
 
 Only token owner can initiate a transfer of tokens from their accounts
-( `from_` MUST be equal to `SENDER`). 
-
-Permission policy formula `S(true) * O(None) * WL(false) * ROH(None) * SOH(None)`.
+( `from_` MUST be equal to `SENDER`).
 
 Any address can be a recipient of the token transfer.
 
 [Hook contract](./examples/fa2_default.mligo)
 
-#### Transfer Operators
-
-This is a sample implementation of the FA2 transfer hook which supports transfer
-operators.
-
-Operator is a Tezos address which initiates token transfer operation.
-Owner is a Tezos address which can hold tokens. Owner can transfer its own tokens.
-Operator, other than the owner, MUST be approved to manage all tokens held by
-the owner to make a transfer from the owner account.
-
-Only token owner can add or remove its operators. The owner does not need to be
-approved to transfer its own tokens.
-
-Permission policy formula `S(true) * O(Op) * WL(false) * ROH(None) * SOH(None)`.
-
-
-#### Receiver Whitelisting
+##### Custom Receiver Hook/White List Permission Policy
 
 This is a sample implementation of the FA2 transfer hook which supports receiver
-whitelist.
+whitelist and `fa2_token_receiver` for token receivers. The hook contract also
+supports [operators](#Operator` Transfer Behavior).
 
-Only addresses which are whitelisted can receive tokens. If one or more `to_`
-addresses in FA2 transfer batch are not whitelisted the whole transfer operation
-MUST fail.
+Only addresses which are whitelisted or implement `fa2_token_receiver` interface
+can receive tokens. If one or more `to_` addresses in FA2 transfer batch are not
+permitted the whole transfer operation MUST fail.
 
-Permission policy formula `S(true) * O(None) * WL(true) * ROH(None) * SOH(None)`.
+The following table demonstrates the required actions depending on `to_` address
+properties.
+
+| `to_` is whitelisted | `to_` implements `fa2_token_receiver` interface | Action |
+| ------ | ----- | ----------|
+| No  | No  | Transaction MUST fail |
+| Yes | No  | Continue transfer |
+| No  | Yes | Continue transfer, MUST call `tokens_received` |
+| Yes | Yes | Continue transfer, MUST call `tokens_received` |
+
+Permission policy formula `S(true) * O(true) * ROH(None) * SOH(Custom)`.
+
+[Hook contract](./examples/fa2_custom_eceiver.mligo)
 
 ## Future directions
 
