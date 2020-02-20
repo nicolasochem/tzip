@@ -35,7 +35,7 @@ let validate_operators (p, policy
       let from_ops = Big_map.find_opt from_ operators in
       match from_ops with
       |None -> false
-      |Some ops -> Set.mem from_ ops
+      |Some ops -> Set.mem p.operator ops
   in
   List.fold
     (fun (res, tx : bool * transfer_descriptor) ->
@@ -83,25 +83,24 @@ let validate_owner(p, policy, get_owner, to_hook :
   | Required_owner_hook -> validate_owner_hook (p, get_owner, to_hook, true)
   | Owner_custom c -> (failwith "custom policy not supported" : operation list)
 
+let to_receiver_hook : to_hook = fun (a : address) ->
+    let c : (transfer_descriptor_param contract) option = 
+    Operation.get_entrypoint_opt "%tokens_received" a in
+    c 
 
 let validate_receivers (p, policy : transfer_descriptor_param * permission_policy)
     : operation list =
   let get_receiver : get_owner = fun (tx : transfer_descriptor) -> tx.to_ in
-  let to_receiver_hook : to_hook = fun (a : address) ->
-    let c : (transfer_descriptor_param contract) option = 
-    Operation.get_entrypoint_opt "%tokens_received" a in
-    c 
-  in
   validate_owner (p, policy.receiver, get_receiver, to_receiver_hook)
+
+let to_sender_hook : to_hook = fun (a : address) ->
+    let c : (transfer_descriptor_param contract) option = 
+    Operation.get_entrypoint_opt "%tokens_sent" a in
+    c 
 
 let validate_senders (p, policy : transfer_descriptor_param * permission_policy)
     : operation list =
   let get_sender : get_owner = fun (tx : transfer_descriptor) -> tx.from_ in
-  let to_sender_hook : to_hook = fun (a : address) ->
-    let c : (transfer_descriptor_param contract) option = 
-    Operation.get_entrypoint_opt "%tokens_sent" a in
-    c 
-  in
   validate_owner (p, policy.sender, get_sender, to_sender_hook)
 
 let standard_transfer_hook (p, policy : transfer_descriptor_param * permission_policy)
