@@ -2,7 +2,7 @@
 
 
 type set_hook_param = {
-  hook : address;
+  hook : unit -> transfer_descriptor_param contract;
   permissions_descriptor : permission_policy_descriptor;
 }
 

@@ -527,7 +527,7 @@ type transfer_descriptor_param = {
 }
 
 type set_hook_param = {
-  hook : address;
+  hook : unit -> transfer_descriptor_param contract;
   permissions_descriptor : permission_policy_descriptor;
 }
 
@@ -541,6 +541,11 @@ The parameter is an address plus hook entry point of type `transfer_descriptor_p
 
 The transfer hook is always invoked from the `transfer` operation.
 Otherwise, FA2 MUST fail.
+
+`hook` field in `set_hook_param` record is a lambda which returns hook entry point
+of type `transfer_descriptor_param`. It allows policy contract implementor to
+choose a name for the hook entry point or even implement several transfer hooks
+in the same contract.
 
 ### Transfer Hook Examples (WIP/TBD)
 

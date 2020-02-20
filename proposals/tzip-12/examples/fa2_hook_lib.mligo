@@ -1,16 +1,17 @@
 #include "../fa2_hook.mligo"
 
-let get_hook_address (hook_contract : address) : address =
+let get_hook_entrypoint (hook_contract : address) (u : unit) 
+    : transfer_descriptor_param contract =
   let hook_entry : transfer_descriptor_param contract = 
     Operation.get_entrypoint "%tokens_transferred_hook" hook_contract in
-  Current.address hook_entry
+  hook_entry
 
 
 let create_register_hook_op 
     (fa2, descriptor : (fa2_with_hook_entry_points contract) * permission_policy_descriptor) : operation =
-  let hook : address = get_hook_address Current.self_address in
+  let hook_fn = get_hook_entrypoint Current.self_address in
   let pp : set_hook_param = {
-    hook = hook;
+    hook = hook_fn;
     permissions_descriptor = descriptor;
   } in
   Operation.transaction (Set_transfer_hook pp) 0mutez fa2
