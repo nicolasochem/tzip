@@ -148,6 +148,69 @@ type fa2_entry_points =
   | Get_permissions_descriptor of permission_policy_descriptor contract
 ```
 
+### Entry Point Semantics
+
+#### `transfer`
+
+Transfers amounts specified in the batch between given addresses. Transfers
+should happen atomically; if at least one specified transfer cannot be completed,
+the whole transaction MUST fail.
+
+The transaction MUST fail if any of the balance(s) of the holder for token(s) in
+the batch is lower than the respective amount(s) sent. If holder does not hold any
+tokens of type `token_id`, holder's balance is interpreted as zero.
+
+Transfer implementations MUST apply permission policy logic. If permission logic
+rejects a transfer, the whole operation MUST fail.
+
+Transfer operation MUST update token owners balances exactly how it is specified
+by its parameters. Transfer operation should not try to adjust transfer amounts
+and/or try to add/remove additional transfers like transaction fees.
+
+FA2 does NOT specify an interface for mint and burn operations. However, if an
+FA2 token contract implements mint and burn operations, it MUST apply the same
+permission logic as for the token transfer operation. Mint and burn can be considered
+special cases of the transfer.
+
+#### `balance_of`
+
+Get the balance of multiple account/token pairs. Accepts a list of `balance_request`s
+and a callback contract `balance_view` which accepts a list of `balance_response`
+records.
+
+#### `total_supply`
+
+Get the total supply for multiple token types. Accepts a list of `total_supply_request`s
+and a callback contract `total_supply_view` which accepts a list of
+`total_supply_response` records.
+
+#### `token_descriptor`
+
+Get the metadata for multiple token types. Accepts a list of `token_id`s
+and a callback contract `token_descriptor_view` which accepts a list of
+`token_descriptor_response` records.
+
+#### `get_permissions_descriptor`
+
+Gets the descriptor of the transfer permission policy.
+
+```ocaml
+type permission_policy_descriptor = {
+  self : self_transfer_policy;
+  operator : operator_transfer_policy;
+  receiver : owner_transfer_policy;
+  sender : owner_transfer_policy;
+  custom : custom_permission_policy option;
+}
+```
+
+For more details see [FA2 Permission Policies and Configuration](#FA2 Permission Policies and Configuration)
+
+Some of the permission options require config API. Config entry points may be
+implemented either within the FA2 token contract itself (then the returned address
+will be `SELF`), or in a separate contract (see recommended implementation pattern
+using [transfer hook](#Transfer Hook)).
+
 ### FA2 Permission Policies and Configuration
 
 Most token standards specify some logic which defines who can initiate a transfer,
@@ -380,67 +443,6 @@ type fa2_operators_config_entry_points =
   | Remove_operators of operator_param list
   | Is_operator of is_operator_param
 ```
-
-### Entry Point Semantics
-
-#### `transfer`
-
-Transfers amounts specified in the batch between given addresses. Transfers
-should happen atomically; if at least one specified transfer cannot be completed,
-the whole transaction MUST fail.
-
-The transaction MUST fail if any of the balance(s) of the holder for token(s) in
-the batch is lower than the respective amount(s) sent. If holder does not hold any
-tokens of type `token_id`, holder's balance is interpreted as zero.
-
-Transfer implementations MUST apply permission policy logic. If permission logic
-rejects a transfer, the whole operation MUST fail.
-
-Transfer operation MUST update token owners balances exactly how it is specified
-by its parameters. Transfer operation should not try to adjust transfer amounts
-and/or try to add/remove additional transfers like transaction fees.
-
-FA2 does NOT specify an interface for mint and burn operations. However, if an
-FA2 token contract implements mint and burn operations, it MUST apply the same
-permission logic as for the token transfer operation. Mint and burn can be considered
-special cases of the transfer.
-
-#### `balance_of`
-
-Get the balance of multiple account/token pairs. Accepts a list of `balance_request`s
-and a callback contract `balance_view` which accepts a list of `balance_response`
-records.
-
-#### `total_supply`
-
-Get the total supply for multiple token types. Accepts a list of `total_supply_request`s
-and a callback contract `total_supply_view` which accepts a list of
-`total_supply_response` records.
-
-#### `token_descriptor`
-
-Get the metadata for multiple token types. Accepts a list of `token_id`s
-and a callback contract `token_descriptor_view` which accepts a list of
-`token_descriptor_response` records.
-
-#### `get_permissions_descriptor`
-
-Gets the descriptor of the transfer permission policy.
-
-```ocaml
-type permission_policy_descriptor = {
-  self : self_transfer_policy;
-  operator : operator_transfer_policy;
-  receiver : owner_transfer_policy;
-  sender : owner_transfer_policy;
-  custom : custom_permission_policy option;
-}
-```
-
-Some of the permission options require config API. Config entry points may be
-implemented either within the FA2 token contract itself (then the returned address
-will be `SELF`), or in a separate contract (see recommended implementation pattern
-using [transfer hook](#Transfer Hook)).
 
 ## Implementing FA2 token contract
 
