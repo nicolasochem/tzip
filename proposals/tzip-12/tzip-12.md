@@ -145,7 +145,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_descriptor of permission_policy_descriptor contract
+  | Permissions_descriptor of permission_policy_descriptor contract
 ```
 
 ### Entry Point Semantics
@@ -190,7 +190,7 @@ Get the metadata for multiple token types. Accepts a list of `token_id`s
 and a callback contract `token_descriptor_view` which accepts a list of
 `token_descriptor_response` records.
 
-#### `get_permissions_descriptor`
+#### `permissions_descriptor`
 
 Gets the descriptor of the transfer permission policy.
 
@@ -228,7 +228,7 @@ in ERC-20) or multiple non-compatible policies (e.g. ERC-777, which has both all
 and operator APIs, and two versions of the transfer entry point, one that invokes
 sender/receiver hooks and one which does not).
 
-FA2 specifies an interface `get_permissions_descriptor` allowing external contracts
+FA2 specifies an interface `permissions_descriptor` allowing external contracts
 (e.g. an auction) to discover an FA2 contract's permissioning policy and configure it.
 This serves as a more modular alternative to the existing approaches in ERC-20 or
 FA1.2, and helps to define consistent and non-self-contradictory policies.
@@ -370,7 +370,7 @@ formula represents non-transferable token (neither token owner, nor operators ca
 transfer tokens.
 
 Permission token policy formula is expressed by the `permission_policy_descriptor`
-returned by the [`get_permissions_descriptor`](#`get_permissions_descriptor`)
+returned by the [`permissions_descriptor`](#`permissions_descriptor`)
 entry point.
 
 ```ocaml

@@ -90,7 +90,7 @@ type fa2_entry_points =
   | Balance_of of balance_of_param
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
-  | Get_permissions_descriptor of permission_policy_descriptor contract
+  | Permissions_descriptor of permission_policy_descriptor contract
 
   type transfer_descriptor = {
   from_ : address option;
