@@ -54,7 +54,7 @@ will also be provided:
 
 ```ocaml
 type token_id = nat
-
+ 
 type transfer = {
   from_ : address;
   to_ : address;
@@ -106,7 +106,27 @@ type token_descriptor_param = {
   token_descriptor_view : (token_descriptor_response list) contract;
 }
 
-(* permission policy and config definition *)
+type operator_tokens =
+  | All_tokens
+  | Some_tokens of token_id list
+
+type operator_param = {
+  owner : address;
+  operator : address; 
+  tokens : operator_tokens;
+}
+
+type is_operator_response = {
+  operator : operator_param;
+  is_operator : bool;
+}
+
+type is_operator_param = {
+  operators : operator_param list;
+  view : (is_operator_response list) contract;
+}
+
+(* permission policy definition *)
 
 type policy_config_api = address
 
@@ -120,9 +140,8 @@ type self_transfer_policy =
   | Self_transfer_denied
 
 type operator_transfer_policy =
-  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_permitted
   | Operator_transfer_denied
-  | Operator_transfer_custom of custom_permission_policy
 
 type owner_transfer_policy =
   | Owner_no_op
@@ -144,6 +163,9 @@ type fa2_entry_points =
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
   | Permissions_descriptor of permission_policy_descriptor contract
+  | Add_operators of operator_param list
+  | Remove_operators of operator_param list
+  | Are_operators of is_operator_param list
 ```
 
 ### Entry Point Semantics
@@ -217,6 +239,39 @@ implemented either within the FA2 token contract itself (then the returned addre
 will be `SELF`), or in a separate contract (see recommended implementation pattern
 using [transfer hook](#Transfer Hook)).
 
+#### Operators
+
+Operator is a Tezos address which initiates token transfer operation on behalf of
+the owner. Owner is a Tezos address which can hold tokens.
+Operator, other than the owner, MUST be approved to manage particular token types
+held by the owner to make a transfer from the owner account.
+
+```ocaml
+type operator_tokens =
+  | All_tokens
+  | Some_tokens of token_id list
+
+type operator_param = {
+  owner : address;
+  operator : address;
+  tokens : operator_tokens;
+}
+
+type is_operator_response = {
+  operator : operator_param;
+  is_operator : bool;
+}
+
+type is_operator_param = {
+  operators : operator_param list;
+  view : (is_operator_response list) contract;
+}
+
+| Add_operators of operator_param list
+| Remove_operators of operator_param list
+| Are_operators of is_operator_param list
+```
+
 ### FA2 Permission Policies and Configuration
 
 Most token standards specify some logic which defines who can initiate a transfer,
@@ -288,19 +343,12 @@ behalf of the owner.
 
 ```ocaml
 type operator_transfer_policy =
-  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_permitted
   | Operator_transfer_denied
-  | Operator_transfer_custom of custom_permission_policy
 ```
 
-If operator transfer is permitted, the policy provides an entry point for the
-operator config API which allows adding and removing operators on behalf of the
-token owner (see [operator config entry points](#`fa2_operators_config_entry_points`)).
-
-The policy has an extension point `operator_transfer_custom`. If required, a
-custom operator policy can be created and used instead of the standard ones.
-For instance, more granular control of token types and allowance amounts per
-operator may be supported.
+FA2 interface provides API to configure operators (see [operators config entry points](#Operators)).
+If operator transfer is denied, those entry points MUST fail if invoked.
 
 ###### Token owner Permission Behavior
 
@@ -416,39 +464,6 @@ overlap with already existing standard policies. This standard does not specify
 exact types for custom config entry points. FA2 token contract clients which
 support custom config entry points must know their types a priori and/or use a
 `tag` hint of `custom_permission_policy`.
-
-#### Permission Policy Standard Configuration APIs
-
-##### `fa2_operators_config_entry_points`
-
-Operator is a Tezos address which initiates token transfer operation on behalf of
-the owner. Owner is a Tezos address which can hold tokens.
-Operator, other than the owner, MUST be approved to manage all tokens held by
-the owner to make a transfer from the owner account.
-
-Config API provides the following entry points:
-
-```ocaml
-type operator_param = {
-  owner : address;
-  operator : address;
-}
-
-type is_operator_response = {
-  operator : operator_param;
-  is_operator : bool;
-}
-
-type is_operator_param = {
-  operators : operator_param list;
-  view : (is_operator_response list) contract;
-}
-
-type fa2_operators_config_entry_points =
-  | Add_operators of operator_param list
-  | Remove_operators of operator_param list
-  | Is_operator of is_operator_param
-```
 
 ## Implementing FA2
 

@@ -51,7 +51,27 @@ type token_descriptor_param = {
   token_descriptor_view : (token_descriptor_response list) contract;
 }
 
-(* permission policy and config definition *)
+type operator_tokens =
+  | All_tokens
+  | Some_tokens of token_id list
+
+type operator_param = {
+  owner : address;
+  operator : address;
+  tokens : operator_tokens;
+}
+
+type is_operator_response = {
+  operator : operator_param;
+  is_operator : bool;
+}
+
+type is_operator_param = {
+  operators : operator_param list;
+  view : (is_operator_response list) contract;
+}
+
+(* permission policy definition *)
 
 type policy_config_api = address
 
@@ -65,9 +85,8 @@ type self_transfer_policy =
   | Self_transfer_denied
 
 type operator_transfer_policy =
-  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_permitted
   | Operator_transfer_denied
-  | Operator_transfer_custom of custom_permission_policy
 
 type owner_transfer_policy =
   | Owner_no_op
@@ -89,8 +108,13 @@ type fa2_entry_points =
   | Total_supply of total_supply_param
   | Token_descriptor of token_descriptor_param
   | Permissions_descriptor of permission_policy_descriptor contract
+  | Add_operators of operator_param list
+  | Remove_operators of operator_param list
+  | Are_operators of is_operator_param list
 
-  type transfer_descriptor = {
+
+
+type transfer_descriptor = {
   from_ : address option;
   to_ : address option;
   token_id : token_id;
@@ -107,33 +131,3 @@ type fa2_token_receiver =
 
 type fa2_token_sender =
   | Tokens_sent of transfer_descriptor_param
-
-(** Different permission policy config interfaces *)
-
-(**
-  Operator permission policy config API.
-  Operator is a Tezos address which initiates token transfer operation.
-  Owner is a Tezos address which can hold tokens.
-  Operator, other than the owner, MUST be approved to manage all tokens held by
-  the owner to make a transfer from the owner account.
- *)
-
-type operator_param = {
-  owner : address;
-  operator : address; 
-}
-
-type is_operator_response = {
-  operator : operator_param;
-  is_operator : bool;
-}
-
-type is_operator_param = {
-  operators : operator_param list;
-  view : (is_operator_response list) contract;
-}
-
-type fa2_operators_config_entry_points =
-  | Add_operators of operator_param list
-  | Remove_operators of operator_param list
-  | Is_operator of is_operator_param
