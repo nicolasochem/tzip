@@ -38,27 +38,22 @@ a common interface standard for wallet integrators and external developers.
 ## Interface Specification
 
 Token type is uniquely identified by a pair of the token contract address and
-token id. If the underlying contract implementation supports only a single
-token type (e.g. ERC-20-like contract), token id is represented by `unit`. If the
-underlying contract implementation supports multiple tokens (in a Multi-Asset
-Contract or MAC), token id is represented by `nat`.
+token id which is a natural number (`nat`). If the underlying contract implementation
+supports only a single token type (e.g. ERC-20-like contract), token id MUST be `0n`.
+FA2 token contract is fully responsible to assign and manage token IDs. FA2 clients
+MUST NOT depend on particular ID values to infer information about a token.
 
 All entry points are batch operations which allow querying or transfer multiple
 token types atomically. If the underlying contract implementation supports
 only a single token type, the batch may contain single or multiple entries where
-token id will always be fixed `Single unit` value.
-
-FA2 token contract is fully responsible to assign and manage token IDs. FA2 clients
-MUST NOT depend on particular ID values to infer information about a token.
+token id will always be fixed `0n` value.
 
 Token contract MUST implement the following entry points. Notation is given in
 [cameLIGO language](https://ligolang.org) for readability but a Michelson interface
 will also be provided:
 
 ```ocaml
-type token_id =
-  | Single
-  | Multi of nat
+type token_id = nat
 
 type transfer = {
   from_ : address;

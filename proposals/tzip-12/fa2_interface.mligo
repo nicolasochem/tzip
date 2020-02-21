@@ -1,7 +1,5 @@
-type token_id =
-  | Single
-  | Multi of nat
-
+type token_id = nat
+ 
 type transfer = {
   from_ : address;
   to_ : address;
