@@ -48,6 +48,9 @@ token types atomically. If the underlying contract implementation supports
 only a single token type, the batch may contain single or multiple entries where
 token id will always be fixed `Single unit` value.
 
+FA2 token contract is fully responsible to assign and manage token IDs. FA2 clients
+MUST NOT depend on particular ID values to infer information about a token.
+
 Token contract MUST implement the following entry points. Notation is given in
 [cameLIGO language](https://ligolang.org) for readability but a Michelson interface
 will also be provided:
@@ -189,6 +192,14 @@ and a callback contract `total_supply_view` which accepts a list of
 Get the metadata for multiple token types. Accepts a list of `token_id`s
 and a callback contract `token_descriptor_view` which accepts a list of
 `token_descriptor_response` records.
+
+FA2 token amounts are represented by natural numbers (`nat`) and their **granularity**
+(the smallest amount oif tokens which may be minted, burned or transferred) is
+always 1.
+
+`decimals` is the number of digits to use after the decimal point when displaying
+the token amounts. If 0, the asset is not divisible. Decimals are used for display
+purpose only and MUST NOT affect transfer operation.
 
 #### `permissions_descriptor`
 
