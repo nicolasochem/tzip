@@ -233,7 +233,7 @@ FA2 specifies an interface `permissions_descriptor` allowing external contracts
 This serves as a more modular alternative to the existing approaches in ERC-20 or
 FA1.2, and helps to define consistent and non-self-contradictory policies.
 
-#### The Taxonomy of Permission Policy
+#### A Taxonomy of Permission Policies
 
 Permission policy semantics can be broken down into several orthogonal behavior patterns.
 The concrete policy can be expressed as a combination of those behaviors.  
@@ -242,7 +242,7 @@ The proposed taxonomy framework and API allows to discover what are the properti
 (behaviors) of the particular FA2 token contract permission policy and/or to configure
 it on the chain.
 
-##### Core Transfer behavior
+##### Core Transfer Behavior
 
 This behavior MUST be implemented by any FA2 token contract. If a token contract
 implementation uses [transfer hook](#Transfer Hook) design pattern, core transfer
@@ -444,14 +444,14 @@ type fa2_operators_config_entry_points =
   | Is_operator of is_operator_param
 ```
 
-## Implementing FA2 token contract
+## Implementing FA2
 
 ### Transfer Hook
 
-Transfer hook is a recommended design pattern to implement FA2, enabling separation
+Transfer hook is one recommended design pattern to implement FA2, enabling separation
 of the core token transfer logic and a permission policy. Instead of implementing
 FA2 as a monolithic contract, a [permission policy](#FA2 Permission Policies and Configuration)
-is implemented as a separate contract. Permission policy contract provides an
+can be implemented as a separate contract. Permission policy contract provides an
 entry point invoked by the core FA2 contract to accept or reject a particular
 transfer operation (such entry point is called **transfer hook**).
 
@@ -465,7 +465,7 @@ transferred by special exchange operator account, but not directly by the token
 owners themselves.
 
 Support for different permission policies usually require customizing existing
-contract code The FA2 standard proposes different approach where the on-chain
+contract code. The FA2 standard proposes a different approach in which the on-chain
 composition of the core FA2 contract implementation does not change and a
 pluggable permission transfer hook is implemented as a separate contract and registered
 with the core FA2. Every time FA2 performs a transfer it invokes a hook contract
