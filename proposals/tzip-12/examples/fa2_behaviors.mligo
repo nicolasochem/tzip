@@ -88,26 +88,26 @@ let to_receiver_hook : to_hook = fun (a : address) ->
     Operation.get_entrypoint_opt "%tokens_received" a in
     c 
 
-let validate_receivers (p, policy : transfer_descriptor_param * permission_policy)
+let validate_receivers (p, policy : transfer_descriptor_param * owner_transfer_policy)
     : operation list =
   let get_receiver : get_owner = fun (tx : transfer_descriptor) -> tx.to_ in
-  validate_owner (p, policy.receiver, get_receiver, to_receiver_hook)
+  validate_owner (p, policy, get_receiver, to_receiver_hook)
 
 let to_sender_hook : to_hook = fun (a : address) ->
     let c : (transfer_descriptor_param contract) option = 
     Operation.get_entrypoint_opt "%tokens_sent" a in
     c 
 
-let validate_senders (p, policy : transfer_descriptor_param * permission_policy)
+let validate_senders (p, policy : transfer_descriptor_param * owner_transfer_policy)
     : operation list =
   let get_sender : get_owner = fun (tx : transfer_descriptor) -> tx.from_ in
-  validate_owner (p, policy.sender, get_sender, to_sender_hook)
+  validate_owner (p, policy, get_sender, to_sender_hook)
 
 let standard_transfer_hook (p, policy : transfer_descriptor_param * permission_policy)
     : operation list =
   let u = validate_operators (p, policy) in
-  let sender_ops = validate_senders (p, policy) in
-  let receiver_ops = validate_receivers (p, policy) in
+  let sender_ops = validate_senders (p, policy.sender) in
+  let receiver_ops = validate_receivers (p, policy.receiver) in
   (* merge two lists *)
   List.fold (fun (l, o : (operation list) * operation) -> o :: l) receiver_ops sender_ops
 
@@ -165,8 +165,6 @@ let is_operator (p, ops : is_operator_param * operators) : operation =
       { operator = r; is_operator = is_op })
     p.operators in
     Operation.transaction responses 0mutez p.view
-
-
 
 let configure_operators_impl (p, operators
     : fa2_operators_config_entry_points * operators) : (operation list) * operators =
