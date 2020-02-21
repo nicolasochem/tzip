@@ -35,7 +35,7 @@ interface which accommodates all mentioned concerns. It aims to provide signific
 expressivity to contract developers to create new types of tokens while maintaining
 a common interface standard for wallet integrators and external developers.
 
-## Specification
+## Interface Specification
 
 Token type is uniquely identified by a pair of the token contract address and
 token id. If the underlying contract implementation supports only a single
