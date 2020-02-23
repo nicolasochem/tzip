@@ -617,3 +617,9 @@ Future amendments to Tezos are likely to enable new functionality by which this
 standard can be upgraded. Namely,
 [read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227),
 event logging, and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
+
+
+## Copyright
+
+Copyright and related rights waived via
+[CC0](https://creativecommons.org/publicdomain/zero/1.0/).
