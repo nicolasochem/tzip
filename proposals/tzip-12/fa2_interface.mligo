@@ -53,7 +53,7 @@ type token_descriptor_param = {
 
 type operator_tokens =
   | All_tokens
-  | Some_tokens of token_id list
+  | Some_tokens of token_id set
 
 type operator_param = {
   owner : address;
@@ -66,7 +66,7 @@ type is_operator_response = {
   is_operator : bool;
 }
 
-type is_operator_param = {
+type are_operators_param = {
   operators : operator_param list;
   view : (is_operator_response list) contract;
 }
@@ -110,7 +110,7 @@ type fa2_entry_points =
   | Permissions_descriptor of permission_policy_descriptor contract
   | Add_operators of operator_param list
   | Remove_operators of operator_param list
-  | Are_operators of is_operator_param list
+  | Are_operators of are_operators_param list
 
 
 

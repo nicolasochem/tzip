@@ -23,14 +23,14 @@ type schedule_policy = {
   schedule_interval : int;
 }
 
-type extended_policy = {
-  standard_policy : permission_policy;
+type permission_policy = {
+  descriptor : permission_policy_descriptor;
   schedule_policy : schedule_policy option;
 }
 
 type storage = {
   fa2_registry : fa2_registry;
-  policy : extended_policy;
+  policy : permission_policy;
 }
 
 type schedule_config =
@@ -54,17 +54,16 @@ let configure_schedule (cfg, policy : schedule_config * schedule_policy option)
     let op = Operation.transaction s 0mutez v in
     [op], policy
 
-let custom_policy_to_descriptor (p : extended_policy) : permission_policy_descriptor =
-  let standard_descriptor = policy_to_descriptor p.standard_policy in
+let custom_policy_to_descriptor (p : permission_policy) : permission_policy_descriptor =
   match p.schedule_policy with
-  | None -> standard_descriptor
+  | None -> p.descriptor
   | Some s ->
     let custom_p : custom_permission_policy = {
       tag = "schedule";
       config_api = Some Current.self_address;
     }
     in
-    {standard_descriptor with custom = Some custom_p; }
+    {p.descriptor with custom = Some custom_p; }
 
 type interval_result =
   | Reminder of int
@@ -100,7 +99,6 @@ let validate_schedule (policy : schedule_policy option) : unit =
 type  entry_points =
   | Tokens_transferred_hook of transfer_descriptor_param
   | Register_with_fa2 of fa2_with_hook_entry_points contract
-  | Config_operators of fa2_operators_config_entry_points
   | Config_schedule of schedule_config
 
  let main (param, s : entry_points * storage) 
@@ -109,7 +107,7 @@ type  entry_points =
   | Tokens_transferred_hook p ->
     let u1 = validate_hook_call (Current.sender, s.fa2_registry) in
     let u2 = validate_schedule(s.policy.schedule_policy) in
-    let ops = standard_transfer_hook (p, s.policy.standard_policy) in
+    let ops = standard_transfer_hook (p, s.policy.descriptor) in
     ops, s
 
   | Register_with_fa2 fa2 ->
@@ -117,17 +115,6 @@ type  entry_points =
     let op , new_registry = register_with_fa2 (fa2, descriptor, s.fa2_registry) in
     let new_s = { s with fa2_registry = new_registry; } in
     [op], new_s
-
-  | Config_operators cfg ->
-    let u = match s.policy.standard_policy.self with
-    (* assume if self transfers permitted only owner can config its own operators *)
-    | Self_transfer_permitted -> asset_operator_config_by_owner cfg
-    (* assume it is called by the admin *)
-    | Self_transfer_denied -> unit
-    in
-    let ops, new_s_policy = configure_operators (cfg, s.policy.standard_policy) in
-    let new_s = { s with policy.standard_policy = new_s_policy; } in
-    ops, new_s
 
   | Config_schedule cfg ->
     let ops, new_schedule = configure_schedule (cfg, s.policy.schedule_policy) in

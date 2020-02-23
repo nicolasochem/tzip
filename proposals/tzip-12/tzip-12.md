@@ -108,11 +108,11 @@ type token_descriptor_param = {
 
 type operator_tokens =
   | All_tokens
-  | Some_tokens of token_id list
+  | Some_tokens of token_id set
 
 type operator_param = {
   owner : address;
-  operator : address; 
+  operator : address;
   tokens : operator_tokens;
 }
 
@@ -121,7 +121,7 @@ type is_operator_response = {
   is_operator : bool;
 }
 
-type is_operator_param = {
+type are_operators_param = {
   operators : operator_param list;
   view : (is_operator_response list) contract;
 }
@@ -249,7 +249,7 @@ held by the owner to make a transfer from the owner account.
 ```ocaml
 type operator_tokens =
   | All_tokens
-  | Some_tokens of token_id list
+  | Some_tokens of token_id set
 
 type operator_param = {
   owner : address;
@@ -262,14 +262,14 @@ type is_operator_response = {
   is_operator : bool;
 }
 
-type is_operator_param = {
+type are_operators_param = {
   operators : operator_param list;
   view : (is_operator_response list) contract;
 }
 
 | Add_operators of operator_param list
 | Remove_operators of operator_param list
-| Are_operators of is_operator_param list
+| Are_operators of are_operators_param list
 ```
 
 ### FA2 Permission Policies and Configuration
