@@ -110,7 +110,7 @@ type fa2_entry_points =
   | Permissions_descriptor of permission_policy_descriptor contract
   | Add_operators of operator_param list
   | Remove_operators of operator_param list
-  | Are_operators of are_operators_param list
+  | Are_operators of are_operators_param
 
 
 
