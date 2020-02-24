@@ -150,3 +150,37 @@ let are_operators (param, storage :  are_operators_param * operator_storage) : o
       r :: rr
     ) param.operators ([] :is_operator_response list) in
   Operation.transaction responses 0mutez param.view
+
+type owner_to_tokens = (address, (token_id set)) map
+
+let validate_operator (self, txs, ops_storage 
+    : self_transfer_policy * transfer_param * operator_storage) : unit =
+  let can_self_tx = match self with
+  | Self_transfer_permitted -> true
+  | Self_transfer_denied -> false
+  in
+  let operator = Current.sender in
+  let tokens_by_owner = List.fold
+    (fun (owners, tx : owner_to_tokens * transfer) ->
+      let tokens = Map.find_opt tx.from_ owners in
+      let new_tokens = match tokens with
+      | None -> Set.literal [tx.token_id]
+      | Some ts -> Set.add tx.token_id ts
+      in
+      Map.update tx.from_ (Some new_tokens) owners
+    ) txs (Map.empty : owner_to_tokens) in
+
+  Map.iter
+    (fun (owner, tokens : address * (token_id set)) ->
+      if can_self_tx && owner = operator
+      then unit
+      else
+        let oparam : operator_param = {
+          owner = owner;
+          operator = sender;
+          tokens = Some_tokens tokens;
+        } in
+        let is_op = is_operator (oparam, ops_storage) in
+        if is_op then unit else failwith "not permitted operator"
+    ) tokens_by_owner
+
