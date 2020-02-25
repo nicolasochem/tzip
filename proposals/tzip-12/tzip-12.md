@@ -362,7 +362,7 @@ type operator_transfer_policy =
   | Operator_custom of custom_permission_policy
 ```
 
-FA2 interface provides API to configure operators (see [operators config entry points](#Operators)).
+FA2 interface provides API to configure operators (see [operators config entry points](#operators)).
 If operator transfer is denied, those entry points MUST fail if invoked.
 
 The policy has an extension point `Operator_custom`. If required, a custom operator
@@ -443,7 +443,7 @@ formula represents non-transferable token (neither token owner, nor operators ca
 transfer tokens.
 
 Permission token policy formula is expressed by the `permission_policy_descriptor`
-returned by the [`permissions_descriptor`](#`permissions_descriptor`)
+returned by the [`permissions_descriptor`](#permissions_descriptor)
 entry point.
 
 ```ocaml
@@ -536,7 +536,7 @@ without changing existing hook configuration.
 
 For each transfer operation token contract MUST invoke transfer hook
 and return corresponding operation as part of the transfer entry point result.
-(For more details see [`set_transfer_hook`](#`set_transfer_hook`) )
+(For more details see [`set_transfer_hook`](#set_transfer_hook) )
 
 `operator` parameter for the hook invocation MUST be set to `SENDER`.
 
@@ -628,7 +628,7 @@ properties.
 
 Permission policy formula `S(true) * O(true) * ROH(None) * SOH(Custom)`.
 
-[Hook contract](./examples/fa2_custom_eceiver.mligo)
+[Hook contract](./examples/fa2_custom_receiver.mligo)
 
 ## Future directions
 
