@@ -88,20 +88,16 @@ type total_supply_param = {
 }
 
 type token_metadata = {
+  token_id : token_id;
   symbol : string;
   name : string;
   decimals : nat;
   extras : (string, string) map;
 }
 
-type token_metadata_response = {
-  token_id : token_id;
-  token_metadata : token_metadata;
-}
-
 type token_metadata_param = {
   token_ids : token_id list;
-  callback : (token_metadata_response list) contract;
+  callback : (token_metadata list) contract;
 }
 
 type operator_tokens =
@@ -210,10 +206,11 @@ and a callback contract `callback` which accepts a list of
 
 Get the metadata for multiple token types. Accepts a list of `token_id`s
 and a callback contract `callback` which accepts a list of
-`token_metadata_response` records.
+`token_metadata` records.
 
 ```ocaml
 type token_metadata = {
+  token_id : token_id;
   symbol : string;
   name : string;
   decimals : nat;
@@ -222,12 +219,14 @@ type token_metadata = {
 ```
 
 FA2 token amounts are represented by natural numbers (`nat`) and their **granularity**
-(the smallest amount oif tokens which may be minted, burned or transferred) is
+(the smallest amount if tokens which may be minted, burned or transferred) is
 always 1.
 
 `decimals` is the number of digits to use after the decimal point when displaying
 the token amounts. If 0, the asset is not divisible. Decimals are used for display
 purpose only and MUST NOT affect transfer operation.
+
+TBD example
 
 #### `permissions_descriptor`
 
@@ -391,7 +390,7 @@ Token owner behavior is defined as following:
 
 ```ocaml
 type owner_transfer_policy =
-  | owner_no_op
+  | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
   | Owner_custom of custom_permission_policy
@@ -411,6 +410,7 @@ type transfer_descriptor = {
 }
 
 type transfer_descriptor_param = {
+  fa2 : address;
   batch : transfer_descriptor list;
   operator : address;
 }

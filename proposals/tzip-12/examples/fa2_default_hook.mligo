@@ -18,7 +18,7 @@ type  entry_points =
     : (operation list) * storage =
   match param with
   | Tokens_transferred_hook p ->
-    let u = validate_hook_call (Current.sender, s.fa2_registry) in
+    let u = validate_hook_call (p.fa2, s.fa2_registry) in
     let ops = standard_transfer_hook (p, s.descriptor) in
     ops, s
 

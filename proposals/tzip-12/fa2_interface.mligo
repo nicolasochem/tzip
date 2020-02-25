@@ -33,20 +33,16 @@ type total_supply_param = {
 }
 
 type token_metadata = {
+  token_id : token_id;
   symbol : string;
   name : string;
   decimals : nat;
   extras : (string, string) map;
 }
 
-type token_metadata_response = {
-  token_id : token_id;
-  token_metadata : token_metadata;
-}
-
 type token_metadata_param = {
   token_ids : token_id list;
-  callback : (token_metadata_response list) contract;
+  callback : (token_metadata list) contract;
 }
 
 type operator_tokens =
@@ -122,6 +118,7 @@ type transfer_descriptor = {
 }
 
 type transfer_descriptor_param = {
+  fa2 : address;
   batch : transfer_descriptor list;
   operator : address;
 }
