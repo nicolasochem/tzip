@@ -105,25 +105,13 @@ let is_operator_impl (p, storage : operator_param * operator_storage) : bool =
   | None -> false
   | Some existing_tokens -> are_tokens_included (existing_tokens, p.tokens)
     
-let update_operators (params, storage : (update_operator_param list) * operator_storage)
+let update_operators (params, storage : (update_operator list) * operator_storage)
     : operator_storage =
   List.fold
-    (fun (s, up : operator_storage * update_operator_param) ->
-      match up.op with
-      | Add_tokens tokens ->
-        let op : operator_param = {
-          owner = up.owner;
-          operator = up.operator;
-          tokens = tokens;
-        } in
-        add_operator (op, s)
-      | Remove_tokens tokens ->
-        let op : operator_param = {
-          owner = up.owner;
-          operator = up.operator;
-          tokens = tokens;
-        } in
-        remove_operator (op, s)
+    (fun (s, up : operator_storage * update_operator) ->
+      match up with
+      | Add_operator op -> add_operator (op, s)
+      | Remove_operator op -> remove_operator (op, s)
     ) params storage
 
 let is_operator (param, storage :  is_operator_param * operator_storage) : operation =

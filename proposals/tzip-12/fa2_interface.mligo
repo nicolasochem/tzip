@@ -1,5 +1,5 @@
 type token_id = nat
- 
+
 type transfer = {
   from_ : address;
   to_ : address;
@@ -59,15 +59,9 @@ type operator_param = {
   tokens : operator_tokens;
 }
 
-type update_operator_op =
-  | Add_tokens of operator_tokens
-  | Remove_tokens of operator_tokens
-
-type update_operator_param = {
-  owner : address;
-  operator : address;
-  op : update_operator_op;
-}
+type update_operator =
+  | Add_operator of operator_param
+  | Remove_operator of operator_param
 
 type is_operator_response = {
   operator : operator_param;
@@ -117,7 +111,7 @@ type fa2_entry_points =
   | Total_supply of total_supply_param
   | Token_metadata of token_metadata_param
   | Permissions_descriptor of permission_policy_descriptor contract
-  | Update_operators of update_operator_param list
+  | Update_operators of update_operator list
   | Is_operator of is_operator_param
 
 type transfer_descriptor = {
