@@ -60,8 +60,14 @@ type operator_param = {
 }
 
 type update_operator_op =
-  | Add of operator_tokens;
-  | Remove of operator_tokens;
+  | Add_tokens of operator_tokens
+  | Remove_tokens of operator_tokens
+
+type update_operator_param = {
+  owner : address;
+  operator : address;
+  op : update_operator_op;
+}
 
 type is_operator_response = {
   operator : operator_param;
@@ -111,7 +117,7 @@ type fa2_entry_points =
   | Total_supply of total_supply_param
   | Token_metadata of token_metadata_param
   | Permissions_descriptor of permission_policy_descriptor contract
-  | Update_operators of update_operator_op list
+  | Update_operators of update_operator_param list
   | Is_operator of is_operator_param
 
 type transfer_descriptor = {

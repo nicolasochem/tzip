@@ -115,8 +115,8 @@ type operator_param = {
 }
 
 type update_operator_op =
-  | Add of operator_tokens;
-  | Remove of operator_tokens;
+  | Add_tokens of operator_tokens
+  | Remove_tokens of operator_tokens
 
 type is_operator_response = {
   operator : operator_param;
@@ -269,8 +269,8 @@ type operator_param = {
 }
 
 type update_operator_op =
-  | Add of operator_tokens;
-  | Remove of operator_tokens;
+  | Add_tokens of operator_tokens
+  | Remove_tokens of operator_tokens
 
 type is_operator_response = {
   operator : operator_param;
@@ -604,7 +604,7 @@ Only token owner can initiate a transfer of tokens from their accounts
 
 Any address can be a recipient of the token transfer.
 
-[Hook contract](./examples/fa2_default.mligo)
+[Hook contract](./examples/fa2_default_hook.mligo)
 
 ##### Custom Receiver Hook/White List Permission Policy
 
