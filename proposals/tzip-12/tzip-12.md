@@ -54,15 +54,13 @@ will also be provided:
 
 ```ocaml
 type token_id = nat
- 
+
 type transfer = {
   from_ : address;
   to_ : address;
   token_id : token_id;
   amount : nat;
 }
-
-type transfer_param = transfer list
 
 type balance_request = {
   owner : address;
@@ -74,36 +72,36 @@ type balance_response = {
   balance : nat;
 }
 
-type balance_of_param = {
-  balance_requests : balance_request list;
-  balance_view : (balance_response list) contract;
+type balance_param = {
+  requests : balance_request list;
+  callback : (balance_response list) contract;
 }
 
 type total_supply_response = {
   token_id : token_id;
-  supply : nat;
+  total_supply : nat;
 }
 
 type total_supply_param = {
   token_ids : token_id list;
-  total_supply_view : (total_supply_response list) contract;
+  callback : (total_supply_response list) contract;
 }
 
-type token_descriptor = {
+type token_metadata = {
   symbol : string;
   name : string;
   decimals : nat;
   extras : (string, string) map;
 }
 
-type token_descriptor_response = {
+type token_metadata_response = {
   token_id : token_id;
-  descriptor : token_descriptor;
+  token_metadata : token_metadata;
 }
 
-type token_descriptor_param = {
+type token_metadata_param = {
   token_ids : token_id list;
-  token_descriptor_view : (token_descriptor_response list) contract;
+  callback : (token_metadata_response list) contract;
 }
 
 type operator_tokens =
@@ -116,14 +114,18 @@ type operator_param = {
   tokens : operator_tokens;
 }
 
+type update_operator_op =
+  | Add of operator_tokens;
+  | Remove of operator_tokens;
+
 type is_operator_response = {
   operator : operator_param;
   is_operator : bool;
 }
 
-type are_operators_param = {
-  operators : operator_param list;
-  view : (is_operator_response list) contract;
+type is_operator_param = {
+  operator : operator_param;
+  callback : (is_operator_response) contract;
 }
 
 (* permission policy definition *)
@@ -142,6 +144,7 @@ type self_transfer_policy =
 type operator_transfer_policy =
   | Operator_transfer_permitted
   | Operator_transfer_denied
+  | Operator_custom of custom_permission_policy
 
 type owner_transfer_policy =
   | Owner_no_op
@@ -158,14 +161,13 @@ type permission_policy_descriptor = {
 }
 
 type fa2_entry_points =
-  | Transfer of transfer_param
-  | Balance_of of balance_of_param
+  | Transfer of transfer list
+  | Balance of balance_param
   | Total_supply of total_supply_param
-  | Token_descriptor of token_descriptor_param
+  | Token_metadata of token_metadata_param
   | Permissions_descriptor of permission_policy_descriptor contract
-  | Add_operators of operator_param list
-  | Remove_operators of operator_param list
-  | Are_operators of is_operator_param list
+  | Update_operators of update_operator_op list
+  | Is_operator of is_operator_param
 ```
 
 ### Entry Point Semantics
@@ -192,23 +194,32 @@ FA2 token contract implements mint and burn operations, it MUST apply the same
 permission logic as for the token transfer operation. Mint and burn can be considered
 special cases of the transfer.
 
-#### `balance_of`
+#### `balance`
 
 Get the balance of multiple account/token pairs. Accepts a list of `balance_request`s
-and a callback contract `balance_view` which accepts a list of `balance_response`
+and a callback contract `callback` which accepts a list of `balance_response`
 records.
 
 #### `total_supply`
 
 Get the total supply for multiple token types. Accepts a list of `total_supply_request`s
-and a callback contract `total_supply_view` which accepts a list of
+and a callback contract `callback` which accepts a list of
 `total_supply_response` records.
 
-#### `token_descriptor`
+#### `token_metadata`
 
 Get the metadata for multiple token types. Accepts a list of `token_id`s
-and a callback contract `token_descriptor_view` which accepts a list of
-`token_descriptor_response` records.
+and a callback contract `callback` which accepts a list of
+`token_metadata_response` records.
+
+```ocaml
+type token_metadata = {
+  symbol : string;
+  name : string;
+  decimals : nat;
+  extras : (string, string) map;
+}
+```
 
 FA2 token amounts are represented by natural numbers (`nat`) and their **granularity**
 (the smallest amount oif tokens which may be minted, burned or transferred) is
@@ -257,19 +268,22 @@ type operator_param = {
   tokens : operator_tokens;
 }
 
+type update_operator_op =
+  | Add of operator_tokens;
+  | Remove of operator_tokens;
+
 type is_operator_response = {
   operator : operator_param;
   is_operator : bool;
 }
 
-type are_operators_param = {
-  operators : operator_param list;
-  view : (is_operator_response list) contract;
+type is_operator_param = {
+  operator : operator_param;
+  callback : (is_operator_response) contract;
 }
 
-| Add_operators of operator_param list
-| Remove_operators of operator_param list
-| Are_operators of are_operators_param list
+| Update_operators of update_operator_op list
+| Is_operator of is_operator_param
 ```
 
 ### FA2 Permission Policies and Configuration
@@ -345,12 +359,17 @@ behalf of the owner.
 type operator_transfer_policy =
   | Operator_transfer_permitted
   | Operator_transfer_denied
+  | Operator_custom of custom_permission_policy
 ```
 
 FA2 interface provides API to configure operators (see [operators config entry points](#Operators)).
 If operator transfer is denied, those entry points MUST fail if invoked.
 
-###### Token owner Permission Behavior
+The policy has an extension point `Operator_custom`. If required, a custom operator
+policy can be created and used instead of the standard ones.
+For instance, operator's allowances per token type may be supported.
+
+###### `Token Owner` Permission Behavior
 
 Each transfer operation defines a set of tokens owners which send tokens (senders)
 and a set of token owners that receive tokens (receivers). Token owner contract
@@ -617,7 +636,6 @@ Future amendments to Tezos are likely to enable new functionality by which this
 standard can be upgraded. Namely,
 [read-only calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227),
 event logging, and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458).
-
 
 ## Copyright
 

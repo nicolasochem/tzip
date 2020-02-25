@@ -7,8 +7,6 @@ type transfer = {
   amount : nat;
 }
 
-type transfer_param = transfer list
-
 type balance_request = {
   owner : address;
   token_id : token_id;  
@@ -19,36 +17,36 @@ type balance_response = {
   balance : nat;
 }
 
-type balance_of_param = {
-  balance_requests : balance_request list;
-  balance_view : (balance_response list) contract;
+type balance_param = {
+  requests : balance_request list;
+  callback : (balance_response list) contract;
 }
 
 type total_supply_response = {
   token_id : token_id;
-  supply : nat;
+  total_supply : nat;
 }
 
 type total_supply_param = {
   token_ids : token_id list;
-  total_supply_view : (total_supply_response list) contract;
+  callback : (total_supply_response list) contract;
 }
 
-type token_descriptor = {
+type token_metadata = {
   symbol : string;
   name : string;
   decimals : nat;
   extras : (string, string) map;
 }
 
-type token_descriptor_response = {
+type token_metadata_response = {
   token_id : token_id;
-  descriptor : token_descriptor;
+  token_metadata : token_metadata;
 }
 
-type token_descriptor_param = {
+type token_metadata_param = {
   token_ids : token_id list;
-  token_descriptor_view : (token_descriptor_response list) contract;
+  callback : (token_metadata_response list) contract;
 }
 
 type operator_tokens =
@@ -61,14 +59,18 @@ type operator_param = {
   tokens : operator_tokens;
 }
 
+type update_operator_op =
+  | Add of operator_tokens;
+  | Remove of operator_tokens;
+
 type is_operator_response = {
   operator : operator_param;
   is_operator : bool;
 }
 
-type are_operators_param = {
-  operators : operator_param list;
-  view : (is_operator_response list) contract;
+type is_operator_param = {
+  operator : operator_param;
+  callback : (is_operator_response) contract;
 }
 
 (* permission policy definition *)
@@ -87,6 +89,7 @@ type self_transfer_policy =
 type operator_transfer_policy =
   | Operator_transfer_permitted
   | Operator_transfer_denied
+  | Operator_custom of custom_permission_policy
 
 type owner_transfer_policy =
   | Owner_no_op
@@ -103,16 +106,13 @@ type permission_policy_descriptor = {
 }
 
 type fa2_entry_points =
-  | Transfer of transfer_param
-  | Balance_of of balance_of_param
+  | Transfer of transfer list
+  | Balance of balance_param
   | Total_supply of total_supply_param
-  | Token_descriptor of token_descriptor_param
+  | Token_metadata of token_metadata_param
   | Permissions_descriptor of permission_policy_descriptor contract
-  | Add_operators of operator_param list
-  | Remove_operators of operator_param list
-  | Are_operators of are_operators_param
-
-
+  | Update_operators of update_operator_op list
+  | Is_operator of is_operator_param
 
 type transfer_descriptor = {
   from_ : address option;
