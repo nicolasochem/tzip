@@ -226,7 +226,13 @@ always 1.
 the token amounts. If 0, the asset is not divisible. Decimals are used for display
 purpose only and MUST NOT affect transfer operation.
 
-TBD example
+Examples
+
+| Decimals | Amount  | Display  |
+| -------- | ------- | -------- |
+| 0n       | 123     | 123      |
+| 1n       | 123     | 12.3     |
+| 3n       | 123000  | 123      |
 
 #### `permissions_descriptor`
 
