@@ -71,13 +71,6 @@ type is_operator_param = {
 
 (* permission policy definition *)
 
-type policy_config_api = address
-
-type custom_permission_policy = {
-  tag : string;
-  config_api: policy_config_api option;
-}
-
 type self_transfer_policy =
   | Self_transfer_permitted
   | Self_transfer_denied
@@ -85,15 +78,18 @@ type self_transfer_policy =
 type operator_transfer_policy =
   | Operator_transfer_permitted
   | Operator_transfer_denied
-  | Operator_custom of custom_permission_policy
 
 type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_custom of custom_permission_policy
 
-type permission_policy_descriptor = {
+type custom_permission_policy = {
+  tag : string;
+  config_api: address option;
+}
+
+type permissions_descriptor = {
   self : self_transfer_policy;
   operator : operator_transfer_policy;
   receiver : owner_transfer_policy;
@@ -106,7 +102,7 @@ type fa2_entry_points =
   | Balance of balance_param
   | Total_supply of total_supply_param
   | Token_metadata of token_metadata_param
-  | Permissions_descriptor of permission_policy_descriptor contract
+  | Permissions_descriptor of permissions_descriptor contract
   | Update_operators of update_operator list
   | Is_operator of is_operator_param
 

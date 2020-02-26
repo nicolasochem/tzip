@@ -126,13 +126,6 @@ type is_operator_param = {
 
 (* permission policy definition *)
 
-type policy_config_api = address
-
-type custom_permission_policy = {
-  tag : string;
-  config_api: policy_config_api option;
-}
-
 type self_transfer_policy =
   | Self_transfer_permitted
   | Self_transfer_denied
@@ -140,15 +133,18 @@ type self_transfer_policy =
 type operator_transfer_policy =
   | Operator_transfer_permitted
   | Operator_transfer_denied
-  | Operator_custom of custom_permission_policy
 
 type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_custom of custom_permission_policy
 
-type permission_policy_descriptor = {
+type custom_permission_policy = {
+  tag : string;
+  config_api: address option;
+}
+
+type permissions_descriptor = {
   self : self_transfer_policy;
   operator : operator_transfer_policy;
   receiver : owner_transfer_policy;
@@ -161,7 +157,7 @@ type fa2_entry_points =
   | Balance of balance_param
   | Total_supply of total_supply_param
   | Token_metadata of token_metadata_param
-  | Permissions_descriptor of permission_policy_descriptor contract
+  | Permissions_descriptor of permissions_descriptor contract
   | Update_operators of update_operator list
   | Is_operator of is_operator_param
 ```
@@ -239,7 +235,7 @@ Examples
 Gets the descriptor of the transfer permission policy.
 
 ```ocaml
-type permission_policy_descriptor = {
+type permissions_descriptor = {
   self : self_transfer_policy;
   operator : operator_transfer_policy;
   receiver : owner_transfer_policy;
@@ -364,15 +360,10 @@ behalf of the owner.
 type operator_transfer_policy =
   | Operator_transfer_permitted
   | Operator_transfer_denied
-  | Operator_custom of custom_permission_policy
 ```
 
 FA2 interface provides API to configure operators (see [operators config entry points](#operators)).
 If an operator transfer is denied, those entry points MUST fail if invoked.
-
-The policy has an extension point `Operator_custom`. If required, a custom operator
-policy can be created and used instead of the standard ones.
-For instance, operator's allowances per token type may be supported.
 
 ###### `Token Owner` Permission Behavior
 
@@ -399,7 +390,6 @@ type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_custom of custom_permission_policy
 ```
 
 This policy can be applied to both token senders and token receivers. There are
@@ -428,10 +418,6 @@ type fa2_token_sender =
   | Tokens_sent of transfer_descriptor_param
 ```
 
-The policy has an extension point, `Owner_custom`. If required, a custom owner policy
-can be created and used instead of the standard ones.
-For instance, a behavior which combines an owner hook and a white list may be supported.
-
 ##### Permission Policy Formulae
 
 Each concrete implementation of the permission policy can be described by a formula
@@ -448,34 +434,29 @@ tokens.
 formula represents non-transferable token (neither token owner, nor operators can
 transfer tokens.
 
-Permission token policy formula is expressed by the `permission_policy_descriptor`
-returned by the [`permissions_descriptor`](#permissions_descriptor)
-entry point.
+Permission token policy formula is expressed by the `permissions_descriptor`
+returned by the [`permissions_descriptor`](#permissions_descriptor) entry point.
 
 ```ocaml
-type policy_config_api = address
-
-type custom_permission_policy = {
-  tag : string;
-  config_api: policy_config_api option;
-}
-
 type self_transfer_policy =
   | Self_transfer_permitted
   | Self_transfer_denied
 
 type operator_transfer_policy =
-  | Operator_transfer_permitted of policy_config_api
+  | Operator_transfer_permitted
   | Operator_transfer_denied
-  | Operator_transfer_custom of custom_permission_policy
 
 type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
-  | Owner_custom of custom_permission_policy
 
-type permission_policy_descriptor = {
+type custom_permission_policy = {
+  tag : string;
+  config_api: address option;
+}
+
+type permissions_descriptor = {
   self : self_transfer_policy;
   operator : operator_transfer_policy;
   receiver : owner_transfer_policy;
