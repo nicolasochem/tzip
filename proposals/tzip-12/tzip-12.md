@@ -349,7 +349,7 @@ it on the chain.
 ##### Core Transfer Behavior
 
 This behavior MUST be implemented by any FA2 token contract. If a token contract
-implementation uses the [transfer hook](#Transfer Hook) design pattern, core transfer
+implementation uses the [transfer hook](#transfer%20hook) design pattern, core transfer
 behavior is to be part of the core transfer logic of the FA2 contract.
 
 * Every transfer operation MUST be atomic. If the operation fails, all token transfers
@@ -359,7 +359,7 @@ If the transfer amount for the particular token type and token owner exceeds the
 existing balance, the whole transfer operation MUST fail.
 * Core transfer behavior MAY be extended. If additional constraints on tokens transfer
 are required, FA2 token contract implementation MAY invoke additional permission
-policies ([transfer hook](#Transfer Hook) is the recommended design pattern to
+policies ([transfer hook](#transfer%20hook) is the recommended design pattern to
 implement core behavior extension). If the additional permission hook fails, the
 whole transfer operation MUST fail.
 * Core transfer behavior MUST update token balances exactly as it is specified by
@@ -505,7 +505,7 @@ support custom config entry points must know their types a priori and/or use a
 
 Transfer hook is one recommended design pattern to implement FA2 that enables separation
 of the core token transfer logic and a permission policy. Instead of implementing
-FA2 as a monolithic contract, a [permission policy](#FA2 Permission Policies and Configuration)
+FA2 as a monolithic contract, a [permission policy](#fa2%20permission%20policies%20and%20configuration)
 can be implemented as a separate contract. Permission policy contract provides an
 entry point invoked by the core FA2 contract to accept or reject a particular
 transfer operation (such entry point is called **transfer hook**).
@@ -624,7 +624,7 @@ Any address can be a recipient of the token transfer.
 
 This is a sample implementation of the FA2 transfer hook which supports receiver
 whitelist and `fa2_token_receiver` for token receivers. The hook contract also
-supports [operators](#Operator` Transfer Behavior).
+supports [operators](#operator%20transfer%20behavior).
 
 Only addresses that are whitelisted or implement the `fa2_token_receiver` interface
 can receive tokens. If one or more `to_` addresses in FA2 transfer batch are not
