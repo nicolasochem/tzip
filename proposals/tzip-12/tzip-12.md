@@ -14,7 +14,7 @@ a wide range of token types and implementations.
 This standard focuses on the interface, token transfer semantics, and support for
 various transfer permission policies.
 
-NOTE: this API specification remains a work-in-progress and may evolve based on public comment
+**PLEASE NOTE:** this API specification remains a work-in-progress and may evolve based on public comment
 
 ## Abstract
 
