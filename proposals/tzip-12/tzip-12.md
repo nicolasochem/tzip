@@ -50,7 +50,28 @@ token id will always be a fixed `0n` value.
 
 Token contract MUST implement the following entry points. Notation is given in
 [cameLIGO language](https://ligolang.org) for readability but a Michelson interface
-will also be provided:
+will also be provided.
+
+A contract implementing FA2 standard must have the following entry points:
+
+`type fa2_entry_points =`
+
+* [`| Transfer of transfer list`](#transfer)
+* [`| Balance of balance_param`](#balance)
+* [`| Total_supply of total_supply_param`](#total_supply)
+* [`| Token_metadata of token_metadata_param`](#token_metadata)
+* [`| Permissions_descriptor of permissions_descriptor contract`](#permissions_descriptor)
+* [`| Update_operators of update_operator list`](#update_operators)
+* [`| Is_operator of is_operator_param`](#is_operator)
+
+The full definition of the FA2 entry points and related types can be found in
+[fa2_interface.mligo](./fa2_interface.mligo).
+
+### Entry Point Semantics
+
+#### `transfer`
+
+Definition:
 
 ```ocaml
 type token_id = nat
@@ -61,6 +82,36 @@ type transfer = {
   token_id : token_id;
   amount : nat;
 }
+
+| Transfer of transfer list
+```
+
+Each transfer amount in the batch is specified between two given addresses. Transfers
+should happen atomically; if at least one specified transfer cannot be completed,
+the whole transaction MUST fail.
+
+The transaction MUST fail if any of the balance(s) of the holder for token(s) in
+the batch is lower than the respective amount(s) sent. If holder does not hold any
+tokens of type `token_id`, holder's balance is interpreted as zero.
+
+Transfer implementations MUST apply permission policy logic. If permission logic
+rejects a transfer, the whole operation MUST fail.
+
+A transfer operation MUST update token owners' balances exactly how it is specified
+by its parameters. Transfer operation should not try to adjust transfer amounts
+and/or try to add/remove additional transfers like transaction fees.
+
+FA2 does NOT specify an interface for mint and burn operations; however, if an
+FA2 token contract implements mint and burn operations, it MUST apply the same
+permission logic as for the token transfer operation. Mint and burn can be considered
+special cases of the transfer.
+
+#### `balance`
+
+Definition:
+
+```ocaml
+type token_id = nat
 
 type balance_request = {
   owner : address;
@@ -77,6 +128,20 @@ type balance_param = {
   callback : (balance_response list) contract;
 }
 
+| Balance of balance_param
+```
+
+Get the balance of multiple account/token pairs. Accepts a list of `balance_request`s
+and a callback contract `callback` which accepts a list of `balance_response`
+records.
+
+#### `total_supply`
+
+Definition:
+
+```ocaml
+type token_id = nat
+
 type total_supply_response = {
   token_id : token_id;
   total_supply : nat;
@@ -87,6 +152,20 @@ type total_supply_param = {
   callback : (total_supply_response list) contract;
 }
 
+| Total_supply of total_supply_param
+```
+
+Get the total supply for multiple token types. Accepts a list of `total_supply_request`s
+and a callback contract `callback` which accepts a list of
+`total_supply_response` records.
+
+#### `token_metadata`
+
+Definition:
+
+```ocaml
+type token_id = nat
+
 type token_metadata = {
   token_id : token_id;
   symbol : string;
@@ -95,37 +174,34 @@ type token_metadata = {
   extras : (string, string) map;
 }
 
-type token_metadata_param = {
-  token_ids : token_id list;
-  callback : (token_metadata list) contract;
-}
+| Token_metadata of token_metadata_param
+```
 
-type operator_tokens =
-  | All_tokens
-  | Some_tokens of token_id set
+Get the metadata for multiple token types. Accepts a list of `token_id`s
+and a callback contract `callback` which accepts a list of
+`token_metadata` records.
 
-type operator_param = {
-  owner : address;
-  operator : address;
-  tokens : operator_tokens;
-}
+FA2 token amounts are represented by natural numbers (`nat`) and their **granularity**
+(the smallest amount if tokens which may be minted, burned or transferred) is
+always 1.
 
-type update_operator =
-  | Add_operator of operator_param
-  | Remove_operator of operator_param
+`decimals` is the number of digits to use after the decimal point when displaying
+the token amounts. If 0, the asset is not divisible. Decimals are used for display
+purpose only and MUST NOT affect transfer operation.
 
-type is_operator_response = {
-  operator : operator_param;
-  is_operator : bool;
-}
+Examples
 
-type is_operator_param = {
-  operator : operator_param;
-  callback : (is_operator_response) contract;
-}
+| Decimals | Amount  | Display  |
+| -------- | ------- | -------- |
+| 0n       | 123     | 123      |
+| 1n       | 123     | 12.3     |
+| 3n       | 123000  | 123      |
 
-(* permission policy definition *)
+#### `permissions_descriptor`
 
+Definition:
+
+```ocaml
 type self_transfer_policy =
   | Self_transfer_permitted
   | Self_transfer_denied
@@ -152,104 +228,16 @@ type permissions_descriptor = {
   custom : custom_permission_policy option;
 }
 
-type fa2_entry_points =
-  | Transfer of transfer list
-  | Balance of balance_param
-  | Total_supply of total_supply_param
-  | Token_metadata of token_metadata_param
-  | Permissions_descriptor of permissions_descriptor contract
-  | Update_operators of update_operator list
-  | Is_operator of is_operator_param
+| Permissions_descriptor of permissions_descriptor contract
 ```
 
-### Entry Point Semantics
-
-#### `transfer`
-
-Transfers amounts specified in the batch between given addresses. Transfers
-should happen atomically; if at least one specified transfer cannot be completed,
-the whole transaction MUST fail.
-
-The transaction MUST fail if any of the balance(s) of the holder for token(s) in
-the batch is lower than the respective amount(s) sent. If holder does not hold any
-tokens of type `token_id`, holder's balance is interpreted as zero.
-
-Transfer implementations MUST apply permission policy logic. If permission logic
-rejects a transfer, the whole operation MUST fail.
-
-A transfer operation MUST update token owners' balances exactly how it is specified
-by its parameters. Transfer operation should not try to adjust transfer amounts
-and/or try to add/remove additional transfers like transaction fees.
-
-FA2 does NOT specify an interface for mint and burn operations; however, if an
-FA2 token contract implements mint and burn operations, it MUST apply the same
-permission logic as for the token transfer operation. Mint and burn can be considered
-special cases of the transfer.
-
-#### `balance`
-
-Get the balance of multiple account/token pairs. Accepts a list of `balance_request`s
-and a callback contract `callback` which accepts a list of `balance_response`
-records.
-
-#### `total_supply`
-
-Get the total supply for multiple token types. Accepts a list of `total_supply_request`s
-and a callback contract `callback` which accepts a list of
-`total_supply_response` records.
-
-#### `token_metadata`
-
-Get the metadata for multiple token types. Accepts a list of `token_id`s
-and a callback contract `callback` which accepts a list of
-`token_metadata` records.
-
-```ocaml
-type token_metadata = {
-  token_id : token_id;
-  symbol : string;
-  name : string;
-  decimals : nat;
-  extras : (string, string) map;
-}
-```
-
-FA2 token amounts are represented by natural numbers (`nat`) and their **granularity**
-(the smallest amount if tokens which may be minted, burned or transferred) is
-always 1.
-
-`decimals` is the number of digits to use after the decimal point when displaying
-the token amounts. If 0, the asset is not divisible. Decimals are used for display
-purpose only and MUST NOT affect transfer operation.
-
-Examples
-
-| Decimals | Amount  | Display  |
-| -------- | ------- | -------- |
-| 0n       | 123     | 123      |
-| 1n       | 123     | 12.3     |
-| 3n       | 123000  | 123      |
-
-#### `permissions_descriptor`
-
-Gets the descriptor of the transfer permission policy.
-
-```ocaml
-type permissions_descriptor = {
-  self : self_transfer_policy;
-  operator : operator_transfer_policy;
-  receiver : owner_transfer_policy;
-  sender : owner_transfer_policy;
-  custom : custom_permission_policy option;
-}
-```
-
-For more details see [FA2 Permission Policies and Configuration](#FA2 Permission Policies and Configuration)
+Get the descriptor of the transfer permission policy. For more details see
+[FA2 Permission Policies and Configuration](#fa2%20permission%20policies%20and%20configuration)
 
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
 will be `SELF`), or in a separate contract (see recommended implementation pattern
-using [transfer hook](#Transfer Hook)).
+using [transfer hook](#transfer%20hook)).
 
 #### Operators
 
@@ -258,7 +246,15 @@ the owner. Owner is a Tezos address which can hold tokens.
 Operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
 
+FA2 interface specifies two entry points to update and inspect operators.
+
+##### `update_operators`
+
+Definition:
+
 ```ocaml
+type token_id = nat
+
 type operator_tokens =
   | All_tokens
   | Some_tokens of token_id set
@@ -273,6 +269,34 @@ type update_operator =
   | Add_operator of operator_param
   | Remove_operator of operator_param
 
+| Update_operators of update_operator list
+```
+
+Adds and/or removes token operators for the specified owners and token types.
+The entry point accepts a list of `update_operator` commands. If two different
+commands in the list add and remove an operator for the same owner/token type,
+the last command in the list MUST take effect. It is possible to update an operator
+for some specific token types (`tokens` field in `operator_param` is `Some_tokens`)
+or for all token types (`tokens` field in `operator_param` is `tokens` parameter
+is `All_tokens`).
+
+##### `is_operator`
+
+Definition:
+
+```ocaml
+type token_id = nat
+
+type operator_tokens =
+  | All_tokens
+  | Some_tokens of token_id set
+
+type operator_param = {
+  owner : address;
+  operator : address;
+  tokens : operator_tokens;
+}
+
 type is_operator_response = {
   operator : operator_param;
   is_operator : bool;
@@ -283,9 +307,13 @@ type is_operator_param = {
   callback : (is_operator_response) contract;
 }
 
-| Update_operators of update_operator list
 | Is_operator of is_operator_param
 ```
+
+Inspect if an address is an operator for the specified owner and token types. If
+the address in not an operator for at least one requested token type, the result
+is `false`. It is possible to make a query for some specific token types (`tokens`
+parameter is `Some_tokens`) or for all token types (`tokens` parameter is `All_tokens`).
 
 ### FA2 Permission Policies and Configuration
 
@@ -324,17 +352,17 @@ This behavior MUST be implemented by any FA2 token contract. If a token contract
 implementation uses the [transfer hook](#Transfer Hook) design pattern, core transfer
 behavior is to be part of the core transfer logic of the FA2 contract.
 
-- Every transfer operation MUST be atomic. If the operation fails, all token transfers
+* Every transfer operation MUST be atomic. If the operation fails, all token transfers
 MUST be reverted and token balances MUST remain unchanged.
-- The amount of a token transfer MUST NOT exceed the existing token owner's balance.
-If the transfer amount for the particular token type and token owner exceeds the existing
-balance, the whole transfer operation MUST fail.
-- Core transfer behavior MAY be extended. If additional constraints on tokens transfer
+* The amount of a token transfer MUST NOT exceed the existing token owner's balance.
+If the transfer amount for the particular token type and token owner exceeds the
+existing balance, the whole transfer operation MUST fail.
+* Core transfer behavior MAY be extended. If additional constraints on tokens transfer
 are required, FA2 token contract implementation MAY invoke additional permission
 policies ([transfer hook](#Transfer Hook) is the recommended design pattern to
-implement core behavior extension). If the additional permission hook fails, the whole
-transfer operation MUST fail.
-- Core transfer behavior MUST update token balances exactly as it is specified by
+implement core behavior extension). If the additional permission hook fails, the
+whole transfer operation MUST fail.
+* Core transfer behavior MUST update token balances exactly as it is specified by
 the operation parameters. No amount adjustments and/or additional transfers are
 allowed.
 
@@ -375,11 +403,11 @@ transaction or reject it by failing. If such a hook is invoked and failed, the
 whole transfer operation MUST fail. Token owner permission may be configured
 to behave in one of the following ways:
 
-- Ignore the owner hook interface.
-- Treat the owner hook interface as optional. If a token owner contract implements
+* Ignore the owner hook interface.
+* Treat the owner hook interface as optional. If a token owner contract implements
 a corresponding hook interface, it gets invoked. If the hook interface is not implemented,
 it gets ignored.
-- Treat the owner hook interface as required. If a token owner contract implements
+* Treat the owner hook interface as required. If a token owner contract implements
 a corresponding hook interface, it gets invoked. If the hook interface is not implemented,
 the entire transfer transaction gets rejected.
 
