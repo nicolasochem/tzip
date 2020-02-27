@@ -37,16 +37,16 @@ let custom_transfer_hook (p, s : transfer_descriptor_param * storage) : operatio
   custom_validate_receivers (p, s.receiver_whitelist)
 
 
-let get_policy_descriptor (u : unit) : permission_policy_descriptor =
+let get_policy_descriptor (u : unit) : permissions_descriptor =
   {
     self = Self_transfer_permitted;
     operator = Operator_transfer_permitted;
     sender = Owner_no_op;
-    receiver = Owner_custom { 
+    receiver = Owner_no_op ; (* overridden by the custom policy *)
+    custom = Some { 
       tag = "receiver_hook_and_whitelist"; 
       config_api = (Some Current.self_address);
     };
-    custom = (None : custom_permission_policy option);
   }
 
 type config_whitelist = 

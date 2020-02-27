@@ -3,7 +3,7 @@
 
 type set_hook_param = {
   hook : unit -> transfer_descriptor_param contract;
-  permissions_descriptor : permission_policy_descriptor;
+  permissions_descriptor : permissions_descriptor;
 }
 
 type fa2_with_hook_entry_points =

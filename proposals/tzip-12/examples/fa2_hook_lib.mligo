@@ -8,7 +8,7 @@ let get_hook_entrypoint (hook_contract : address) (u : unit)
 
 
 let create_register_hook_op 
-    (fa2, descriptor : (fa2_with_hook_entry_points contract) * permission_policy_descriptor) : operation =
+    (fa2, descriptor : (fa2_with_hook_entry_points contract) * permissions_descriptor) : operation =
   let hook_fn = get_hook_entrypoint Current.self_address in
   let pp : set_hook_param = {
     hook = hook_fn;
@@ -20,7 +20,7 @@ let create_register_hook_op
 type fa2_registry = address set
 
 let register_with_fa2 (fa2, descriptor, registry : 
-    (fa2_with_hook_entry_points contract) * permission_policy_descriptor * fa2_registry) 
+    (fa2_with_hook_entry_points contract) * permissions_descriptor * fa2_registry) 
     : operation * fa2_registry =
   let op = create_register_hook_op (fa2, descriptor) in
   let fa2_address = Current.address fa2 in

@@ -1,7 +1,7 @@
 #include "fa2_hook_lib.mligo"
 
 
-(** generic transfer hook implementation. Behavior is driven by `permission_policy_descriptor` *)
+(** generic transfer hook implementation. Behavior is driven by `permissions_descriptor` *)
 
 type get_owner = transfer_descriptor -> address option
 type to_hook = address -> (transfer_descriptor_param contract) option
@@ -39,7 +39,6 @@ let validate_owner(p, policy, get_owner, to_hook :
   | Owner_no_op -> ([] : operation list)
   | Optional_owner_hook -> validate_owner_hook (p, get_owner, to_hook, false)
   | Required_owner_hook -> validate_owner_hook (p, get_owner, to_hook, true)
-  | Owner_custom c -> (failwith "custom policy not supported" : operation list)
 
 let to_receiver_hook : to_hook = fun (a : address) ->
     let c : (transfer_descriptor_param contract) option = 
@@ -61,7 +60,7 @@ let validate_senders (p, policy : transfer_descriptor_param * owner_transfer_pol
   let get_sender : get_owner = fun (tx : transfer_descriptor) -> tx.from_ in
   validate_owner (p, policy, get_sender, to_sender_hook)
 
-let standard_transfer_hook (p, descriptor : transfer_descriptor_param * permission_policy_descriptor)
+let standard_transfer_hook (p, descriptor : transfer_descriptor_param * permissions_descriptor)
     : operation list =
   let sender_ops = validate_senders (p, descriptor.sender) in
   let receiver_ops = validate_receivers (p, descriptor.receiver) in

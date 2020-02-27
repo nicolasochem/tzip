@@ -7,7 +7,7 @@ by a particular settings of `permission_policy`.
 
 type storage = {
   fa2_registry : fa2_registry;
-  descriptor : permission_policy_descriptor;
+  descriptor : permissions_descriptor;
 }
 
 type  entry_points =
@@ -32,7 +32,7 @@ type  entry_points =
 (** example policies *)
 
 (* the policy which allows only token owners to transfer their own tokens. *)
-let own_policy : permission_policy_descriptor = {
+let own_policy : permissions_descriptor = {
   self = Self_transfer_permitted;
   operator = Operator_transfer_denied;
   sender = Owner_no_op;
@@ -41,7 +41,7 @@ let own_policy : permission_policy_descriptor = {
 }
 
 (* non-transferable token (neither token owner, nor operators can transfer tokens. *)
-  let own_policy : permission_policy_descriptor = {
+  let own_policy : permissions_descriptor = {
   self = Self_transfer_denied;
   operator = Operator_transfer_denied;
   sender = Owner_no_op;
