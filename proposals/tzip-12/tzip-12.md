@@ -62,7 +62,7 @@ A contract implementing the FA2 standard must have the following entry points:
 `type fa2_entry_points =`
 
 * [`| Transfer of transfer list`](#transfer)
-* [`| Balance of balance_param`](#balance)
+* [`| Balance_of of balance_of_param`](#balance_of)
 * [`| Total_supply of total_supply_param`](#total_supply)
 * [`| Token_metadata of token_metadata_param`](#token_metadata)
 * [`| Permissions_descriptor of permissions_descriptor contract`](#permissions_descriptor)
@@ -111,34 +111,34 @@ token contract implements mint and burn operations, it MUST enforce the same
 permission logic applied to the token transfer operation. Mint and burn can be
 considered special cases of the transfer.
 
-#### `balance`
+#### `balance_of`
 
 Definition:
 
 ```ocaml
 type token_id = nat
 
-type balance_request = {
+type balance_of_request = {
   owner : address;
   token_id : token_id;
 }
 
-type balance_response = {
-  request : balance_request;
+type balance_of_response = {
+  request : balance_of_request;
   balance : nat;
 }
 
-type balance_param = {
-  requests : balance_request list;
-  callback : (balance_response list) contract;
+type balance_of_param = {
+  requests : balance_of_request list;
+  callback : (balance_of_response list) contract;
 }
 
-| Balance of balance_param
+| Balance_of of balance_of_param
 ```
 
 Get the balance of multiple account/token pairs. Accepts a list of
-`balance_request`s and a callback contract `callback` which accepts a list of
-`balance_response` records.
+`balance_of_request`s and a callback contract `callback` which accepts a list of
+`balance_of_response` records.
 
 #### `total_supply`
 
