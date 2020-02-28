@@ -235,9 +235,10 @@ type permissions_descriptor = {
 | Permissions_descriptor of permissions_descriptor contract
 ```
 
-Get the descriptor of the transfer permission policy. For more details see [FA2
-Permission Policies and
-Configuration](#fa2%20permission%20policies%20and%20configuration)
+Get the descriptor of the transfer permission policy. FA2 specifies an interface
+permissions_descriptor allowing external contracts (e.g. an auction) to discover
+an FA2 contract's permission policy and configure it. For more details see
+[FA2 Permission Policies and Configuration](#permission_policy).
 
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
@@ -246,8 +247,8 @@ using [transfer hook](#transfer%20hook)).
 
 #### Operators
 
-Operator is a Tezos address that initiates token transfer operation on behalf of the
-owner. Owner is a Tezos address which can hold tokens.
+Operator is a Tezos address that initiates token transfer operation on behalf of
+the sowner. Owner is a Tezos address which can hold tokens.
 
 Operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
@@ -318,12 +319,12 @@ type is_operator_param = {
 ```
 
 Inspect if an address is an operator for the specified owner and token types.  If
-the address is not an operator for at least one requested token type, the result is
-`false`. It is possible to make a query for some specific token types (`tokens`
+the address is not an operator for at least one requested token type, the result
+is `false`. It is possible to make a query for some specific token types (`tokens`
 parameter is `Some_tokens`) or for all token types (`tokens` parameter is
 `All_tokens`).
 
-### FA2 Permission Policies and Configuration
+### <a name="permission_policy"></a> FA2 Permission Policies and Configuration
 
 Most token standards specify logic such as who can initiate a transfer, the quantity
 for transfer, who can receive tokens. This standard calls such logic *permission
@@ -522,7 +523,7 @@ custom config entry points must know their types a priori and/or use a `tag` hin
 Transfer hook is one recommended design pattern to implement FA2 that enables
 separation of the core token transfer logic and a permission policy. Instead of
 implementing FA2 as a monolithic contract, a [permission
-policy](#fa2%20permission%20policies%20and%20configuration) can be implemented as a
+policy](#permission_policy) can be implemented as a
 separate contract. Permission policy contract provides an entry point invoked by the
 core FA2 contract to accept or reject a particular transfer operation (such an entry
 point is called **transfer hook**).
