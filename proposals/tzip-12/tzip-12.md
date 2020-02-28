@@ -342,7 +342,7 @@ and operator APIs and two versions of the transfer entry point, one that invokes
 sender/receiver hooks and one which does not).
 
 FA2 specifies an interface `permissions_descriptor` allowing external contracts
-(e.g. an auction) to discover an FA2 contract's permissioning policy and configure
+(e.g. an auction) to discover an FA2 contract's permission policy and to configure
 it. `permissions_descriptor` serves as a modular alternative to the existing
 approaches in ERC-20 or FA1.2 and helps to define consistent and
 non-self-contradictory policies.
