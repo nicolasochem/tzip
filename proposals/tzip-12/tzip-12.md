@@ -235,9 +235,9 @@ type permissions_descriptor = {
 | Permissions_descriptor of permissions_descriptor contract
 ```
 
-Get the descriptor of the transfer permission policy. FA2 specifies an interface
-permissions_descriptor allowing external contracts (e.g. an auction) to discover
-an FA2 contract's permission policy and configure it. For more details see
+Get the descriptor of the transfer permission policy. FA2 specifies
+`permissions_descriptor` allowing external contracts (e.g. an auction) to discover
+an FA2 contract's permission policy and to configure it. For more details see
 [FA2 Permission Policies and Configuration](#permission_policy).
 
 Some of the permission options require config API. Config entry points may be
@@ -248,7 +248,7 @@ using [transfer hook](#transfer%20hook)).
 #### Operators
 
 Operator is a Tezos address that initiates token transfer operation on behalf of
-the sowner. Owner is a Tezos address which can hold tokens.
+the owner. Owner is a Tezos address which can hold tokens.
 
 Operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
