@@ -92,7 +92,7 @@ type transfer = {
 ```
 
 Each transfer amount in the batch is specified between two given addresses.
-Transfers should happen atomically; if at least one specified transfer cannot be
+Transfers MUST happen atomically; if at least one specified transfer cannot be
 completed, the whole transaction MUST fail.
 
 The transaction MUST fail if the balance(s) of the holder for token(s) in the batch
@@ -102,8 +102,8 @@ tokens of type `token_id`, the holder's balance is interpreted as zero.
 Transfer implementations MUST apply permission policy logic. If permission logic
 rejects a transfer, the whole operation MUST fail.
 
-A transfer operation MUST update token owners' balances exactly as the parameters of
-the operation specify it. Transfer operations should not try to adjust transfer
+A transfer operation MUST update token owners' balances exactly as the parameters
+of the operation specify it. Transfer operations MUST NOT try to adjust transfer
 amounts or try to add/remove additional transfers like transaction fees.
 
 FA2 does NOT specify an interface for mint and burn operations; however, if an FA2
@@ -352,14 +352,14 @@ Permission policy semantics are composed from several orthogonal behavior patter
 The concrete policy is expressed as a combination of those behaviors.
 
 The proposed taxonomy framework and API allows other contracts to discover the
-properties (behaviors) of the particular FA2 token contract permission policy or to
-configure it on the chain.
+properties (behaviors) of the particular FA2 token contract permission policy and
+to configure it on the chain.
 
 ##### Core Transfer Behavior
 
 FA2 token contracts MUST implement this behavior. If a token contract implementation
-uses the [transfer hook](#transfer%20hook) design pattern, core transfer behavior is
-to be part of the core transfer logic of the FA2 contract.
+uses the [transfer hook](#transfer%20hook) design pattern, core transfer behavior
+is to be part of the core transfer logic of the FA2 contract.
 
 * Every transfer operation MUST be atomic. If the operation fails, all token
   transfers MUST be reverted, and token balances MUST remain unchanged.
