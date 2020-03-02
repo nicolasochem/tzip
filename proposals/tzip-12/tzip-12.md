@@ -243,7 +243,7 @@ an FA2 contract's permission policy and to configure it. For more details see
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
 shall be `SELF`), or in a separate contract (see recommended implementation pattern
-using [transfer hook](#transfer%20hook)).
+using [transfer hook](#transfer-hook)).
 
 #### Operators
 
@@ -359,7 +359,7 @@ to configure it on the chain.
 ##### Core Transfer Behavior
 
 FA2 token contracts MUST implement this behavior. If a token contract implementation
-uses the [transfer hook](#transfer%20hook) design pattern, core transfer behavior
+uses the [transfer hook](#transfer-hook) design pattern, core transfer behavior
 is to be part of the core transfer logic of the FA2 contract.
 
 * Every transfer operation MUST be atomic. If the operation fails, all token
@@ -371,7 +371,7 @@ is to be part of the core transfer logic of the FA2 contract.
 
 * Core transfer behavior MAY be extended. If additional constraints on tokens
   transfer are required, FA2 token contract implementation MAY invoke additional
-  permission policies ([transfer hook](#transfer%20hook) is the recommended design
+  permission policies ([transfer hook](#transfer-hook) is the recommended design
   pattern to implement core behavior extension). If the additional permission hook
   fails, the whole transfer operation MUST fail.
 
@@ -647,7 +647,7 @@ Any address can be a recipient of the token transfer.
 
 This is a sample implementation of the FA2 transfer hook, which supports receiver
 whitelist and `fa2_token_receiver` for token receivers. The hook contract also
-supports [operators](#operator%20transfer%20behavior).
+supports [operators](#operator-transfer-behavior).
 
 Only addresses that are whitelisted or implement the `fa2_token_receiver` interface
 can receive tokens. If one or more `to_` addresses in FA2 transfer batch are not
