@@ -247,8 +247,8 @@ using [transfer hook](#transfer%20hook)).
 
 #### Operators
 
-Operator is a Tezos address that initiates token transfer operation on behalf of
-the owner. Owner is a Tezos address which can hold tokens.
+**Operator** is a Tezos address that initiates token transfer operation on behalf of
+the owner. **Owner** is a Tezos address which can hold tokens.
 
 Operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
