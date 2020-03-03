@@ -9,8 +9,8 @@ created: 2020-01-24
 
 ## Summary
 
-This document proposes a standard for a unified token contract interface, supporting
-a range of token types and implementations.
+This document proposes a standard for a unified token contract interface,
+supporting a range of token types and implementations.
 
 This standard focuses on the interface, token transfer semantics, and support for
 various transfer permission policies.
@@ -35,23 +35,23 @@ in the Ethereum ecosystem, where many standards have been proposed, but ERC-20
 Token wallets, token exchanges, and other clients then need to support multiple
 standards and multiple token APIs. The FA2 standard proposes a unified token
 contract interface that accommodates all mentioned concerns. It aims to provide
-significant expressivity to contract developers to create new types of tokens while
-maintaining a common interface standard for wallet integrators and external
+significant expressivity to contract developers to create new types of tokens
+while maintaining a common interface standard for wallet integrators and external
 developers.
 
 ## Interface Specification
 
 Token type is uniquely identified by a pair composed of the token contract address
 and token id, a natural number (`nat`). If the underlying contract implementation
-supports only a single token type (e.g. ERC-20-like contract), the token id MUST be
-`0n`. The FA2 token contract is fully responsible for assigning and managing token
-IDs. FA2 clients MUST NOT depend on particular ID values to infer information about
-a token.
+supports only a single token type (e.g. ERC-20-like contract), the token id MUST
+be `0n`. The FA2 token contract is fully responsible for assigning and managing
+token IDs. FA2 clients MUST NOT depend on particular ID values to infer information
+about a token.
 
 All entry points are batch operations that allow querying or transfer of multiple
-token types atomically. If the underlying contract implementation supports only a
-single token type, the batch may contain single or multiple entries where token id
-will be a fixed `0n` value.
+token types atomically. If the underlying contract implementation supports only
+a single token type, the batch may contain single or multiple entries where token
+id will be a fixed `0n` value.
 
 Token contract MUST implement the following entry points. Notation is given in
 [cameLIGO language](https://ligolang.org) for readability. (Note: A Michelson
@@ -95,9 +95,9 @@ Each transfer amount in the batch is specified between two given addresses.
 Transfers MUST happen atomically; if at least one specified transfer cannot be
 completed, the whole transaction MUST fail.
 
-The transaction MUST fail if the balance(s) of the holder for token(s) in the batch
-is lower than the corresponding amount(s) sent. If the holder does not hold any
-tokens of type `token_id`, the holder's balance is interpreted as zero.
+The transaction MUST fail if the balance(s) of the holder for token(s) in the
+batch is lower than the corresponding amount(s) sent. If the holder does not hold
+any tokens of type `token_id`, the holder's balance is interpreted as zero.
 
 Transfer implementations MUST apply permission policy logic. If permission logic
 rejects a transfer, the whole operation MUST fail.
@@ -106,8 +106,8 @@ A transfer operation MUST update token owners' balances exactly as the parameter
 of the operation specify it. Transfer operations MUST NOT try to adjust transfer
 amounts or try to add/remove additional transfers like transaction fees.
 
-FA2 does NOT specify an interface for mint and burn operations; however, if an FA2
-token contract implements mint and burn operations, it MUST enforce the same
+FA2 does NOT specify an interface for mint and burn operations; however, if an
+FA2 token contract implements mint and burn operations, it MUST enforce the same
 permission logic applied to the token transfer operation. Mint and burn can be
 considered special cases of the transfer.
 
@@ -161,8 +161,8 @@ type total_supply_param = {
 ```
 
 Get the total supply for multiple token types. Accepts a list of
-`total_supply_request`s and a callback contract `callback`, which accepts a list of
-`total_supply_response` records.
+`total_supply_request`s and a callback contract `callback`, which accepts a list
+of `total_supply_response` records.
 
 #### `token_metadata`
 
@@ -242,13 +242,13 @@ an FA2 contract's permission policy and to configure it. For more details see
 
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
-shall be `SELF`), or in a separate contract (see recommended implementation pattern
-using [transfer hook](#transfer-hook)).
+shall be `SELF`), or in a separate contract (see recommended implementation
+pattern using [transfer hook](#transfer-hook)).
 
 #### Operators
 
-**Operator** is a Tezos address that initiates token transfer operation on behalf of
-the owner. **Owner** is a Tezos address which can hold tokens.
+**Operator** is a Tezos address that initiates token transfer operation on behalf
+of the owner. **Owner** is a Tezos address which can hold tokens.
 
 Operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
@@ -282,11 +282,11 @@ type update_operator =
 Add or Remove token operators for the specified owners and token types.
 
 The entry point accepts a list of `update_operator` commands. If two different
-commands in the list add and remove an operator for the same owner/token type, the
-last command in the list MUST take effect. It is possible to update an operator for
-some specific token types (`tokens` field in `operator_param` is `Some_tokens`) or
-for all token types (`tokens` field in `operator_param` is `tokens` parameter is
-`All_tokens`).
+commands in the list add and remove an operator for the same owner/token type,
+the last command in the list MUST take effect. It is possible to update an operator
+for some specific token types (`tokens` field in `operator_param` is `Some_tokens`)
+or for all token types (`tokens` field in `operator_param` is `tokens` parameter
+is `All_tokens`).
 
 ##### `is_operator`
 
@@ -318,7 +318,7 @@ type is_operator_param = {
 | Is_operator of is_operator_param
 ```
 
-Inspect if an address is an operator for the specified owner and token types.  If
+Inspect if an address is an operator for the specified owner and token types. If
 the address is not an operator for at least one requested token type, the result
 is `false`. It is possible to make a query for some specific token types (`tokens`
 parameter is `Some_tokens`) or for all token types (`tokens` parameter is
@@ -372,8 +372,8 @@ is to be part of the core transfer logic of the FA2 contract.
 * Core transfer behavior MAY be extended. If additional constraints on tokens
   transfer are required, FA2 token contract implementation MAY invoke additional
   permission policies ([transfer hook](#transfer-hook) is the recommended design
-  pattern to implement core behavior extension). If the additional permission hook
-  fails, the whole transfer operation MUST fail.
+  pattern to implement core behavior extension). If the additional permission
+  hook fails, the whole transfer operation MUST fail.
 
 * Core transfer behavior MUST update token balances exactly as the operation
   parameters specify it. No changes to amount values or additional transfers are
@@ -436,9 +436,9 @@ type owner_transfer_policy =
   | Required_owner_hook
 ```
 
-This policy can be applied to both token senders and token receivers. There are two
-owner hook interfaces, `fa2_token_receiver` and `fa2_token_sender`, that need to be
-implemented by token owner contracts to expose the owner's hooks to FA2 token
+This policy can be applied to both token senders and token receivers. There are
+two owner hook interfaces, `fa2_token_receiver` and `fa2_token_sender`, that need
+to be implemented by token owner contracts to expose the owner's hooks to FA2 token
 contract.
 
 ```ocaml
@@ -510,11 +510,11 @@ type permissions_descriptor = {
 }
 ```
 
-It is possible to extend permission policy with a `custom` behavior, which does not
-overlap with already existing standard policies. This standard does not specify
+It is possible to extend permission policy with a `custom` behavior, which does
+not overlap with already existing standard policies. This standard does not specify
 exact types for custom config entry points. FA2 token contract clients that support
-custom config entry points must know their types a priori and/or use a `tag` hint of
-`custom_permission_policy`.
+custom config entry points must know their types a priori and/or use a `tag` hint
+of `custom_permission_policy`.
 
 ## Implementing FA2
 
@@ -524,16 +524,16 @@ Transfer hook is one recommended design pattern to implement FA2 that enables
 separation of the core token transfer logic and a permission policy. Instead of
 implementing FA2 as a monolithic contract, a [permission
 policy](#permission_policy) can be implemented as a
-separate contract. Permission policy contract provides an entry point invoked by the
-core FA2 contract to accept or reject a particular transfer operation (such an entry
-point is called **transfer hook**).
+separate contract. Permission policy contract provides an entry point invoked by
+the core FA2 contract to accept or reject a particular transfer operation (such
+an entry point is called **transfer hook**).
 
 #### Transfer Hook Motivation
 
-Usually, different tokens require different permission policies that define who can
-transfer and receive tokens. There is no single permission policy that fits all
-scenarios. For instance, some game tokens can be transferred by token owners, but no
-one else. In some financial token exchange applications, tokens are to be
+Usually, different tokens require different permission policies that define who
+can transfer and receive tokens. There is no single permission policy that fits
+all scenarios. For instance, some game tokens can be transferred by token owners,
+but no one else. In some financial token exchange applications, tokens are to be
 transferred by special exchange operator account, not directly by the token owners
 themselves.
 
@@ -546,33 +546,33 @@ validates a transaction and either approves it by finishing execution successful
 or rejects it by failing.
 
 The transfer hook makes it is possible to model different transfer permission
-policies like whitelists, operator lists, etc. Although this approach introduces gas
-consumption overhead (compared to an all-in-one contract) by requiring an extra
+policies like whitelists, operator lists, etc. Although this approach introduces
+gas consumption overhead (compared to an all-in-one contract) by requiring an extra
 inter-contract call, it also offers some other advantages:
 
-- FA2 core implementation can be verified once, and certain properties (not
+* FA2 core implementation can be verified once, and certain properties (not
   related to permission policy) remain unchanged.
 
-- Most likely, the core transfer semantic will remain unchanged. If
-  modification of the permission policy is required for an existing contract, it can
-  be done by replacing a transfer hook only. No storage migration of the FA2 ledger
-  is required.
+* Most likely, the core transfer semantic will remain unchanged. If
+  modification of the permission policy is required for an existing contract, it
+  can be done by replacing a transfer hook only. No storage migration of the FA2
+  ledger is required.
 
-- Transfer hooks could be used for purposes beyond permissioning, such as
+* Transfer hooks could be used for purposes beyond permissioning, such as
   implementing custom logic for a particular token application.
 
 #### Transfer Hook Specification
 
 An FA2 token contract has a single entry point to set the hook. If a transfer hook
-is not set, the FA2 token contract transfer operation MUST fail. Transfer hook is to
-be set by the token contract administrator before any transfers can happen. The
-concrete token contract implementation MAY impose additional restrictions on who may
-set the hook. If the set hook operation is not permitted, it MUST fail without
-changing existing hook configuration.
+is not set, the FA2 token contract transfer operation MUST fail. Transfer hook is
+to be set by the token contract administrator before any transfers can happen.
+The concrete token contract implementation MAY impose additional restrictions on
+who may set the hook. If the set hook operation is not permitted, it MUST fail
+without changing existing hook configuration.
 
-For each transfer operation, a token contract MUST invoke a transfer hook and return
-a corresponding operation as part of the transfer entry point result.  (For more
-details see [`set_transfer_hook`](#set_transfer_hook) )
+For each transfer operation, a token contract MUST invoke a transfer hook and
+return a corresponding operation as part of the transfer entry point result.
+(For more details see [`set_transfer_hook`](#set_transfer_hook) )
 
 `operator` parameter for the hook invocation MUST be set to `SENDER`.
 
@@ -580,14 +580,14 @@ details see [`set_transfer_hook`](#set_transfer_hook) )
 
 `to_` parameter for each `hook_transfer` batch entry MUST be set to `Some(transfer.to_)`.
 
-A transfer hook MUST be invoked, and operation returned by the hook invocation MUST
-be returned by `transfer` entry point among other operations it might create.
+A transfer hook MUST be invoked, and operation returned by the hook invocation
+MUST be returned by `transfer` entry point among other operations it might create.
 `SENDER` MUST be passed as an `operator` parameter to any hook invocation. If an
 invoked hook fails, the whole transfer transaction MUST fail.
 
-FA2 does NOT specify an interface for mint and burn operations; however, if an FA2
-token contract implements mint and burn operations, these operations MUST invoke a
-transfer hook as well.
+FA2 does NOT specify an interface for mint and burn operations; however, if an
+FA2 token contract implements mint and burn operations, these operations MUST
+invoke a transfer hook as well.
 
 |  Mint | Burn |
 | :---- | :--- |
@@ -627,10 +627,10 @@ The parameter is an address plus hook entry point of type
 The transfer hook is always invoked from the `transfer` operation; otherwise, FA2
 MUST fail.
 
-`hook` field in `set_hook_param` record is a lambda which returns a hook entry point
-of type `transfer_descriptor_param`. It allows a policy contract implementor to
-choose a name for the hook entry point or even implement several transfer hooks in
-the same contract.
+`hook` field in `set_hook_param` record is a lambda which returns a hook entry
+point of type `transfer_descriptor_param`. It allows a policy contract implementor
+to choose a name for the hook entry point or even implement several transfer hooks
+in the same contract.
 
 #### Transfer Hook Examples
 
