@@ -7,6 +7,39 @@ author: Eugene Mishura (@e-mishura)
 created: 2020-01-24
 ---
 
+## Table Of Content
+
+* [Summary](#summary)
+* [Abstract](#abstract)
+* [Interface Specification](#interface-specification)
+  * [Entry Point Semantics](#entry-point-semantics)
+    * [`transfer`](#transfer)
+    * [`balance_of`](#balance_of)
+    * [`total_supply`](#total_supply)
+    * [`token_metadata`](#token_metadata)
+    * [`permissions_descriptor`](#permissions_descriptor)
+    * [Operators](#operators)
+      * [`update_operators`](#update_operators)
+      * [`is_operator`](#is_operator)
+  * [FA2 Permission Policies and Configuration](#permission_policy)
+    * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
+      * [Core Transfer Behavior](#core-transfer-behavior)
+      * [Behavior Patterns](#behavior-patterns)
+        * [`Self` Transfer Behavior](#self-transfer-behavior)
+        * [`Operator` Transfer Behavior](#operator-transfer-behavior)
+        * [`Token Owner` Permission Behavior](#token-owner-permission-behavior)
+      * [Permission Policy Formulae](#permission-policy-formulae)
+* [Implementing FA2](#implementing-fa2)
+  * [Transfer Hook](#transfer-hook)
+  * [Transfer Hook Motivation](#transfer-hook-motivation)
+  * [Transfer Hook Specification](#transfer-hook-specification)
+  * [`set_transfer_hook`](#set_transfer_hook)
+  * [Transfer Hook Examples](#transfer-hook-examples)
+    * [Default Permission Policy](#default-permission-policy)
+    * [Custom Receiver Hook/White List Permission Policy](#custom-receiver-hookwhite-list-permission-policy)
+* [Future directions](#future-directions)
+* [Copyright](#copyright)
+
 ## Summary
 
 This document proposes a standard for a unified token contract interface,
