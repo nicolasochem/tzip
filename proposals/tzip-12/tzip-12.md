@@ -47,7 +47,7 @@ supporting a wide range of token types and implementations. This document provid
 various transfer permission policies.
 
 **PLEASE NOTE:** This API specification remains a work-in-progress and may evolve
-based on public comment see FA2 Request for Comment on [Tezos Agora](https://tezosagora.org.
+based on public comment see FA2 Request for Comment on [Tezos Agora](https://tezosagora.org).
 
 ## Abstract
 
