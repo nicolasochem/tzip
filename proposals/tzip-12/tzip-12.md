@@ -42,14 +42,12 @@ created: 2020-01-24
 
 ## Summary
 
-This document proposes a standard for a unified token contract interface,
-supporting a range of token types and implementations.
-
-This standard focuses on the interface, token transfer semantics, and support for
+TZIP-12 proposes a standard for a unified token contract interface,
+supporting a wide range of token types and implementations. This document provides an overview and rationale for the interface, token transfer semantics, and support for
 various transfer permission policies.
 
 **PLEASE NOTE:** This API specification remains a work-in-progress and may evolve
-based on public comment.
+based on public comment see FA2 Request for Comment on [Tezos Agora](https://tezosagora.org.
 
 ## Abstract
 
