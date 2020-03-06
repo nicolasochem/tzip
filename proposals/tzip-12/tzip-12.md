@@ -21,7 +21,7 @@ created: 2020-01-24
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
       * [`is_operator`](#is_operator)
-  * [FA2 Permission Policies and Configuration](#permission_policy)
+  * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [Core Transfer Behavior](#core-transfer-behavior)
       * [Behavior Patterns](#behavior-patterns)
@@ -270,7 +270,7 @@ type permissions_descriptor = {
 Get the descriptor of the transfer permission policy. FA2 specifies
 `permissions_descriptor` allowing external contracts (e.g. an auction) to discover
 an FA2 contract's permission policy and to configure it. For more details see
-[FA2 Permission Policies and Configuration](#permission_policy).
+[FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
@@ -356,7 +356,7 @@ is `false`. It is possible to make a query for some specific token types (`token
 parameter is `Some_tokens`) or for all token types (`tokens` parameter is
 `All_tokens`).
 
-### <a name="permission_policy"></a> FA2 Permission Policies and Configuration
+### FA2 Permission Policies and Configuration
 
 Most token standards specify logic such as who can initiate a transfer, the quantity
 for transfer, who can receive tokens. This standard calls such logic *permission
@@ -554,10 +554,10 @@ of `custom_permission_policy`.
 
 Transfer hook is one recommended design pattern to implement FA2 that enables
 separation of the core token transfer logic and a permission policy. Instead of
-implementing FA2 as a monolithic contract, a [permission
-policy](#permission_policy) can be implemented as a
-separate contract. Permission policy contract provides an entry point invoked by
-the core FA2 contract to accept or reject a particular transfer operation (such
+implementing FA2 as a monolithic contract, a [permission policy]
+(#fa2-permission-policies-and-configuration) can be implemented as a separate
+contract. Permission policy contract provides an entry point invoked by the core
+FA2 contract to accept or reject a particular transfer operation (such
 an entry point is called **transfer hook**).
 
 #### Transfer Hook Motivation
