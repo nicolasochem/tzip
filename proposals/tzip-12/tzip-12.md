@@ -36,7 +36,7 @@ created: 2020-01-24
   * [`set_transfer_hook`](#set_transfer_hook)
   * [Transfer Hook Examples](#transfer-hook-examples)
     * [Default Permission Policy](#default-permission-policy)
-    * [Custom Receiver Hook/White List Permission Policy](#custom-receiver-hookwhite-list-permission-policy)
+    * [Custom Receiver Hook/White List Permission Policy](#custom-receiver-hook-white-list-permission-policy)
 * [Future directions](#future-directions)
 * [Copyright](#copyright)
 
