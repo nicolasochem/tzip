@@ -128,10 +128,13 @@ type transfer = {
 Michelson definition:
 ```
 (list %transfer
-  (pair (address %from_)
-  (pair (address %to_)
-  (pair (nat %token_id)
-  (nat %amount)
+  (pair
+    (address %from_)
+    (pair
+      (address %to_)
+      (pair
+        (nat %token_id)
+        (nat %amount)
   )))
 )
 ```
@@ -279,11 +282,15 @@ Michelson definition:
   (list %token_ids nat)
   (contract %callback
     (list
-      (pair (nat %token_id)
-      (pair (string %symbol)
-      (pair (string %name)
-      (pair (nat %decimals)
-      (map %extras string string)
+      (pair
+        (nat %token_id)
+        (pair
+          (string %symbol)
+          (pair
+            (string %name)
+            (pair
+              (nat %decimals)
+              (map %extras string string)
       ))))
     )
   )
@@ -352,31 +359,31 @@ Michelson definition:
       (unit %self_transfer_permitted)
       (unit %self_transfer_denied)
     )
-  (pair
-    (or %operator
-      (unit %operator_transfer_permitted)
-      (unit %operator_transfer_denied)
-    )
-  (pair
-    (or %receiver
-      (unit %owner_no_op)
-    (or
-      (unit %optional_owner_hook)
-      (unit %required_owner_hook)
-    ))
-  (pair
-    (or %sender
-      (unit %owner_no_op)
-    (or
-      (unit %optional_owner_hook)
-      (unit %required_owner_hook)
-    ))
-    (option %custom
-      (pair
-        (string %tag)
-        (option %config_api address)
+    (pair
+      (or %operator
+        (unit %operator_transfer_permitted)
+        (unit %operator_transfer_denied)
       )
-    )
+      (pair
+        (or %receiver
+          (unit %owner_no_op)
+          (or
+            (unit %optional_owner_hook)
+            (unit %required_owner_hook)
+        ))
+        (pair
+          (or %sender
+            (unit %owner_no_op)
+            (or
+              (unit %optional_owner_hook)
+              (unit %required_owner_hook)
+          ))
+        (option %custom
+          (pair
+            (string %tag)
+            (option %config_api address)
+          )
+        )
   ))))
 )
 ```
@@ -432,21 +439,21 @@ Michelson definition:
   (or
     (pair %add_operator
       (address %owner)
-    (pair
-      (address %operator)
-      (or %tokens
-        (unit %all_tokens)
-        (set %some_tokens nat)
-      )
+      (pair
+        (address %operator)
+        (or %tokens
+          (unit %all_tokens)
+          (set %some_tokens nat)
+        )
     ))
     (pair %remove_operator
-        (address %owner)
-    (pair
-      (address %operator)
-      (or %tokens
-        (unit %all_tokens)
-        (set %some_tokens nat)
-      )
+      (address %owner)
+      (pair
+        (address %operator)
+        (or %tokens
+          (unit %all_tokens)
+          (set %some_tokens nat)
+        )
     ))
   )
 )
@@ -497,23 +504,23 @@ Michelson definition:
 (pair %is_operator
   (pair %operator
     (address %owner)
-  (pair
-    (address %operator)
-    (or %tokens
-      (unit %all_tokens)
-      (set %some_tokens nat)
-    )
+    (pair
+      (address %operator)
+      (or %tokens
+        (unit %all_tokens)
+        (set %some_tokens nat)
+      )
   ))
   (contract %callback
     (pair
       (pair %operator
         (address %owner)
-      (pair
-        (address %operator)
-        (or %tokens
-          (unit %all_tokens)
-          (set %some_tokens nat)
-        )
+        (pair
+          (address %operator)
+          (or %tokens
+            (unit %all_tokens)
+            (set %some_tokens nat)
+          )
       ))
       (bool %is_operator)
     )
@@ -832,10 +839,13 @@ Michelson definition:
     (contract
         (pair
           (list %batch
-            (pair (option %from_ address)
-            (pair (option %to_ address)
-            (pair (nat %token_id)
-            (nat %amount)
+            (pair
+              (option %from_ address)
+              (pair
+                (option %to_ address)
+                (pair
+                  (nat %token_id)
+                  (nat %amount)
             )))
           )
           (address %operator)
@@ -855,16 +865,16 @@ Michelson definition:
   (pair
     (or %receiver
       (unit %owner_no_op)
-    (or
-      (unit %optional_owner_hook)
-      (unit %required_owner_hook)
+      (or
+        (unit %optional_owner_hook)
+        (unit %required_owner_hook)
     ))
   (pair
     (or %sender
       (unit %owner_no_op)
-    (or
-      (unit %optional_owner_hook)
-      (unit %required_owner_hook)
+      (or
+        (unit %optional_owner_hook)
+        (unit %required_owner_hook)
     ))
     (option %custom
       (pair
