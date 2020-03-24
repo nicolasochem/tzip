@@ -86,8 +86,10 @@ a single token type, the batch may contain single or multiple entries where toke
 id will be a fixed `0n` value.
 
 Token contract MUST implement the following entry points. Notation is given in
-[cameLIGO language](https://ligolang.org) for readability. (Note: A Michelson
-interface will be provided).
+[cameLIGO language](https://ligolang.org) for readability and Michelson. Please
+note that the current LIGO implementation does not allow control over generated
+Michelson entry points layout and thus LIGO-generated entry points will not be
+compatible with provided Michelson specification.
 
 A contract implementing the FA2 standard must have the following entry points:
 
@@ -108,7 +110,7 @@ The full definition of the FA2 entry points and related types can be found in
 
 #### `transfer`
 
-Definition:
+LIGO definition:
 
 ```ocaml
 type token_id = nat
@@ -121,6 +123,20 @@ type transfer = {
 }
 
 | Transfer of transfer list
+```
+
+Michelson definition:
+```
+(list %transfer
+  (pair
+    (address %from_)
+    (pair
+      (address %to_)
+      (pair
+        (nat %token_id)
+        (nat %amount)
+  )))
+)
 ```
 
 Each transfer amount in the batch is specified between two given addresses.
@@ -145,7 +161,7 @@ considered special cases of the transfer.
 
 #### `balance_of`
 
-Definition:
+LIGO definition:
 
 ```ocaml
 type token_id = nat
@@ -168,13 +184,37 @@ type balance_of_param = {
 | Balance_of of balance_of_param
 ```
 
+Michelson definition:
+
+```
+(pair %balance_of
+  (list %requests
+    (pair
+      (address %owner)
+      (nat %token_id)
+    )
+  )
+  (contract %callback
+    (list
+      (pair
+        (pair %request
+          (address %owner)
+          (nat %token_id)
+        )
+        (nat %balance)
+      )
+    )
+  )
+)
+```
+
 Get the balance of multiple account/token pairs. Accepts a list of
 `balance_of_request`s and a callback contract `callback` which accepts a list of
 `balance_of_response` records.
 
 #### `total_supply`
 
-Definition:
+LIGO definition:
 
 ```ocaml
 type token_id = nat
@@ -192,13 +232,29 @@ type total_supply_param = {
 | Total_supply of total_supply_param
 ```
 
+Michelson definition:
+
+```
+(pair %total_supply
+  (list %token_ids nat)
+  (contract %callback
+    (list
+      (pair
+        (nat %token_id)
+        (nat %total_supply)
+      )
+    )
+  )
+)
+```
+
 Get the total supply for multiple token types. Accepts a list of
 `total_supply_request`s and a callback contract `callback`, which accepts a list
 of `total_supply_response` records.
 
 #### `token_metadata`
 
-Definition:
+LIGO definition:
 
 ```ocaml
 type token_id = nat
@@ -211,7 +267,34 @@ type token_metadata = {
   extras : (string, string) map;
 }
 
+type token_metadata_param = {
+  token_ids : token_id list;
+  callback : (token_metadata list) contract;
+}
+
 | Token_metadata of token_metadata_param
+```
+
+Michelson definition:
+
+```
+(pair %token_metadata
+  (list %token_ids nat)
+  (contract %callback
+    (list
+      (pair
+        (nat %token_id)
+        (pair
+          (string %symbol)
+          (pair
+            (string %name)
+            (pair
+              (nat %decimals)
+              (map %extras string string)
+      ))))
+    )
+  )
+)
 ```
 
 Get the metadata for multiple token types. Accepts a list of `token_id`s and a
@@ -235,7 +318,7 @@ Examples
 
 #### `permissions_descriptor`
 
-Definition:
+LIGO definition:
 
 ```ocaml
 type self_transfer_policy =
@@ -267,6 +350,44 @@ type permissions_descriptor = {
 | Permissions_descriptor of permissions_descriptor contract
 ```
 
+Michelson definition:
+
+```
+(contract %permissions_descriptor
+  (pair
+    (or %self
+      (unit %self_transfer_permitted)
+      (unit %self_transfer_denied)
+    )
+    (pair
+      (or %operator
+        (unit %operator_transfer_permitted)
+        (unit %operator_transfer_denied)
+      )
+      (pair
+        (or %receiver
+          (unit %owner_no_op)
+          (or
+            (unit %optional_owner_hook)
+            (unit %required_owner_hook)
+        ))
+        (pair
+          (or %sender
+            (unit %owner_no_op)
+            (or
+              (unit %optional_owner_hook)
+              (unit %required_owner_hook)
+          ))
+        (option %custom
+          (pair
+            (string %tag)
+            (option %config_api address)
+          )
+        )
+  ))))
+)
+```
+
 Get the descriptor of the transfer permission policy. FA2 specifies
 `permissions_descriptor` allowing external contracts (e.g. an auction) to discover
 an FA2 contract's permission policy and to configure it. For more details see
@@ -289,7 +410,7 @@ FA2 interface specifies two entry points to update and inspect operators.
 
 ##### `update_operators`
 
-Definition:
+LIGO definition:
 
 ```ocaml
 type token_id = nat
@@ -311,6 +432,33 @@ type update_operator =
 | Update_operators of update_operator list
 ```
 
+Michelson definition:
+
+```
+(list %update_operators
+  (or
+    (pair %add_operator
+      (address %owner)
+      (pair
+        (address %operator)
+        (or %tokens
+          (unit %all_tokens)
+          (set %some_tokens nat)
+        )
+    ))
+    (pair %remove_operator
+      (address %owner)
+      (pair
+        (address %operator)
+        (or %tokens
+          (unit %all_tokens)
+          (set %some_tokens nat)
+        )
+    ))
+  )
+)
+```
+
 Add or Remove token operators for the specified owners and token types.
 
 The entry point accepts a list of `update_operator` commands. If two different
@@ -322,7 +470,7 @@ is `All_tokens`).
 
 ##### `is_operator`
 
-Definition:
+LIGO definition:
 
 ```ocaml
 type token_id = nat
@@ -348,6 +496,36 @@ type is_operator_param = {
 }
 
 | Is_operator of is_operator_param
+```
+
+Michelson definition:
+
+```
+(pair %is_operator
+  (pair %operator
+    (address %owner)
+    (pair
+      (address %operator)
+      (or %tokens
+        (unit %all_tokens)
+        (set %some_tokens nat)
+      )
+  ))
+  (contract %callback
+    (pair
+      (pair %operator
+        (address %owner)
+        (pair
+          (address %operator)
+          (or %tokens
+            (unit %all_tokens)
+            (set %some_tokens nat)
+          )
+      ))
+      (bool %is_operator)
+    )
+  )
+)
 ```
 
 Inspect if an address is an operator for the specified owner and token types. If
@@ -627,7 +805,9 @@ invoke a transfer hook as well.
 
 #### `set_transfer_hook`
 
-FA2 entry point with the following signature:
+FA2 entry point with the following signature.
+
+LIGO definition:
 
 ```ocaml
 type transfer_descriptor = {
@@ -648,6 +828,62 @@ type set_hook_param = {
 }
 
 Set_transfer_hook of set_hook_param
+```
+
+Michelson definition:
+
+```
+(pair %set_transfer_hook
+  (lambda %hook
+    unit
+    (contract
+        (pair
+          (list %batch
+            (pair
+              (option %from_ address)
+              (pair
+                (option %to_ address)
+                (pair
+                  (nat %token_id)
+                  (nat %amount)
+            )))
+          )
+          (address %operator)
+        )
+    )
+  )
+  (pair %permissions_descriptor
+    (or %self
+      (unit %self_transfer_permitted)
+      (unit %self_transfer_denied)
+    )
+  (pair
+    (or %operator
+      (unit %operator_transfer_permitted)
+      (unit %operator_transfer_denied)
+    )
+  (pair
+    (or %receiver
+      (unit %owner_no_op)
+      (or
+        (unit %optional_owner_hook)
+        (unit %required_owner_hook)
+    ))
+  (pair
+    (or %sender
+      (unit %owner_no_op)
+      (or
+        (unit %optional_owner_hook)
+        (unit %required_owner_hook)
+    ))
+    (option %custom
+      (pair
+        (string %tag)
+        (option %config_api address)
+      )
+    )
+  ))))
+)
 ```
 
 FA2 implementation MAY restrict access to this operation to a contract administrator
