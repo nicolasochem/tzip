@@ -83,7 +83,8 @@ about a token.
 All entry points are batch operations that allow querying or transfer of multiple
 token types atomically. If the underlying contract implementation supports only
 a single token type, the batch may contain single or multiple entries where token
-id will be a fixed `0n` value.
+id will be a fixed `0n` value. Likewise, if multiple token types are supported,
+the batch may contain zero or more entries and there may be duplicates.
 
 Token contract MUST implement the following entry points. Notation is given in
 [cameLIGO language](https://ligolang.org) for readability and Michelson. Please
@@ -140,8 +141,8 @@ Michelson definition:
 ```
 
 Each transfer amount in the batch is specified between two given addresses.
-Transfers MUST happen atomically; if at least one specified transfer cannot be
-completed, the whole transaction MUST fail.
+Transfers MUST happen atomically and in order; if at least one specified transfer
+cannot be completed, the whole transaction MUST fail.
 
 The transaction MUST fail if the balance(s) of the holder for token(s) in the
 batch is lower than the corresponding amount(s) sent. If the holder does not hold
@@ -210,7 +211,8 @@ Michelson definition:
 
 Get the balance of multiple account/token pairs. Accepts a list of
 `balance_of_request`s and a callback contract `callback` which accepts a list of
-`balance_of_response` records.
+`balance_of_response` records. There may be duplicate `balance_of_request`'s,
+in which case they should not be deduplicated nor reordered.
 
 #### `total_supply`
 
@@ -299,6 +301,8 @@ Michelson definition:
 
 Get the metadata for multiple token types. Accepts a list of `token_id`s and a
 callback contract `callback`, which accepts a list of `token_metadata` records.
+As with `balance_of`, the input `token_id`'s should not be deduplicated nor
+reordered.
 
 FA2 token amounts are represented by natural numbers (`nat`), and their
 **granularity** (the smallest amount of tokens which may be minted, burned, or
