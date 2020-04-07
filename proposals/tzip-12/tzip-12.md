@@ -140,7 +140,7 @@ amounts or try to add/remove additional transfers like transaction fees.
 
 FA2 does NOT specify an interface for mint and burn operations; however, if an
 FA2 token contract implements mint and burn operations, it MUST enforce the same
-permission logic applied to the token transfer operation. Mint and burn can be
+rules and logic applied to the token transfer operation. Mint and burn can be
 considered special cases of the transfer.
 
 #### `balance_of`
