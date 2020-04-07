@@ -1,7 +1,7 @@
 ---
 tzip: 4
 title: A1 - Michelson Contract Interfaces and Conventions
-status: Submitted
+status: Deprecated
 type: Application
 author: John Burnham, Konstantin Ivanov <kivanov@serokell.io>
 created: 2019-04-11

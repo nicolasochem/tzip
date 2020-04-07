@@ -1,7 +1,7 @@
 ---
 tzip: 5
 title: FA1 - Abstract Ledger
-status: Submitted
+status: Deprecated
 type: Financial Application
 author: John Burnham, Konstantin Ivanov <kivanov@serokell.io>, Kirill Kuvshinov (@kkirka)
 created: 2019-04-12

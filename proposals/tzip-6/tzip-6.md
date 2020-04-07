@@ -1,7 +1,7 @@
 ---
 tzip: 6
 title: A1.1 - Balanced Trees for nested or and pair types
-status: Submitted
+status: Deprecated
 type: Application
 author: John Burnham, Konstantin Ivanov <kivanov@serokell.io>
 created: 2019-05-04

@@ -1,6 +1,6 @@
 ---
 tzip: 7
-status: Submitted
+status: Final
 author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak)
 created: 2019-04-12
 ---

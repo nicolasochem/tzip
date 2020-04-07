@@ -1,7 +1,7 @@
 ---
 tzip: 7
 title: FA1.2 - Approvable Ledger
-status: Submitted
+status: Final
 type: Financial Application
 author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka)
 created: 2019-06-20
