@@ -29,6 +29,12 @@ See also:
 * [Syntax sugar explanation](/proposals/tzip-4/tzip-4.md#pairs-and-ors-syntax-sugar).
 * [Explanation of `view`](/proposals/tzip-4/tzip-4.md#view-entrypoints).
 
+### Metadata
+
+This document does not specify contract metadata.
+For a metadata specification, see
+[TZIP-12](/proposals/tzip-12/tzip-12.md#token_metadata)
+
 ## Errors
 
 This document definines additional error types while following the approach for signalling errors described in FA1.
@@ -76,9 +82,13 @@ This view returns the approval value between two given addresses.
 
 ## Related work
 
-[ERC-20](https://eips.ethereum.org/EIPS/eip-20) is a standard used in Ethererum for implementing tokens.
+[ERC-20](https://eips.ethereum.org/EIPS/eip-20) is a standard used in Ethereum for implementing tokens.
 It also describes transfer and approval operations.
 The interface we propose here differs from ERC-20. Specifically, we have `transfer`
 and `transferFrom` analogies merged into a single entrypoint.
 Also, ERC-20 is known to suffer from some vulnerabilities, and we took them into
 account when implementing our interface.
+
+
+[TZIP-12](/proposals/tzip-12/tzip-12.md) defines `FA2`: a contract standard
+that generalizes and extends `FA1.2`.
