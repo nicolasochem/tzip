@@ -472,6 +472,9 @@ for some specific token types (`tokens` field in `operator_param` is `Some_token
 or for all token types (`tokens` field in `operator_param` is `tokens` parameter
 is `All_tokens`).
 
+Operator relation is not transitive. If C is an operator of B , and if B is an operator
+of A, C cannot transfer tokens that are owned by A, on behalf of B.
+
 ##### `is_operator`
 
 LIGO definition:
