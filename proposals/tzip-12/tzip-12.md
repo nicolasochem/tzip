@@ -236,7 +236,7 @@ Michelson definition:
       (nat %token_id)
     )
   )
-  (contract %callback\
+  (contract %callback
     (list
       (pair
         (pair %request
