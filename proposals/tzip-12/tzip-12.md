@@ -405,12 +405,29 @@ pattern using [transfer hook](#transfer-hook)).
 #### Operators
 
 **Operator** is a Tezos address that initiates token transfer operation on behalf
-of the owner. **Owner** is a Tezos address which can hold tokens.
+of the owner. 
+
+**Owner** is a Tezos address which can hold tokens.
 
 Operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
 
 FA2 interface specifies two entry points to update and inspect operators.
+In general, an FA2 contract maintains the relation from a pair of token owner and
+operator addresses to a set of permitted token types
+(`(owner, operator) -> operator_tokens`). Although, an actual implementation of
+the FA2 contract can use a different internal representation of that relation.
+`operator_tokens` type represents a set of token types that can be defined either
+explicitly by the enumeration of `token_id`s (`Some_tokens`) or as a whole set of
+token types defined by the FA2 contract (`All_tokens`). Both operator entry points
+are defined as operations on sets of tokens associated with a particular pair of
+token owner and operator:
+
+| Operation | Description |
+| :-------- | :---------- |
+| `Add_operator` | A resulting set of permitted tokens types is a union of provided and previously permitted token sets |
+| `Remove_operator` | A resulting set of permitted tokens types obtained by substructing provided tokens set from previously permitted tokens set |
+| `Is_operator` | Test if provided tokens set is a subset of permitted tokens set | 
 
 ##### `update_operators`
 
@@ -472,8 +489,13 @@ for some specific token types (`tokens` field in `operator_param` is `Some_token
 or for all token types (`tokens` field in `operator_param` is `tokens` parameter
 is `All_tokens`).
 
-Operator relation is not transitive. If C is an operator of B , and if B is an operator
-of A, C cannot transfer tokens that are owned by A, on behalf of B.
+Operator relation is not transitive. If C is an operator of B , and if B is an
+operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
+
+The standard does not specify who is permitted to update operators on behalf of
+the token owner. Depending on the business use case,the particular implementation
+of FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
+or be limited to an administrator.
 
 ##### `is_operator`
 
