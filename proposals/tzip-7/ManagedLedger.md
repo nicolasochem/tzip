@@ -6,7 +6,7 @@ created: 2019-06-24
 
 ## Summary
 
-This document describes a smart contract that implements [TZIP-7](/proposals/tzip-7/tzip-7.md) inteface.
+This document describes a smart contract that implements [TZIP-7](/proposals/tzip-7/tzip-7.md) interface.
 The contract also maintains an entity called _administrator_ which has an exclusive right to perform management operations like `Mint` and `Pause`.
 
 The contract compiled to Michelson is provided in [ManagedLedger.tz](/proposals/tzip-7/ManagedLedger.tz).
@@ -88,6 +88,12 @@ The contract has been written in Lorentz eDSL - a [language over Haskell](https:
 
 The contract code can be found
 [here](https://gitlab.com/morley-framework/morley/tree/ce28076a79b93d48aa7745271e6a1395b8b9e50d/lorentz-contracts/src/Lorentz/Contracts/ManagedLedger.hs).
+
+An implementation of [TZIP-7](/proposals/tzip-7/tzip-7.md)
+that includes contract metadata, as specified in
+[TZIP-12](/proposals/tzip-12/tzip-12.md#token_metadata),
+can be found
+[here](https://github.com/tqtezos/lorentz-contract-metadata).
 
 ### Compiling Lorentz contract
 
