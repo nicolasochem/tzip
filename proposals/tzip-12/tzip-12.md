@@ -131,14 +131,14 @@ Standard error mnemonics:
 
 | Error mnemonic | Description |
 | :------------- | :---------- |
-| `"TOKEN_NOT_DEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
+| `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
 | `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
 | `"SELF_TX_DENIED"` | A transfer failed because of `self_transfer_policy == Self_transfer_permitted`, when a token owner tries to initiate a transfer | 
-| `"OPERATOR_TX_DENIED"` | A transfer failed because an operator that tries to initiate a transfer is not permitted to transfer tokens on behalf of a token owner |
+| `"NOT_OPERATOR"` | A transfer failed because an operator that tries to initiate a transfer is not permitted to transfer tokens on behalf of a token owner |
 | `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
 | `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"RECEIVER_HOOK_NOT_DEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"SENDER_HOOK_NOT_DEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
+| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
 
 
 
@@ -196,7 +196,7 @@ rules and logic applied to the token transfer operation. Mint and burn can be
 considered special cases of the transfer.
 
 If one of the specified `token_id`s is not defined withing the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_NOT_DEFINED"`.
+entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 If one of the token owners do not have sufficient balance to transfer tokens from
 that account, the entry point must fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
@@ -256,7 +256,7 @@ Get the balance of multiple account/token pairs. Accepts a list of
 in which case they should not be deduplicated nor reordered.
 
 If one of the specified `token_id`s is not defined withing the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_NOT_DEFINED"`.
+entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 #### `total_supply`
 
@@ -299,7 +299,7 @@ Get the total supply for multiple token types. Accepts a list of
 of `total_supply_response` records.
 
 If one of the specified `token_id`s is not defined withing the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_NOT_DEFINED"`.
+entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 #### `token_metadata`
 
@@ -445,7 +445,7 @@ an FA2 contract's permission policy and to configure it. For more details see
 [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
 If one of the specified `token_id`s is not defined withing the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_NOT_DEFINED"`.
+entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
@@ -480,7 +480,7 @@ token owner and operator:
 | `Is_operator` | Test if provided tokens set is a subset of permitted tokens set |
 
 If one of the specified `token_id`s is not defined withing the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_NOT_DEFINED"`.
+entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 ##### `update_operators`
 
@@ -543,7 +543,7 @@ or for all token types (`tokens` field in `operator_param` is `tokens` parameter
 is `All_tokens`).
 
 If one of the specified `token_id`s is not defined withing the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_NOT_DEFINED"`. It is possible
+entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`. It is possible
 to update operators for a token owner that does not hold any token balances yet.
 
 Operator relation is not transitive. If C is an operator of B , and if B is an
@@ -621,7 +621,7 @@ parameter is `Some_tokens`) or for all token types (`tokens` parameter is
 `All_tokens`).
 
 If one of the specified `token_id`s is not defined withing the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_NOT_DEFINED"`.
+entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 ### FA2 Permission Policies and Configuration
 
@@ -711,7 +711,7 @@ points](#operators)). If an operator transfer is denied, those entry points MUST
 fail if invoked.
 
 If a transfer is not permitted because of `Self_transfer_permitted` policy,
-the operation MUST fail with the error mnemonic `"OPERATOR_TX_DENIED"`.
+the operation MUST fail with the error mnemonic `"NOT_OPERATOR"`.
 
 ###### `Token Owner` Permission Behavior
 
@@ -775,8 +775,8 @@ MUST fail with the one of the following error mnemonics:
 | :------------- | :---------- |
 | `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
 | `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"RECEIVER_HOOK_NOT_DEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"SENDER_HOOK_NOT_DEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
+| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
 
 ##### Permission Policy Formulae
 
