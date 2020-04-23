@@ -118,7 +118,7 @@ Each error code is a short abbreviated string mnemonic. An FA2 contract client
 (like another contract or a wallet) could use on-the-chain or off-the-chain registry
 to map the error code mnemonic to a user-readable, localized message. A particular
 implementation of the FA2 contract MAY extend the standard set of errors with custom
-mnemonics for additional constrains.
+mnemonics for additional constraints.
 
 When error occurs, any FA2 contract entry point MUST fail with one of the following
 types:
