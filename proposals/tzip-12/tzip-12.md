@@ -710,7 +710,7 @@ FA2 interface provides API to configure operators (see [operators config entry
 points](#operators)). If an operator transfer is denied, those entry points MUST
 fail if invoked.
 
-If a transfer is not permitted because of `Self_transfer_permitted` policy,
+If a transfer is not permitted because of `Self_transfer_denied` policy,
 the operation MUST fail with the error mnemonic `"NOT_OPERATOR"`.
 
 ###### `Token Owner` Permission Behavior
