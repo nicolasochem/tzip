@@ -195,7 +195,7 @@ FA2 token contract implements mint and burn operations, it MUST enforce the same
 rules and logic applied to the token transfer operation. Mint and burn can be
 considered special cases of the transfer.
 
-If one of the specified `token_id`s is not defined withing the FA2 contract, the
+If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 If one of the token owners do not have sufficient balance to transfer tokens from
@@ -255,7 +255,7 @@ Get the balance of multiple account/token pairs. Accepts a list of
 `balance_of_response` records. There may be duplicate `balance_of_request`'s,
 in which case they should not be deduplicated nor reordered.
 
-If one of the specified `token_id`s is not defined withing the FA2 contract, the
+If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 #### `total_supply`
@@ -298,7 +298,7 @@ Get the total supply for multiple token types. Accepts a list of
 `total_supply_request`s and a callback contract `callback`, which accepts a list
 of `total_supply_response` records.
 
-If one of the specified `token_id`s is not defined withing the FA2 contract, the
+If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 #### `token_metadata`
@@ -444,7 +444,7 @@ Get the descriptor of the transfer permission policy. FA2 specifies
 an FA2 contract's permission policy and to configure it. For more details see
 [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
-If one of the specified `token_id`s is not defined withing the FA2 contract, the
+If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 Some of the permission options require config API. Config entry points may be
@@ -479,7 +479,7 @@ token owner and operator:
 | `Remove_operator` | A resulting set of permitted tokens types obtained by substructing provided tokens set from previously permitted tokens set |
 | `Is_operator` | Test if provided tokens set is a subset of permitted tokens set |
 
-If one of the specified `token_id`s is not defined withing the FA2 contract, the
+If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 ##### `update_operators`
@@ -542,7 +542,7 @@ for some specific token types (`tokens` field in `operator_param` is `Some_token
 or for all token types (`tokens` field in `operator_param` is `tokens` parameter
 is `All_tokens`).
 
-If one of the specified `token_id`s is not defined withing the FA2 contract, the
+If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`. It is possible
 to update operators for a token owner that does not hold any token balances yet.
 
@@ -620,7 +620,7 @@ is `false`. It is possible to make a query for some specific token types (`token
 parameter is `Some_tokens`) or for all token types (`tokens` parameter is
 `All_tokens`).
 
-If one of the specified `token_id`s is not defined withing the FA2 contract, the
+If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 ### FA2 Permission Policies and Configuration
