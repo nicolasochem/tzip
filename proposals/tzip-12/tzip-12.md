@@ -133,7 +133,7 @@ Standard error mnemonics:
 | :------------- | :---------- |
 | `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
 | `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
-| `"SELF_TX_DENIED"` | A transfer failed because of `self_transfer_policy == Self_transfer_permitted`, when a token owner tries to initiate a transfer | 
+| `"SELF_TX_DENIED"` | A transfer failed because of `self_transfer_policy == Self_transfer_denied`, when a token owner tries to initiate a transfer | 
 | `"NOT_OPERATOR"` | A transfer failed because an operator that tries to initiate a transfer is not permitted to transfer tokens on behalf of a token owner |
 | `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
 | `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
@@ -691,7 +691,7 @@ type self_transfer_policy =
   | Self_transfer_denied
 ```
 
-If a transfer is not permitted because of `Self_transfer_permitted` policy,
+If a transfer is not permitted because of `Self_transfer_denied` policy,
 the operation MUST fail with the error mnemonic `"SELF_TX_DENIED"`.
 
 ###### `Operator` Transfer Behavior
