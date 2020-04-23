@@ -93,7 +93,7 @@ note that the current LIGO implementation does not allow control over generated
 Michelson entry points layout and thus LIGO-generated entry points will not be
 compatible with provided Michelson specification.
 
-A contract implementing the FA2 standard must have the following entry points:
+A contract implementing the FA2 standard MUST have the following entry points:
 
 `type fa2_entry_points =`
 
@@ -196,10 +196,10 @@ rules and logic applied to the token transfer operation. Mint and burn can be
 considered special cases of the transfer.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 If one of the token owners do not have sufficient balance to transfer tokens from
-that account, the entry point must fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
+that account, the entry point MUST fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
 
 #### `balance_of`
 
@@ -256,7 +256,7 @@ Get the balance of multiple account/token pairs. Accepts a list of
 in which case they should not be deduplicated nor reordered.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 #### `total_supply`
 
@@ -299,7 +299,7 @@ Get the total supply for multiple token types. Accepts a list of
 of `total_supply_response` records.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 #### `token_metadata`
 
@@ -445,7 +445,7 @@ an FA2 contract's permission policy and to configure it. For more details see
 [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
@@ -480,7 +480,7 @@ token owner and operator:
 | `Is_operator` | Test if provided tokens set is a subset of permitted tokens set |
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 ##### `update_operators`
 
@@ -543,7 +543,7 @@ or for all token types (`tokens` field in `operator_param` is `tokens` parameter
 is `All_tokens`).
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`. It is possible
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`. It is possible
 to update operators for a token owner that does not hold any token balances yet.
 
 Operator relation is not transitive. If C is an operator of B , and if B is an
@@ -621,7 +621,7 @@ parameter is `Some_tokens`) or for all token types (`tokens` parameter is
 `All_tokens`).
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point must fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 ### FA2 Permission Policies and Configuration
 
