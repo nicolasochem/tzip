@@ -550,7 +550,7 @@ Operator relation is not transitive. If C is an operator of B , and if B is an
 operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
 
 The standard does not specify who is permitted to update operators on behalf of
-the token owner. Depending on the business use case,the particular implementation
+the token owner. Depending on the business use case, the particular implementation
 of FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
 
