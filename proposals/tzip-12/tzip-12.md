@@ -12,6 +12,7 @@ created: 2020-01-24
 * [Summary](#summary)
 * [Abstract](#abstract)
 * [Interface Specification](#interface-specification)
+  * [Error Handling](#error-handling)
   * [Entry Point Semantics](#entry-point-semantics)
     * [`transfer`](#transfer)
     * [`balance_of`](#balance_of)
@@ -92,7 +93,7 @@ note that the current LIGO implementation does not allow control over generated
 Michelson entry points layout and thus LIGO-generated entry points will not be
 compatible with provided Michelson specification.
 
-A contract implementing the FA2 standard must have the following entry points:
+A contract implementing the FA2 standard MUST have the following entry points:
 
 `type fa2_entry_points =`
 
@@ -106,6 +107,42 @@ A contract implementing the FA2 standard must have the following entry points:
 
 The full definition of the FA2 entry points and related types can be found in
 [fa2_interface.mligo](./fa2_interface.mligo).
+
+### Error Handling
+
+This specification defines the set of standard errors to make it easier to integrate
+FA2 contracts with wallets, DApps and other generic software, and enable
+localization of user-visible error messages.
+
+Each error code is a short abbreviated string mnemonic. An FA2 contract client
+(like another contract or a wallet) could use on-the-chain or off-the-chain registry
+to map the error code mnemonic to a user-readable, localized message. A particular
+implementation of the FA2 contract MAY extend the standard set of errors with custom
+mnemonics for additional constraints.
+
+When error occurs, any FA2 contract entry point MUST fail with one of the following
+types:
+
+1. `string` value which represents an error code mnemonic.
+2. a Michelson `pair`, where the first element is a `string` representing error code
+mnemonic and the second element is a custom error data.
+
+Standard error mnemonics:
+
+| Error mnemonic | Description |
+| :------------- | :---------- |
+| `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
+| `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
+| `"SELF_TX_DENIED"` | A transfer failed because of `self_transfer_policy == Self_transfer_denied`, when a token owner tries to initiate a transfer | 
+| `"NOT_OPERATOR"` | A transfer failed because an operator that tries to initiate a transfer is not permitted to transfer tokens on behalf of a token owner |
+| `"OPERATORS_DENIED"` | A transfer failed because it is initiated not by the tokens owner and operator's transfers are denied |
+| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
+
+If more than one error conditions are met, the entry point MAY fail with any applicable
+error.
 
 ### Entry Point Semantics
 
@@ -159,6 +196,12 @@ FA2 does NOT specify an interface for mint and burn operations; however, if an
 FA2 token contract implements mint and burn operations, it MUST enforce the same
 rules and logic applied to the token transfer operation. Mint and burn can be
 considered special cases of the transfer.
+
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+
+If one of the token owners do not have sufficient balance to transfer tokens from
+that account, the entry point MUST fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
 
 #### `balance_of`
 
@@ -214,6 +257,9 @@ Get the balance of multiple account/token pairs. Accepts a list of
 `balance_of_response` records. There may be duplicate `balance_of_request`'s,
 in which case they should not be deduplicated nor reordered.
 
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+
 #### `total_supply`
 
 LIGO definition:
@@ -253,6 +299,9 @@ Michelson definition:
 Get the total supply for multiple token types. Accepts a list of
 `total_supply_request`s and a callback contract `callback`, which accepts a list
 of `total_supply_response` records.
+
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 #### `token_metadata`
 
@@ -397,6 +446,9 @@ Get the descriptor of the transfer permission policy. FA2 specifies
 an FA2 contract's permission policy and to configure it. For more details see
 [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+
 Some of the permission options require config API. Config entry points may be
 implemented either within the FA2 token contract itself (then the returned address
 shall be `SELF`), or in a separate contract (see recommended implementation
@@ -405,12 +457,32 @@ pattern using [transfer hook](#transfer-hook)).
 #### Operators
 
 **Operator** is a Tezos address that initiates token transfer operation on behalf
-of the owner. **Owner** is a Tezos address which can hold tokens.
+of the owner.
+
+**Owner** is a Tezos address which can hold tokens.
 
 Operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
 
 FA2 interface specifies two entry points to update and inspect operators.
+In general, an FA2 contract maintains the relation from a pair of token owner and
+operator addresses to a set of permitted token types
+(`(owner, operator) -> operator_tokens`). Although, an actual implementation of
+the FA2 contract can use a different internal representation of that relation.
+`operator_tokens` type represents a set of token types that can be defined either
+explicitly by the enumeration of `token_id`s (`Some_tokens`) or as a whole set of
+token types defined by the FA2 contract (`All_tokens`). Both operator entry points
+are defined as operations on sets of tokens associated with a particular pair of
+token owner and operator:
+
+| Operation | Description |
+| :-------- | :---------- |
+| `Add_operator` | A resulting set of permitted tokens types is a union of provided and previously permitted token sets |
+| `Remove_operator` | A resulting set of permitted tokens types obtained by substructing provided tokens set from previously permitted tokens set |
+| `Is_operator` | Test if provided tokens set is a subset of permitted tokens set |
+
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 ##### `update_operators`
 
@@ -472,8 +544,17 @@ for some specific token types (`tokens` field in `operator_param` is `Some_token
 or for all token types (`tokens` field in `operator_param` is `tokens` parameter
 is `All_tokens`).
 
-Operator relation is not transitive. If C is an operator of B , and if B is an operator
-of A, C cannot transfer tokens that are owned by A, on behalf of B.
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`. It is possible
+to update operators for a token owner that does not hold any token balances yet.
+
+Operator relation is not transitive. If C is an operator of B , and if B is an
+operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
+
+The standard does not specify who is permitted to update operators on behalf of
+the token owner. Depending on the business use case, the particular implementation
+of FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
+or be limited to an administrator.
 
 ##### `is_operator`
 
@@ -541,6 +622,9 @@ is `false`. It is possible to make a query for some specific token types (`token
 parameter is `Some_tokens`) or for all token types (`tokens` parameter is
 `All_tokens`).
 
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+
 ### FA2 Permission Policies and Configuration
 
 Most token standards specify logic such as who can initiate a transfer, the quantity
@@ -584,13 +668,14 @@ is to be part of the core transfer logic of the FA2 contract.
 
 * The amount of a token transfer MUST NOT exceed the existing token owner's
   balance. If the transfer amount for the particular token type and token owner
-  exceeds the existing balance, the whole transfer operation MUST fail.
+  exceeds the existing balance, the whole transfer operation MUST fail with the
+  error mnemonic `"INSUFFICIENT_BALANCE"`
 
 * Core transfer behavior MAY be extended. If additional constraints on tokens
   transfer are required, FA2 token contract implementation MAY invoke additional
   permission policies ([transfer hook](#transfer-hook) is the recommended design
   pattern to implement core behavior extension). If the additional permission
-  hook fails, the whole transfer operation MUST fail.
+  hook fails, the whole transfer operation MUST fail with a custom error mnemonic.
 
 * Core transfer behavior MUST update token balances exactly as the operation
   parameters specify it. No changes to amount values or additional transfers are
@@ -608,6 +693,9 @@ type self_transfer_policy =
   | Self_transfer_denied
 ```
 
+If a transfer is not permitted because of `Self_transfer_denied` policy,
+the operation MUST fail with the error mnemonic `"SELF_TX_DENIED"`.
+
 ###### `Operator` Transfer Behavior
 
 This behavior specifies if a token transfer can be initiated by someone other than
@@ -623,6 +711,13 @@ type operator_transfer_policy =
 FA2 interface provides API to configure operators (see [operators config entry
 points](#operators)). If an operator transfer is denied, those entry points MUST
 fail if invoked.
+
+If the operator policy is `Operator_transfer_permitted` and the operator does not
+have permissions to transfer specified tokens, the transfer operation MUST fail
+with the error mnemonic `"NOT_OPERATOR"`.
+If the operator policy is `Operator_transfer_denied` and a transfer is initiated
+not by the tokens owner, the operation MUST fail with the error mnemonic
+`"OPERATORS_DENIED"`.
 
 ###### `Token Owner` Permission Behavior
 
@@ -678,6 +773,16 @@ type fa2_token_receiver =
 type fa2_token_sender =
   | Tokens_sent of transfer_descriptor_param
 ```
+
+If a transfer failed because of the token owner permission behavior, the operation
+MUST fail with the one of the following error mnemonics:
+
+| Error Mnemonic | Description |
+| :------------- | :---------- |
+| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
 
 ##### Permission Policy Formulae
 
