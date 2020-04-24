@@ -140,7 +140,8 @@ Standard error mnemonics:
 | `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
 | `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
 
-
+If more than one error conditions are met, the entry point MAY fail with any applicable
+error.
 
 ### Entry Point Semantics
 
