@@ -135,6 +135,7 @@ Standard error mnemonics:
 | `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
 | `"SELF_TX_DENIED"` | A transfer failed because of `self_transfer_policy == Self_transfer_denied`, when a token owner tries to initiate a transfer | 
 | `"NOT_OPERATOR"` | A transfer failed because an operator that tries to initiate a transfer is not permitted to transfer tokens on behalf of a token owner |
+| `"OPERATORS_DENIED"` | A transfer failed because it is initiated not by the tokens owner and operator's transfers are denied |
 | `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
 | `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
 | `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
@@ -711,8 +712,12 @@ FA2 interface provides API to configure operators (see [operators config entry
 points](#operators)). If an operator transfer is denied, those entry points MUST
 fail if invoked.
 
-If a transfer is not permitted because of `Self_transfer_denied` policy,
-the operation MUST fail with the error mnemonic `"NOT_OPERATOR"`.
+If the operator policy is `Operator_transfer_permitted` and the operator does not
+have permissions to transfer specified tokens, the transfer operation MUST fail
+with the error mnemonic `"NOT_OPERATOR"`.
+If the operator policy is `Operator_transfer_denied` and a transfer is initiated
+not by the tokens owner, the operation MUST fail with the error mnemonic
+`"OPERATORS_DENIED"`.
 
 ###### `Token Owner` Permission Behavior
 
