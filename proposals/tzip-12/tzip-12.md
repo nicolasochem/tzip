@@ -193,9 +193,23 @@ of the operation specify it. Transfer operations MUST NOT try to adjust transfer
 amounts or try to add/remove additional transfers like transaction fees.
 
 FA2 does NOT specify an interface for mint and burn operations; however, if an
-FA2 token contract implements mint and burn operations, it MUST enforce the same
-rules and logic applied to the token transfer operation. Mint and burn can be
-considered special cases of the transfer.
+FA2 token contract implements mint and burn operations, it SHOULD, when possible,
+enforce the same rules and logic applied to the token transfer operation. Mint
+and burn can be considered special cases of the transfer. Although, it is possible
+that mint and burn have more or less restrictive rules than regular transfer.
+
+For instance, mint and burn operations may be initiated by a special privileged
+administrative address only. In this case, regular operator restrictions may not
+be applicable.
+
+A special consideration is required if FA2 implementation supports sender and/or
+receiver hooks (see [`Token Owner` Permission Behavior](#token-owner-permission-behavior)).
+It is possible that one of the token owner hooks will fail because of the hook
+implementation defects or other circumstances out of control of the FA2 contract.
+This situation may cause tokens to be permanently locked on the token owner's account.
+One of the possible solutions could be the implementation of a special administrative
+version of the mint and burn operations that bypasses owner's hooks otherwise required
+by the FA2 contract permissions policy.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
