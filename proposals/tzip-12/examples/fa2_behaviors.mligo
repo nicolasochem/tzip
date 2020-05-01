@@ -4,7 +4,7 @@
 (** generic transfer hook implementation. Behavior is driven by `permissions_descriptor` *)
 
 type get_owner = transfer_descriptor -> address option
-type to_hook = address -> (transfer_descriptor_param contract) option
+type to_hook = address -> ((transfer_descriptor_param contract) option * string)
 
 let get_owners (batch, get_owner : (transfer_descriptor list) * get_owner) : address set =
   List.fold 
@@ -21,14 +21,14 @@ let validate_owner_hook (p, get_owner, to_hook, is_required :
     let owners = get_owners (p.batch, get_owner) in
     Set.fold 
       (fun (ops, owner : (operation list) * address) ->
-        let hook = to_hook owner in
+        let hook, error = to_hook owner in
         match hook with
         | Some h ->
           let op = Operation.transaction p 0mutez h in
           op :: ops
         | None ->
           if is_required
-          then (failwith "token owner does not implement hook interface" : operation list)
+          then (failwith error : operation list)
           else ops)
       owners ([] : operation list)
 
@@ -43,7 +43,7 @@ let validate_owner(p, policy, get_owner, to_hook :
 let to_receiver_hook : to_hook = fun (a : address) ->
     let c : (transfer_descriptor_param contract) option = 
     Operation.get_entrypoint_opt "%tokens_received" a in
-    c 
+    c, "RECEIVER_HOOK_UNDEFINED" 
 
 let validate_receivers (p, policy : transfer_descriptor_param * owner_transfer_policy)
     : operation list =
@@ -53,7 +53,7 @@ let validate_receivers (p, policy : transfer_descriptor_param * owner_transfer_p
 let to_sender_hook : to_hook = fun (a : address) ->
     let c : (transfer_descriptor_param contract) option = 
     Operation.get_entrypoint_opt "%tokens_sent" a in
-    c 
+    c, "SENDER_HOOK_UNDEFINED" 
 
 let validate_senders (p, policy : transfer_descriptor_param * owner_transfer_policy)
     : operation list =
