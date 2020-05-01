@@ -33,6 +33,7 @@ alternative options, opinions, and objections.
 | [TZIP-12] | `FA2` - Multi-Asset Interface                        |  01/24/2020   | Draft            |
 | [TZIP-13] | `FA1.3` - Fungible Asset Standard                    |  01/02/2020   | Work In Progress |
 | [TZIP-14] | GraphQL interface to Tezos node data                 |  02/03/2020   | Work In Progress |
+| [TZIP-15] | Token Whitelisting                                   |  05/01/2020   | Work In Progress |
 
 ## How to Contribute
 
@@ -63,3 +64,5 @@ in your merge request. The exact TZIP workflow is explained in [TZIP-1].
 [TZIP-12]: proposals/tzip-12/tzip-12.md
 [TZIP-13]: proposals/tzip-13/tzip-13.md
 [TZIP-14]: proposals/tzip-14/tzip-14.md
+[TZIP-15]: proposals/tzip-15/tzip-15.md
+
