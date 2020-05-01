@@ -30,4 +30,4 @@ let register_with_fa2 (fa2, descriptor, registry :
 let validate_hook_call (fa2, registry: address * fa2_registry) : unit =
   if Set.mem fa2 registry
   then unit
-  else failwith "unknown FA2 contract called a transfer hook"
+  else failwith "UNKNOWN_FA2_CALL"

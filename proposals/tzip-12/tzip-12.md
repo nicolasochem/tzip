@@ -7,7 +7,7 @@ author: Eugene Mishura (@e-mishura)
 created: 2020-01-24
 ---
 
-## Table Of Content
+## Table Of Contents
 
 * [Summary](#summary)
 * [Abstract](#abstract)
@@ -26,7 +26,6 @@ created: 2020-01-24
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [Core Transfer Behavior](#core-transfer-behavior)
       * [Behavior Patterns](#behavior-patterns)
-        * [`Self` Transfer Behavior](#self-transfer-behavior)
         * [`Operator` Transfer Behavior](#operator-transfer-behavior)
         * [`Token Owner` Permission Behavior](#token-owner-permission-behavior)
       * [Permission Policy Formulae](#permission-policy-formulae)
@@ -133,9 +132,9 @@ Standard error mnemonics:
 | :------------- | :---------- |
 | `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
 | `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
-| `"SELF_TX_DENIED"` | A transfer failed because of `self_transfer_policy == Self_transfer_denied`, when a token owner tries to initiate a transfer | 
-| `"NOT_OPERATOR"` | A transfer failed because an operator that tries to initiate a transfer is not permitted to transfer tokens on behalf of a token owner |
-| `"OPERATORS_DENIED"` | A transfer failed because it is initiated not by the tokens owner and operator's transfers are denied |
+| `"TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
+| `"NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
+| `"NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
 | `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
 | `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
 | `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
@@ -388,13 +387,10 @@ Examples
 LIGO definition:
 
 ```ocaml
-type self_transfer_policy =
-  | Self_transfer_permitted
-  | Self_transfer_denied
-
 type operator_transfer_policy =
-  | Operator_transfer_permitted
-  | Operator_transfer_denied
+  | No_transfer
+  | Owner_transfer
+  | Owner_or_operator_transfer
 
 type owner_transfer_policy =
   | Owner_no_op
@@ -407,7 +403,6 @@ type custom_permission_policy = {
 }
 
 type permissions_descriptor = {
-  self : self_transfer_policy;
   operator : operator_transfer_policy;
   receiver : owner_transfer_policy;
   sender : owner_transfer_policy;
@@ -697,41 +692,35 @@ is to be part of the core transfer logic of the FA2 contract.
 
 ##### Behavior Patterns
 
-###### `Self` Transfer Behavior
-
-This behavior specifies if the token owner can transfer its tokens.
-
-```ocaml
-type self_transfer_policy =
-  | Self_transfer_permitted
-  | Self_transfer_denied
-```
-
-If a transfer is not permitted because of `Self_transfer_denied` policy,
-the operation MUST fail with the error mnemonic `"SELF_TX_DENIED"`.
-
 ###### `Operator` Transfer Behavior
 
-This behavior specifies if a token transfer can be initiated by someone other than
-token owner (an operator). An operator can transfer any tokens in any amount on
+This behavior specifies who can initiate a token transfer. Potentially token transfers
+can be initiated by the token owner or by an operator permitted to transfer tokens
+on behalf of the token owner. An operator can transfer any tokens in any amount on
 behalf of the owner.
 
 ```ocaml
 type operator_transfer_policy =
-  | Operator_transfer_permitted
-  | Operator_transfer_denied
+  | No_transfer
+  | Owner_transfer
+  | Owner_or_operator_transfer
 ```
 
 FA2 interface provides API to configure operators (see [operators config entry
 points](#operators)). If an operator transfer is denied, those entry points MUST
 fail if invoked.
 
-If the operator policy is `Operator_transfer_permitted` and the operator does not
-have permissions to transfer specified tokens, the transfer operation MUST fail
-with the error mnemonic `"NOT_OPERATOR"`.
-If the operator policy is `Operator_transfer_denied` and a transfer is initiated
-not by the tokens owner, the operation MUST fail with the error mnemonic
-`"OPERATORS_DENIED"`.
+If the operator policy is `No_transfer`, the transfer operation MUST fail with
+the error mnemonic `"TX_DENIED"`. This permission mode can be used for non-transferable
+tokens or for the FA2 implementation when a transfer can be initiated only by some
+privileged and/or administrative account.
+
+If the operator policy is `Owner_transfer` and `SENDER` is not the token owner,
+the transfer operation MUST fail with the error mnemonic `"NOT_OWNER"`.
+
+If the operator policy is `Owner_or_operator_transfer` and `SENDER` is not the
+token owner and does not have permissions to transfer specified tokens, the transfer
+operation MUST fail with the error mnemonic `"NOT_OPERATOR"`.
 
 ###### `Token Owner` Permission Behavior
 
