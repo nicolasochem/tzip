@@ -426,15 +426,21 @@ type operator_transfer_policy =
   | Owner_transfer
   | Owner_or_operator_transfer
 
+type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
+
 type owner_transfer_policy =
   | Owner_no_op
   | Optional_owner_hook
   | Required_owner_hook
 
+type owner_transfer_policy_michelson = owner_transfer_policy michelson_or_right_comb
+
 type custom_permission_policy = {
   tag : string;
   config_api: address option;
 }
+
+type custom_permission_policy_michelson = custom_permission_policy michelson_pair_right_comb
 
 type permissions_descriptor = {
   operator : operator_transfer_policy;
@@ -443,7 +449,16 @@ type permissions_descriptor = {
   custom : custom_permission_policy option;
 }
 
-| Permissions_descriptor of permissions_descriptor contract
+type permissions_descriptor_aux = {
+  operator : operator_transfer_policy_michelson;
+  receiver : owner_transfer_policy_michelson;
+  sender : owner_transfer_policy_michelson;
+  custom : custom_permission_policy_michelson option;
+}
+
+type permissions_descriptor_michelson = permissions_descriptor_aux michelson_pair_right_comb
+
+| Permissions_descriptor of permissions_descriptor_michelson contract
 ```
 
 Michelson definition:
@@ -451,36 +466,38 @@ Michelson definition:
 ```
 (contract %permissions_descriptor
   (pair
-    (or %self
-      (unit %self_transfer_permitted)
-      (unit %self_transfer_denied)
+    (or %operator
+      (unit %no_transfer)
+      (or
+        (unit %owner_transfer)
+        (unit %owner_or_operator_transfer)
+      )
     )
     (pair
-      (or %operator
-        (unit %operator_transfer_permitted)
-        (unit %operator_transfer_denied)
+      (or %receiver
+        (unit %owner_no_op)
+        (or
+          (unit %optional_owner_hook)
+          (unit %required_owner_hook)
+        )
       )
       (pair
-        (or %receiver
+        (or %sender
           (unit %owner_no_op)
           (or
             (unit %optional_owner_hook)
             (unit %required_owner_hook)
-        ))
-        (pair
-          (or %sender
-            (unit %owner_no_op)
-            (or
-              (unit %optional_owner_hook)
-              (unit %required_owner_hook)
-          ))
+          )
+        )
         (option %custom
           (pair
             (string %tag)
             (option %config_api address)
           )
         )
-  ))))
+      )
+    )
+  )
 )
 ```
 
@@ -838,17 +855,27 @@ type transfer_descriptor = {
   amount : nat;
 }
 
+type transfer_descriptor_michelson = transfer_descriptor michelson_pair_right_comb
+
 type transfer_descriptor_param = {
   fa2 : address;
   batch : transfer_descriptor list;
   operator : address;
 }
 
+type transfer_descriptor_param_aux = {
+  fa2 : address;
+  batch : transfer_descriptor_michelson list;
+  operator : address;
+}
+
+type transfer_descriptor_param_michelson = transfer_descriptor_param michelson_pair_right_comb
+
 type fa2_token_receiver =
-  | Tokens_received of transfer_descriptor_param
+  | Tokens_received of transfer_descriptor_param_michelson
 
 type fa2_token_sender =
-  | Tokens_sent of transfer_descriptor_param
+  | Tokens_sent of transfer_descriptor_param_michelson
 ```
 
 If a transfer failed because of the token owner permission behavior, the operation
@@ -867,7 +894,7 @@ Each concrete implementation of the permission policy can be described by a form
 which combines permission behaviors in the following form:
 
 ```
-Self(?) * Operator(?) * Receiver(?) * Sender(?)
+Operator(?) * Receiver(?) * Sender(?)
 ```
 
 For instance, `Self(Self_transfer_permitted) * Operator(Operator_transfer_denied) *
@@ -882,13 +909,10 @@ Permission token policy formula is expressed by the `permissions_descriptor`
 returned by the [`permissions_descriptor`](#permissions_descriptor) entry point.
 
 ```ocaml
-type self_transfer_policy =
-  | Self_transfer_permitted
-  | Self_transfer_denied
-
 type operator_transfer_policy =
-  | Operator_transfer_permitted
-  | Operator_transfer_denied
+  | No_transfer
+  | Owner_transfer
+  | Owner_or_operator_transfer
 
 type owner_transfer_policy =
   | Owner_no_op
@@ -901,7 +925,6 @@ type custom_permission_policy = {
 }
 
 type permissions_descriptor = {
-  self : self_transfer_policy;
   operator : operator_transfer_policy;
   receiver : owner_transfer_policy;
   sender : owner_transfer_policy;
