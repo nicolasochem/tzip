@@ -204,14 +204,10 @@ type transfer_descriptor_param_aux = {
   operator : address;
 }
 
-type transfer_descriptor_param_michelson = transfer_descriptor_param michelson_pair_right_comb
+type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
 
 type fa2_token_receiver =
   | Tokens_received of transfer_descriptor_param_michelson
 
 type fa2_token_sender =
   | Tokens_sent of transfer_descriptor_param_michelson
-
-
-let main (p, s : fa2_entry_points * unit) = 
-  ([] : operation list), unit

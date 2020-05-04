@@ -869,7 +869,7 @@ type transfer_descriptor_param_aux = {
   operator : address;
 }
 
-type transfer_descriptor_param_michelson = transfer_descriptor_param michelson_pair_right_comb
+type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
 
 type fa2_token_receiver =
   | Tokens_received of transfer_descriptor_param_michelson
@@ -1029,17 +1029,27 @@ type transfer_descriptor = {
   amount : nat;
 }
 
-type transfer_descriptor_param = {
-  batch : transfer_descriptor list;
+type transfer_descriptor_param_aux = {
+  fa2 : address;
+  batch : transfer_descriptor_michelson list;
   operator : address;
 }
 
+type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
+
 type set_hook_param = {
   hook : unit -> transfer_descriptor_param contract;
-  permissions_descriptor : permission_policy_descriptor;
+  permissions_descriptor : permissions_descriptor;
 }
 
-Set_transfer_hook of set_hook_param
+type set_hook_param_aux = {
+  hook : unit -> transfer_descriptor_param_michelson contract;
+  permissions_descriptor : permissions_descriptor_michelson;
+}
+
+type set_hook_param_michelson = set_hook_param_aux michelson_pair_right_comb
+
+| Set_transfer_hook of set_hook_param_michelson
 ```
 
 Michelson definition:
@@ -1049,6 +1059,8 @@ Michelson definition:
   (lambda %hook
     unit
     (contract
+      (pair
+        (address %fa2)
         (pair
           (list %batch
             (pair
@@ -1058,43 +1070,48 @@ Michelson definition:
                 (pair
                   (nat %token_id)
                   (nat %amount)
-            )))
+                )
+              )
+            )
           )
           (address %operator)
         )
+      )
     )
   )
   (pair %permissions_descriptor
-    (or %self
-      (unit %self_transfer_permitted)
-      (unit %self_transfer_denied)
-    )
-  (pair
     (or %operator
-      (unit %operator_transfer_permitted)
-      (unit %operator_transfer_denied)
-    )
-  (pair
-    (or %receiver
-      (unit %owner_no_op)
+      (unit %no_transfer)
       (or
-        (unit %optional_owner_hook)
-        (unit %required_owner_hook)
-    ))
-  (pair
-    (or %sender
-      (unit %owner_no_op)
-      (or
-        (unit %optional_owner_hook)
-        (unit %required_owner_hook)
-    ))
-    (option %custom
-      (pair
-        (string %tag)
-        (option %config_api address)
+        (unit %owner_transfer)
+        (unit %owner_or_operator_transfer)
       )
     )
-  ))))
+    (pair
+      (or %receiver
+        (unit %owner_no_op)
+        (or
+          (unit %optional_owner_hook)
+          (unit %Required_owner_hook)
+        )
+      )
+      (pair
+        (or %sender
+          (unit %owner_no_op)
+          (or
+            (unit %optional_owner_hook)
+            (unit %Required_owner_hook)
+          )
+        )
+        (option %custom
+          (pair
+            (string %tag)
+            (option %config_api address)
+          )
+        )
+      )
+    )
+  )
 )
 ```
 
