@@ -244,7 +244,7 @@ type balance_of_response_michelson = balance_of_response_aux michelson_pair_righ
 
 type balance_of_param = {
   requests : balance_of_request list;
-  callback : (balance_of_response list) contract;
+  callback : (balance_of_response_michelson list) contract;
 }
 
 type balance_of_param_aux = {
@@ -305,11 +305,6 @@ type total_supply_response_michelson = total_supply_response michelson_pair_righ
 
 type total_supply_param = {
   token_ids : token_id list;
-  callback : (total_supply_response list) contract;
-}
-
-type total_supply_param_aux = {
-  token_ids : token_id list;
   callback : (total_supply_response_michelson list) contract;
 }
 
@@ -360,15 +355,10 @@ type token_metadata_michelson = token_metadata michelson_pair_right_comb
 
 type token_metadata_param = {
   token_ids : token_id list;
-  callback : (token_metadata list) contract;
-}
-
-type token_metadata_param_aux = {
-  token_ids : token_id list;
   callback : (token_metadata_michelson list) contract;
 }
 
-type token_metadata_param_michelson = token_metadata_param_aux michelson_pair_right_comb
+type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
 
 | Token_metadata of token_metadata_param_michelson
 ```
@@ -673,7 +663,7 @@ type is_operator_response_michelson = is_operator_response_aux michelson_pair_ri
 
 type is_operator_param = {
   operator : operator_param;
-  callback : (is_operator_response) contract;
+  callback : (is_operator_response_michelson) contract;
 }
 
 type is_operator_param_aux = {
