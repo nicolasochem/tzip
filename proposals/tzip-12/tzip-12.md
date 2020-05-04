@@ -88,10 +88,8 @@ id will be a fixed `0n` value. Likewise, if multiple token types are supported,
 the batch may contain zero or more entries and there may be duplicates.
 
 Token contract MUST implement the following entry points. Notation is given in
-[cameLIGO language](https://ligolang.org) for readability and Michelson. Please
-note that the current LIGO implementation does not allow control over generated
-Michelson entry points layout and thus LIGO-generated entry points will not be
-compatible with provided Michelson specification.
+[cameLIGO language](https://ligolang.org) for readability and Michelson. The LIGO
+definition, when compiled, generates compatible Michelson entry points.
 
 A contract implementing the FA2 standard MUST have the following entry points:
 
@@ -160,7 +158,9 @@ type transfer = {
   amount : nat;
 }
 
-| Transfer of transfer list
+type transfer_michelson = transfer michelson_pair_right_comb
+
+| Transfer of transfer_michelson list
 ```
 
 Michelson definition:
@@ -212,20 +212,36 @@ type token_id = nat
 
 type balance_of_request = {
   owner : address;
-  token_id : token_id;
+  token_id : token_id;  
 }
+
+type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
 
 type balance_of_response = {
   request : balance_of_request;
   balance : nat;
 }
 
+type balance_of_response_aux = {
+  request : balance_of_request_michelson;
+  balance : nat;
+}
+
+type balance_of_response_michelson = balance_of_response_aux michelson_pair_right_comb
+
 type balance_of_param = {
   requests : balance_of_request list;
   callback : (balance_of_response list) contract;
 }
 
-| Balance_of of balance_of_param
+type balance_of_param_aux = {
+  requests : balance_of_request_michelson list;
+  callback : (balance_of_response_michelson list) contract;
+}
+
+type balance_of_param_michelson = balance_of_param_aux michelson_pair_right_comb
+
+| Balance_of of balance_of_param_michelson
 ```
 
 Michelson definition:
@@ -272,12 +288,21 @@ type total_supply_response = {
   total_supply : nat;
 }
 
+type total_supply_response_michelson = total_supply_response michelson_pair_right_comb
+
 type total_supply_param = {
   token_ids : token_id list;
   callback : (total_supply_response list) contract;
 }
 
-| Total_supply of total_supply_param
+type total_supply_param_aux = {
+  token_ids : token_id list;
+  callback : (total_supply_response_michelson list) contract;
+}
+
+type total_supply_param_michelson = total_supply_param michelson_pair_right_comb
+
+| Total_supply of total_supply_param_michelson
 ```
 
 Michelson definition:
@@ -318,12 +343,21 @@ type token_metadata = {
   extras : (string, string) map;
 }
 
+type token_metadata_michelson = token_metadata michelson_pair_right_comb
+
 type token_metadata_param = {
   token_ids : token_id list;
   callback : (token_metadata list) contract;
 }
 
-| Token_metadata of token_metadata_param
+type token_metadata_param_aux = {
+  token_ids : token_id list;
+  callback : (token_metadata_michelson list) contract;
+}
+
+type token_metadata_param_michelson = token_metadata_param_aux michelson_pair_right_comb
+
+| Token_metadata of token_metadata_param_michelson
 ```
 
 Michelson definition:
@@ -495,17 +529,33 @@ type operator_tokens =
   | All_tokens
   | Some_tokens of token_id set
 
+type operator_tokens_michelson = operator_tokens michelson_or_right_comb
+
 type operator_param = {
   owner : address;
   operator : address;
   tokens : operator_tokens;
 }
 
-type update_operator =
-  | Add_operator of operator_param
-  | Remove_operator of operator_param
+type operator_param_aux = {
+  owner : address;
+  operator : address;
+  tokens : operator_tokens_michelson;
+}
 
-| Update_operators of update_operator list
+type operator_param_michelson = operator_param_aux michelson_pair_right_comb
+
+type update_operator =
+  | Add_operator_p of operator_param
+  | Remove_operator_p of operator_param
+
+type update_operator_aux =
+  | Add_operator of operator_param_michelson
+  | Remove_operator of operator_param_michelson
+
+type update_operator_michelson = update_operator_aux michelson_or_right_comb
+
+| Update_operators of update_operator_michelson list
 ```
 
 Michelson definition:
@@ -567,23 +617,47 @@ type operator_tokens =
   | All_tokens
   | Some_tokens of token_id set
 
+type operator_tokens_michelson = operator_tokens michelson_or_right_comb
+
 type operator_param = {
   owner : address;
   operator : address;
   tokens : operator_tokens;
 }
 
+type operator_param_aux = {
+  owner : address;
+  operator : address;
+  tokens : operator_tokens_michelson;
+}
+
+type operator_param_michelson = operator_param_aux michelson_pair_right_comb
+
 type is_operator_response = {
   operator : operator_param;
   is_operator : bool;
 }
+
+type is_operator_response_aux = {
+  operator : operator_param_michelson;
+  is_operator : bool;
+}
+
+type is_operator_response_michelson = is_operator_response_aux michelson_pair_right_comb
 
 type is_operator_param = {
   operator : operator_param;
   callback : (is_operator_response) contract;
 }
 
-| Is_operator of is_operator_param
+type is_operator_param_aux = {
+  operator : operator_param_michelson;
+  callback : (is_operator_response_michelson) contract;
+}
+
+type is_operator_param_michelson = is_operator_param_aux michelson_pair_right_comb
+
+| Is_operator of is_operator_param_michelson
 ```
 
 Michelson definition:
