@@ -1,4 +1,5 @@
 #include "fa2_hook_lib.mligo"
+#include "../fa2_errors.mligo"
 
 
 (** generic transfer hook implementation. Behavior is driven by `permissions_descriptor` *)
@@ -43,7 +44,7 @@ let validate_owner(p, policy, get_owner, to_hook :
 let to_receiver_hook : to_hook = fun (a : address) ->
     let c : (transfer_descriptor_param contract) option = 
     Operation.get_entrypoint_opt "%tokens_received" a in
-    c, "RECEIVER_HOOK_UNDEFINED" 
+    c, receiver_hook_undefined
 
 let validate_receivers (p, policy : transfer_descriptor_param * owner_transfer_policy)
     : operation list =
@@ -53,7 +54,7 @@ let validate_receivers (p, policy : transfer_descriptor_param * owner_transfer_p
 let to_sender_hook : to_hook = fun (a : address) ->
     let c : (transfer_descriptor_param contract) option = 
     Operation.get_entrypoint_opt "%tokens_sent" a in
-    c, "SENDER_HOOK_UNDEFINED" 
+    c, sender_hook_undefined
 
 let validate_senders (p, policy : transfer_descriptor_param * owner_transfer_policy)
     : operation list =

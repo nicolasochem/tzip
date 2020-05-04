@@ -11,13 +11,14 @@ type storage = {
 }
 
 type  entry_points =
-  | Tokens_transferred_hook of transfer_descriptor_param
+  | Tokens_transferred_hook of transfer_descriptor_param_michelson
   | Register_with_fa2 of fa2_with_hook_entry_points contract
 
  let main (param, s : entry_points * storage) 
     : (operation list) * storage =
   match param with
-  | Tokens_transferred_hook p ->
+  | Tokens_transferred_hook pm ->
+    let p = transfer_descriptor_param_from_michelson pm in
     let u = validate_hook_call (p.fa2, s.fa2_registry) in
     let ops = standard_transfer_hook (p, s.descriptor) in
     ops, s

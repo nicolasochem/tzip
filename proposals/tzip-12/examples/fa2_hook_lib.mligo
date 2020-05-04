@@ -1,8 +1,8 @@
-#include "../fa2_hook.mligo"
+#include "fa2_convertors.mligo"
 
 let get_hook_entrypoint (hook_contract : address) (u : unit) 
-    : transfer_descriptor_param contract =
-  let hook_entry : transfer_descriptor_param contract = 
+    : transfer_descriptor_param_michelson contract =
+  let hook_entry : transfer_descriptor_param_michelson contract = 
     Operation.get_entrypoint "%tokens_transferred_hook" hook_contract in
   hook_entry
 
@@ -10,11 +10,12 @@ let get_hook_entrypoint (hook_contract : address) (u : unit)
 let create_register_hook_op 
     (fa2, descriptor : (fa2_with_hook_entry_points contract) * permissions_descriptor) : operation =
   let hook_fn = get_hook_entrypoint Current.self_address in
-  let pp : set_hook_param = {
+  let p : set_hook_param_aux = {
     hook = hook_fn;
-    permissions_descriptor = descriptor;
+    permissions_descriptor = permissions_descriptor_to_michelson descriptor;
   } in
-  Operation.transaction (Set_transfer_hook pp) 0mutez fa2
+  let pm = Layout.convert_to_right_comb p in
+  Operation.transaction (Set_transfer_hook pm) 0mutez fa2
 
 
 type fa2_registry = address set
