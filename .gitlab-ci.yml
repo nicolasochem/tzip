@@ -1,27 +1,8 @@
-image: haskell:8.6.5
-
-cache:
-  key: "all"  # Share cache to speed-up initial MR build
-  paths:
-    - .stack-root/
-    - .stack-work/
-    - $CROSSREF_VERIFIER_DIR/
-
 stages:
   - test
 
 variables:
-  STACK_ROOT: "$CI_PROJECT_DIR/.stack-root"
-  STACK_GLOBAL_CONFIG: "$CI_PROJECT_DIR/.stack-root/config.yaml"
-  # Resolver that we use to build code outside our repository
-  STACK_RESOLVER: "lts-13.22"
-  CROSSREF_VERIFIER_COMMIT: "b3615befce62a483699e1705fd6715c7135820e6"
-  CROSSREF_VERIFIER_DIR: ".crossref-verifier"
-
-before_script:
-  - 'mkdir -p "${STACK_GLOBAL_CONFIG%/*}" && touch "$STACK_GLOBAL_CONFIG"'
-  - 'echo "system-ghc: true" >> "$STACK_GLOBAL_CONFIG"'
-  - 'echo "install-ghc: false" >> "$STACK_GLOBAL_CONFIG"'
+  XREFCHECK_URL: "https://github.com/serokell/xrefcheck/releases/download/v0.1.1/release.tar.gz"
 
 verify-doc-links:
   stage: test
@@ -33,11 +14,4 @@ verify-doc-links:
     refs:
       - merge_requests
   script:
-    - "git clone https://github.com/serokell/crossref-verifier.git $CROSSREF_VERIFIER_DIR || :"
-    - cd $CROSSREF_VERIFIER_DIR
-    - git fetch
-    - git checkout $CROSSREF_VERIFIER_COMMIT
-    - stack --resolver $STACK_RESOLVER
-        install crossref-verifier
-    - cd ..
-    - crossref-verify -v --no-progress -m full
+    - wget -O - "$XREFCHECK_URL" | tar xzv && xrefcheck/bin/xrefcheck --no-progress --ignored xrefcheck

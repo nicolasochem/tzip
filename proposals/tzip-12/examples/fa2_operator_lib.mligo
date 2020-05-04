@@ -124,11 +124,12 @@ let is_operator (param, storage :  is_operator_param * operator_storage) : opera
 
 type owner_to_tokens = (address, (token_id set)) map
 
-let validate_operator (self, txs, ops_storage 
-    : self_transfer_policy * (transfer list) * operator_storage) : unit =
-  let can_self_tx = match self with
-  | Self_transfer_permitted -> true
-  | Self_transfer_denied -> false
+let validate_operator (tx_policy, txs, ops_storage 
+    : operator_transfer_policy * (transfer list) * operator_storage) : unit =
+  let can_owner_tx, can_operator_tx = match tx_policy with
+  | No_transfer -> (failwith "TX_DENIED" : bool * bool)
+  | Owner_transfer -> true, false
+  | Owner_or_operator_transfer -> true, true
   in
   let operator = Current.sender in
   let tokens_by_owner = List.fold
@@ -143,8 +144,10 @@ let validate_operator (self, txs, ops_storage
 
   Map.iter
     (fun (owner, tokens : address * (token_id set)) ->
-      if can_self_tx && owner = operator
+      if can_owner_tx && owner = operator
       then unit
+      else if not can_operator_tx
+      then failwith "NOT_OWNER"
       else
         let oparam : operator_param = {
           owner = owner;
@@ -152,5 +155,5 @@ let validate_operator (self, txs, ops_storage
           tokens = Some_tokens tokens;
         } in
         let is_op = is_operator_impl (oparam, ops_storage) in
-        if is_op then unit else failwith "not permitted operator"
+        if is_op then unit else failwith "NOT_OPERATOR"
     ) tokens_by_owner

@@ -24,7 +24,7 @@ type schedule_policy = {
 }
 
 type permission_policy = {
-  descriptor : permission_policy_descriptor;
+  descriptor : permissions_descriptor;
   schedule_policy : schedule_policy option;
 }
 
@@ -54,7 +54,7 @@ let configure_schedule (cfg, policy : schedule_config * schedule_policy option)
     let op = Operation.transaction s 0mutez v in
     [op], policy
 
-let custom_policy_to_descriptor (p : permission_policy) : permission_policy_descriptor =
+let custom_policy_to_descriptor (p : permission_policy) : permissions_descriptor =
   match p.schedule_policy with
   | None -> p.descriptor
   | Some s ->
@@ -84,7 +84,7 @@ let is_schedule_locked (policy : schedule_policy) : bool =
           else Reminder (r - i.interval)
       ) policy.schedule.schedule (Reminder e) in
     match interval with
-    | Reminder r -> (failwith "schedule logic error" : bool)
+    | Reminder r -> (failwith "SCHEDULE_ERROR" : bool)
     | Found i -> i.locked
 
 let validate_schedule (policy : schedule_policy option) : unit =
@@ -93,7 +93,7 @@ let validate_schedule (policy : schedule_policy option) : unit =
   | Some p ->
     let locked = is_schedule_locked p in
     if locked
-    then failwith "transactions are schedule locked"
+    then failwith "SCHEDULE_LOCKED"
     else unit
 
 type  entry_points =
