@@ -2,7 +2,7 @@
 
 
 type set_hook_param = {
-  hook : unit -> transfer_descriptor_param contract;
+  hook : unit -> transfer_descriptor_param_michelson contract;
   permissions_descriptor : permissions_descriptor;
 }
 
@@ -17,3 +17,5 @@ type fa2_with_hook_entry_points =
   | Fa2 of fa2_entry_points
   | Set_transfer_hook of set_hook_param_michelson
 
+let main (p, s : fa2_with_hook_entry_points * unit) =
+ ([] : operation list), unit

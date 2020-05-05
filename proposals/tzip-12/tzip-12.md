@@ -1028,7 +1028,7 @@ type transfer_descriptor_param_aux = {
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
 
 type set_hook_param = {
-  hook : unit -> transfer_descriptor_param contract;
+  hook : unit -> transfer_descriptor_param_michelson contract;
   permissions_descriptor : permissions_descriptor;
 }
 
@@ -1082,7 +1082,7 @@ Michelson definition:
         (unit %owner_no_op)
         (or
           (unit %optional_owner_hook)
-          (unit %Required_owner_hook)
+          (unit %required_owner_hook)
         )
       )
       (pair
@@ -1090,7 +1090,7 @@ Michelson definition:
           (unit %owner_no_op)
           (or
             (unit %optional_owner_hook)
-            (unit %Required_owner_hook)
+            (unit %required_owner_hook)
           )
         )
         (option %custom
