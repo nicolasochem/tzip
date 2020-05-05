@@ -16,6 +16,3 @@ type set_hook_param_michelson = set_hook_param_aux michelson_pair_right_comb
 type fa2_with_hook_entry_points =
   | Fa2 of fa2_entry_points
   | Set_transfer_hook of set_hook_param_michelson
-
-let main (p, s : fa2_with_hook_entry_points * unit) =
- ([] : operation list), unit
