@@ -225,7 +225,7 @@ type token_id = nat
 
 type balance_of_request = {
   owner : address;
-  token_id : token_id;  
+  token_id : token_id;
 }
 
 type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
