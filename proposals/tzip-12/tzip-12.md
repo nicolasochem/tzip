@@ -887,13 +887,13 @@ which combines permission behaviors in the following form:
 Operator(?) * Receiver(?) * Sender(?)
 ```
 
-For instance, `Self(Self_transfer_permitted) * Operator(Operator_transfer_denied) *
-Receiver(Owner_no_op) * Sender(Owner_no_op)` formula describes the policy which
-allows only token owners to transfer their own tokens.
+For instance, `Operator(No_transfer) * Receiver(Owner_no_op) * Sender(Owner_no_op)`
+formula describes the policy which allows only token owners to transfer their own
+tokens.
 
-`Self(Self_transfer_denied) * Operator(Operator_transfer_denied) *
-Receiver(Owner_no_op) * Sender(Owner_no_op)` formula represents non-transferable
-token (neither token owner, nor operators can transfer tokens.
+`Operator(No_transfer) * Receiver(Owner_no_op) * Sender(Owner_no_op)` formula
+represents non-transferable token (neither token owner, nor operators can transfer
+tokens.
 
 Permission token policy formula is expressed by the `permissions_descriptor`
 returned by the [`permissions_descriptor`](#permissions_descriptor) entry point.
