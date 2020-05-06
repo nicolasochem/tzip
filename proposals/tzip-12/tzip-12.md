@@ -887,7 +887,7 @@ which combines permission behaviors in the following form:
 Operator(?) * Receiver(?) * Sender(?)
 ```
 
-For instance, `Operator(No_transfer) * Receiver(Owner_no_op) * Sender(Owner_no_op)`
+For instance, `Operator(Owner_transfer) * Receiver(Owner_no_op) * Sender(Owner_no_op)`
 formula describes the policy which allows only token owners to transfer their own
 tokens.
 
