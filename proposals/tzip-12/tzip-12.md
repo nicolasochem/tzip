@@ -73,12 +73,12 @@ developers.
 
 ## Interface Specification
 
-Token type is uniquely identified by a pair composed of the token contract address
-and token id, a natural number (`nat`). If the underlying contract implementation
-supports only a single token type (e.g. ERC-20-like contract), the token id MUST
-be `0n`. The FA2 token contract is fully responsible for assigning and managing
-token IDs. FA2 clients MUST NOT depend on particular ID values to infer information
-about a token.
+Token type is uniquely identified on the chain by a pair composed of the token
+contract address and token id, a natural number (`nat`). If the underlying contract
+implementation supports only a single token type (e.g. ERC-20-like contract),
+the token id MUST be `0n`. The FA2 token contract is fully responsible for assigning
+and managing token IDs. FA2 clients MUST NOT depend on particular ID values to infer
+information about a token.
 
 All entry points are batch operations that allow querying or transfer of multiple
 token types atomically. If the underlying contract implementation supports only
@@ -213,7 +213,7 @@ by the FA2 contract permissions policy.
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
-If one of the token owners do not have sufficient balance to transfer tokens from
+If one of the token owners does not have sufficient balance to transfer tokens from
 that account, the entry point MUST fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
 
 #### `balance_of`
@@ -511,7 +511,7 @@ of the owner.
 
 **Owner** is a Tezos address which can hold tokens.
 
-Operator, other than the owner, MUST be approved to manage particular token types
+An operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
 
 FA2 interface specifies two entry points to update and inspect operators.
@@ -528,7 +528,7 @@ token owner and operator:
 | Operation | Description |
 | :-------- | :---------- |
 | `Add_operator` | A resulting set of permitted tokens types is a union of provided and previously permitted token sets |
-| `Remove_operator` | A resulting set of permitted tokens types obtained by substructing provided tokens set from previously permitted tokens set |
+| `Remove_operator` | A resulting set of permitted tokens types obtained by substracting provided tokens set from previously permitted tokens set |
 | `Is_operator` | Test if provided tokens set is a subset of permitted tokens set |
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
@@ -946,7 +946,7 @@ Usually, different tokens require different permission policies that define who
 can transfer and receive tokens. There is no single permission policy that fits
 all scenarios. For instance, some game tokens can be transferred by token owners,
 but no one else. In some financial token exchange applications, tokens are to be
-transferred by special exchange operator account, not directly by the token owners
+transferred by a special exchange operator account, not directly by the token owners
 themselves.
 
 Support for different permission policies usually requires customizing existing
@@ -957,7 +957,7 @@ the core FA2. Every time FA2 performs a transfer, it invokes a hook contract tha
 validates a transaction and either approves it by finishing execution successfully
 or rejects it by failing.
 
-The transfer hook makes it is possible to model different transfer permission
+The transfer hook makes it possible to model different transfer permission
 policies like whitelists, operator lists, etc. Although this approach introduces
 gas consumption overhead (compared to an all-in-one contract) by requiring an extra
 inter-contract call, it also offers some other advantages:
