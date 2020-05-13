@@ -36,15 +36,15 @@ type  entry_points =
 (* the policy which allows only token owners to transfer their own tokens. *)
 let own_policy : permissions_descriptor = {
   operator = Owner_transfer;
-  sender = Owner_no_op;
-  receiver = Owner_no_op;
+  sender = Owner_no_hook;
+  receiver = Owner_no_hook;
   custom = (None : custom_permission_policy option);
 }
 
 (* non-transferable token (neither token owner, nor operators can transfer tokens. *)
   let own_policy : permissions_descriptor = {
   operator = No_transfer;
-  sender = Owner_no_op;
-  receiver = Owner_no_op;
+  sender = Owner_no_hook;
+  receiver = Owner_no_hook;
   custom = (None : custom_permission_policy option);
 }

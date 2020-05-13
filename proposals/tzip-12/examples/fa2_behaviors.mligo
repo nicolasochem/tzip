@@ -38,10 +38,10 @@ let validate_owner_hook (p, get_owner, to_hook, is_required :
       owners ([] : operation list)
 
 let validate_owner(p, policy, get_owner, to_hook : 
-    transfer_hook_params * owner_transfer_policy * get_owner * to_hook)
+    transfer_hook_params * owner_hook_policy * get_owner * to_hook)
     : operation list =
   match policy with
-  | Owner_no_op -> ([] : operation list)
+  | Owner_no_hook -> ([] : operation list)
   | Optional_owner_hook -> validate_owner_hook (p, get_owner, to_hook, false)
   | Required_owner_hook -> validate_owner_hook (p, get_owner, to_hook, true)
 
@@ -50,7 +50,7 @@ let to_receiver_hook : to_hook = fun (a : address) ->
     Operation.get_entrypoint_opt "%tokens_received" a in
     c, receiver_hook_undefined
 
-let validate_receivers (p, policy : transfer_hook_params * owner_transfer_policy)
+let validate_receivers (p, policy : transfer_hook_params * owner_hook_policy)
     : operation list =
   let get_receiver : get_owner = fun (tx : transfer_descriptor) -> tx.to_ in
   validate_owner (p, policy, get_receiver, to_receiver_hook)
@@ -60,7 +60,7 @@ let to_sender_hook : to_hook = fun (a : address) ->
     Operation.get_entrypoint_opt "%tokens_sent" a in
     c, sender_hook_undefined
 
-let validate_senders (p, policy : transfer_hook_params * owner_transfer_policy)
+let validate_senders (p, policy : transfer_hook_params * owner_hook_policy)
     : operation list =
   let get_sender : get_owner = fun (tx : transfer_descriptor) -> tx.from_ in
   validate_owner (p, policy, get_sender, to_sender_hook)
