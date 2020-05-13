@@ -27,7 +27,7 @@ created: 2020-01-24
       * [Core Transfer Behavior](#core-transfer-behavior)
       * [Behavior Patterns](#behavior-patterns)
         * [`Operator` Transfer Behavior](#operator-transfer-behavior)
-        * [`Token Owner` Permission Behavior](#token-owner-permission-behavior)
+        * [`Token Owner Hook` Permission Behavior](#token-owner-hook-permission-behavior)
       * [Permission Policy Formulae](#permission-policy-formulae)
 * [Implementing FA2](#implementing-fa2)
   * [Transfer Hook](#transfer-hook)
@@ -73,12 +73,12 @@ developers.
 
 ## Interface Specification
 
-Token type is uniquely identified by a pair composed of the token contract address
-and token id, a natural number (`nat`). If the underlying contract implementation
-supports only a single token type (e.g. ERC-20-like contract), the token id MUST
-be `0n`. The FA2 token contract is fully responsible for assigning and managing
-token IDs. FA2 clients MUST NOT depend on particular ID values to infer information
-about a token.
+Token type is uniquely identified on the chain by a pair composed of the token
+contract address and token id, a natural number (`nat`). If the underlying contract
+implementation supports only a single token type (e.g. ERC-20-like contract),
+the token id MUST be `0n`. The FA2 token contract is fully responsible for assigning
+and managing token IDs. FA2 clients MUST NOT depend on particular ID values to infer
+information about a token.
 
 All entry points are batch operations that allow querying or transfer of multiple
 token types atomically. If the underlying contract implementation supports only
@@ -87,10 +87,8 @@ id will be a fixed `0n` value. Likewise, if multiple token types are supported,
 the batch may contain zero or more entries and there may be duplicates.
 
 Token contract MUST implement the following entry points. Notation is given in
-[cameLIGO language](https://ligolang.org) for readability and Michelson. Please
-note that the current LIGO implementation does not allow control over generated
-Michelson entry points layout and thus LIGO-generated entry points will not be
-compatible with provided Michelson specification.
+[cameLIGO language](https://ligolang.org) for readability and Michelson. The LIGO
+definition, when compiled, generates compatible Michelson entry points.
 
 A contract implementing the FA2 standard MUST have the following entry points:
 
@@ -159,7 +157,9 @@ type transfer = {
   amount : nat;
 }
 
-| Transfer of transfer list
+type transfer_michelson = transfer michelson_pair_right_comb
+
+| Transfer of transfer_michelson list
 ```
 
 Michelson definition:
@@ -213,7 +213,7 @@ by the FA2 contract permissions policy.
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
-If one of the token owners do not have sufficient balance to transfer tokens from
+If one of the token owners does not have sufficient balance to transfer tokens from
 that account, the entry point MUST fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
 
 #### `balance_of`
@@ -228,17 +228,33 @@ type balance_of_request = {
   token_id : token_id;
 }
 
+type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
+
 type balance_of_response = {
   request : balance_of_request;
   balance : nat;
 }
 
-type balance_of_param = {
-  requests : balance_of_request list;
-  callback : (balance_of_response list) contract;
+type balance_of_response_aux = {
+  request : balance_of_request_michelson;
+  balance : nat;
 }
 
-| Balance_of of balance_of_param
+type balance_of_response_michelson = balance_of_response_aux michelson_pair_right_comb
+
+type balance_of_param = {
+  requests : balance_of_request list;
+  callback : (balance_of_response_michelson list) contract;
+}
+
+type balance_of_param_aux = {
+  requests : balance_of_request_michelson list;
+  callback : (balance_of_response_michelson list) contract;
+}
+
+type balance_of_param_michelson = balance_of_param_aux michelson_pair_right_comb
+
+| Balance_of of balance_of_param_michelson
 ```
 
 Michelson definition:
@@ -285,12 +301,16 @@ type total_supply_response = {
   total_supply : nat;
 }
 
+type total_supply_response_michelson = total_supply_response michelson_pair_right_comb
+
 type total_supply_param = {
   token_ids : token_id list;
-  callback : (total_supply_response list) contract;
+  callback : (total_supply_response_michelson list) contract;
 }
 
-| Total_supply of total_supply_param
+type total_supply_param_michelson = total_supply_param michelson_pair_right_comb
+
+| Total_supply of total_supply_param_michelson
 ```
 
 Michelson definition:
@@ -331,12 +351,16 @@ type token_metadata = {
   extras : (string, string) map;
 }
 
+type token_metadata_michelson = token_metadata michelson_pair_right_comb
+
 type token_metadata_param = {
   token_ids : token_id list;
-  callback : (token_metadata list) contract;
+  callback : (token_metadata_michelson list) contract;
 }
 
-| Token_metadata of token_metadata_param
+type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
+
+| Token_metadata of token_metadata_param_michelson
 ```
 
 Michelson definition:
@@ -392,24 +416,39 @@ type operator_transfer_policy =
   | Owner_transfer
   | Owner_or_operator_transfer
 
-type owner_transfer_policy =
-  | Owner_no_op
+type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
+
+type owner_hook_policy =
+  | Owner_no_hook
   | Optional_owner_hook
   | Required_owner_hook
+
+type owner_hook_policy_michelson = owner_hook_policy michelson_or_right_comb
 
 type custom_permission_policy = {
   tag : string;
   config_api: address option;
 }
 
+type custom_permission_policy_michelson = custom_permission_policy michelson_pair_right_comb
+
 type permissions_descriptor = {
   operator : operator_transfer_policy;
-  receiver : owner_transfer_policy;
-  sender : owner_transfer_policy;
+  receiver : owner_hook_policy;
+  sender : owner_hook_policy;
   custom : custom_permission_policy option;
 }
 
-| Permissions_descriptor of permissions_descriptor contract
+type permissions_descriptor_aux = {
+  operator : operator_transfer_policy_michelson;
+  receiver : owner_hook_policy_michelson;
+  sender : owner_hook_policy_michelson;
+  custom : custom_permission_policy_michelson option;
+}
+
+type permissions_descriptor_michelson = permissions_descriptor_aux michelson_pair_right_comb
+
+| Permissions_descriptor of permissions_descriptor_michelson contract
 ```
 
 Michelson definition:
@@ -417,36 +456,38 @@ Michelson definition:
 ```
 (contract %permissions_descriptor
   (pair
-    (or %self
-      (unit %self_transfer_permitted)
-      (unit %self_transfer_denied)
+    (or %operator
+      (unit %no_transfer)
+      (or
+        (unit %owner_transfer)
+        (unit %owner_or_operator_transfer)
+      )
     )
     (pair
-      (or %operator
-        (unit %operator_transfer_permitted)
-        (unit %operator_transfer_denied)
+      (or %receiver
+        (unit %owner_no_hook)
+        (or
+          (unit %optional_owner_hook)
+          (unit %required_owner_hook)
+        )
       )
       (pair
-        (or %receiver
-          (unit %owner_no_op)
+        (or %sender
+          (unit %owner_no_hook)
           (or
             (unit %optional_owner_hook)
             (unit %required_owner_hook)
-        ))
-        (pair
-          (or %sender
-            (unit %owner_no_op)
-            (or
-              (unit %optional_owner_hook)
-              (unit %required_owner_hook)
-          ))
+          )
+        )
         (option %custom
           (pair
             (string %tag)
             (option %config_api address)
           )
         )
-  ))))
+      )
+    )
+  )
 )
 ```
 
@@ -470,51 +511,36 @@ of the owner.
 
 **Owner** is a Tezos address which can hold tokens.
 
-Operator, other than the owner, MUST be approved to manage particular token types
+An operator, other than the owner, MUST be approved to manage particular token types
 held by the owner to make a transfer from the owner account.
 
-FA2 interface specifies two entry points to update and inspect operators.
-In general, an FA2 contract maintains the relation from a pair of token owner and
-operator addresses to a set of permitted token types
-(`(owner, operator) -> operator_tokens`). Although, an actual implementation of
-the FA2 contract can use a different internal representation of that relation.
-`operator_tokens` type represents a set of token types that can be defined either
-explicitly by the enumeration of `token_id`s (`Some_tokens`) or as a whole set of
-token types defined by the FA2 contract (`All_tokens`). Both operator entry points
-are defined as operations on sets of tokens associated with a particular pair of
-token owner and operator:
-
-| Operation | Description |
-| :-------- | :---------- |
-| `Add_operator` | A resulting set of permitted tokens types is a union of provided and previously permitted token sets |
-| `Remove_operator` | A resulting set of permitted tokens types obtained by substructing provided tokens set from previously permitted tokens set |
-| `Is_operator` | Test if provided tokens set is a subset of permitted tokens set |
-
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+FA2 interface specifies two entry points to update and inspect operators. Once
+permitted for the specific token owner, an operator can transfer any tokens belonging
+to the owner.
 
 ##### `update_operators`
 
 LIGO definition:
 
 ```ocaml
-type token_id = nat
-
-type operator_tokens =
-  | All_tokens
-  | Some_tokens of token_id set
-
 type operator_param = {
   owner : address;
   operator : address;
-  tokens : operator_tokens;
 }
 
-type update_operator =
-  | Add_operator of operator_param
-  | Remove_operator of operator_param
+type operator_param_michelson = operator_param michelson_pair_right_comb
 
-| Update_operators of update_operator list
+type update_operator =
+  | Add_operator_p of operator_param
+  | Remove_operator_p of operator_param
+
+type update_operator_aux =
+  | Add_operator of operator_param_michelson
+  | Remove_operator of operator_param_michelson
+
+type update_operator_michelson = update_operator_aux michelson_or_right_comb
+
+| Update_operators of update_operator_michelson list
 ```
 
 Michelson definition:
@@ -524,38 +550,24 @@ Michelson definition:
   (or
     (pair %add_operator
       (address %owner)
-      (pair
-        (address %operator)
-        (or %tokens
-          (unit %all_tokens)
-          (set %some_tokens nat)
-        )
-    ))
+      (address %operator)
+    )
     (pair %remove_operator
       (address %owner)
-      (pair
-        (address %operator)
-        (or %tokens
-          (unit %all_tokens)
-          (set %some_tokens nat)
-        )
-    ))
+      (address %operator)
+    )
   )
 )
 ```
 
-Add or Remove token operators for the specified owners and token types.
+Add or Remove token operators for the specified owners.
 
 The entry point accepts a list of `update_operator` commands. If two different
-commands in the list add and remove an operator for the same owner/token type,
-the last command in the list MUST take effect. It is possible to update an operator
-for some specific token types (`tokens` field in `operator_param` is `Some_tokens`)
-or for all token types (`tokens` field in `operator_param` is `tokens` parameter
-is `All_tokens`).
+commands in the list add and remove an operator for the same owner,
+the last command in the list MUST take effect.
 
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`. It is possible
-to update operators for a token owner that does not hold any token balances yet.
+It is possible to update operators for a token owner that does not hold any token
+balances yet.
 
 Operator relation is not transitive. If C is an operator of B , and if B is an
 operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
@@ -570,29 +582,38 @@ or be limited to an administrator.
 LIGO definition:
 
 ```ocaml
-type token_id = nat
-
-type operator_tokens =
-  | All_tokens
-  | Some_tokens of token_id set
-
 type operator_param = {
   owner : address;
   operator : address;
-  tokens : operator_tokens;
 }
+
+type operator_param_michelson = operator_param michelson_pair_right_comb
 
 type is_operator_response = {
   operator : operator_param;
   is_operator : bool;
 }
 
-type is_operator_param = {
-  operator : operator_param;
-  callback : (is_operator_response) contract;
+type is_operator_response_aux = {
+  operator : operator_param_michelson;
+  is_operator : bool;
 }
 
-| Is_operator of is_operator_param
+type is_operator_response_michelson = is_operator_response_aux michelson_pair_right_comb
+
+type is_operator_param = {
+  operator : operator_param;
+  callback : (is_operator_response_michelson) contract;
+}
+
+type is_operator_param_aux = {
+  operator : operator_param_michelson;
+  callback : (is_operator_response_michelson) contract;
+}
+
+type is_operator_param_michelson = is_operator_param_aux michelson_pair_right_comb
+
+| Is_operator of is_operator_param_michelson
 ```
 
 Michelson definition:
@@ -601,38 +622,21 @@ Michelson definition:
 (pair %is_operator
   (pair %operator
     (address %owner)
-    (pair
-      (address %operator)
-      (or %tokens
-        (unit %all_tokens)
-        (set %some_tokens nat)
-      )
-  ))
+    (address %operator)
+  )
   (contract %callback
     (pair
       (pair %operator
         (address %owner)
-        (pair
-          (address %operator)
-          (or %tokens
-            (unit %all_tokens)
-            (set %some_tokens nat)
-          )
-      ))
+        (address %operator)
+      )
       (bool %is_operator)
     )
   )
 )
 ```
 
-Inspect if an address is an operator for the specified owner and token types. If
-the address is not an operator for at least one requested token type, the result
-is `false`. It is possible to make a query for some specific token types (`tokens`
-parameter is `Some_tokens`) or for all token types (`tokens` parameter is
-`All_tokens`).
-
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+Inspect if an address is an operator for the specified owner.
 
 ### FA2 Permission Policies and Configuration
 
@@ -722,7 +726,7 @@ If the operator policy is `Owner_or_operator_transfer` and `SENDER` is not the
 token owner and does not have permissions to transfer specified tokens, the transfer
 operation MUST fail with the error mnemonic `"NOT_OPERATOR"`.
 
-###### `Token Owner` Permission Behavior
+###### `Token Owner Hook` Permission Behavior
 
 Each transfer operation defines both a set of token owners that send tokens
 (senders) and a set of token owners that receive tokens (receivers). Token owner
@@ -745,8 +749,8 @@ configured to behave in one of the following ways:
 Token owner behavior is defined as follows:
 
 ```ocaml
-type owner_transfer_policy =
-  | Owner_no_op
+type owner_hook_policy =
+  | Owner_no_hook
   | Optional_owner_hook
   | Required_owner_hook
 ```
@@ -764,17 +768,27 @@ type transfer_descriptor = {
   amount : nat;
 }
 
+type transfer_descriptor_michelson = transfer_descriptor michelson_pair_right_comb
+
 type transfer_descriptor_param = {
   fa2 : address;
   batch : transfer_descriptor list;
   operator : address;
 }
 
+type transfer_descriptor_param_aux = {
+  fa2 : address;
+  batch : transfer_descriptor_michelson list;
+  operator : address;
+}
+
+type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
+
 type fa2_token_receiver =
-  | Tokens_received of transfer_descriptor_param
+  | Tokens_received of transfer_descriptor_param_michelson
 
 type fa2_token_sender =
-  | Tokens_sent of transfer_descriptor_param
+  | Tokens_sent of transfer_descriptor_param_michelson
 ```
 
 If a transfer failed because of the token owner permission behavior, the operation
@@ -793,31 +807,28 @@ Each concrete implementation of the permission policy can be described by a form
 which combines permission behaviors in the following form:
 
 ```
-Self(?) * Operator(?) * Receiver(?) * Sender(?)
+Operator(?) * Receiver(?) * Sender(?)
 ```
 
-For instance, `Self(Self_transfer_permitted) * Operator(Operator_transfer_denied) *
-Receiver(Owner_no_op) * Sender(Owner_no_op)` formula describes the policy which
-allows only token owners to transfer their own tokens.
+For instance, `Operator(Owner_transfer) * Receiver(Owner_no_hook) * Sender(Owner_no_hook)`
+formula describes the policy which allows only token owners to transfer their own
+tokens.
 
-`Self(Self_transfer_denied) * Operator(Operator_transfer_denied) *
-Receiver(Owner_no_op) * Sender(Owner_no_op)` formula represents non-transferable
-token (neither token owner, nor operators can transfer tokens.
+`Operator(No_transfer) * Receiver(Owner_no_hook) * Sender(Owner_no_hook)` formula
+represents non-transferable token (neither token owner, nor operators can transfer
+tokens.
 
 Permission token policy formula is expressed by the `permissions_descriptor`
 returned by the [`permissions_descriptor`](#permissions_descriptor) entry point.
 
 ```ocaml
-type self_transfer_policy =
-  | Self_transfer_permitted
-  | Self_transfer_denied
-
 type operator_transfer_policy =
-  | Operator_transfer_permitted
-  | Operator_transfer_denied
+  | No_transfer
+  | Owner_transfer
+  | Owner_or_operator_transfer
 
-type owner_transfer_policy =
-  | Owner_no_op
+type owner_hook_policy =
+  | Owner_no_hook
   | Optional_owner_hook
   | Required_owner_hook
 
@@ -827,10 +838,9 @@ type custom_permission_policy = {
 }
 
 type permissions_descriptor = {
-  self : self_transfer_policy;
   operator : operator_transfer_policy;
-  receiver : owner_transfer_policy;
-  sender : owner_transfer_policy;
+  receiver : owner_hook_policy;
+  sender : owner_hook_policy;
   custom : custom_permission_policy option;
 }
 ```
@@ -859,7 +869,7 @@ Usually, different tokens require different permission policies that define who
 can transfer and receive tokens. There is no single permission policy that fits
 all scenarios. For instance, some game tokens can be transferred by token owners,
 but no one else. In some financial token exchange applications, tokens are to be
-transferred by special exchange operator account, not directly by the token owners
+transferred by a special exchange operator account, not directly by the token owners
 themselves.
 
 Support for different permission policies usually requires customizing existing
@@ -870,7 +880,7 @@ the core FA2. Every time FA2 performs a transfer, it invokes a hook contract tha
 validates a transaction and either approves it by finishing execution successfully
 or rejects it by failing.
 
-The transfer hook makes it is possible to model different transfer permission
+The transfer hook makes it possible to model different transfer permission
 policies like whitelists, operator lists, etc. Although this approach introduces
 gas consumption overhead (compared to an all-in-one contract) by requiring an extra
 inter-contract call, it also offers some other advantages:
@@ -932,17 +942,27 @@ type transfer_descriptor = {
   amount : nat;
 }
 
-type transfer_descriptor_param = {
-  batch : transfer_descriptor list;
+type transfer_descriptor_param_aux = {
+  fa2 : address;
+  batch : transfer_descriptor_michelson list;
   operator : address;
 }
 
+type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
+
 type set_hook_param = {
-  hook : unit -> transfer_descriptor_param contract;
-  permissions_descriptor : permission_policy_descriptor;
+  hook : unit -> transfer_descriptor_param_michelson contract;
+  permissions_descriptor : permissions_descriptor;
 }
 
-Set_transfer_hook of set_hook_param
+type set_hook_param_aux = {
+  hook : unit -> transfer_descriptor_param_michelson contract;
+  permissions_descriptor : permissions_descriptor_michelson;
+}
+
+type set_hook_param_michelson = set_hook_param_aux michelson_pair_right_comb
+
+| Set_transfer_hook of set_hook_param_michelson
 ```
 
 Michelson definition:
@@ -952,6 +972,8 @@ Michelson definition:
   (lambda %hook
     unit
     (contract
+      (pair
+        (address %fa2)
         (pair
           (list %batch
             (pair
@@ -961,43 +983,48 @@ Michelson definition:
                 (pair
                   (nat %token_id)
                   (nat %amount)
-            )))
+                )
+              )
+            )
           )
           (address %operator)
         )
+      )
     )
   )
   (pair %permissions_descriptor
-    (or %self
-      (unit %self_transfer_permitted)
-      (unit %self_transfer_denied)
-    )
-  (pair
     (or %operator
-      (unit %operator_transfer_permitted)
-      (unit %operator_transfer_denied)
-    )
-  (pair
-    (or %receiver
-      (unit %owner_no_op)
+      (unit %no_transfer)
       (or
-        (unit %optional_owner_hook)
-        (unit %required_owner_hook)
-    ))
-  (pair
-    (or %sender
-      (unit %owner_no_op)
-      (or
-        (unit %optional_owner_hook)
-        (unit %required_owner_hook)
-    ))
-    (option %custom
-      (pair
-        (string %tag)
-        (option %config_api address)
+        (unit %owner_transfer)
+        (unit %owner_or_operator_transfer)
       )
     )
-  ))))
+    (pair
+      (or %receiver
+        (unit %owner_no_op)
+        (or
+          (unit %optional_owner_hook)
+          (unit %required_owner_hook)
+        )
+      )
+      (pair
+        (or %sender
+          (unit %owner_no_op)
+          (or
+            (unit %optional_owner_hook)
+            (unit %required_owner_hook)
+          )
+        )
+        (option %custom
+          (pair
+            (string %tag)
+            (option %config_api address)
+          )
+        )
+      )
+    )
+  )
 )
 ```
 
