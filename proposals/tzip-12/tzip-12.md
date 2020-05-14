@@ -127,9 +127,9 @@ Although not part of the standard, this document also recommends a
 (*transfer hook*)[#transfer-hook] design pattern to implement FA2 that enables
 separation of the core token transfer logic and variable permission policies.
 
-This specification defines the set of [standard errors](#error-handling) to be
-used when implementing FA2. However, some implementation MAY introduce their custom
-error that MUST follow the same pattern as standard ones.
+This specification defines the set of [standard errors](#error-handling) and error
+mnemonics to be used when implementing FA2. However, some implementation MAY
+introduce their custom error that MUST follow the same pattern as standard ones.
 
 ## Interface Specification
 
@@ -340,7 +340,7 @@ Michelson definition:
 ```
 
 Get the total supply for multiple token types. Accepts a list of
-`total_supply_request`s and a callback contract `callback`, which accepts a list
+`token_id`s and a callback contract `callback`, which accepts a list
 of `total_supply_response` records.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
@@ -503,16 +503,19 @@ Michelson definition:
 
 Get the descriptor of the transfer permission policy. FA2 specifies
 `permissions_descriptor` allowing external contracts (e.g. an auction) to discover
-an FA2 contract's permission policy and to configure it. For more details see
+an FA2 contract's implemented permission policies and to configure it. For more
+details see
 [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
-
-Some of the permission options require config API. Config entry points may be
-implemented either within the FA2 token contract itself (then the returned address
-shall be `SELF`), or in a separate contract (see recommended implementation
-pattern using [transfer hook](#transfer-hook)).
+The FA2 contract MAY also implement an optional custom permissions policy. If such
+custom policy is implemented, the FA2 contract SHOULD expose it using permissions
+descriptor `custom` field by giving it a `tag` that would be available to other
+parties which are aware of such custom extension. Some some custom permission MAY
+require a config API (like [`update_operators`](#update_operators),
+[`is_operator`](#is_operator) entry point of the FA2 to configure `operator_transfer_policy`).
+Config entry points may be implemented either within the FA2 token contract itself
+(then the returned address SHALL be `SELF`), or in a separate contract (see
+recommended implementation pattern using [transfer hook](#transfer-hook)).
 
 #### Operators
 
