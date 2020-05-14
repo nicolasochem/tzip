@@ -11,8 +11,8 @@ created: 2020-01-24
 
 * [Summary](#summary)
 * [Abstract](#abstract)
+* [Overview](#overview)
 * [Interface Specification](#interface-specification)
-  * [Error Handling](#error-handling)
   * [Entry Point Semantics](#entry-point-semantics)
     * [`transfer`](#transfer)
     * [`balance_of`](#balance_of)
@@ -22,6 +22,7 @@ created: 2020-01-24
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
       * [`is_operator`](#is_operator)
+  * [Error Handling](#error-handling)
   * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [Core Transfer Behavior](#core-transfer-behavior)
@@ -57,7 +58,7 @@ token smart contract. Tokens might be fungible or non-fungible. A variety of
 permission policies can be used to define how many tokens can be transferred, who
 can initiate a transfer, and who can receive tokens. A token contract can be
 designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple token
-types (e.g. ERC-1155) to optimize batch transfer and atomic swaps of the tokens.
+types (e.g. ERC-1155) to optimize batch transfers and atomic swaps of the tokens.
 
 Such considerations can easily lead to the proliferation of many token standards,
 each optimized for a particular token type or use case. This situation is apparent
@@ -70,6 +71,10 @@ contract interface that accommodates all mentioned concerns. It aims to provide
 significant expressivity to contract developers to create new types of tokens
 while maintaining a common interface standard for wallet integrators and external
 developers.
+
+## Overview
+
+
 
 ## Interface Specification
 
@@ -104,42 +109,6 @@ A contract implementing the FA2 standard MUST have the following entry points:
 
 The full definition of the FA2 entry points and related types can be found in
 [fa2_interface.mligo](./fa2_interface.mligo).
-
-### Error Handling
-
-This specification defines the set of standard errors to make it easier to integrate
-FA2 contracts with wallets, DApps and other generic software, and enable
-localization of user-visible error messages.
-
-Each error code is a short abbreviated string mnemonic. An FA2 contract client
-(like another contract or a wallet) could use on-the-chain or off-the-chain registry
-to map the error code mnemonic to a user-readable, localized message. A particular
-implementation of the FA2 contract MAY extend the standard set of errors with custom
-mnemonics for additional constraints.
-
-When error occurs, any FA2 contract entry point MUST fail with one of the following
-types:
-
-1. `string` value which represents an error code mnemonic.
-2. a Michelson `pair`, where the first element is a `string` representing error code
-mnemonic and the second element is a custom error data.
-
-Standard error mnemonics:
-
-| Error mnemonic | Description |
-| :------------- | :---------- |
-| `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
-| `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
-| `"TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
-| `"NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
-| `"NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
-| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
-
-If more than one error conditions are met, the entry point MAY fail with any applicable
-error.
 
 ### Entry Point Semantics
 
@@ -637,6 +606,42 @@ Michelson definition:
 ```
 
 Inspect if an address is an operator for the specified owner.
+
+### Error Handling
+
+This specification defines the set of standard errors to make it easier to integrate
+FA2 contracts with wallets, DApps and other generic software, and enable
+localization of user-visible error messages.
+
+Each error code is a short abbreviated string mnemonic. An FA2 contract client
+(like another contract or a wallet) could use on-the-chain or off-the-chain registry
+to map the error code mnemonic to a user-readable, localized message. A particular
+implementation of the FA2 contract MAY extend the standard set of errors with custom
+mnemonics for additional constraints.
+
+When error occurs, any FA2 contract entry point MUST fail with one of the following
+types:
+
+1. `string` value which represents an error code mnemonic.
+2. a Michelson `pair`, where the first element is a `string` representing error code
+mnemonic and the second element is a custom error data.
+
+Standard error mnemonics:
+
+| Error mnemonic | Description |
+| :------------- | :---------- |
+| `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
+| `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
+| `"TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
+| `"NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
+| `"NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
+| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
+
+If more than one error conditions are met, the entry point MAY fail with any applicable
+error.
 
 ### FA2 Permission Policies and Configuration
 
