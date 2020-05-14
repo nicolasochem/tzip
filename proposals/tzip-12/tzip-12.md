@@ -127,6 +127,10 @@ Although not part of the standard, this document also recommends a
 (*transfer hook*)[#transfer-hook] design pattern to implement FA2 that enables
 separation of the core token transfer logic and variable permission policies.
 
+This specification defines the set of [standard errors](#error-handling) to be
+used when implementing FA2. However, some implementation MAY introduce their custom
+error that MUST follow the same pattern as standard ones.
+
 ## Interface Specification
 
 Token contract implementing the FA2 standard MUST have the following entry points.
