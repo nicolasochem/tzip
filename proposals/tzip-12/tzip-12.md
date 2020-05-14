@@ -74,28 +74,65 @@ developers.
 
 ## Overview
 
+Token type is uniquely identified on the chain by a pair composed of the token
+contract address and token ID, a natural number (`nat`). If the underlying contract
+implementation supports only a single token type (e.g. ERC-20-like contract),
+the token ID MUST be `0n`. In the case, when multiple token types are supported
+within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
+is fully responsible for assigning and managing token IDs. FA2 clients MUST NOT
+depend on particular ID values to infer information about a token.
 
+Most of the entry points are batch operations that allow querying or transfer of
+multiple token types atomically. If the underlying contract implementation supports
+only a single token type, the batch may contain single or multiple entries where
+token ID will be a fixed `0n` value. Likewise, if multiple token types are supported,
+the batch may contain zero or more entries and there may be duplicate token IDs.
+
+Most token standards specify logic that validates a transfer transaction and can
+either approve or reject a transfer. Such logic could validate who initiates a
+transfer, a transfer amount, and who can receive tokens. This standard calls such
+logic *permission policy* or *permission behavior*. Unlike many other standards,
+FA2 defines the default core transfer behavior, that MUST always be implemented
+(see [Core Transfer Behavior](#core-transfer-behavior)), and a set of predefined
+permission policies that are optional (see
+[FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)).
+A particular FA2 contract implementation MAY choose which optional policies to
+implement. Selected permission policies are applied to all tokens and token owners
+managed by the FA2 contract.
+
+The FA2 defines the following standard permission policies, that can be chosen
+independently, when FA2 contract is implemented:
+
+* `operator_transfer_policy` - defines who can transfer tokens. Tokens can be
+transferred by the token owner or an operator (some address that is authorized to
+transfer tokens on behalf of the token owner). A special case is when neither owner
+nor operator can transfer tokens (can be used for non-transferable tokens). The
+FA2 standard defines two entry points to manage and inspect operators associated
+with the token owner address ([`update_operators`](#update_operators),
+[`is_operator`](#is_operator)). Once an operator is added, it can manage all owner's
+tokens.
+* `owner_hook_policy` - defines if sender/receiver hooks should be called or
+not. Each token owner contract MAY implement either an `fa2_token_sender` or
+`fa2_token_receiver` hook interface. That hooks MAY be called when a transfer sends
+tokens from the owner account or the owner receives tokens. The hook can either
+accept a transfer transaction or reject it by failing.
+
+The FA2 standard defines a special metadata entry point ([`permissions_descriptor`](#permissions_descriptor))
+that returns a *permissions descriptor* record. Permission descriptor indicates
+which standard permission policies are implemented by the FA2 contract and can be
+used by off-chain and on-chain tools to discover the properties of the particular
+FA2 contract implementation.
+
+Although not part of the standard, this document also recommends a
+(*transfer hook*)[#transfer-hook] design pattern to implement FA2 that enables
+separation of the core token transfer logic and variable permission policies.
 
 ## Interface Specification
 
-Token type is uniquely identified on the chain by a pair composed of the token
-contract address and token id, a natural number (`nat`). If the underlying contract
-implementation supports only a single token type (e.g. ERC-20-like contract),
-the token id MUST be `0n`. The FA2 token contract is fully responsible for assigning
-and managing token IDs. FA2 clients MUST NOT depend on particular ID values to infer
-information about a token.
-
-All entry points are batch operations that allow querying or transfer of multiple
-token types atomically. If the underlying contract implementation supports only
-a single token type, the batch may contain single or multiple entries where token
-id will be a fixed `0n` value. Likewise, if multiple token types are supported,
-the batch may contain zero or more entries and there may be duplicates.
-
-Token contract MUST implement the following entry points. Notation is given in
-[cameLIGO language](https://ligolang.org) for readability and Michelson. The LIGO
-definition, when compiled, generates compatible Michelson entry points.
-
-A contract implementing the FA2 standard MUST have the following entry points:
+Token contract implementing the FA2 standard MUST have the following entry points.
+Notation is given in [cameLIGO language](https://ligolang.org) for readability
+and Michelson. The LIGO definition, when compiled, generates compatible Michelson
+entry points.
 
 `type fa2_entry_points =`
 
