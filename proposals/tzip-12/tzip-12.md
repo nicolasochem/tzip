@@ -160,14 +160,25 @@ LIGO definition:
 ```ocaml
 type token_id = nat
 
-type transfer = {
-  from_ : address;
+type transfer_destination = {
   to_ : address;
   token_id : token_id;
   amount : nat;
 }
 
-type transfer_michelson = transfer michelson_pair_right_comb
+type transfer_destination_michelson = transfer_destination michelson_pair_right_comb
+
+type transfer = {
+  from_ : address;
+  txs : transfer_destination list;
+}
+
+type transfer_aux = {
+  from_ : address;
+  txs : transfer_destination_michelson list;
+}
+
+type transfer_michelson = transfer_aux michelson_pair_right_comb
 
 | Transfer of transfer_michelson list
 ```
@@ -177,16 +188,22 @@ Michelson definition:
 (list %transfer
   (pair
     (address %from_)
-    (pair
-      (address %to_)
+    (list %txs
       (pair
-        (nat %token_id)
-        (nat %amount)
-  )))
+        (address %to_)
+        (pair
+          (nat %token_id)
+          (nat %amount)
+        )
+      )
+    )
+  )
 )
 ```
 
-Each transfer amount in the batch is specified between two given addresses.
+Each transfer in the batch is specified between one source (`from_`) address and
+a list of destination addresses (`to_`). Each `transfer_destination` specifies
+token type and amount to be transferred from the source addresses.
 Transfers MUST happen atomically and in order; if at least one specified transfer
 cannot be completed, the whole transaction MUST fail.
 
@@ -810,14 +827,26 @@ to be implemented by token owner contracts to expose the owner's hooks to FA2 to
 contract.
 
 ```ocaml
-type transfer_descriptor = {
-  from_ : address option;
+type transfer_destination_descriptor = {
   to_ : address option;
   token_id : token_id;
   amount : nat;
 }
 
-type transfer_descriptor_michelson = transfer_descriptor michelson_pair_right_comb
+type transfer_destination_descriptor_michelson =
+  transfer_destination_descriptor michelson_pair_right_comb
+
+type transfer_descriptor = {
+  from_ : address option;
+  txs : transfer_destination_descriptor list
+}
+
+type transfer_descriptor_aux = {
+  from_ : address option;
+  txs : transfer_destination_descriptor_michelson list
+}
+
+type transfer_descriptor_michelson = transfer_descriptor_aux michelson_pair_right_comb
 
 type transfer_descriptor_param = {
   fa2 : address;
@@ -984,12 +1013,26 @@ FA2 entry point with the following signature.
 LIGO definition:
 
 ```ocaml
-type transfer_descriptor = {
-  from_ : address option;
+type transfer_destination_descriptor = {
   to_ : address option;
   token_id : token_id;
   amount : nat;
 }
+
+type transfer_destination_descriptor_michelson =
+  transfer_destination_descriptor michelson_pair_right_comb
+
+type transfer_descriptor = {
+  from_ : address option;
+  txs : transfer_destination_descriptor list
+}
+
+type transfer_descriptor_aux = {
+  from_ : address option;
+  txs : transfer_destination_descriptor_michelson list
+}
+
+type transfer_descriptor_michelson = transfer_descriptor_aux michelson_pair_right_comb
 
 type transfer_descriptor_param_aux = {
   fa2 : address;
@@ -1027,11 +1070,13 @@ Michelson definition:
           (list %batch
             (pair
               (option %from_ address)
-              (pair
-                (option %to_ address)
+              (list %txs
                 (pair
-                  (nat %token_id)
-                  (nat %amount)
+                  (option %to_ address)
+                  (pair
+                    (nat %token_id)
+                    (nat %amount)
+                  )
                 )
               )
             )
