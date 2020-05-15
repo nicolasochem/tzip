@@ -16,20 +16,22 @@ type storage = {
 
 let custom_validate_receivers (p, wl : transfer_descriptor_param * (address set))
     : operation list =
-  let get_receiver : get_owner = fun (tx : transfer_descriptor) -> tx.to_ in
-  let receivers = get_owners (p.batch, get_receiver) in
+  let get_receiver : get_owners = fun (tx : transfer_descriptor) -> 
+    List.map (fun (t : transfer_destination_descriptor) -> t.to_) tx.txs in
+  let receivers = get_owners_from_batch (p.batch, get_receiver) in
 
   Set.fold 
     (fun (ops, r : (operation list) * address) ->
-      let hook = to_sender_hook r in
+      let hook, err = to_sender_hook r in
       match hook with
       | Some h ->
-        let op = Operation.transaction p 0mutez h in
+        let pm = transfer_descriptor_param_to_michelson p in
+        let op = Operation.transaction pm 0mutez h in
         op :: ops
-      | None ->
+      | None -> 
         if Set.mem r wl
         then ops
-        else (failwith "receiver not permitted" : operation list) 
+        else (failwith err : operation list)
     )
     receivers ([] : operation list)
 
@@ -39,10 +41,9 @@ let custom_transfer_hook (p, s : transfer_descriptor_param * storage) : operatio
 
 let get_policy_descriptor (u : unit) : permissions_descriptor =
   {
-    self = Self_transfer_permitted;
-    operator = Operator_transfer_permitted;
-    sender = Owner_no_op;
-    receiver = Owner_no_op ; (* overridden by the custom policy *)
+    operator = Owner_or_operator_transfer;
+    sender = Owner_no_hook;
+    receiver = Owner_no_hook ; (* overridden by the custom policy *)
     custom = Some { 
       tag = "receiver_hook_and_whitelist"; 
       config_api = (Some Current.self_address);
