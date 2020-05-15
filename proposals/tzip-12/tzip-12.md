@@ -10,8 +10,8 @@ created: 2020-01-24
 ## Table Of Contents
 
 * [Summary](#summary)
+* [Motivation](#motivation)
 * [Abstract](#abstract)
-* [Overview](#overview)
 * [Interface Specification](#interface-specification)
   * [Entry Point Semantics](#entry-point-semantics)
     * [`transfer`](#transfer)
@@ -51,7 +51,7 @@ for various transfer permission policies.
 **PLEASE NOTE:** This API specification remains a work-in-progress and may evolve
 based on public comment see FA2 Request for Comment on [Tezos Agora](https://tezosagora.org).
 
-## Abstract
+## Motivation
 
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. A variety of
@@ -72,7 +72,7 @@ significant expressivity to contract developers to create new types of tokens
 while maintaining a common interface standard for wallet integrators and external
 developers.
 
-## Overview
+## Abstract
 
 Token type is uniquely identified on the chain by a pair composed of the token
 contract address and token ID, a natural number (`nat`). If the underlying contract
