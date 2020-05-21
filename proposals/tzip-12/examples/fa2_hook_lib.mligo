@@ -1,3 +1,7 @@
+#if !FA2_HOOK_LIB
+#define FA2_HOOK_LIB
+
+#include "../fa2_hook.mligo"
 #include "fa2_convertors.mligo"
 
 let get_hook_entrypoint (hook_contract : address) (u : unit) 
@@ -32,3 +36,5 @@ let validate_hook_call (fa2, registry: address * fa2_registry) : unit =
   if Set.mem fa2 registry
   then unit
   else failwith "UNKNOWN_FA2_CALL"
+
+#endif

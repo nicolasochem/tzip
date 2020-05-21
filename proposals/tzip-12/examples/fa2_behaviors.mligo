@@ -1,4 +1,8 @@
-#include "fa2_hook_lib.mligo"
+#if !FA2_BEHAVIORS
+#define FA2_BEHAVIORS
+
+(* #include "fa2_hook_lib.mligo" *)
+#include "../fa2_interface.mligo"
 #include "../fa2_errors.mligo"
 
 
@@ -80,3 +84,4 @@ let standard_transfer_hook (p, descriptor : transfer_hook_params * permissions_d
   (* merge two lists *)
   List.fold (fun (l, o : (operation list) * operation) -> o :: l) receiver_ops sender_ops
 
+#endif
