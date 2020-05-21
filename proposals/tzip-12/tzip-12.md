@@ -10,9 +10,9 @@ created: 2020-01-24
 ## Table Of Contents
 
 * [Summary](#summary)
+* [Motivation](#motivation)
 * [Abstract](#abstract)
 * [Interface Specification](#interface-specification)
-  * [Error Handling](#error-handling)
   * [Entry Point Semantics](#entry-point-semantics)
     * [`transfer`](#transfer)
     * [`balance_of`](#balance_of)
@@ -22,6 +22,7 @@ created: 2020-01-24
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
       * [`is_operator`](#is_operator)
+  * [Error Handling](#error-handling)
   * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [Core Transfer Behavior](#core-transfer-behavior)
@@ -50,14 +51,14 @@ for various transfer permission policies.
 **PLEASE NOTE:** This API specification remains a work-in-progress and may evolve
 based on public comment see FA2 Request for Comment on [Tezos Agora](https://tezosagora.org).
 
-## Abstract
+## Motivation
 
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. A variety of
 permission policies can be used to define how many tokens can be transferred, who
 can initiate a transfer, and who can receive tokens. A token contract can be
 designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple token
-types (e.g. ERC-1155) to optimize batch transfer and atomic swaps of the tokens.
+types (e.g. ERC-1155) to optimize batch transfers and atomic swaps of the tokens.
 
 Such considerations can easily lead to the proliferation of many token standards,
 each optimized for a particular token type or use case. This situation is apparent
@@ -71,26 +72,71 @@ significant expressivity to contract developers to create new types of tokens
 while maintaining a common interface standard for wallet integrators and external
 developers.
 
-## Interface Specification
+## Abstract
 
 Token type is uniquely identified on the chain by a pair composed of the token
-contract address and token id, a natural number (`nat`). If the underlying contract
+contract address and token ID, a natural number (`nat`). If the underlying contract
 implementation supports only a single token type (e.g. ERC-20-like contract),
-the token id MUST be `0n`. The FA2 token contract is fully responsible for assigning
-and managing token IDs. FA2 clients MUST NOT depend on particular ID values to infer
-information about a token.
+the token ID MUST be `0n`. In the case, when multiple token types are supported
+within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
+is fully responsible for assigning and managing token IDs. FA2 clients MUST NOT
+depend on particular ID values to infer information about a token.
 
-All entry points are batch operations that allow querying or transfer of multiple
-token types atomically. If the underlying contract implementation supports only
-a single token type, the batch may contain single or multiple entries where token
-id will be a fixed `0n` value. Likewise, if multiple token types are supported,
-the batch may contain zero or more entries and there may be duplicates.
+Most of the entry points are batch operations that allow querying or transfer of
+multiple token types atomically. If the underlying contract implementation supports
+only a single token type, the batch may contain single or multiple entries where
+token ID will be a fixed `0n` value. Likewise, if multiple token types are supported,
+the batch may contain zero or more entries and there may be duplicate token IDs.
 
-Token contract MUST implement the following entry points. Notation is given in
-[cameLIGO language](https://ligolang.org) for readability and Michelson. The LIGO
-definition, when compiled, generates compatible Michelson entry points.
+Most token standards specify logic that validates a transfer transaction and can
+either approve or reject a transfer. Such logic could validate who initiates a
+transfer, the transfer amount, and who can receive tokens. This standard calls such
+logic a *permission policy* or *permission behavior*. Unlike many other standards,
+FA2 defines the default core transfer behavior, that MUST always be implemented
+(see [Core Transfer Behavior](#core-transfer-behavior)), and a set of predefined
+permission policies that are optional (see
+[FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)).
+A particular FA2 contract implementation MAY choose which optional policies to
+implement. Selected permission policies are applied to all tokens and token owners
+managed by the FA2 contract.
 
-A contract implementing the FA2 standard MUST have the following entry points:
+The FA2 defines the following standard permission policies, that can be chosen
+independently, when an FA2 contract is implemented:
+
+* `operator_transfer_policy` - defines who can transfer tokens. Tokens can be
+transferred by the token owner or an operator (some address that is authorized to
+transfer tokens on behalf of the token owner). A special case is when neither owner
+nor operator can transfer tokens (can be used for non-transferable tokens). The
+FA2 standard defines two entry points to manage and inspect operators associated
+with the token owner address ([`update_operators`](#update_operators),
+[`is_operator`](#is_operator)). Once an operator is added, it can manage all of
+its associated owner's tokens.
+* `owner_hook_policy` - defines if sender/receiver hooks should be called or
+not. Each token owner contract MAY implement either an `fa2_token_sender` or
+`fa2_token_receiver` hook interface. Those hooks MAY be called when a transfer sends
+tokens from the owner account or the owner receives tokens. The hook can either
+accept a transfer transaction or reject it by failing.
+
+The FA2 standard defines a special metadata entry point ([`permissions_descriptor`](#permissions_descriptor))
+that returns a *permissions descriptor* record. The permission descriptor indicates
+which standard permission policies are implemented by the FA2 contract and can be
+used by off-chain and on-chain tools to discover the properties of the particular
+FA2 contract implementation.
+
+Although not part of the standard, this document also recommends a
+(*transfer hook*)[#transfer-hook] design pattern to implement FA2 that enables
+separation of the core token transfer logic and variable permission policies.
+
+This specification defines the set of [standard errors](#error-handling) and error
+mnemonics to be used when implementing FA2. However, some implementation MAY
+introduce their custom error that MUST follow the same pattern as standard ones.
+
+## Interface Specification
+
+Token contract implementing the FA2 standard MUST have the following entry points.
+Notation is given in [cameLIGO language](https://ligolang.org) for readability
+and Michelson. The LIGO definition, when compiled, generates compatible Michelson
+entry points.
 
 `type fa2_entry_points =`
 
@@ -104,42 +150,6 @@ A contract implementing the FA2 standard MUST have the following entry points:
 
 The full definition of the FA2 entry points and related types can be found in
 [fa2_interface.mligo](./fa2_interface.mligo).
-
-### Error Handling
-
-This specification defines the set of standard errors to make it easier to integrate
-FA2 contracts with wallets, DApps and other generic software, and enable
-localization of user-visible error messages.
-
-Each error code is a short abbreviated string mnemonic. An FA2 contract client
-(like another contract or a wallet) could use on-the-chain or off-the-chain registry
-to map the error code mnemonic to a user-readable, localized message. A particular
-implementation of the FA2 contract MAY extend the standard set of errors with custom
-mnemonics for additional constraints.
-
-When error occurs, any FA2 contract entry point MUST fail with one of the following
-types:
-
-1. `string` value which represents an error code mnemonic.
-2. a Michelson `pair`, where the first element is a `string` representing error code
-mnemonic and the second element is a custom error data.
-
-Standard error mnemonics:
-
-| Error mnemonic | Description |
-| :------------- | :---------- |
-| `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
-| `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
-| `"TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
-| `"NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
-| `"NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
-| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
-
-If more than one error conditions are met, the entry point MAY fail with any applicable
-error.
 
 ### Entry Point Semantics
 
@@ -330,7 +340,7 @@ Michelson definition:
 ```
 
 Get the total supply for multiple token types. Accepts a list of
-`total_supply_request`s and a callback contract `callback`, which accepts a list
+`token_id`s and a callback contract `callback`, which accepts a list
 of `total_supply_response` records.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
@@ -493,16 +503,19 @@ Michelson definition:
 
 Get the descriptor of the transfer permission policy. FA2 specifies
 `permissions_descriptor` allowing external contracts (e.g. an auction) to discover
-an FA2 contract's permission policy and to configure it. For more details see
+an FA2 contract's implemented permission policies and to configure it. For more
+details see
 [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
-
-Some of the permission options require config API. Config entry points may be
-implemented either within the FA2 token contract itself (then the returned address
-shall be `SELF`), or in a separate contract (see recommended implementation
-pattern using [transfer hook](#transfer-hook)).
+The FA2 contract MAY also implement an optional custom permissions policy. If such
+custom a policy is implemented, the FA2 contract SHOULD expose it using permissions
+descriptor `custom` field by giving it a `tag` that would be available to other
+parties which are aware of such custom extension. Some some custom permission MAY
+require a config API (like [`update_operators`](#update_operators),
+[`is_operator`](#is_operator) entry point of the FA2 to configure `operator_transfer_policy`).
+Config entry points may be implemented either within the FA2 token contract itself
+(then the returned address SHALL be `SELF`), or in a separate contract (see
+recommended implementation pattern using [transfer hook](#transfer-hook)).
 
 #### Operators
 
@@ -637,6 +650,42 @@ Michelson definition:
 ```
 
 Inspect if an address is an operator for the specified owner.
+
+### Error Handling
+
+This specification defines the set of standard errors to make it easier to integrate
+FA2 contracts with wallets, DApps and other generic software, and enable
+localization of user-visible error messages.
+
+Each error code is a short abbreviated string mnemonic. An FA2 contract client
+(like another contract or a wallet) could use on-the-chain or off-the-chain registry
+to map the error code mnemonic to a user-readable, localized message. A particular
+implementation of the FA2 contract MAY extend the standard set of errors with custom
+mnemonics for additional constraints.
+
+When error occurs, any FA2 contract entry point MUST fail with one of the following
+types:
+
+1. `string` value which represents an error code mnemonic.
+2. a Michelson `pair`, where the first element is a `string` representing error code
+mnemonic and the second element is a custom error data.
+
+Standard error mnemonics:
+
+| Error mnemonic | Description |
+| :------------- | :---------- |
+| `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
+| `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
+| `"TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
+| `"NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
+| `"NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
+| `"RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
+| `"SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
+| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
+
+If more than one error conditions are met, the entry point MAY fail with any applicable
+error.
 
 ### FA2 Permission Policies and Configuration
 
