@@ -6,8 +6,8 @@ Transfer is permitted if a receiver address is in the receiver white list OR imp
 interface, its `tokens_received` entry point must be called.
 *)
 
-#include "fa2_hook_lib.mligo"
-#include "fa2_behaviors.mligo"
+#include "../lib/fa2_hook_lib.mligo"
+#include "../lib/fa2_behaviors.mligo"
 
 
 type storage = {

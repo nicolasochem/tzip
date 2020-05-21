@@ -5,8 +5,8 @@ additional custom policy "schedule" which let pause/unpause transfers
 based on used schedule
 *)
 
-#include "fa2_hook_lib.mligo"
-#include "fa2_behaviors.mligo"
+#include "../lib/fa2_hook_lib.mligo"
+#include "../lib/fa2_behaviors.mligo"
 
 type schedule_interval = {
   interval : int;
