@@ -166,12 +166,18 @@ type transfer_destination = {
   amount : nat;
 }
 
-type transfer_destination_michelson = transfer_destination michelson_pair_right_comb
-
 type transfer = {
   from_ : address;
   txs : transfer_destination list;
 }
+
+| Transfer of transfer_michelson list
+```
+
+where
+
+```ocaml
+type transfer_destination_michelson = transfer_destination michelson_pair_right_comb
 
 type transfer_aux = {
   from_ : address;
@@ -179,8 +185,6 @@ type transfer_aux = {
 }
 
 type transfer_michelson = transfer_aux michelson_pair_right_comb
-
-| Transfer of transfer_michelson list
 ```
 
 Michelson definition:
@@ -255,12 +259,23 @@ type balance_of_request = {
   token_id : token_id;
 }
 
-type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
-
 type balance_of_response = {
   request : balance_of_request;
   balance : nat;
 }
+
+type balance_of_param = {
+  requests : balance_of_request list;
+  callback : (balance_of_response_michelson list) contract;
+}
+
+| Balance_of of balance_of_param_michelson
+```
+
+where
+
+```ocaml
+type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
 
 type balance_of_response_aux = {
   request : balance_of_request_michelson;
@@ -269,19 +284,12 @@ type balance_of_response_aux = {
 
 type balance_of_response_michelson = balance_of_response_aux michelson_pair_right_comb
 
-type balance_of_param = {
-  requests : balance_of_request list;
-  callback : (balance_of_response_michelson list) contract;
-}
-
 type balance_of_param_aux = {
   requests : balance_of_request_michelson list;
   callback : (balance_of_response_michelson list) contract;
 }
 
 type balance_of_param_michelson = balance_of_param_aux michelson_pair_right_comb
-
-| Balance_of of balance_of_param_michelson
 ```
 
 Michelson definition:
@@ -328,16 +336,20 @@ type total_supply_response = {
   total_supply : nat;
 }
 
-type total_supply_response_michelson = total_supply_response michelson_pair_right_comb
-
 type total_supply_param = {
   token_ids : token_id list;
   callback : (total_supply_response_michelson list) contract;
 }
 
-type total_supply_param_michelson = total_supply_param michelson_pair_right_comb
-
 | Total_supply of total_supply_param_michelson
+```
+
+where
+
+```ocaml
+type total_supply_response_michelson = total_supply_response michelson_pair_right_comb
+
+type total_supply_param_michelson = total_supply_param michelson_pair_right_comb
 ```
 
 Michelson definition:
@@ -378,16 +390,20 @@ type token_metadata = {
   extras : (string, string) map;
 }
 
-type token_metadata_michelson = token_metadata michelson_pair_right_comb
-
 type token_metadata_param = {
   token_ids : token_id list;
   callback : (token_metadata_michelson list) contract;
 }
 
-type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
-
 | Token_metadata of token_metadata_param_michelson
+```
+
+where
+
+```ocaml
+type token_metadata_michelson = token_metadata michelson_pair_right_comb
+
+type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
 ```
 
 Michelson definition:
@@ -443,21 +459,15 @@ type operator_transfer_policy =
   | Owner_transfer
   | Owner_or_operator_transfer
 
-type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
-
 type owner_hook_policy =
   | Owner_no_hook
   | Optional_owner_hook
   | Required_owner_hook
 
-type owner_hook_policy_michelson = owner_hook_policy michelson_or_right_comb
-
 type custom_permission_policy = {
   tag : string;
   config_api: address option;
 }
-
-type custom_permission_policy_michelson = custom_permission_policy michelson_pair_right_comb
 
 type permissions_descriptor = {
   operator : operator_transfer_policy;
@@ -465,6 +475,18 @@ type permissions_descriptor = {
   sender : owner_hook_policy;
   custom : custom_permission_policy option;
 }
+
+| Permissions_descriptor of permissions_descriptor_michelson contract
+```
+
+where
+
+```ocaml
+type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
+
+type owner_hook_policy_michelson = owner_hook_policy michelson_or_right_comb
+
+type custom_permission_policy_michelson = custom_permission_policy michelson_pair_right_comb
 
 type permissions_descriptor_aux = {
   operator : operator_transfer_policy_michelson;
@@ -474,8 +496,6 @@ type permissions_descriptor_aux = {
 }
 
 type permissions_descriptor_michelson = permissions_descriptor_aux michelson_pair_right_comb
-
-| Permissions_descriptor of permissions_descriptor_michelson contract
 ```
 
 Michelson definition:
@@ -558,19 +578,23 @@ type operator_param = {
   operator : address;
 }
 
-type operator_param_michelson = operator_param michelson_pair_right_comb
-
 type update_operator =
   | Add_operator_p of operator_param
   | Remove_operator_p of operator_param
+
+| Update_operators of update_operator_michelson list
+```
+
+where
+
+```ocaml
+type operator_param_michelson = operator_param michelson_pair_right_comb
 
 type update_operator_aux =
   | Add_operator of operator_param_michelson
   | Remove_operator of operator_param_michelson
 
 type update_operator_michelson = update_operator_aux michelson_or_right_comb
-
-| Update_operators of update_operator_michelson list
 ```
 
 Michelson definition:
@@ -617,12 +641,23 @@ type operator_param = {
   operator : address;
 }
 
-type operator_param_michelson = operator_param michelson_pair_right_comb
-
 type is_operator_response = {
   operator : operator_param;
   is_operator : bool;
 }
+
+type is_operator_param = {
+  operator : operator_param;
+  callback : (is_operator_response_michelson) contract;
+}
+
+| Is_operator of is_operator_param_michelson
+```
+
+where
+
+```ocaml
+type operator_param_michelson = operator_param michelson_pair_right_comb
 
 type is_operator_response_aux = {
   operator : operator_param_michelson;
@@ -631,19 +666,12 @@ type is_operator_response_aux = {
 
 type is_operator_response_michelson = is_operator_response_aux michelson_pair_right_comb
 
-type is_operator_param = {
-  operator : operator_param;
-  callback : (is_operator_response_michelson) contract;
-}
-
 type is_operator_param_aux = {
   operator : operator_param_michelson;
   callback : (is_operator_response_michelson) contract;
 }
 
 type is_operator_param_michelson = is_operator_param_aux michelson_pair_right_comb
-
-| Is_operator of is_operator_param_michelson
 ```
 
 Michelson definition:
@@ -833,13 +861,29 @@ type transfer_destination_descriptor = {
   amount : nat;
 }
 
-type transfer_destination_descriptor_michelson =
-  transfer_destination_descriptor michelson_pair_right_comb
-
 type transfer_descriptor = {
   from_ : address option;
   txs : transfer_destination_descriptor list
 }
+
+type transfer_descriptor_param = {
+  fa2 : address;
+  batch : transfer_descriptor list;
+  operator : address;
+}
+
+type fa2_token_receiver =
+  | Tokens_received of transfer_descriptor_param_michelson
+
+type fa2_token_sender =
+  | Tokens_sent of transfer_descriptor_param_michelson
+```
+
+where
+
+```ocaml
+type transfer_destination_descriptor_michelson =
+  transfer_destination_descriptor michelson_pair_right_comb
 
 type transfer_descriptor_aux = {
   from_ : address option;
@@ -848,12 +892,6 @@ type transfer_descriptor_aux = {
 
 type transfer_descriptor_michelson = transfer_descriptor_aux michelson_pair_right_comb
 
-type transfer_descriptor_param = {
-  fa2 : address;
-  batch : transfer_descriptor list;
-  operator : address;
-}
-
 type transfer_descriptor_param_aux = {
   fa2 : address;
   batch : transfer_descriptor_michelson list;
@@ -861,12 +899,6 @@ type transfer_descriptor_param_aux = {
 }
 
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
-
-type fa2_token_receiver =
-  | Tokens_received of transfer_descriptor_param_michelson
-
-type fa2_token_sender =
-  | Tokens_sent of transfer_descriptor_param_michelson
 ```
 
 If a transfer failed because of the token owner permission behavior, the operation
@@ -1019,13 +1051,24 @@ type transfer_destination_descriptor = {
   amount : nat;
 }
 
-type transfer_destination_descriptor_michelson =
-  transfer_destination_descriptor michelson_pair_right_comb
-
 type transfer_descriptor = {
   from_ : address option;
   txs : transfer_destination_descriptor list
 }
+
+type set_hook_param = {
+  hook : unit -> transfer_descriptor_param_michelson contract;
+  permissions_descriptor : permissions_descriptor;
+}
+
+| Set_transfer_hook of set_hook_param_michelson
+```
+
+where
+
+```ocaml
+type transfer_destination_descriptor_michelson =
+  transfer_destination_descriptor michelson_pair_right_comb
 
 type transfer_descriptor_aux = {
   from_ : address option;
@@ -1042,19 +1085,12 @@ type transfer_descriptor_param_aux = {
 
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
 
-type set_hook_param = {
-  hook : unit -> transfer_descriptor_param_michelson contract;
-  permissions_descriptor : permissions_descriptor;
-}
-
 type set_hook_param_aux = {
   hook : unit -> transfer_descriptor_param_michelson contract;
   permissions_descriptor : permissions_descriptor_michelson;
 }
 
 type set_hook_param_michelson = set_hook_param_aux michelson_pair_right_comb
-
-| Set_transfer_hook of set_hook_param_michelson
 ```
 
 Michelson definition:
