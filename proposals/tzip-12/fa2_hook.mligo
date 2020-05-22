@@ -1,3 +1,7 @@
+
+#if !FA2_HOOK
+#define FA2_HOOK
+
 #include "fa2_interface.mligo"
 
 
@@ -16,3 +20,5 @@ type set_hook_param_michelson = set_hook_param_aux michelson_pair_right_comb
 type fa2_with_hook_entry_points =
   | Fa2 of fa2_entry_points
   | Set_transfer_hook of set_hook_param_michelson
+
+#endif

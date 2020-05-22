@@ -6,7 +6,8 @@ Transfer is permitted if a receiver address is in the receiver white list OR imp
 interface, its `tokens_received` entry point must be called.
 *)
 
-#include "fa2_behaviors.mligo"
+#include "../lib/fa2_hook_lib.mligo"
+#include "../lib/fa2_behaviors.mligo"
 
 
 type storage = {
@@ -16,8 +17,9 @@ type storage = {
 
 let custom_validate_receivers (p, wl : transfer_descriptor_param * (address set))
     : operation list =
-  let get_receiver : get_owner = fun (tx : transfer_descriptor) -> tx.to_ in
-  let receivers = get_owners (p.batch, get_receiver) in
+  let get_receiver : get_owners = fun (tx : transfer_descriptor) -> 
+    List.map (fun (t : transfer_destination_descriptor) -> t.to_) tx.txs in
+  let receivers = get_owners_from_batch (p.batch, get_receiver) in
 
   Set.fold 
     (fun (ops, r : (operation list) * address) ->

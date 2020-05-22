@@ -3,7 +3,8 @@ Implementation of the permission transfer hook, which behavior is driven
 by a particular settings of `permission_policy`.
 *)
 
-#include "fa2_behaviors.mligo"
+#include "../lib/fa2_hook_lib.mligo"
+#include "../lib/fa2_behaviors.mligo"
 
 type storage = {
   fa2_registry : fa2_registry;
