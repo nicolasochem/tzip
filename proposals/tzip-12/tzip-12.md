@@ -90,8 +90,8 @@ the batch may contain zero or more entries and there may be duplicate token IDs.
 
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who initiates a
-transfer, a transfer amount, and who can receive tokens. This standard calls such
-logic *permission policy* or *permission behavior*. Unlike many other standards,
+transfer, the transfer amount, and who can receive tokens. This standard calls such
+logic a *permission policy* or *permission behavior*. Unlike many other standards,
 FA2 defines the default core transfer behavior, that MUST always be implemented
 (see [Core Transfer Behavior](#core-transfer-behavior)), and a set of predefined
 permission policies that are optional (see
@@ -101,7 +101,7 @@ implement. Selected permission policies are applied to all tokens and token owne
 managed by the FA2 contract.
 
 The FA2 defines the following standard permission policies, that can be chosen
-independently, when FA2 contract is implemented:
+independently, when an FA2 contract is implemented:
 
 * `operator_transfer_policy` - defines who can transfer tokens. Tokens can be
 transferred by the token owner or an operator (some address that is authorized to
@@ -109,16 +109,16 @@ transfer tokens on behalf of the token owner). A special case is when neither ow
 nor operator can transfer tokens (can be used for non-transferable tokens). The
 FA2 standard defines two entry points to manage and inspect operators associated
 with the token owner address ([`update_operators`](#update_operators),
-[`is_operator`](#is_operator)). Once an operator is added, it can manage all owner's
-tokens.
+[`is_operator`](#is_operator)). Once an operator is added, it can manage all of
+its associated owner's tokens.
 * `owner_hook_policy` - defines if sender/receiver hooks should be called or
 not. Each token owner contract MAY implement either an `fa2_token_sender` or
-`fa2_token_receiver` hook interface. That hooks MAY be called when a transfer sends
+`fa2_token_receiver` hook interface. Those hooks MAY be called when a transfer sends
 tokens from the owner account or the owner receives tokens. The hook can either
 accept a transfer transaction or reject it by failing.
 
 The FA2 standard defines a special metadata entry point ([`permissions_descriptor`](#permissions_descriptor))
-that returns a *permissions descriptor* record. Permission descriptor indicates
+that returns a *permissions descriptor* record. The permission descriptor indicates
 which standard permission policies are implemented by the FA2 contract and can be
 used by off-chain and on-chain tools to discover the properties of the particular
 FA2 contract implementation.
@@ -525,7 +525,7 @@ details see
 [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration).
 
 The FA2 contract MAY also implement an optional custom permissions policy. If such
-custom policy is implemented, the FA2 contract SHOULD expose it using permissions
+custom a policy is implemented, the FA2 contract SHOULD expose it using permissions
 descriptor `custom` field by giving it a `tag` that would be available to other
 parties which are aware of such custom extension. Some some custom permission MAY
 require a config API (like [`update_operators`](#update_operators),
@@ -696,8 +696,8 @@ Standard error mnemonics:
 | `"TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
 | `"NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
 | `"NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
-| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
+| `"SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
 | `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
 | `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
 
