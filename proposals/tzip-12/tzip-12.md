@@ -307,7 +307,8 @@ Michelson definition:
 Get the balance of multiple account/token pairs. Accepts a list of
 `balance_of_request`s and a callback contract `callback` which accepts a list of
 `balance_of_response` records. There may be duplicate `balance_of_request`'s,
-in which case they should not be deduplicated nor reordered.
+in which case they should not be deduplicated nor reordered. If the account does
+not hold any tokens, the account balance is interpreted as zero.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
@@ -358,7 +359,8 @@ Michelson definition:
 
 Get the total supply for multiple token types. Accepts a list of
 `token_id`s and a callback contract `callback`, which accepts a list
-of `total_supply_response` records.
+of `total_supply_response` records. There may be duplicate `token_id`'s in the
+request, in which case they should not be deduplicated nor reordered.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
@@ -420,6 +422,9 @@ Get the metadata for multiple token types. Accepts a list of `token_id`s and a
 callback contract `callback`, which accepts a list of `token_metadata` records.
 As with `balance_of`, the input `token_id`'s should not be deduplicated nor
 reordered.
+
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
 FA2 token amounts are represented by natural numbers (`nat`), and their
 **granularity** (the smallest amount of tokens which may be minted, burned, or
