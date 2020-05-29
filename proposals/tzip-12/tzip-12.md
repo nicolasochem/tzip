@@ -85,16 +85,19 @@ the batch may contain zero or more entries and there may be duplicate token IDs.
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who initiates a
 transfer, the transfer amount, and who can receive tokens. This standard calls such
-logic a *permission policy* or *permission behavior*. The FA2 standard defines
+logic a *permission policy* or *permission behavior*. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
-specify who can transfer tokens. However, unlike many other standards, FA2 allows
-to customize the default permission policy (see
-[FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration))
+specify who can transfer tokens. The default policy allow transfers to be initiated
+either by the token owner (an account that holds token balance) or by an operator
+(an account that is permitted to manage tokens on behalf of the owner).
+
+Unlike many other standards, FA2 allows to customize the default permission policy
+(see [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration))
 using a set of predefined permission policies that are optional.
 
 This specification defines the set of [standard errors](#error-handling) and error
 mnemonics to be used when implementing FA2. However, some implementation MAY
-introduce their custom error that MUST follow the same pattern as standard ones.
+introduce their custom errors that MUST follow the same pattern as standard ones.
 
 ## Interface Specification
 
@@ -171,21 +174,25 @@ Michelson definition:
 
 Each transfer in the batch is specified between one source (`from_`) address and
 a list of destination addresses (`to_`). Each `transfer_destination` specifies
-token type and amount to be transferred from the source addresses.
+token type and the amount to be transferred from the source address.
 
 Transfers MUST happen atomically and in order; if at least one specified transfer
 cannot be completed, the whole transaction MUST fail.
 
-The transaction MUST fail if the balance(s) of the holder for token(s) in the
-batch is lower than the corresponding amount(s) sent. If the holder does not hold
-any tokens of type `token_id`, the holder's balance is interpreted as zero.
-
-Transfer implementations MUST apply permission policy logic. If permission logic
-rejects a transfer, the whole operation MUST fail.
+The transaction MUST fail with the error mnemonic `"INSUFFICIENT_BALANCE"` if the
+balance(s) of the holder for the token(s) in the batch is lower than the corresponding
+amount(s) sent. If the holder does not hold any tokens of type `token_id`, the
+holder's balance is interpreted as zero.
 
 A transfer operation MUST update token owners' balances exactly as the parameters
 of the operation specify it. Transfer operations MUST NOT try to adjust transfer
 amounts or try to add/remove additional transfers like transaction fees.
+
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+
+Transfer implementations MUST apply permission policy logic. If permission logic
+rejects a transfer, the whole operation MUST fail.
 
 FA2 does NOT specify an interface for mint and burn operations; however, if an
 FA2 token contract implements mint and burn operations, it SHOULD, when possible,
@@ -197,12 +204,6 @@ For instance, mint and burn operations may be initiated by a special privileged
 administrative address only. In this case, regular operator restrictions may not
 be applicable.
 
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
-
-If one of the token owners does not have sufficient balance to transfer tokens from
-that account, the entry point MUST fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
-
 ##### Default `transfer` permission policy
 
 Token owner address MUST be able to initiate a transfer of its own tokens (e. g.
@@ -213,7 +214,7 @@ of the owner) MUST be permitted to manage all owner's tokens before it can initi
 a transfer transaction (see [`update_operators`](#update_operators)).
 
 If the address that initiates a transfer operation is neither a token owner nor
-one of the permitted operators, the transaction MUST fail with error mnemonic
+one of the permitted operators, the transaction MUST fail with the error mnemonic
 `"NOT_OPERATOR"`. If at least one of the `transfer`s in the batch is not permitted,
 the whole transaction MUST fail.
 
@@ -498,7 +499,7 @@ operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
 
 The standard does not specify who is permitted to update operators on behalf of
 the token owner. Depending on the business use case, the particular implementation
-of FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
+of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
 
 ##### `is_operator`
@@ -568,29 +569,64 @@ Inspect if an address is an operator for the specified owner.
 
 ### FA2 Permission Policies and Configuration
 
-Most token standards specify logic such as who can initiate a transfer, the quantity
-for a transfer, and who can receive tokens. This standard calls such logic *permission
+Most token standards specify logic such as who can initiate a transfer, the amount
+of a transfer, and who can receive tokens. This standard calls such logic *permission
 policy* and defines a framework to compose and configure such permission policies
-from the standard behaviors and configuration APIs.
+from the standard behaviors.
 
-EDIT
-A particular permission policy defines the semantics (logic that defines if a
-transfer operation is permitted or not) and MAY require additional internal data
-(for example, operators). If the permission policy requires additional internal
-data, it also requires the standard configuration API to manage that data.
-EDIT
-
-Often, proposed token standards specify either a single policy (e.g. allowances in
-ERC-20) or multiple non-compatible policies. (e.g. ERC-777, which has both allowance
+Often, proposed token standards specify either a single fixed policy (e.g. allowances
+in ERC-20) or multiple non-compatible policies (e.g. ERC-777, which has both allowance
 and operator APIs and two versions of the transfer entry point, one that invokes
-sender/receiver hooks and one which does not). The FA2 standard defines
-[default `transfer` permission policy](#default-transfer-permission-policy) that
-specify who can transfer tokens. However, unlike many other standards, FA2 allows
-to customize a permission policy implementation using a set of predefined permission
-policies that are optional. The proposed approach is a modular alternative to the
-existing approaches in ERC-20 or FA1.2 and helps to define consistent and
-non-self-contradictory policies and allows to discover the properties of the particular
-FA2 contract implementation.
+sender/receiver hooks and one which does not). The FA2 standard defines the
+[default `transfer` permission policy](#default-transfer-permission-policy).
+However, unlike many other standards, FA2 allows to customize a permission policy
+implementation using a set of standard permission behaviors. The proposed approach
+is a modular alternative to the existing ones in ERC-20 or FA1.2 and helps
+to define consistent and non-self-contradictory policies and allows to discover
+the properties of the particular FA2 contract implementation.
+
+#### A Taxonomy of Permission Policies
+
+Permission policy semantics are composed from several orthogonal behavior patterns.
+The concrete policy is expressed as a combination of those behaviors.
+
+The proposed taxonomy framework and API allows other contracts to discover the
+properties (behaviors) of the particular FA2 token contract permission policy and
+to configure it on the chain.
+
+##### Core Transfer Behavior
+
+FA2 token contracts MUST always implement this behavior. The rest of permission
+behaviors are OPTIONAL.
+
+* Every transfer operation MUST be atomic. If the operation fails, all token
+  transfers MUST be reverted, and token balances MUST remain unchanged.
+
+* The amount of a token transfer MUST NOT exceed the existing token owner's
+  balance. If the transfer amount for the particular token type and token owner
+  exceeds the existing balance, the whole transfer operation MUST fail with the
+  error mnemonic `"INSUFFICIENT_BALANCE"`
+
+* Core transfer behavior MUST update token balances exactly as the operation
+  parameters specify it. No changes to amount values or additional transfers are
+  allowed.
+
+* If one of the specified `token_id`s is not defined within the FA2 contract, the
+  entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+
+* Core transfer behavior MAY be extended. If additional constraints on tokens
+  transfer are required, FA2 token contract implementation MAY invoke additional
+  permission policies. If the additional permission fails, the whole transfer
+  operation MUST fail with a custom error mnemonic.
+
+##### Behavior Patterns
+
+Each permission policy defines a set possible standard behaviors (one of them is
+default). An FA2 contract developer MAY chose to implement one or more behavior
+patterns that are different from the default ones depending on their business use
+case. The FA2 contract MUST expose what policies are implemented using
+[`permissions_descriptor`](#permissions_descriptor) entry point if non-default
+permission behaviors are selected.
 
 The FA2 defines the following standard permission policies, that can be chosen
 independently, when an FA2 contract is implemented:
@@ -609,44 +645,6 @@ not. Each token owner contract MAY implement either an `fa2_token_sender` or
 tokens from the owner account or the owner receives tokens. The hook can either
 accept a transfer transaction or reject it by failing.
 
-#### A Taxonomy of Permission Policies
-
-Permission policy semantics are composed from several orthogonal behavior patterns.
-The concrete policy is expressed as a combination of those behaviors.
-
-The proposed taxonomy framework and API allows other contracts to discover the
-properties (behaviors) of the particular FA2 token contract permission policy and
-to configure it on the chain.
-
-##### Core Transfer Behavior
-
-FA2 token contracts MUST implement this behavior. The rest of permission behaviors
-are OPTIONAL.
-
-* Every transfer operation MUST be atomic. If the operation fails, all token
-  transfers MUST be reverted, and token balances MUST remain unchanged.
-
-* The amount of a token transfer MUST NOT exceed the existing token owner's
-  balance. If the transfer amount for the particular token type and token owner
-  exceeds the existing balance, the whole transfer operation MUST fail with the
-  error mnemonic `"INSUFFICIENT_BALANCE"`
-
-* Core transfer behavior MAY be extended. If additional constraints on tokens
-  transfer are required, FA2 token contract implementation MAY invoke additional
-  permission policies. If the additional permission fails, the whole transfer
-  operation MUST fail with a custom error mnemonic.
-
-* Core transfer behavior MUST update token balances exactly as the operation
-  parameters specify it. No changes to amount values or additional transfers are
-  allowed.
-
-##### Behavior Patterns
-
-These behavior patterns (or permission policies) are OPTIONAL. An FA2 contract
-developer MAY chose to implement some or all of those permission policies, depending
-on their business use case. The FA2 contract MUST expose what policies are
-implemented using [`permissions_descriptor`](#permissions_descriptor) entry point.
-
 ###### `Operator` Transfer Behavior
 
 This behavior specifies who can initiate a token transfer. Potentially token transfers
@@ -658,7 +656,7 @@ behalf of the owner.
 type operator_transfer_policy =
   | No_transfer
   | Owner_transfer
-  | Owner_or_operator_transfer
+  | Owner_or_operator_transfer (* default *)
 ```
 
 FA2 interface provides API to configure operators (see [operators config entry
@@ -701,7 +699,7 @@ Token owner behavior is defined as follows:
 
 ```ocaml
 type owner_hook_policy =
-  | Owner_no_hook
+  | Owner_no_hook (* default *)
   | Optional_owner_hook
   | Required_owner_hook
 ```
@@ -788,17 +786,7 @@ implementation.
 If the FA2 contract implementation choses the
 [default `transfer` permission policy](#default-transfer-permission-policy),
 it MAY omit implementation of the [`permissions_descriptor`](#permissions_descriptor)
-entry point. The implicit value for the default permissions descriptor is the
-following:
-
-```ocaml
-type permissions_descriptor = {
-  operator = Owner_or_operator_transfer;
-  receiver : Owner_no_hook;
-  sender : Owner_no_hook;
-  custom : (None: custom_permission_policy option);
-}
-```
+entry point.
 
 If the FA2 contract implementation customizes one or more permission
 behaviors, the contract MUST implement [`permissions_descriptor`](#permissions_descriptor)
