@@ -32,7 +32,13 @@ created: 2020-01-24
       * [`permissions_descriptor`](#permissions_descriptor)
       * [Permission Policy Formulae](#permission-policy-formulae)
   * [Error Handling](#error-handling)
+* [Implementing different token types with FA2](#implementing-different-token-types-with-fa2)
 * [Future directions](#future-directions)
+  * [Single fungible token](#single-fungible-token)
+  * [Multiple fungible tokens](#multiple-fungible-tokens)
+  * [Non-fungible tokens](#non-fungible-tokens)
+  * [Mixing fungible and non-fungible tokens](#mixing-fungible-and-non-fungible-tokens)
+  * [Non-transferable tokens](#non-transferable-tokens)
 * [Copyright](#copyright)
 
 ## Summary
@@ -998,6 +1004,81 @@ Standard error mnemonics:
 
 If more than one error conditions are met, the entry point MAY fail with any applicable
 error.
+
+## Implementing different token types with FA2
+
+The FA2 interface is designed to support a wide range of token types and implementations.
+This section gives examples of how different types of the FA2 contracts MAY be
+implemented and what are the expected properties of such an implementation.
+
+### Single fungible token
+
+An FA2 contract represents a single token similar to ERC-20 or FA1.2 standards.
+
+| Property         | Constrains |
+| :--------------- | :--------: |
+| `token_id`       |  Always `0n` |
+| transfer amount  | natural number |
+| account balance  | natural number |
+| total supply     | natural number |
+| decimals         | custom |
+
+### Multiple fungible tokens
+
+An FA2 contract may represent multiple tokens similar to ERC-11555 standard.
+The implementation can have a fixed predefined set of supported tokens or tokens
+can be created dynamically.
+
+| Property         | Constrains |
+| :--------------- | :--------: |
+| `token_id`       |  natural number |
+| transfer amount  | natural number |
+| account balance  | natural number |
+| total supply     | natural number |
+| decimals         | custom, per each `token_id` |
+
+### Non-fungible tokens
+
+An FA2 contract may represent non-fungible tokens (NFT) similar to ERC-721 standard.
+For each individual non-fungible token the implementation assigns a unique `token_id`.
+The implementation MAY support either a single kind of NFTs or multiple kinds.
+If multiple kinds of NFT is supported, each kind MAY be assigned a continuous range
+of natural number (that does not overlap with other ranges) and have its own associated
+metadata.
+
+| Property         | Constrains |
+| :--------------- | :--------: |
+| `token_id`       |  natural number |
+| transfer amount  | `0n` or `1n` |
+| account balance  | `0n` or `1n` |
+| total supply     | `0n` or `1n` |
+| decimals         | `0n` or a natural number if a token represents a batch of items |
+
+For any valid `token_id` only one account CAN hold the balance of one token (`1n`).
+The rest of the accounts MUST hold zero balance (`0n`) for that `token_id`.
+
+### Mixing fungible and non-fungible tokens
+
+An FA2 contract MAY mix multiple fungible and non-fungible tokens within the same
+contract similar to ERC-1155. The implementation MAY chose to select individual
+natural numbers to represent `token_id` for fungible tokens and continuous natural
+number ranges to represent `token_id`s for NFTs.
+
+| Property         | Constrains |
+| :--------------- | :--------: |
+| `token_id`       |  natural number |
+| transfer amount  | `0n` or `1n` for NFT and natural number for fungible tokens |
+| account balance  | `0n` or `1n` for NFT and natural number for fungible tokens |
+| total supply     | `0n` or `1n` for NFT and natural number for fungible tokens |
+| decimals         | custom |
+
+### Non-transferable tokens
+
+Either fungible and non-fungible tokens can be non-transferable. Non-transferable
+tokens can be represented by the FA2 contract which [operator transfer behavior](#operator-transfer-behavior)
+is defined as `No_transfer`. Tokens cannot be transferred neither by the token owner
+nor by any operator. Only privileged operations like mint and burn can assign tokens
+to owner accounts.
 
 ## Future directions
 
