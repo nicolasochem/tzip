@@ -1025,7 +1025,7 @@ An FA2 contract represents a single token similar to ERC-20 or FA1.2 standards.
 
 ### Multiple fungible tokens
 
-An FA2 contract may represent multiple tokens similar to ERC-11555 standard.
+An FA2 contract may represent multiple tokens similar to ERC-1155 standard.
 The implementation can have a fixed predefined set of supported tokens or tokens
 can be created dynamically.
 
