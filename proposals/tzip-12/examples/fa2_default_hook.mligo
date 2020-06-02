@@ -1,10 +1,11 @@
 (**
-Implementation of the permission transfer hook, which behavior is driven
-by a particular settings of `permission_policy`.
+Implementation of a generic permission transfer hook that supports sender/receiver
+hooks. Contract behavior is driven by the permissions descriptor value in the
+contract storage and its particular settings for `sender` and `receiver` policies.
 *)
 
-#include "../lib/fa2_hook_lib.mligo"
-#include "../lib/fa2_behaviors.mligo"
+#include "../lib/fa2_transfer_hook_lib.mligo"
+#include "../lib/fa2_owner_hooks_lib.mligo"
 
 type storage = {
   fa2_registry : fa2_registry;
@@ -21,8 +22,8 @@ type  entry_points =
   | Tokens_transferred_hook pm ->
     let p = transfer_descriptor_param_from_michelson pm in
     let u = validate_hook_call (p.fa2, s.fa2_registry) in
-    let ops = standard_transfer_hook (
-      {ligo_param = p; michelson_param = pm}, s.descriptor) in
+    let ops = owners_transfer_hook
+      ({ligo_param = p; michelson_param = pm}, s.descriptor) in
     ops, s
 
   | Register_with_fa2 fa2 ->
