@@ -17,11 +17,9 @@ created: 2020-01-24
     * [`transfer`](#transfer)
       * [Default `transfer` permission policy](#default-transfer-permission-policy)
     * [`balance_of`](#balance_of)
-    * [`total_supply`](#total_supply)
     * [`token_metadata`](#token_metadata)
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
-      * [`is_operator`](#is_operator)
   * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [Core Transfer Behavior](#core-transfer-behavior)
@@ -116,10 +114,8 @@ entry points.
 
 * [`| Transfer of transfer list`](#transfer)
 * [`| Balance_of of balance_of_param`](#balance_of)
-* [`| Total_supply of total_supply_param`](#total_supply)
 * [`| Token_metadata of token_metadata_param`](#token_metadata)
 * [`| Update_operators of update_operator list`](#update_operators)
-* [`| Is_operator of is_operator_param`](#is_operator)
 
 The full definition of the FA2 entry points and related types can be found in
 [fa2_interface.mligo](./fa2_interface.mligo).
@@ -302,58 +298,6 @@ not hold any tokens, the account balance is interpreted as zero.
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
-#### `total_supply`
-
-LIGO definition:
-
-```ocaml
-type token_id = nat
-
-type total_supply_response = {
-  token_id : token_id;
-  total_supply : nat;
-}
-
-type total_supply_param = {
-  token_ids : token_id list;
-  callback : (total_supply_response_michelson list) contract;
-}
-
-| Total_supply of total_supply_param_michelson
-```
-
-where
-
-```ocaml
-type total_supply_response_michelson = total_supply_response michelson_pair_right_comb
-
-type total_supply_param_michelson = total_supply_param michelson_pair_right_comb
-```
-
-Michelson definition:
-
-```
-(pair %total_supply
-  (list %token_ids nat)
-  (contract %callback
-    (list
-      (pair
-        (nat %token_id)
-        (nat %total_supply)
-      )
-    )
-  )
-)
-```
-
-Get the total supply for multiple token types. Accepts a list of
-`token_id`s and a callback contract `callback`, which accepts a list
-of `total_supply_response` records. There may be duplicate `token_id`'s in the
-request, in which case they should not be deduplicated nor reordered.
-
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
-
 #### `token_metadata`
 
 LIGO definition:
@@ -508,71 +452,6 @@ the token owner. Depending on the business use case, the particular implementati
 of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
 
-##### `is_operator`
-
-LIGO definition:
-
-```ocaml
-type operator_param = {
-  owner : address;
-  operator : address;
-}
-
-type is_operator_response = {
-  operator : operator_param;
-  is_operator : bool;
-}
-
-type is_operator_param = {
-  operator : operator_param;
-  callback : (is_operator_response_michelson) contract;
-}
-
-| Is_operator of is_operator_param_michelson
-```
-
-where
-
-```ocaml
-type operator_param_michelson = operator_param michelson_pair_right_comb
-
-type is_operator_response_aux = {
-  operator : operator_param_michelson;
-  is_operator : bool;
-}
-
-type is_operator_response_michelson = is_operator_response_aux michelson_pair_right_comb
-
-type is_operator_param_aux = {
-  operator : operator_param_michelson;
-  callback : (is_operator_response_michelson) contract;
-}
-
-type is_operator_param_michelson = is_operator_param_aux michelson_pair_right_comb
-```
-
-Michelson definition:
-
-```
-(pair %is_operator
-  (pair %operator
-    (address %owner)
-    (address %operator)
-  )
-  (contract %callback
-    (pair
-      (pair %operator
-        (address %owner)
-        (address %operator)
-      )
-      (bool %is_operator)
-    )
-  )
-)
-```
-
-Inspect if an address is an operator for the specified owner.
-
 ### FA2 Permission Policies and Configuration
 
 Most token standards specify logic such as who can initiate a transfer, the amount
@@ -641,10 +520,9 @@ independently, when an FA2 contract is implemented:
 transferred by the token owner or an operator (some address that is authorized to
 transfer tokens on behalf of the token owner). A special case is when neither owner
 nor operator can transfer tokens (can be used for non-transferable tokens). The
-FA2 standard defines two entry points to manage and inspect operators associated
-with the token owner address ([`update_operators`](#update_operators),
-[`is_operator`](#is_operator)). Once an operator is added, it can manage all of
-its associated owner's tokens.
+FA2 standard defines the entry point to manage operators associated with the token
+owner address ([`update_operators`](#update_operators). Once an operator is added,
+it can manage all of its associated owner's tokens.
 * `owner_hook_policy` - defines if sender/receiver hooks should be called or
 not. Each token owner contract MAY implement either an `fa2_token_sender` or
 `fa2_token_receiver` hook interface. Those hooks MAY be called when a transfer sends
@@ -913,11 +791,11 @@ an optional custom permissions policy. If such custom a policy is implemented,
 the FA2 contract SHOULD expose it using permissions descriptor `custom` field by
 giving it a `tag` that would be available to other parties which are aware of such
 custom extension. Some some custom permission MAY require a config API
-(like [`update_operators`](#update_operators), [`is_operator`](#is_operator) entry
-point of the FA2 to configure `operator_transfer_policy`). Config entry points may
-be implemented either within the FA2 token contract itself (then the returned address
-SHALL be `SELF`), or in a separate contract (see recommended implementation pattern
-using [transfer hook](./implementing-fa2.md#transfer-hook)).
+(like [`update_operators`](#update_operators) entry point of the FA2 to configure
+`operator_transfer_policy`). Config entry points may be implemented either within
+the FA2 token contract itself (then the returned address SHALL be `SELF`), or in
+a separate contract (see recommended implementation pattern using
+[transfer hook](./implementing-fa2.md#transfer-hook)).
 
 ##### Permission Policy Formulae
 
