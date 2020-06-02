@@ -180,7 +180,8 @@ Michelson definition:
 
 Each transfer in the batch is specified between one source (`from_`) address and
 a list of destination addresses (`to_`). Each `transfer_destination` specifies
-token type and the amount to be transferred from the source address.
+token type and the amount to be transferred from the source address to the destination
+address.
 
 Transfers MUST happen atomically and in order; if at least one specified transfer
 cannot be completed, the whole transaction MUST fail.
@@ -191,7 +192,7 @@ amount(s) sent. If the holder does not hold any tokens of type `token_id`, the
 holder's balance is interpreted as zero.
 
 A transfer operation MUST update token owners' balances exactly as the parameters
-of the operation specify it. Transfer operations MUST NOT try to adjust transfer
+of the operation specifying it. Transfer operations MUST NOT try to adjust transfer
 amounts or try to add/remove additional transfers like transaction fees.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
@@ -204,8 +205,7 @@ FA2 does NOT specify an interface for mint and burn operations; however, if an
 FA2 token contract implements mint and burn operations, it SHOULD, when possible,
 enforce the same rules and logic applied to the token transfer operation. Mint
 and burn can be considered special cases of the transfer. Although, it is possible
-that mint and burn have more or less restrictive rules than regular transfer.
-
+that mint and burn have more or less restrictive rules than the regular transfer.
 For instance, mint and burn operations may be initiated by a special privileged
 administrative address only. In this case, regular operator restrictions may not
 be applicable.
