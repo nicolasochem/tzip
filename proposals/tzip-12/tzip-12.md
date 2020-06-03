@@ -17,9 +17,9 @@ created: 2020-01-24
     * [`transfer`](#transfer)
       * [Default `transfer` permission policy](#default-transfer-permission-policy)
     * [`balance_of`](#balance_of)
-    * [`token_metadata`](#token_metadata)
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
+    * [`token_metadata`](#token_metadata)
   * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [Core Transfer Behavior](#core-transfer-behavior)
@@ -114,8 +114,8 @@ entry points.
 
 * [`| Transfer of transfer list`](#transfer)
 * [`| Balance_of of balance_of_param`](#balance_of)
-* [`| Token_metadata of token_metadata_param`](#token_metadata)
 * [`| Update_operators of update_operator list`](#update_operators)
+* [`| Token_metadata of token_metadata_param`](#token_metadata)
 
 The full definition of the FA2 entry points and related types can be found in
 [fa2_interface.mligo](./fa2_interface.mligo).
@@ -298,83 +298,6 @@ not hold any tokens, the account balance is interpreted as zero.
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
 
-#### `token_metadata`
-
-LIGO definition:
-
-```ocaml
-type token_id = nat
-
-type token_metadata = {
-  token_id : token_id;
-  symbol : string;
-  name : string;
-  decimals : nat;
-  extras : (string, string) map;
-}
-
-type token_metadata_param = {
-  token_ids : token_id list;
-  callback : (token_metadata_michelson list) contract;
-}
-
-| Token_metadata of token_metadata_param_michelson
-```
-
-where
-
-```ocaml
-type token_metadata_michelson = token_metadata michelson_pair_right_comb
-
-type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
-```
-
-Michelson definition:
-
-```
-(pair %token_metadata
-  (list %token_ids nat)
-  (contract %callback
-    (list
-      (pair
-        (nat %token_id)
-        (pair
-          (string %symbol)
-          (pair
-            (string %name)
-            (pair
-              (nat %decimals)
-              (map %extras string string)
-      ))))
-    )
-  )
-)
-```
-
-Get the metadata for multiple token types. Accepts a list of `token_id`s and a
-callback contract `callback`, which accepts a list of `token_metadata` records.
-As with `balance_of`, the input `token_id`'s should not be deduplicated nor
-reordered.
-
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
-
-FA2 token amounts are represented by natural numbers (`nat`), and their
-**granularity** (the smallest amount of tokens which may be minted, burned, or
-transferred) is always 1.
-
-`decimals` is the number of digits to use after the decimal point when displaying
-the token amounts. If 0, the asset is not divisible. Decimals are used for display
-purposes only and MUST NOT affect transfer operation.
-
-Examples
-
-| Decimals | Amount  | Display  |
-| -------- | ------- | -------- |
-| 0n       | 123     | 123      |
-| 1n       | 123     | 12.3     |
-| 3n       | 123000  | 123      |
-
 #### Operators
 
 **Operator** is a Tezos address that initiates token transfer operation on behalf
@@ -451,6 +374,83 @@ The standard does not specify who is permitted to update operators on behalf of
 the token owner. Depending on the business use case, the particular implementation
 of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
+
+#### `token_metadata`
+
+LIGO definition:
+
+```ocaml
+type token_id = nat
+
+type token_metadata = {
+  token_id : token_id;
+  symbol : string;
+  name : string;
+  decimals : nat;
+  extras : (string, string) map;
+}
+
+type token_metadata_param = {
+  token_ids : token_id list;
+  callback : (token_metadata_michelson list) contract;
+}
+
+| Token_metadata of token_metadata_param_michelson
+```
+
+where
+
+```ocaml
+type token_metadata_michelson = token_metadata michelson_pair_right_comb
+
+type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
+```
+
+Michelson definition:
+
+```
+(pair %token_metadata
+  (list %token_ids nat)
+  (contract %callback
+    (list
+      (pair
+        (nat %token_id)
+        (pair
+          (string %symbol)
+          (pair
+            (string %name)
+            (pair
+              (nat %decimals)
+              (map %extras string string)
+      ))))
+    )
+  )
+)
+```
+
+Get the metadata for multiple token types. Accepts a list of `token_id`s and a
+callback contract `callback`, which accepts a list of `token_metadata` records.
+As with `balance_of`, the input `token_id`'s should not be deduplicated nor
+reordered.
+
+If one of the specified `token_id`s is not defined within the FA2 contract, the
+entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+
+FA2 token amounts are represented by natural numbers (`nat`), and their
+**granularity** (the smallest amount of tokens which may be minted, burned, or
+transferred) is always 1.
+
+`decimals` is the number of digits to use after the decimal point when displaying
+the token amounts. If 0, the asset is not divisible. Decimals are used for display
+purposes only and MUST NOT affect transfer operation.
+
+Examples
+
+| Decimals | Amount  | Display  |
+| -------- | ------- | -------- |
+| 0n       | 123     | 123      |
+| 1n       | 123     | 12.3     |
+| 3n       | 123000  | 123      |
 
 ### FA2 Permission Policies and Configuration
 
