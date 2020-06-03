@@ -15,7 +15,7 @@ created: 2020-01-24
 * [Interface Specification](#interface-specification)
   * [Entry Point Semantics](#entry-point-semantics)
     * [`transfer`](#transfer)
-      * [Default `transfer` permission policy](#default-transfer-permission-policy)
+      * [Default `transfer` Permission Policy](#default-transfer-permission-policy)
     * [`balance_of`](#balance_of)
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
@@ -30,13 +30,13 @@ created: 2020-01-24
       * [`permissions_descriptor`](#permissions_descriptor)
       * [Permission Policy Formulae](#permission-policy-formulae)
   * [Error Handling](#error-handling)
-* [Implementing different token types with FA2](#implementing-different-token-types-with-fa2)
-  * [Single fungible token](#single-fungible-token)
-  * [Multiple fungible tokens](#multiple-fungible-tokens)
-  * [Non-fungible tokens](#non-fungible-tokens)
-  * [Mixing fungible and non-fungible tokens](#mixing-fungible-and-non-fungible-tokens)
-  * [Non-transferable tokens](#non-transferable-tokens)
-* [Future directions](#future-directions)
+* [Implementing Different Token Types with FA2](#implementing-different-token-types-with-fa2)
+  * [Single Fungible Token](#single-fungible-token)
+  * [Multiple Fungible Tokens](#multiple-fungible-tokens)
+  * [Non-fungible Tokens](#non-fungible-tokens)
+  * [Mixing Fungible and Non-fungible Tokens](#mixing-fungible-and-non-fungible-tokens)
+  * [Non-transferable Tokens](#non-transferable-tokens)
+* [Future Directions](#future-directions)
 * [Copyright](#copyright)
 
 ## Summary
@@ -206,7 +206,7 @@ For instance, mint and burn operations may be initiated by a special privileged
 administrative address only. In this case, regular operator restrictions may not
 be applicable.
 
-##### Default `transfer` permission policy
+##### Default `transfer` Permission Policy
 
 Token owner address MUST be able to initiate a transfer of its own tokens (e. g.
 `SENDER` equals to `from_` parameter in the `transfer`).
@@ -658,7 +658,7 @@ owner's account. One of the possible solutions could be the implementation of a
 special administrative version of the mint and burn operations that bypasses owner's
 hooks otherwise required by the FA2 contract permissions policy.
 
-##### Customizing permission policy
+##### Customizing Permission Policy
 
 The FA2 standard defines a special OPTIONAL metadata entry point
 ([`permissions_descriptor`](#permissions_descriptor)) that returns a
@@ -883,13 +883,13 @@ Standard error mnemonics:
 If more than one error conditions are met, the entry point MAY fail with any applicable
 error.
 
-## Implementing different token types with FA2
+## Implementing Different Token Types With FA2
 
 The FA2 interface is designed to support a wide range of token types and implementations.
 This section gives examples of how different types of the FA2 contracts MAY be
 implemented and what are the expected properties of such an implementation.
 
-### Single fungible token
+### Single Fungible Token
 
 An FA2 contract represents a single token similar to ERC-20 or FA1.2 standards.
 
@@ -901,7 +901,7 @@ An FA2 contract represents a single token similar to ERC-20 or FA1.2 standards.
 | total supply     | natural number |
 | decimals         | custom |
 
-### Multiple fungible tokens
+### Multiple Fungible Tokens
 
 An FA2 contract may represent multiple tokens similar to ERC-1155 standard.
 The implementation can have a fixed predefined set of supported tokens or tokens
@@ -915,7 +915,7 @@ can be created dynamically.
 | total supply     | natural number |
 | decimals         | custom, per each `token_id` |
 
-### Non-fungible tokens
+### Non-fungible Tokens
 
 An FA2 contract may represent non-fungible tokens (NFT) similar to ERC-721 standard.
 For each individual non-fungible token the implementation assigns a unique `token_id`.
@@ -935,7 +935,7 @@ metadata.
 For any valid `token_id` only one account CAN hold the balance of one token (`1n`).
 The rest of the accounts MUST hold zero balance (`0n`) for that `token_id`.
 
-### Mixing fungible and non-fungible tokens
+### Mixing Fungible and Non-fungible Tokens
 
 An FA2 contract MAY mix multiple fungible and non-fungible tokens within the same
 contract similar to ERC-1155. The implementation MAY chose to select individual
@@ -950,7 +950,7 @@ number ranges to represent `token_id`s for NFTs.
 | total supply     | `0n` or `1n` for NFT and natural number for fungible tokens |
 | decimals         | custom |
 
-### Non-transferable tokens
+### Non-transferable Tokens
 
 Either fungible and non-fungible tokens can be non-transferable. Non-transferable
 tokens can be represented by the FA2 contract which [operator transfer behavior](#operator-transfer-behavior)
@@ -958,7 +958,7 @@ is defined as `No_transfer`. Tokens cannot be transferred neither by the token o
 nor by any operator. Only privileged operations like mint and burn can assign tokens
 to owner accounts.
 
-## Future directions
+## Future Directions
 
 Future amendments to Tezos are likely to enable new functionality by which this
 standard can be upgraded. Namely, [read-only
