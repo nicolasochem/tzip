@@ -31,12 +31,12 @@ created: 2020-01-24
       * [Permission Policy Formulae](#permission-policy-formulae)
   * [Error Handling](#error-handling)
 * [Implementing different token types with FA2](#implementing-different-token-types-with-fa2)
-* [Future directions](#future-directions)
   * [Single fungible token](#single-fungible-token)
   * [Multiple fungible tokens](#multiple-fungible-tokens)
   * [Non-fungible tokens](#non-fungible-tokens)
   * [Mixing fungible and non-fungible tokens](#mixing-fungible-and-non-fungible-tokens)
   * [Non-transferable tokens](#non-transferable-tokens)
+* [Future directions](#future-directions)
 * [Copyright](#copyright)
 
 ## Summary
