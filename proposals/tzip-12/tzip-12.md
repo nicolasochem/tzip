@@ -573,6 +573,15 @@ MUST fail with the one of the following error mnemonics:
 | `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
 | `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
 
+`transfer_descriptor` type defined below can represent regular transfer, mint and
+burn operations.
+
+| operation | `from_` | `to_` |
+| :-------- | :------ | :----- |
+| transfer | MUST be `Some sender_address` | MUST be `Some receiver_address` |
+| mint | MUST be `None` | MUST be `Some receiver_address` |
+| burn | MUST be `Some burner_address` | MUST be `None` |
+
 A special consideration is required if FA2 implementation supports sender and/or
 receiver hooks. It is possible that one of the token owner hooks will fail because
 of the hook implementation defects or other circumstances out of control of the
