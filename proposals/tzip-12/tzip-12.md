@@ -790,7 +790,7 @@ In addition to the standard permission behaviors, the FA2 contract MAY also impl
 an optional custom permissions policy. If such custom a policy is implemented,
 the FA2 contract SHOULD expose it using permissions descriptor `custom` field by
 giving it a `tag` that would be available to other parties which are aware of such
-custom extension. Some some custom permission MAY require a config API
+custom extension. Some custom permission MAY require a config API
 (like [`update_operators`](#update_operators) entry point of the FA2 to configure
 `operator_transfer_policy`). Config entry points may be implemented either within
 the FA2 token contract itself (then the returned address SHALL be `SELF`), or in
