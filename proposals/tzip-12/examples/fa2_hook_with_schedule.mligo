@@ -109,7 +109,7 @@ type  entry_points =
   match param with
   | Tokens_transferred_hook pm ->
     let p = transfer_descriptor_param_from_michelson pm in
-    let u1 = validate_hook_call (p.fa2, s.fa2_registry) in
+    let u1 = validate_hook_call (Tezos.sender, s.fa2_registry) in
     let u2 = validate_schedule(s.policy.schedule_policy) in
     let ops = owners_transfer_hook
       ({ligo_param = p; michelson_param = pm}, s.policy.descriptor) in

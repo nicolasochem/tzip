@@ -594,7 +594,6 @@ type transfer_descriptor = {
 }
 
 type transfer_descriptor_param = {
-  fa2 : address;
   batch : transfer_descriptor list;
   operator : address;
 }
@@ -620,12 +619,33 @@ type transfer_descriptor_aux = {
 type transfer_descriptor_michelson = transfer_descriptor_aux michelson_pair_right_comb
 
 type transfer_descriptor_param_aux = {
-  fa2 : address;
   batch : transfer_descriptor_michelson list;
   operator : address;
 }
 
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
+```
+
+Michelson definition:
+
+```
+(pair
+  (list %batch
+    (pair
+      (option %from_ address)
+      (list %txs
+        (pair
+          (option %to_ address)
+          (pair
+            (nat %token_id)
+            (nat %amount)
+          )
+        )
+      )
+    )
+  )
+  (address %operator)
+)
 ```
 
 ##### Permission Policy Formulae

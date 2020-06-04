@@ -77,7 +77,7 @@ type  entry_points =
     : (operation list) * storage =
   match param with
   | Tokens_transferred_hook p ->
-    let u = validate_hook_call (p.fa2, s.fa2_registry) in
+    let u = validate_hook_call (Tezos.sender, s.fa2_registry) in
     let ops = custom_transfer_hook (p, s) in
     ops, s
 
