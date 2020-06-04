@@ -100,7 +100,7 @@ Unlike many other standards, FA2 allows to customize the default permission poli
 using a set of predefined permission policies that are optional.
 
 This specification defines the set of [standard errors](#error-handling) and error
-mnemonics to be used when implementing FA2. However, some implementation MAY
+mnemonics to be used when implementing FA2. However, some implementations MAY
 introduce their custom errors that MUST follow the same pattern as standard ones.
 
 ## Interface Specification
@@ -859,13 +859,6 @@ to map the error code mnemonic to a user-readable, localized message. A particul
 implementation of the FA2 contract MAY extend the standard set of errors with custom
 mnemonics for additional constraints.
 
-When error occurs, any FA2 contract entry point MUST fail with one of the following
-types:
-
-1. `string` value which represents an error code mnemonic.
-2. a Michelson `pair`, where the first element is a `string` representing error code
-mnemonic and the second element is a custom error data.
-
 Standard error mnemonics:
 
 | Error mnemonic | Description |
@@ -882,6 +875,16 @@ Standard error mnemonics:
 
 If more than one error conditions are met, the entry point MAY fail with any applicable
 error.
+
+When error occurs, any FA2 contract entry point MUST fail with one of the following
+types:
+
+1. `string` value which represents an error code mnemonic.
+2. a Michelson `pair`, where the first element is a `string` representing error code
+mnemonic and the second element is a custom error data.
+
+Some FA2 implementations MAY introduce their custom errors that MUST follow the
+same pattern as standard ones.
 
 ## Implementing Different Token Types With FA2
 
