@@ -76,6 +76,12 @@ invoke a transfer hook as well.
 | :---- | :--- |
 | Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
 
+Note that using the transfer hook design pattern with sender/receiver hooks may
+potentially be insecure. Sender and/or receiver contract hooks will be called
+from the transfer hook contract (not the facade FA2 token contract). If sender/receiver
+contracts rely on `SENDER` value for authorization, they must guarantee that the
+call is initiated on behalf of the FA2 contract.
+
 ### `set_transfer_hook`
 
 FA2 entry point with the following signature.
