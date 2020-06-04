@@ -24,8 +24,8 @@ created: 2020-01-24
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [Core Transfer Behavior](#core-transfer-behavior)
       * [Behavior Patterns](#behavior-patterns)
-        * [`Operator` Transfer Behavior](#operator-transfer-behavior)
-        * [`Token Owner Hook` Permission Behavior](#token-owner-hook-permission-behavior)
+        * [Operator Transfer Behavior](#operator-transfer-behavior)
+        * [Token Owner Hook Permission Behavior](#token-owner-hook-permission-behavior)
       * [Customizing permission policy](#customizing-permission-policy)
       * [`permissions_descriptor`](#permissions_descriptor)
       * [Permission Policy Formulae](#permission-policy-formulae)
@@ -564,22 +564,11 @@ operation MUST fail with the error mnemonic `"NOT_OPERATOR"`.
 Each transfer operation defines both a set of token owners that send tokens
 (senders) and a set of token owners that receive tokens (receivers). Token owner
 contracts MAY implement either an `fa2_token_sender` or `fa2_token_receiver` hook
-interface. Permission behavior MAY call sender and/or receiver hooks which can
-approve the transaction or reject it by failing. If such a hook is invoked and
-failed, the whole transfer operation MUST fail. Token owner permission may be
-configured to behave in one of the following ways:
+interface. Sender and/or receiver hooks can approve the transaction or reject it
+by failing. If such a hook is invoked and failed, the whole transfer operation MUST
+fail.
 
-* Ignore the owner hook interface.
-
-* Treat the owner hook interface as optional. If a token owner contract
-  implements a corresponding hook interface, it gets invoked. If the hook interface
-  is not implemented, it gets ignored.
-
-* Treat the owner hook interface as required. If a token owner contract
-  implements a corresponding hook interface, it gets invoked. If the hook interface
-  is not implemented, the entire transfer transaction gets rejected.
-
-Token owner behavior is defined as follows:
+Token owner permission can be configured to behave in one of the following ways:
 
 ```ocaml
 type owner_hook_policy =
@@ -588,10 +577,39 @@ type owner_hook_policy =
   | Required_owner_hook
 ```
 
+* **Owner_no_hook** - ignore the owner hook interface.
+
+* **Optional_owner_hook** - treat the owner hook interface as optional. If a token
+owner contract implements a corresponding hook interface, it MUST be invoked. If
+the hook interface is not implemented, it gets ignored.
+
+* **Required_owner_hook** - treat the owner hook interface as required. If a token
+owner contract implements a corresponding hook interface, it MUST be invoked. If
+the hook interface is not implemented, the entire transfer transaction MUST fail.
+
 This policy can be applied to both token senders and token receivers. There are
 two owner hook interfaces, `fa2_token_receiver` and `fa2_token_sender`, that need
 to be implemented by token owner contracts to expose the owner's hooks to FA2 token
 contract.
+
+If a transfer failed because of the token owner permission behavior, the operation
+MUST fail with the one of the following error mnemonics:
+
+| Error Mnemonic | Description |
+| :------------- | :---------- |
+| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
+
+A special consideration is required if FA2 implementation supports sender and/or
+receiver hooks. It is possible that one of the token owner hooks will fail because
+of the hook implementation defects or other circumstances out of control of the
+FA2 contract. This situation may cause tokens to be permanently locked on the token
+owner's account. One of the possible solutions could be the implementation of a
+special administrative version of the mint and burn operations that bypasses owner's
+hooks otherwise required by the FA2 contract permissions policy.
+
 
 ```ocaml
 type transfer_destination_descriptor = {
@@ -639,24 +657,6 @@ type transfer_descriptor_param_aux = {
 
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
 ```
-
-If a transfer failed because of the token owner permission behavior, the operation
-MUST fail with the one of the following error mnemonics:
-
-| Error Mnemonic | Description |
-| :------------- | :---------- |
-| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
-
-A special consideration is required if FA2 implementation supports sender and/or
-receiver hooks. It is possible that one of the token owner hooks will fail because
-of the hook implementation defects or other circumstances out of control of the
-FA2 contract. This situation may cause tokens to be permanently locked on the token
-owner's account. One of the possible solutions could be the implementation of a
-special administrative version of the mint and burn operations that bypasses owner's
-hooks otherwise required by the FA2 contract permissions policy.
 
 ##### Customizing Permission Policy
 
