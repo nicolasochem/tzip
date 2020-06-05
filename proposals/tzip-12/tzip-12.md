@@ -527,7 +527,8 @@ type operator_transfer_policy =
   operator is added, it can manage all of its associated owner's tokens.
 
 If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
-[`update_operators`](#update_operators) entry point MUST fail if invoked.
+[`update_operators`](#update_operators) entry point MUST fail if invoked with the
+error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 
 ###### `Token Owner Hook` Permission Behavior
 
@@ -837,6 +838,7 @@ Standard error mnemonics:
 | `"FA2_TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
 | `"FA2_NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
 | `"FA2_NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
+| `"FA2_OPERATORS_UNSUPPORTED"` | `update_operators` entry point is invoked and `operator_transfer_policy` is `No_transfer` or `Owner_transfer` |
 | `"FA2_RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
 | `"FA2_SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
 | `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
