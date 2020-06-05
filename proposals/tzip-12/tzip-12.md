@@ -117,7 +117,7 @@ entry points.
 * [`| Update_operators of update_operator list`](#update_operators)
 * [`| Token_metadata of token_metadata_param`](#token_metadata)
 
-The full definition of the FA2 entry points and related types can be found in
+The full definition of the FA2 entry points in LIGO and related types can be found in
 [fa2_interface.mligo](./fa2_interface.mligo).
 
 ### Entry Point Semantics
