@@ -189,8 +189,7 @@ be applicable.
 
 ##### Core `transfer` Behavior
 
-FA2 token contracts MUST always implement this behavior. The rest of permission
-behaviors are OPTIONAL.
+FA2 token contracts MUST always implement this behavior.
 
 * Every transfer operation MUST happen atomically and in order. If at least one
   transfer in the batch cannot be completed, the whole transaction MUST fail, all
