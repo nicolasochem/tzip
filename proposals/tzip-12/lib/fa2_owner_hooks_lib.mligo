@@ -80,7 +80,7 @@ let to_receiver_hook : to_hook = fun (a : address) ->
     Operation.get_entrypoint_opt "%tokens_received" a in
     match c with
     | Some c -> Hook_contract c
-    | None -> Hook_undefined receiver_hook_undefined
+    | None -> Hook_undefined fa2_receiver_hook_undefined
 
 (**
 Create a list iof Tezos operations invoking all token receiver contracts that
@@ -102,7 +102,7 @@ let to_sender_hook : to_hook = fun (a : address) ->
     Operation.get_entrypoint_opt "%tokens_sent" a in
     match c with
     | Some c -> Hook_contract c
-    | None -> Hook_undefined sender_hook_undefined
+    | None -> Hook_undefined fa2_sender_hook_undefined
 
 (**
 Create a list iof Tezos operations invoking all token sender contracts that

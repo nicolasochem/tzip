@@ -200,7 +200,7 @@ FA2 token contracts MUST always implement this behavior.
   (`to_`) address by the amount of the transfer.
   
 * If the transfer amount exceeds, current token balance of the source address,
-  the whole transfer operation MUST fail with the error mnemonic `"INSUFFICIENT_BALANCE"`.
+  the whole transfer operation MUST fail with the error mnemonic `"FA2_INSUFFICIENT_BALANCE"`.
 
 * If the holder does not hold any tokens of type `token_id`, the holder's balance
   is interpreted as zero. No token holder can have a negative balance.
@@ -210,7 +210,7 @@ FA2 token contracts MUST always implement this behavior.
   amounts or try to add/remove additional transfers like transaction fees.
 
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
-  entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+  entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 * Transfer implementations MUST apply permission policy logic. If permission logic
   rejects a transfer, the whole operation MUST fail.
@@ -231,7 +231,7 @@ a transfer transaction (see [`update_operators`](#update_operators)).
 
 If the address that initiates a transfer operation is neither a token owner nor
 one of the permitted operators, the transaction MUST fail with the error mnemonic
-`"NOT_OPERATOR"`. If at least one of the `transfer`s in the batch is not permitted,
+`"FA2_NOT_OPERATOR"`. If at least one of the `transfer`s in the batch is not permitted,
 the whole transaction MUST fail.
 
 #### `balance_of`
@@ -310,7 +310,7 @@ in which case they should not be deduplicated nor reordered. If the account does
 not hold any tokens, the account balance is interpreted as zero.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 #### Operators
 
@@ -448,7 +448,7 @@ As with `balance_of`, the input `token_id`'s should not be deduplicated nor
 reordered.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"TOKEN_UNDEFINED"`.
+entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 FA2 token amounts are represented by natural numbers (`nat`), and their
 **granularity** (the smallest amount of tokens which may be minted, burned, or
@@ -513,15 +513,15 @@ type operator_transfer_policy =
 * `No_transfer` - neither owner nor operator can transfer tokens. This permission
   mode can be used for non-transferable tokens or for the FA2 implementation when
   a transfer can be initiated only by some privileged and/or administrative account.
-  The transfer operation MUST fail with the error mnemonic `"TX_DENIED"`.
+  The transfer operation MUST fail with the error mnemonic `"FA2_TX_DENIED"`.
 
 * `Owner_transfer` - If `SENDER` is not the token owner, the transfer operation
-  MUST fail with the error mnemonic `"NOT_OWNER"`.
+  MUST fail with the error mnemonic `"FA2_NOT_OWNER"`.
 
 * `Owner_or_operator_transfer` - allows transfer for the token owner or an operator
   permitted to manage tokens on behalf of the owner. If `SENDER` is not the token
   owner and not an operator permitted to manage tokens on behalf of the owner,
-  the transfer operation MUST fail with the error mnemonic `"NOT_OPERATOR"`.
+  the transfer operation MUST fail with the error mnemonic `"FA2_NOT_OPERATOR"`.
   The FA2 standard defines the entry point to manage operators associated with
   the token owner address ([`update_operators`](#update_operators)). Once an
   operator is added, it can manage all of its associated owner's tokens.
@@ -567,10 +567,10 @@ MUST fail with the one of the following error mnemonics:
 
 | Error Mnemonic | Description |
 | :------------- | :---------- |
-| `"RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
+| `"FA2_RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"FA2_SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
+| `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"FA2_SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
 
 `transfer_descriptor` type defined below can represent regular transfer, mint and
 burn operations.
@@ -832,15 +832,15 @@ Standard error mnemonics:
 
 | Error mnemonic | Description |
 | :------------- | :---------- |
-| `"TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
-| `"INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
-| `"TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
-| `"NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
-| `"NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
-| `"RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
-| `"SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
-| `"RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
+| `"FA2_TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
+| `"FA2_INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
+| `"FA2_TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
+| `"FA2_NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
+| `"FA2_NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
+| `"FA2_RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
+| `"FA2_SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
+| `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
+| `"FA2_SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
 
 If more than one error conditions are met, the entry point MAY fail with any applicable
 error.
