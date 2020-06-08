@@ -86,5 +86,3 @@ let validate_operator (tx_policy, txs, ops_storage
   List.iter (fun (tx : transfer) -> validator (tx.from_, ops_storage)) txs
 
 #endif
-
-let test (u : unit) = unit
