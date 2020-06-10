@@ -20,7 +20,10 @@ created: 2020-01-24
     * [`balance_of`](#balance_of)
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
-    * [`token_metadata`](#token_metadata)
+    * [Token Metadata](#token-metadata)
+      * [`token_metadata_registry`](#token_metadata_registry)
+      * [`token_metadata` `big_map`](#token_metadata-big_map)
+      * [`token_metadata` Entry Point](#token_metadata-entry-point)
   * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [`permissions_descriptor`](#permissions_descriptor)
@@ -384,9 +387,9 @@ the token owner. Depending on the business use case, the particular implementati
 of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
 
-#### `token_metadata`
+#### Token Metadata
 
-LIGO definition:
+Each FA2 `token_id` has associated metadata of the following type:
 
 ```ocaml
 type token_id = nat
@@ -398,7 +401,114 @@ type token_metadata = {
   decimals : nat;
   extras : (string, string) map;
 }
+```
 
+Michelson definition:
+
+```
+(pair
+  (nat %token_id)
+  (pair
+    (string %symbol)
+    (pair
+      (string %name)
+      (pair
+        (nat %decimals)
+        (map %extras string string)
+))))
+```
+
+FA2 token amounts are represented by natural numbers (`nat`), and their
+**granularity** (the smallest amount of tokens which may be minted, burned, or
+transferred) is always 1.
+
+`decimals` is the number of digits to use after the decimal point when displaying
+the token amounts. If 0, the asset is not divisible. Decimals are used for display
+purposes only and MUST NOT affect transfer operation.
+
+Examples
+
+| Decimals | Amount  | Display  |
+| -------- | ------- | -------- |
+| 0n       | 123     | 123      |
+| 1n       | 123     | 12.3     |
+| 3n       | 123000  | 123      |
+
+Mostly token metadata is used off-chain. The FA2 standard optimizes token metadata
+access for off-chain use and gas consumption. This part of the specification will
+be updated once Tezos metadata standard is finalized.
+
+* The FA2 contract MUST implement `token_metadata_registry` view entry point that
+  returns an address of the contract holding tokens metadata. Token metadata can
+  be held either by the FA2 token contract itself (then `token_metadata_registry`
+  returns `SELF` address) or by a separate token registry contract.
+
+* Token registry contract MUST implement one of two ways to expose token metadata
+  for off-chain clients:
+  
+  * Contract storage MUST have a `big_map` that maps `token_id -> token_metadata`
+    and annotated `%token_metadata`
+
+  * Contract MUST implement entry point `token_metadata`
+
+##### `token_metadata_registry`
+
+LIGO definition:
+
+```ocaml
+| Token_metadata_registry of address contract
+```
+
+Michelson definition:
+
+```
+(contract %token_metadata_registry address)
+```
+
+Return address of the contract that holds tokens metadata. If the FA2 contract
+holds its own tokens metadata, the entry point returns `SELF` address. The entry
+point parameter is some contract entry point to be called with the address of the
+token metadata registry.
+
+##### `token_metadata` `big_map`
+
+LIGO definition:
+
+```ocaml
+type <contract_storage> = {
+  ...
+  token_metadata : (token_id, token_metadata) big_map;
+  ...
+}
+```
+
+Michelson definition:
+
+```
+(big_map %token_metadata
+  nat
+  (pair
+  (nat %token_id)
+  (pair
+    (string %symbol)
+    (pair
+      (string %name)
+      (pair
+        (nat %decimals)
+        (map %extras string string)
+  ))))
+)
+```
+
+The FA2 contract storage MUST have a `big_map` with a key type `token_id` and
+value type `token_metadata`. This `big_map` MUST be annotated as `%token_metadata`
+and can be at any position withing the storage.
+
+##### `token_metadata` Entry Point
+
+LIGO definition:
+
+```ocaml
 type token_metadata_param = {
   token_ids : token_id list;
   callback : (token_metadata_michelson list) contract;
@@ -445,21 +555,6 @@ reordered.
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
-FA2 token amounts are represented by natural numbers (`nat`), and their
-**granularity** (the smallest amount of tokens which may be minted, burned, or
-transferred) is always 1.
-
-`decimals` is the number of digits to use after the decimal point when displaying
-the token amounts. If 0, the asset is not divisible. Decimals are used for display
-purposes only and MUST NOT affect transfer operation.
-
-Examples
-
-| Decimals | Amount  | Display  |
-| -------- | ------- | -------- |
-| 0n       | 123     | 123      |
-| 1n       | 123     | 12.3     |
-| 3n       | 123000  | 123      |
 
 ### FA2 Permission Policies and Configuration
 
