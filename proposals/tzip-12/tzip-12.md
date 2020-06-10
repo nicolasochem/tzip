@@ -434,9 +434,8 @@ Examples
 | 1n       | 123     | 12.3     |
 | 3n       | 123000  | 123      |
 
-Mostly token metadata is used off-chain. The FA2 standard optimizes token metadata
-access for off-chain use and gas consumption. This part of the specification will
-be updated once Tezos metadata standard is finalized.
+Mostly token metadata is used off-chain. The FA2 standard optimizes for off-chain use of token metadata
+and minimal gas consumption. A related effort to create a separate metadata TZIP standard is also underway.
 
 * The FA2 contract MUST implement `token_metadata_registry` view entry point that
   returns an address of the contract holding tokens metadata. Token metadata can
@@ -502,7 +501,7 @@ Michelson definition:
 
 The FA2 contract storage MUST have a `big_map` with a key type `token_id` and
 value type `token_metadata`. This `big_map` MUST be annotated as `%token_metadata`
-and can be at any position withing the storage.
+and can be at any position within the storage.
 
 ##### `token_metadata` Entry Point
 
