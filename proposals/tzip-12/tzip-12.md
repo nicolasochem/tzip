@@ -113,7 +113,7 @@ entry points.
 * [`| Transfer of transfer list`](#transfer)
 * [`| Balance_of of balance_of_param`](#balance_of)
 * [`| Update_operators of update_operator list`](#update_operators)
-* [`| Token_metadata of token_metadata_param`](#token_metadata)
+* [`| Token_metadata_registry of address contract`](##token_metadata_registry)
 
 The full definition of the FA2 entry points in LIGO and related types can be found in
 [fa2_interface.mligo](./fa2_interface.mligo).
