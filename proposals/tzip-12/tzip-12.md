@@ -434,7 +434,7 @@ Examples
 | 1n       | 123     | 12.3     |
 | 3n       | 123000  | 123      |
 
-Token metadata is used off-chain in most well-known contexts (e.g. wallets, explorers, applications). As a result, FA2 optimizes for off-chain use of token metadata
+Token metadata is primarily useful in off-chain, user-facing contexts (e.g. wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use of token metadata
 and minimal gas consumption. A related effort to create a separate metadata TZIP standard is also underway.
 
 * The FA2 contract MUST implement `token_metadata_registry` view entry point that
