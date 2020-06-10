@@ -83,7 +83,7 @@ type token_metadata_michelson = token_metadata michelson_pair_right_comb
 
 type token_metadata_param = {
   token_ids : token_id list;
-  callback : (token_metadata_michelson list) contract;
+  handler : (token_metadata_michelson list) -> unit;
 }
 
 type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
@@ -181,3 +181,6 @@ type fa2_token_sender =
   | Tokens_sent of transfer_descriptor_param_michelson
 
 #endif
+
+let main (p, s : fa2_token_metadata * unit) =
+  ([] : operation list), unit

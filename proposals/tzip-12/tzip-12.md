@@ -510,7 +510,7 @@ LIGO definition:
 ```ocaml
 type token_metadata_param = {
   token_ids : token_id list;
-  callback : (token_metadata_michelson list) contract;
+  handler : (token_metadata_michelson list) -> unit;
 }
 
 | Token_metadata of token_metadata_param_michelson
@@ -529,31 +529,35 @@ Michelson definition:
 ```
 (pair %token_metadata
   (list %token_ids nat)
-  (contract %callback
-    (list
-      (pair
-        (nat %token_id)
+  (lambda %handler
+      (list
         (pair
-          (string %symbol)
+          (nat %token_id)
           (pair
-            (string %name)
+            (string %symbol)
             (pair
-              (nat %decimals)
-              (map %extras string string)
-      ))))
-    )
+              (string %name)
+              (pair
+                (nat %decimals)
+                (map %extras string string)
+        ))))
+      )
+      unit
   )
 )
 ```
 
 Get the metadata for multiple token types. Accepts a list of `token_id`s and a
-callback contract `callback`, which accepts a list of `token_metadata` records.
+a lambda `handler`, which accepts a list of `token_metadata` records. The `handler`
+lambda may assert certain assumptions about the metadata and/or fail with the
+obtained metadata implementing a view entry point pattern to extract tokens metadata
+off-chain.
+
 As with `balance_of`, the input `token_id`'s should not be deduplicated nor
 reordered.
 
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
-
 
 ### FA2 Permission Policies and Configuration
 
