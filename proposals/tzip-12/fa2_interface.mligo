@@ -181,6 +181,3 @@ type fa2_token_sender =
   | Tokens_sent of transfer_descriptor_param_michelson
 
 #endif
-
-let main (p, s : fa2_token_metadata * unit) =
-  ([] : operation list), unit
