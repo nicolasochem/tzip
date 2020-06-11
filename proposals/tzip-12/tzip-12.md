@@ -310,6 +310,13 @@ not hold any tokens, the account balance is interpreted as zero.
 If one of the specified `token_id`s is not defined within the FA2 contract, the
 entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
+*Notice:* The `balance_of` entry point implements a *continuation-passing style (CPS)
+view entry point* pattern that invokes the other callback contract with the requested
+data. This pattern, when not used carefully, could expose the callback contract
+to an inconsistent state and/or manipulatable outcome (see
+[view patterns](https://www.notion.so/Review-of-TZIP-12-95e4b631555d49429e2efdfe0f9ffdc0#6d68e18802734f059adf3f5ba8f32a74)).
+The `balance_of` entry point should be used on the chain with the extreme caution.
+
 #### Operators
 
 **Operator** is a Tezos address that initiates token transfer operation on behalf
