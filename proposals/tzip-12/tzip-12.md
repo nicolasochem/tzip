@@ -203,7 +203,7 @@ FA2 token contracts MUST always implement this behavior.
 * If the holder does not hold any tokens of type `token_id`, the holder's balance
   is interpreted as zero. No token holder can have a negative balance.
 
-* Core transfer behavior MUST update token balances exactly as the operation
+* The transfer MUST update token balances exactly as the operation
   parameters specify it. Transfer operations MUST NOT try to adjust transfer
   amounts or try to add/remove additional transfers like transaction fees.
 
