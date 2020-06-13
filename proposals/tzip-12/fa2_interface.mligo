@@ -54,37 +54,6 @@ type balance_of_param_aux = {
 
 type balance_of_param_michelson = balance_of_param_aux michelson_pair_right_comb
 
-type total_supply_response = {
-  token_id : token_id;
-  total_supply : nat;
-}
-
-type total_supply_response_michelson = total_supply_response michelson_pair_right_comb
-
-type total_supply_param = {
-  token_ids : token_id list;
-  callback : (total_supply_response_michelson list) contract;
-}
-
-type total_supply_param_michelson = total_supply_param michelson_pair_right_comb
-
-type token_metadata = {
-  token_id : token_id;
-  symbol : string;
-  name : string;
-  decimals : nat;
-  extras : (string, string) map;
-}
-
-type token_metadata_michelson = token_metadata michelson_pair_right_comb
-
-type token_metadata_param = {
-  token_ids : token_id list;
-  callback : (token_metadata_michelson list) contract;
-}
-
-type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
-
 type operator_param = {
   owner : address;
   operator : address;
@@ -102,29 +71,32 @@ type update_operator_aux =
 
 type update_operator_michelson = update_operator_aux michelson_or_right_comb
 
-type is_operator_response = {
-  operator : operator_param;
-  is_operator : bool;
+type token_metadata = {
+  token_id : token_id;
+  symbol : string;
+  name : string;
+  decimals : nat;
+  extras : (string, string) map;
 }
 
-type is_operator_response_aux = {
-  operator : operator_param_michelson;
-  is_operator : bool;
+type token_metadata_michelson = token_metadata michelson_pair_right_comb
+
+type token_metadata_param = {
+  token_ids : token_id list;
+  handler : (token_metadata_michelson list) -> unit;
 }
 
-type is_operator_response_michelson = is_operator_response_aux michelson_pair_right_comb
+type token_metadata_param_michelson = token_metadata_param michelson_pair_right_comb
 
-type is_operator_param = {
-  operator : operator_param;
-  callback : (is_operator_response_michelson) contract;
-}
+type fa2_entry_points =
+  | Transfer of transfer_michelson list
+  | Balance_of of balance_of_param_michelson
+  | Update_operators of update_operator_michelson list
+  | Token_metadata_registry of address contract
 
-type is_operator_param_aux = {
-  operator : operator_param_michelson;
-  callback : (is_operator_response_michelson) contract;
-}
 
-type is_operator_param_michelson = is_operator_param_aux michelson_pair_right_comb
+type fa2_token_metadata =
+  | Token_metadata of token_metadata_param_michelson
 
 (* permission policy definition *)
 
@@ -165,14 +137,8 @@ type permissions_descriptor_aux = {
 
 type permissions_descriptor_michelson = permissions_descriptor_aux michelson_pair_right_comb
 
-type fa2_entry_points =
-  | Transfer of transfer_michelson list
-  | Balance_of of balance_of_param_michelson
-  | Total_supply of total_supply_param_michelson
-  | Token_metadata of token_metadata_param_michelson
+type fa2_entry_points_custom =
   | Permissions_descriptor of permissions_descriptor_michelson contract
-  | Update_operators of update_operator_michelson list
-  | Is_operator of is_operator_param_michelson
 
 
 type transfer_destination_descriptor = {
@@ -197,13 +163,11 @@ type transfer_descriptor_aux = {
 type transfer_descriptor_michelson = transfer_descriptor_aux michelson_pair_right_comb
 
 type transfer_descriptor_param = {
-  fa2 : address;
   batch : transfer_descriptor list;
   operator : address;
 }
 
 type transfer_descriptor_param_aux = {
-  fa2 : address;
   batch : transfer_descriptor_michelson list;
   operator : address;
 }

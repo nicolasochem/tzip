@@ -1,3 +1,12 @@
+(**
+Helper function to convert FA2 entry points input parameters between their
+Michelson and internal LIGO representation.
+
+FA2 contract implementation must conform to the Michelson entry points interface
+outlined in the FA2 standard for interoperability with other contracts and off-chain
+tools.
+ *)
+
 #if !FA2_CONVERTORS
 #define FA2_CONVERTORS
 
@@ -29,11 +38,8 @@ let transfer_descriptor_to_michelson (p : transfer_descriptor) : transfer_descri
 let transfer_descriptor_param_to_michelson (p : transfer_descriptor_param)
     : transfer_descriptor_param_michelson =
   let aux : transfer_descriptor_param_aux = {
-    fa2 = p.fa2;
     operator = p.operator;
-    batch = List.map 
-      (fun (td: transfer_descriptor) -> transfer_descriptor_to_michelson td) 
-      p.batch;
+    batch = List.map  transfer_descriptor_to_michelson p.batch;
   } in
   Layout.convert_to_right_comb aux
 
@@ -53,14 +59,10 @@ let transfer_descriptor_from_michelson (p : transfer_descriptor_michelson) : tra
 let transfer_descriptor_param_from_michelson (p : transfer_descriptor_param_michelson)
     : transfer_descriptor_param =
   let aux : transfer_descriptor_param_aux = Layout.convert_from_right_comb p in
-  let b : transfer_descriptor list = List.map 
-      (fun (tdm : transfer_descriptor_michelson) -> 
-        transfer_descriptor_from_michelson tdm
-      )
-      aux.batch
+  let b : transfer_descriptor list =
+    List.map transfer_descriptor_from_michelson aux.batch
   in
   {
-    fa2 = aux.fa2;
     operator = aux.operator;
     batch = b;
   }
@@ -78,11 +80,7 @@ let transfer_from_michelson (txm : transfer_michelson) : transfer =
   }
 
 let transfers_from_michelson (txsm : transfer_michelson list) : transfer list =
-  List.map 
-    (fun (txm: transfer_michelson) ->
-      let tx : transfer = transfer_from_michelson txm in
-      tx
-    ) txsm
+  List.map transfer_from_michelson txsm
 
 let operator_param_from_michelson (p : operator_param_michelson) : operator_param =
   let op : operator_param = Layout.convert_from_right_comb p in
@@ -104,32 +102,9 @@ let operator_update_to_michelson (uo : update_operator) : update_operator_michel
     in
     Layout.convert_to_right_comb aux
 
-(* check this *)
 let operator_updates_from_michelson (updates_michelson : update_operator_michelson list)
     : update_operator list =
   List.map operator_update_from_michelson updates_michelson
-
-let is_operator_param_from_michelson (p : is_operator_param_michelson) : is_operator_param =
-  let aux : is_operator_param_aux = Layout.convert_from_right_comb p in
-  {
-    operator = operator_param_from_michelson aux.operator;
-    callback = aux.callback;
-  }
-
-let is_operator_param_to_michelson (p : is_operator_param) : is_operator_param_michelson =
-  let aux : is_operator_param_aux = 
-  {
-    operator = operator_param_to_michelson p.operator;
-    callback = p.callback;
-  } in
-  Layout.convert_to_right_comb aux
-
-let is_operator_response_to_michelson (r : is_operator_response) : is_operator_response_michelson =
-  let aux : is_operator_response_aux = {
-    operator = operator_param_to_michelson r.operator;
-    is_operator = r.is_operator;
-  } in
-  Layout.convert_to_right_comb aux
 
 let balance_of_param_from_michelson (p : balance_of_param_michelson) : balance_of_param =
   let aux : balance_of_param_aux = Layout.convert_from_right_comb p in
@@ -168,14 +143,6 @@ let balance_of_response_from_michelson (rm : balance_of_response_michelson) : ba
     request = request;
     balance = aux.balance;
   }
-
-let total_supply_responses_to_michelson (rs : total_supply_response list)
-    : total_supply_response_michelson list =
-  List.map
-    (fun (r : total_supply_response) ->
-      let rm : total_supply_response_michelson = Layout.convert_to_right_comb r in
-      rm
-    ) rs
 
 let token_metas_to_michelson (ms : token_metadata list) : token_metadata_michelson list =
   List.map

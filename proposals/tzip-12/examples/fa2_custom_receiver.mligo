@@ -6,8 +6,8 @@ Transfer is permitted if a receiver address is in the receiver white list OR imp
 interface, its `tokens_received` entry point must be called.
 *)
 
-#include "../lib/fa2_hook_lib.mligo"
-#include "../lib/fa2_behaviors.mligo"
+#include "../lib/fa2_transfer_hook_lib.mligo"
+#include "../lib/fa2_owner_hooks_lib.mligo"
 
 
 type storage = {
@@ -23,13 +23,14 @@ let custom_validate_receivers (p, wl : transfer_descriptor_param * (address set)
 
   Set.fold 
     (fun (ops, r : (operation list) * address) ->
-      let hook, err = to_sender_hook r in
-      match hook with
-      | Some h ->
+      match to_sender_hook r with
+      | Hook_contract h ->
+        (* receiver contract implements fa2_token_receiver interface: invoke it*)
         let pm = transfer_descriptor_param_to_michelson p in
         let op = Operation.transaction pm 0mutez h in
         op :: ops
-      | None -> 
+      | Hook_undefined err ->
+        (* receiver contract does not implement fa2_token_receiver interface: check whitelist*)
         if Set.mem r wl
         then ops
         else (failwith err : operation list)
@@ -76,7 +77,7 @@ type  entry_points =
     : (operation list) * storage =
   match param with
   | Tokens_transferred_hook p ->
-    let u = validate_hook_call (p.fa2, s.fa2_registry) in
+    let u = validate_hook_call (Tezos.sender, s.fa2_registry) in
     let ops = custom_transfer_hook (p, s) in
     ops, s
 

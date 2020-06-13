@@ -1,12 +1,14 @@
 (**
-Implementation of the permission transfer hook, which behavior is driven
-by a particular settings of `permission_policy`. It is possible to use
-additional custom policy "schedule" which let pause/unpause transfers
-based on used schedule
+Implementation of a generic permission transfer hook that supports sender/receiver
+hooks. Contract behavior is driven by the permissions descriptor value in the
+contract storage and its particular settings for `sender` and `receiver` policies.
+
+It is possible to use additional custom policy "schedule" which let pause/unpause
+transfers based on used schedule
 *)
 
-#include "../lib/fa2_hook_lib.mligo"
-#include "../lib/fa2_behaviors.mligo"
+#include "../lib/fa2_transfer_hook_lib.mligo"
+#include "../lib/fa2_owner_hooks_lib.mligo"
 
 type schedule_interval = {
   interval : int;
@@ -107,10 +109,10 @@ type  entry_points =
   match param with
   | Tokens_transferred_hook pm ->
     let p = transfer_descriptor_param_from_michelson pm in
-    let u1 = validate_hook_call (p.fa2, s.fa2_registry) in
+    let u1 = validate_hook_call (Tezos.sender, s.fa2_registry) in
     let u2 = validate_schedule(s.policy.schedule_policy) in
-    let ops = standard_transfer_hook (
-      {ligo_param = p; michelson_param = pm}, s.policy.descriptor) in
+    let ops = owners_transfer_hook
+      ({ligo_param = p; michelson_param = pm}, s.policy.descriptor) in
     ops, s
 
   | Register_with_fa2 fa2 ->
