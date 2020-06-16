@@ -1,2 +1,2 @@
-*.mligo linguist-language=OCaml
-*.religo linguist-language=OCaml
+*.mligo gitlab-language=ocaml
+*.religo gitlab-language=ocaml
