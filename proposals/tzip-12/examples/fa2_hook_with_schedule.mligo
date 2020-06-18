@@ -111,8 +111,11 @@ type  entry_points =
     let p = transfer_descriptor_param_from_michelson pm in
     let u1 = validate_hook_call (Tezos.sender, s.fa2_registry) in
     let u2 = validate_schedule(s.policy.schedule_policy) in
-    let ops = owners_transfer_hook
-      ({ligo_param = p; michelson_param = pm}, s.policy.descriptor) in
+    let hook_calls = owners_transfer_hook(p, s.policy.descriptor) in
+    let ops = List.map (fun (call : hook_entry_point) ->
+        Operation.transaction pm 0mutez call
+      ) hook_calls
+    in
     ops, s
 
   | Register_with_fa2 fa2 ->

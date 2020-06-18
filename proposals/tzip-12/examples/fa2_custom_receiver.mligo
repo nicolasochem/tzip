@@ -15,18 +15,17 @@ type storage = {
   receiver_whitelist : address set;
 } 
 
-let custom_validate_receivers (p, wl : transfer_descriptor_param * (address set))
+let custom_validate_receivers (p, pm, wl
+    : transfer_descriptor_param * transfer_descriptor_param_michelson * (address set))
     : operation list =
   let get_receiver : get_owners = fun (tx : transfer_descriptor) -> 
     List.map (fun (t : transfer_destination_descriptor) -> t.to_) tx.txs in
   let receivers = get_owners_from_batch (p.batch, get_receiver) in
-
   Set.fold 
     (fun (ops, r : (operation list) * address) ->
       match to_sender_hook r with
-      | Hook_contract h ->
+      | Hook_entry_point h ->
         (* receiver contract implements fa2_token_receiver interface: invoke it*)
-        let pm = transfer_descriptor_param_to_michelson p in
         let op = Operation.transaction pm 0mutez h in
         op :: ops
       | Hook_undefined err ->
@@ -37,8 +36,9 @@ let custom_validate_receivers (p, wl : transfer_descriptor_param * (address set)
     )
     receivers ([] : operation list)
 
-let custom_transfer_hook (p, s : transfer_descriptor_param * storage) : operation list =
-  custom_validate_receivers (p, s.receiver_whitelist)
+let custom_transfer_hook (p, pm, s
+    : transfer_descriptor_param * transfer_descriptor_param_michelson * storage) : operation list =
+  custom_validate_receivers (p, pm, s.receiver_whitelist)
 
 
 let get_policy_descriptor (u : unit) : permissions_descriptor =
@@ -69,16 +69,17 @@ let configure_receiver_whitelist (cfg, wl : config_whitelist * (address set))
       rs wl
 
 type  entry_points =
-  | Tokens_transferred_hook of transfer_descriptor_param
+  | Tokens_transferred_hook of transfer_descriptor_param_michelson
   | Register_with_fa2 of fa2_with_hook_entry_points contract
   | Config_receiver_whitelist of config_whitelist
 
  let main (param, s : entry_points * storage) 
     : (operation list) * storage =
   match param with
-  | Tokens_transferred_hook p ->
+  | Tokens_transferred_hook pm ->
     let u = validate_hook_call (Tezos.sender, s.fa2_registry) in
-    let ops = custom_transfer_hook (p, s) in
+    let p = transfer_descriptor_param_from_michelson pm in
+    let ops = custom_transfer_hook (p, pm, s) in
     ops, s
 
   | Register_with_fa2 fa2 ->
