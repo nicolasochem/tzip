@@ -638,12 +638,26 @@ error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 
 ###### `Token Owner Hook` Permission Behavior
 
-Each transfer operation defines both a set of token owners that send tokens
-(senders) and a set of token owners that receive tokens (receivers). Token owner
-contracts MAY implement either an `fa2_token_sender` or `fa2_token_receiver` hook
-interface. Sender and/or receiver hooks can approve the transaction or reject it
-by failing. If such a hook is invoked and failed, the whole transfer operation MUST
-fail.
+Each transfer operation accepts a batch that defines token owners that send tokens
+(senders) and token owners that receive tokens (receivers).
+
+* Token owner contracts MAY implement either an `fa2_token_sender` and/or
+`fa2_token_receiver` hook interface.
+
+* Sender and/or receiver hooks can approve the transaction or reject it
+  by failing. If such a hook is invoked and failed, the whole transfer operation
+  MUST fail.
+
+* If all of the following conditions are met, the FA2 contract MUST invoke both
+  `fa2_token_sender` and `fa2_token_receiver` entry points:
+  * the token owner implements both `fa2_token_sender` and `fa2_token_receiver`
+    interfaces
+  * the token owner receives and sends some tokens in the same transfer operation
+  * both sender and receiver hooks are enabled by the FA2 permissions policy
+  
+* If the token owner participates in multiple transfers within the transfer operation
+  batch and hook invocation is required by the permissions policy, the hook MUST
+  be invoked only once.
 
 Token owner permission can be configured to behave in one of the following ways:
 
