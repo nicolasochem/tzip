@@ -912,11 +912,11 @@ The implicit value of the descriptor for the
 the following:
 
 ```ocaml
-type permissions_descriptor = {
+let default_descriptor : permissions_descriptor = {
   operator = Owner_or_operator_transfer;
-  receiver : Owner_no_hook;
-  sender : Owner_no_hook;
-  custom : (None: custom_permission_policy option);
+  receiver = Owner_no_hook;
+  sender = Owner_no_hook;
+  custom = (None: custom_permission_policy option);
 }
 ```
 
