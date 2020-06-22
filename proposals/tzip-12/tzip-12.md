@@ -579,8 +579,8 @@ of a transfer, and who can receive tokens. This standard calls such logic *permi
 policy* and defines a framework to compose such permission policies from the standard
 behaviors.
 
-The FA2 contract developer can choose a custom set of permissions behaviors to be
-implemented. The particular implementation may be static (the permissions configuration
+The FA2 contract developer can choose and implement a custom set of permissions
+behaviors. The particular implementation may be static (the permissions configuration
 cannot be changed after the contract is deployed) or dynamic (the FA2 contract
 may be upgradable and allow to change the permissions configuration). At any moment
 in time, the FA2 token contract exposes consistent and non-self-contradictory
