@@ -834,7 +834,7 @@ The FA2 contract MUST always implement the [core transfer behavior](#core-transf
 However, FA2 contract developer MAY chose to implement either the
 [default transfer permission policy](#default-transfer-permission-policy) or a
 custom policy.
-If the FA2 contract implementation MAY customizes one or more of the standard permission
+The FA2 contract implementation MAY customizes one or more of the standard permission
 behaviors (`operator`, `receiver`, `sender` as specified in `permissions_descriptor`
 type), by choosing one of the available options for those permission behaviors.
 
