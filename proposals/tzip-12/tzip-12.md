@@ -617,9 +617,9 @@ type operator_transfer_policy =
 ```
 
 * `No_transfer` - neither owner nor operator can transfer tokens. This permission
-  mode can be used for non-transferable tokens or for the FA2 implementation when
-  a transfer can be initiated only by some privileged and/or administrative account.
-  The transfer operation MUST fail with the error mnemonic `"FA2_TX_DENIED"`.
+  configuration can be used for non-transferable tokens or for the FA2 implementation
+  when a transfer can be initiated only by some privileged and/or administrative
+  account. The transfer operation MUST fail with the error mnemonic `"FA2_TX_DENIED"`.
 
 * `Owner_transfer` - If `SENDER` is not the token owner, the transfer operation
   MUST fail with the error mnemonic `"FA2_NOT_OWNER"`.
