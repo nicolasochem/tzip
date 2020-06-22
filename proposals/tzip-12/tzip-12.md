@@ -200,12 +200,14 @@ FA2 token contracts MUST always implement this behavior.
 * If the transfer amount exceeds, current token balance of the source address,
   the whole transfer operation MUST fail with the error mnemonic `"FA2_INSUFFICIENT_BALANCE"`.
 
-* If the holder does not hold any tokens of type `token_id`, the holder's balance
-  is interpreted as zero. No token holder can have a negative balance.
+* If the token owner does not hold any tokens of type `token_id`, the owner's balance
+  is interpreted as zero. No token owner can have a negative balance.
 
 * The transfer MUST update token balances exactly as the operation
   parameters specify it. Transfer operations MUST NOT try to adjust transfer
   amounts or try to add/remove additional transfers like transaction fees.
+
+* Transfers of zero amount MUST be treated as normal transfers.
 
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
   entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
