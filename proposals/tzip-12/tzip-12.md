@@ -220,14 +220,14 @@ FA2 token contracts MUST always implement this behavior.
 
 ##### Default `transfer` Permission Policy
 
-Token owner address MUST be able to initiate a transfer of its own tokens (e. g.
+* Token owner address MUST be able to initiate a transfer of its own tokens (e. g.
 `SENDER` equals to `from_` parameter in the `transfer`).
 
-An operator (a Tezos address that initiates token transfer operation on behalf
+* An operator (a Tezos address that initiates token transfer operation on behalf
 of the owner) MUST be permitted to manage all owner's tokens before it can initiate
 a transfer transaction (see [`update_operators`](#update_operators)).
 
-If the address that initiates a transfer operation is neither a token owner nor
+* If the address that initiates a transfer operation is neither a token owner nor
 one of the permitted operators, the transaction MUST fail with the error mnemonic
 `"FA2_NOT_OPERATOR"`. If at least one of the `transfer`s in the batch is not permitted,
 the whole transaction MUST fail.
@@ -303,12 +303,16 @@ Michelson definition:
 
 Get the balance of multiple account/token pairs. Accepts a list of
 `balance_of_request`s and a callback contract `callback` which accepts a list of
-`balance_of_response` records. There may be duplicate `balance_of_request`'s,
-in which case they should not be deduplicated nor reordered. If the account does
-not hold any tokens, the account balance is interpreted as zero.
+`balance_of_response` records.
 
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
+* There may be duplicate `balance_of_request`'s, in which case they should not be
+  deduplicated nor reordered.
+
+* If the account does not hold any tokens, the account
+  balance is interpreted as zero.
+
+* If one of the specified `token_id`s is not defined within the FA2 contract, the
+  entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 *Notice:* The `balance_of` entry point implements a *continuation-passing style (CPS)
 view entry point* pattern that invokes the other callback contract with the requested
@@ -379,15 +383,15 @@ Michelson definition:
 
 Add or Remove token operators for the specified owners.
 
-The entry point accepts a list of `update_operator` commands. If two different
-commands in the list add and remove an operator for the same owner,
-the last command in the list MUST take effect.
+* The entry point accepts a list of `update_operator` commands. If two different
+  commands in the list add and remove an operator for the same owner,
+  the last command in the list MUST take effect.
 
-It is possible to update operators for a token owner that does not hold any token
-balances yet.
+* It is possible to update operators for a token owner that does not hold any token
+  balances yet.
 
-Operator relation is not transitive. If C is an operator of B , and if B is an
-operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
+* Operator relation is not transitive. If C is an operator of B , and if B is an
+  operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
 
 The standard does not specify who is permitted to update operators on behalf of
 the token owner. Depending on the business use case, the particular implementation
@@ -425,13 +429,13 @@ Michelson definition:
 ))))
 ```
 
-FA2 token amounts are represented by natural numbers (`nat`), and their
-**granularity** (the smallest amount of tokens which may be minted, burned, or
-transferred) is always 1.
+* FA2 token amounts are represented by natural numbers (`nat`), and their
+  **granularity** (the smallest amount of tokens which may be minted, burned, or
+  transferred) is always 1.
 
-`decimals` is the number of digits to use after the decimal point when displaying
-the token amounts. If 0, the asset is not divisible. Decimals are used for display
-purposes only and MUST NOT affect transfer operation.
+* `decimals` is the number of digits to use after the decimal point when displaying
+  the token amounts. If 0, the asset is not divisible. Decimals are used for display
+  purposes only and MUST NOT affect transfer operation.
 
 Examples
 
@@ -441,8 +445,10 @@ Examples
 | 1n       | 123     | 12.3     |
 | 3n       | 123000  | 123      |
 
-Token metadata is primarily useful in off-chain, user-facing contexts (e.g. wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use of token metadata
-and minimal on-chain gas consumption. A related effort to create a separate metadata TZIP standard is also underway.
+Token metadata is primarily useful in off-chain, user-facing contexts (e.g.
+wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use
+of token metadata and minimal on-chain gas consumption. A related effort to create
+a separate metadata TZIP standard is also underway.
 
 * The FA2 contract MUST implement `token_metadata_registry` view entry point that
   returns an address of the contract holding tokens metadata. Token metadata can
@@ -560,11 +566,11 @@ lambda may assert certain assumptions about the metadata and/or fail with the
 obtained metadata implementing a view entry point pattern to extract tokens metadata
 off-chain.
 
-As with `balance_of`, the input `token_id`'s should not be deduplicated nor
-reordered.
+* As with `balance_of`, the input `token_id`'s should not be deduplicated nor
+  reordered.
 
-If one of the specified `token_id`s is not defined within the FA2 contract, the
-entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
+* If one of the specified `token_id`s is not defined within the FA2 contract, the
+  entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 ### FA2 Permission Policies and Configuration
 
@@ -626,7 +632,7 @@ type operator_transfer_policy =
   the token owner address ([`update_operators`](#update_operators)). Once an
   operator is added, it can manage all of its associated owner's tokens.
 
-If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
+* If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
 [`update_operators`](#update_operators) entry point MUST fail if invoked with the
 error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 
