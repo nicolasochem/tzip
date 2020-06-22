@@ -212,7 +212,9 @@ FA2 token contracts MUST always implement this behavior.
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
   entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
-* Transfer implementations MUST apply [permission policy logic](#default-transfer-permission-policy).
+* Transfer implementations MUST apply permission policy logic (either
+  [default transfer permission policy](#default-transfer-permission-policy) or
+  [customized one](#customizing-permission-policy)).
   If permission logic rejects a transfer, the whole operation MUST fail.
 
 * Core transfer behavior MAY be extended. If additional constraints on tokens
