@@ -641,25 +641,10 @@ error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 ###### `Token Owner Hook` Permission Behavior
 
 Each transfer operation accepts a batch that defines token owners that send tokens
-(senders) and token owners that receive tokens (receivers).
-
-* Token owner contracts MAY implement either an `fa2_token_sender` and/or
-`fa2_token_receiver` hook interface.
-
-* Sender and/or receiver hooks can approve the transaction or reject it
-  by failing. If such a hook is invoked and failed, the whole transfer operation
-  MUST fail.
-
-* If all of the following conditions are met, the FA2 contract MUST invoke both
-  `fa2_token_sender` and `fa2_token_receiver` entry points:
-  * the token owner implements both `fa2_token_sender` and `fa2_token_receiver`
-    interfaces
-  * the token owner receives and sends some tokens in the same transfer operation
-  * both sender and receiver hooks are enabled by the FA2 permissions policy
-  
-* If the token owner participates in multiple transfers within the transfer operation
-  batch and hook invocation is required by the permissions policy, the hook MUST
-  be invoked only once.
+(senders) and token owners that receive tokens (receivers). Token owner contracts
+MAY implement either `fa2_token_sender` and/or `fa2_token_receiver` interfaces.
+Those interfaces define a hook entry point that accepts transfer description and
+invoked by the FA2 contract in the context of transfer, mint and burn operations.
 
 Token owner permission can be configured to behave in one of the following ways:
 
@@ -680,13 +665,17 @@ the hook interface is not implemented, it gets ignored.
 owner contract implements a corresponding hook interface, it MUST be invoked. If
 the hook interface is not implemented, the entire transfer transaction MUST fail.
 
-This policy can be applied to both token senders and token receivers. There are
-two owner hook interfaces, `fa2_token_receiver` and `fa2_token_sender`, that need
-to be implemented by token owner contracts to expose the owner's hooks to FA2 token
-contract.
+* Sender and/or receiver hooks can approve the transaction or reject it
+  by failing. If such a hook is invoked and failed, the whole transfer operation
+  MUST fail.
 
-If a transfer failed because of the token owner permission behavior, the operation
-MUST fail with the one of the following error mnemonics:
+* This policy can be applied to both token senders and token receivers. There are
+  two owner hook interfaces, `fa2_token_receiver` and `fa2_token_sender`, that need
+  to be implemented by token owner contracts to expose the owner's hooks to FA2 token
+  contract.
+
+* If a transfer failed because of the token owner permission behavior, the operation
+  MUST fail with the one of the following error mnemonics:
 
 | Error Mnemonic | Description |
 | :------------- | :---------- |
@@ -695,14 +684,28 @@ MUST fail with the one of the following error mnemonics:
 | `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
 | `"FA2_SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
 
-`transfer_descriptor` type defined below can represent regular transfer, mint and
-burn operations.
+* `transfer_descriptor` type defined below can represent regular transfer, mint and
+  burn operations.
 
 | operation | `from_` | `to_` |
 | :-------- | :------ | :----- |
 | transfer | MUST be `Some sender_address` | MUST be `Some receiver_address` |
 | mint | MUST be `None` | MUST be `Some receiver_address` |
 | burn | MUST be `Some burner_address` | MUST be `None` |
+
+* If all of the following conditions are met, the FA2 contract MUST invoke both
+  `fa2_token_sender` and `fa2_token_receiver` entry points:
+  * the token owner implements both `fa2_token_sender` and `fa2_token_receiver`
+    interfaces
+  * the token owner receives and sends some tokens in the same transfer operation
+  * both sender and receiver hooks are enabled by the FA2 permissions policy
+  
+* If the token owner participates in multiple transfers within the transfer operation
+  batch and hook invocation is required by the permissions policy, the hook MUST
+  be invoked only once.
+
+* The hooks MUST NOT be invoked in the context of the operation other than transfer,
+  mint and burn.
 
 A special consideration is required if FA2 implementation supports sender and/or
 receiver hooks. It is possible that one of the token owner hooks will fail because
