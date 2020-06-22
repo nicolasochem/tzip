@@ -885,7 +885,7 @@ Michelson definition:
 
 Get the descriptor of the transfer permission policy. FA2 specifies
 `permissions_descriptor` allowing external contracts (e.g. an auction) to discover
-an FA2 contract's implemented permission policies and to configure it.
+an FA2 contract's implemented permission policies.
 
 The implicit value of the descriptor for the
 [default `transfer` permission policy](#default-transfer-permission-policy) is
@@ -910,12 +910,14 @@ type permissions_descriptor = {
 * In addition to the standard permission behaviors, the FA2 contract MAY also
   implement an optional custom permissions policy. If such custom a policy is
   implemented, the FA2 contract SHOULD expose it using permissions descriptor
-  `custom` field by giving it a `tag` that would be available to other parties
-  which are aware of such custom extension. Some custom permission MAY require a
-  config API (like [`update_operators`](#update_operators) entry point of the FA2
-  to configure `operator_transfer_policy`). Config entry points MAY be implemented
-  either within the FA2 token contract itself (then the returned address SHALL be
-  `SELF`), or in a separate contract.
+  `custom` field. `custom_permission_policy.tag` value would be available to
+  other parties which are aware of such custom extension. Some custom permission
+  MAY require a config API (like [`update_operators`](#update_operators) entry
+  point of the FA2 to configure `operator_transfer_policy`). The address of the
+  contract that provides config entry points is specified by
+  `custom_permission_policy.config_api` field. The config entry points MAY be
+  implemented either within the FA2 token contract itself (then the returned
+  address SHALL be `SELF`), or in a separate contract.
 
 ### Error Handling
 
