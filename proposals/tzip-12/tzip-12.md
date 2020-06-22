@@ -52,7 +52,7 @@ based on public comment see FA2 Request for Comment on [Tezos Agora](https://tez
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. A variety of
 permission policies can be used to define how many tokens can be transferred, who
-can initiate a transfer, and who can receive tokens. A token contract can be
+can perform a transfer, and who can receive tokens. A token contract can be
 designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple token
 types (e.g. ERC-1155) to optimize batch transfers and atomic swaps of the tokens.
 
@@ -85,13 +85,13 @@ token ID will be a fixed `0n` value. Likewise, if multiple token types are suppo
 the batch may contain zero or more entries and there may be duplicate token IDs.
 
 Most token standards specify logic that validates a transfer transaction and can
-either approve or reject a transfer. Such logic could validate who initiates a
+either approve or reject a transfer. Such logic could validate who can perform a
 transfer, the transfer amount, and who can receive tokens. This standard calls such
 logic a *permission policy* or *permission behavior*. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
-specify who can transfer tokens. The default policy allow transfers to be initiated
-either by the token owner (an account that holds token balance) or by an operator
-(an account that is permitted to manage tokens on behalf of the owner).
+specify who can transfer tokens. The default policy allows transfers by
+either token owner (an account that holds token balance) or by an operator
+(an account that is permitted to manage tokens on behalf of the token owner).
 
 Unlike many other standards, FA2 allows to customize the default permission policy
 (see [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration))
@@ -181,7 +181,7 @@ FA2 token contract implements mint and burn operations, it SHOULD, when possible
 enforce the same rules and logic applied to the token transfer operation. Mint
 and burn can be considered special cases of the transfer. Although, it is possible
 that mint and burn have more or less restrictive rules than the regular transfer.
-For instance, mint and burn operations may be initiated by a special privileged
+For instance, mint and burn operations may be invoked by a special privileged
 administrative address only. In this case, regular operator restrictions may not
 be applicable.
 
@@ -222,17 +222,17 @@ FA2 token contracts MUST always implement this behavior.
 
 ##### Default `transfer` Permission Policy
 
-* Token owner address MUST be able to initiate a transfer of its own tokens (e. g.
-`SENDER` equals to `from_` parameter in the `transfer`).
+* Token owner address MUST be able to perform a transfer of its own tokens (e. g.
+  `SENDER` equals to `from_` parameter in the `transfer`).
 
-* An operator (a Tezos address that initiates token transfer operation on behalf
-of the owner) MUST be permitted to manage all owner's tokens before it can initiate
-a transfer transaction (see [`update_operators`](#update_operators)).
+* An operator (a Tezos address that performs token transfer operation on behalf
+  of the owner) MUST be permitted to manage all owner's tokens before it invokes
+  a transfer transaction (see [`update_operators`](#update_operators)).
 
-* If the address that initiates a transfer operation is neither a token owner nor
-one of the permitted operators, the transaction MUST fail with the error mnemonic
-`"FA2_NOT_OPERATOR"`. If at least one of the `transfer`s in the batch is not permitted,
-the whole transaction MUST fail.
+* If the address that invokes a transfer operation is neither a token owner nor
+  one of the permitted operators, the transaction MUST fail with the error mnemonic
+  `"FA2_NOT_OPERATOR"`. If at least one of the `transfer`s in the batch is not permitted,
+  the whole transaction MUST fail.
 
 #### `balance_of`
 
@@ -325,7 +325,7 @@ The `balance_of` entry point should be used on the chain with the extreme cautio
 
 #### Operators
 
-**Operator** is a Tezos address that initiates token transfer operation on behalf
+**Operator** is a Tezos address that originates token transfer operation on behalf
 of the owner.
 
 **Owner** is a Tezos address which can hold tokens.
@@ -576,7 +576,7 @@ off-chain.
 
 ### FA2 Permission Policies and Configuration
 
-Most token standards specify logic such as who can initiate a transfer, the amount
+Most token standards specify logic such as who can perform a transfer, the amount
 of a transfer, and who can receive tokens. This standard calls such logic *permission
 policy* and defines a framework to compose such permission policies from the standard
 behaviors.
@@ -604,12 +604,11 @@ independently, when an FA2 contract is implemented:
 
 ###### `Operator` Transfer Behavior
 
-This behavior specifies who can initiate a token transfer.
+This behavior specifies who is permitted to transfer tokens.
 
-Potentially token transfers
-can be initiated by the token owner or by an operator permitted to transfer tokens
-on behalf of the token owner. An operator can transfer any tokens in any amount on
-behalf of the owner.
+Potentially token transfers can be performed by the token owner or by an operator
+permitted to transfer tokens on behalf of the token owner. An operator can transfer
+any tokens in any amount on behalf of the owner.
 
 ```ocaml
 type operator_transfer_policy =
@@ -620,7 +619,7 @@ type operator_transfer_policy =
 
 * `No_transfer` - neither owner nor operator can transfer tokens. This permission
   configuration can be used for non-transferable tokens or for the FA2 implementation
-  when a transfer can be initiated only by some privileged and/or administrative
+  when a transfer can be performed only by some privileged and/or administrative
   account. The transfer operation MUST fail with the error mnemonic `"FA2_TX_DENIED"`.
 
 * `Owner_transfer` - If `SENDER` is not the token owner, the transfer operation
@@ -963,8 +962,8 @@ Standard error mnemonics:
 | `"FA2_TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
 | `"FA2_INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
 | `"FA2_TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
-| `"FA2_NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is initiated not by the token owner |
-| `"FA2_NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is initiated neither by the token owner nor a permitted operator |
+| `"FA2_NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is invoked not by the token owner |
+| `"FA2_NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is invoked neither by the token owner nor a permitted operator |
 | `"FA2_OPERATORS_UNSUPPORTED"` | `update_operators` entry point is invoked and `operator_transfer_policy` is `No_transfer` or `Owner_transfer` |
 | `"FA2_RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
 | `"FA2_SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
