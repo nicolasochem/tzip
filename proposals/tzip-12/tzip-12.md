@@ -143,6 +143,9 @@ type transfer = {
 
 where
 
+<details>
+<summary>LIGO to Michelson conversion</summary>
+
 ```ocaml
 type transfer_destination_michelson = transfer_destination michelson_pair_right_comb
 
@@ -153,6 +156,8 @@ type transfer_aux = {
 
 type transfer_michelson = transfer_aux michelson_pair_right_comb
 ```
+
+</details>
 
 Michelson definition:
 ```
@@ -263,6 +268,9 @@ type balance_of_param = {
 
 where
 
+<details>
+<summary>LIGO to Michelson conversion</summary>
+
 ```ocaml
 type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
 
@@ -280,6 +288,7 @@ type balance_of_param_aux = {
 
 type balance_of_param_michelson = balance_of_param_aux michelson_pair_right_comb
 ```
+</details>
 
 Michelson definition:
 
@@ -358,6 +367,9 @@ type update_operator =
 
 where
 
+<details>
+<summary>LIGO to Michelson conversion</summary>
+
 ```ocaml
 type operator_param_michelson = operator_param michelson_pair_right_comb
 
@@ -367,6 +379,8 @@ type update_operator_aux =
 
 type update_operator_michelson = update_operator_aux michelson_or_right_comb
 ```
+
+</details>
 
 Michelson definition:
 
@@ -535,6 +549,9 @@ type token_metadata_param = {
 
 where
 
+<details>
+<summary>LIGO to Michelson conversion</summary>
+
 ```ocaml
 type token_metadata_michelson = token_metadata michelson_pair_right_comb
 
@@ -563,6 +580,8 @@ Michelson definition:
   )
 )
 ```
+
+</details>
 
 Get the metadata for multiple token types. Accepts a list of `token_id`s and a
 a lambda `handler`, which accepts a list of `token_metadata` records. The `handler`
@@ -745,6 +764,9 @@ type fa2_token_sender =
 
 where
 
+<details>
+<summary>LIGO to Michelson conversion</summary>
+
 ```ocaml
 type transfer_destination_descriptor_michelson =
   transfer_destination_descriptor michelson_pair_right_comb
@@ -763,6 +785,8 @@ type transfer_descriptor_param_aux = {
 
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
 ```
+
+</details>
 
 Michelson definition:
 
@@ -855,6 +879,9 @@ LIGO definition:
 
 where
 
+<details>
+<summary>LIGO to Michelson conversion</summary>
+
 ```ocaml
 type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
 
@@ -871,6 +898,8 @@ type permissions_descriptor_aux = {
 
 type permissions_descriptor_michelson = permissions_descriptor_aux michelson_pair_right_comb
 ```
+
+</details>
 
 Michelson definition:
 
