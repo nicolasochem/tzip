@@ -197,7 +197,7 @@ FA2 token contracts MUST always implement this behavior.
   address by the amount of the transfer and increment token balance of the destination
   (`to_`) address by the amount of the transfer.
   
-* If the transfer amount exceeds, current token balance of the source address,
+* If the transfer amount exceeds current token balance of the source address,
   the whole transfer operation MUST fail with the error mnemonic `"FA2_INSUFFICIENT_BALANCE"`.
 
 * If the token owner does not hold any tokens of type `token_id`, the owner's balance
@@ -580,14 +580,14 @@ off-chain.
 
 Most token standards specify logic such as who can perform a transfer, the amount
 of a transfer, and who can receive tokens. This standard calls such logic *permission
-policy* and defines a framework to compose such permission policies from the standard
-behaviors.
+policy* and defines a framework to compose such permission policies from the
+[standard behaviors](#permission-behaviors).
 
 The FA2 contract developer can choose and implement a custom set of permissions
 behaviors. The particular implementation may be static (the permissions configuration
 cannot be changed after the contract is deployed) or dynamic (the FA2 contract
 may be upgradable and allow to change the permissions configuration). At any moment
-in time, the FA2 token contract exposes consistent and non-self-contradictory
+in time, the FA2 token contract MUST expose consistent and non-self-contradictory
 permissions configuration (unlike ERC-777 that exposes two flavors of the transfer
 at the same time).
 
@@ -597,14 +597,14 @@ at the same time).
 
 Permission policy semantics are composed from several orthogonal behaviors.
 The concrete policy is expressed as a combination of those behaviors. Each permission
-policy defines a set possible standard behaviors. An FA2 contract developer MAY
+policy defines a set of possible standard behaviors. An FA2 contract developer MAY
 chose to implement one or more behaviors that are different from the default ones
 depending on their business use case.
 
 The FA2 defines the following standard permission behaviors, that can be chosen
 independently, when an FA2 contract is implemented:
 
-###### `Operator` Transfer Behavior
+###### `Operator` Permission Behavior
 
 This behavior specifies who is permitted to transfer tokens.
 
@@ -707,6 +707,9 @@ the hook interface is not implemented, the entire transfer transaction MUST fail
 
 * The hooks MUST NOT be invoked in the context of the operation other than transfer,
   mint and burn.
+
+* `transfer_descriptor_param.operator` MUST be initialized with the address that
+  invoked the FA2 contract (`SENDER`).
 
 A special consideration is required if FA2 implementation supports sender and/or
 receiver hooks. It is possible that one of the token owner hooks will fail because
@@ -838,11 +841,11 @@ The FA2 contract MUST always implement the [core transfer behavior](#core-transf
 However, FA2 contract developer MAY chose to implement either the
 [default transfer permission policy](#default-transfer-permission-policy) or a
 custom policy.
-The FA2 contract implementation MAY customizes one or more of the standard permission
+The FA2 contract implementation MAY customize one or more of the standard permission
 behaviors (`operator`, `receiver`, `sender` as specified in `permissions_descriptor`
 type), by choosing one of the available options for those permission behaviors.
 
-##### `permissions_descriptor`
+##### `permissions_descriptor` Entry Point
 
 LIGO definition:
 
