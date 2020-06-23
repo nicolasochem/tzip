@@ -23,7 +23,7 @@ let custom_validate_receivers (p, pm, wl
   let receivers = get_owners_from_batch (p.batch, get_receiver) in
   Set.fold 
     (fun (ops, r : (operation list) * address) ->
-      match to_sender_hook r with
+      match to_receiver_hook r with
       | Hook_entry_point h ->
         (* receiver contract implements fa2_token_receiver interface: invoke it*)
         let op = Operation.transaction pm 0mutez h in
