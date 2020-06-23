@@ -141,10 +141,8 @@ type transfer = {
 | Transfer of transfer_michelson list
 ```
 
-where
-
 <details>
-<summary>LIGO to Michelson conversion</summary>
+<summary>where</summary>
 
 ```ocaml
 type transfer_destination_michelson = transfer_destination michelson_pair_right_comb
@@ -266,10 +264,8 @@ type balance_of_param = {
 | Balance_of of balance_of_param_michelson
 ```
 
-where
-
 <details>
-<summary>LIGO to Michelson conversion</summary>
+<summary>where</summary>
 
 ```ocaml
 type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
@@ -365,10 +361,8 @@ type update_operator =
 | Update_operators of update_operator_michelson list
 ```
 
-where
-
 <details>
-<summary>LIGO to Michelson conversion</summary>
+<summary>where</summary>
 
 ```ocaml
 type operator_param_michelson = operator_param michelson_pair_right_comb
@@ -547,10 +541,8 @@ type token_metadata_param = {
 | Token_metadata of token_metadata_param_michelson
 ```
 
-where
-
 <details>
-<summary>LIGO to Michelson conversion</summary>
+<summary>where</summary>
 
 ```ocaml
 type token_metadata_michelson = token_metadata michelson_pair_right_comb
@@ -762,10 +754,8 @@ type fa2_token_sender =
   | Tokens_sent of transfer_descriptor_param_michelson
 ```
 
-where
-
 <details>
-<summary>LIGO to Michelson conversion</summary>
+<summary>where</summary>
 
 ```ocaml
 type transfer_destination_descriptor_michelson =
@@ -877,10 +867,8 @@ LIGO definition:
 | Permissions_descriptor of permissions_descriptor_michelson contract
 ```
 
-where
-
 <details>
-<summary>LIGO to Michelson conversion</summary>
+<summary>where</summary>
 
 ```ocaml
 type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
