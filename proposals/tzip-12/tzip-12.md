@@ -87,7 +87,7 @@ the batch may contain zero or more entries and there may be duplicate token IDs.
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who can perform a
 transfer, the transfer amount, and who can receive tokens. This standard calls such
-logic a *permission policy* or *permission behavior*. The FA2 standard defines the
+logic a *permission policy*. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
 specify who can transfer tokens. The default policy allows transfers by
 either token owner (an account that holds token balance) or by an operator
@@ -115,8 +115,8 @@ entry points.
 * [`| Update_operators of update_operator list`](#update_operators)
 * [`| Token_metadata_registry of address contract`](##token_metadata_registry)
 
-The full definition of the FA2 entry points in LIGO and related types can be found in
-[fa2_interface.mligo](./fa2_interface.mligo).
+The full definition of the FA2 entry points in LIGO and related types can be found
+in [fa2_interface.mligo](./fa2_interface.mligo).
 
 ### Entry Point Semantics
 
@@ -593,15 +593,15 @@ at the same time).
 
 #### A Taxonomy of Permission Policies
 
-##### Behavior Patterns
+##### Permission Behaviors
 
-Permission policy semantics are composed from several orthogonal behavior patterns.
+Permission policy semantics are composed from several orthogonal behaviors.
 The concrete policy is expressed as a combination of those behaviors. Each permission
-policy defines a set possible standard behaviors (one of them is default). An FA2
-contract developer MAY chose to implement one or more behavior patterns that are
-different from the default ones depending on their business use case.
+policy defines a set possible standard behaviors. An FA2 contract developer MAY
+chose to implement one or more behaviors that are different from the default ones
+depending on their business use case.
 
-The FA2 defines the following standard permission policies, that can be chosen
+The FA2 defines the following standard permission behaviors, that can be chosen
 independently, when an FA2 contract is implemented:
 
 ###### `Operator` Transfer Behavior
