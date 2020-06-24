@@ -412,6 +412,24 @@ or be limited to an administrator.
 
 #### Token Metadata
 
+Token metadata is primarily useful in off-chain, user-facing contexts (e.g.
+wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use
+of token metadata and minimal on-chain gas consumption. A related effort to create
+a separate metadata TZIP standard is also underway.
+
+* The FA2 contract MUST implement `token_metadata_registry` view entry point that
+  returns an address of the contract holding tokens metadata. Token metadata can
+  be held either by the FA2 token contract itself (then `token_metadata_registry`
+  returns `SELF` address) or by a separate token registry contract.
+
+* Token registry contract MUST implement one of two ways to expose token metadata
+  for off-chain clients:
+  
+  * Contract storage MUST have a `big_map` that maps `token_id -> token_metadata`
+    and annotated `%token_metadata`
+
+  * Contract MUST implement entry point `token_metadata`
+
 Each FA2 `token_id` has associated metadata of the following type:
 
 ```ocaml
@@ -456,24 +474,6 @@ Examples
 | 0n       | 123     | 123      |
 | 1n       | 123     | 12.3     |
 | 3n       | 123000  | 123      |
-
-Token metadata is primarily useful in off-chain, user-facing contexts (e.g.
-wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use
-of token metadata and minimal on-chain gas consumption. A related effort to create
-a separate metadata TZIP standard is also underway.
-
-* The FA2 contract MUST implement `token_metadata_registry` view entry point that
-  returns an address of the contract holding tokens metadata. Token metadata can
-  be held either by the FA2 token contract itself (then `token_metadata_registry`
-  returns `SELF` address) or by a separate token registry contract.
-
-* Token registry contract MUST implement one of two ways to expose token metadata
-  for off-chain clients:
-  
-  * Contract storage MUST have a `big_map` that maps `token_id -> token_metadata`
-    and annotated `%token_metadata`
-
-  * Contract MUST implement entry point `token_metadata`
 
 ##### `token_metadata_registry`
 
