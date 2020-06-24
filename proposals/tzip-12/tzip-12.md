@@ -142,7 +142,7 @@ type transfer = {
 ```
 
 <details>
-<summary>where LIGO to Michelson conversion is</summary>
+<summary>where</summary>
 
 ```ocaml
 type transfer_destination_michelson = transfer_destination michelson_pair_right_comb
@@ -265,7 +265,7 @@ type balance_of_param = {
 ```
 
 <details>
-<summary>where LIGO to Michelson conversion is</summary>
+<summary>where</summary>
 
 ```ocaml
 type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
@@ -362,7 +362,7 @@ type update_operator =
 ```
 
 <details>
-<summary>where LIGO to Michelson conversion is</summary>
+<summary>where</summary>
 
 ```ocaml
 type operator_param_michelson = operator_param michelson_pair_right_comb
@@ -542,7 +542,7 @@ type token_metadata_param = {
 ```
 
 <details>
-<summary>where LIGO to Michelson conversion is</summary>
+<summary>where</summary>
 
 ```ocaml
 type token_metadata_michelson = token_metadata michelson_pair_right_comb
@@ -594,13 +594,14 @@ of a transfer, and who can receive tokens. This standard calls such logic *permi
 policy* and defines a framework to compose such permission policies from the
 [standard behaviors](#permission-behaviors).
 
-The FA2 contract developer can choose and implement a custom set of permissions
-behaviors. The particular implementation may be static (the permissions configuration
+FA2 allows the contract developer to choose and customize from a variety of permissions
+behaviors, easily enabling non-transferrable tokens or centrally-administrated tokens without operators. 
+The particular implementation may be static (the permissions configuration
 cannot be changed after the contract is deployed) or dynamic (the FA2 contract
-may be upgradable and allow to change the permissions configuration). At any moment
-in time, the FA2 token contract MUST expose consistent and non-self-contradictory
-permissions configuration (unlike ERC-777 that exposes two flavors of the transfer
-at the same time).
+may be upgradable and allow to change the permissions configuration). However, the 
+FA2 token contract MUST expose consistent and non-self-contradictory permissions 
+configuration (unlike ERC-777 that exposes two flavors of the transfer at the 
+same time).
 
 #### A Taxonomy of Permission Policies
 
@@ -755,7 +756,7 @@ type fa2_token_sender =
 ```
 
 <details>
-<summary>where LIGO to Michelson conversion is</summary>
+<summary>where</summary>
 
 ```ocaml
 type transfer_destination_descriptor_michelson =
@@ -868,7 +869,7 @@ LIGO definition:
 ```
 
 <details>
-<summary>where LIGO to Michelson conversion is</summary>
+<summary>where</summary>
 
 ```ocaml
 type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
