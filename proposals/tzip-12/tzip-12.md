@@ -142,7 +142,7 @@ type transfer = {
 ```
 
 <details>
-<summary>where</summary>
+<summary>where LIGO to Michelson conversion is</summary>
 
 ```ocaml
 type transfer_destination_michelson = transfer_destination michelson_pair_right_comb
@@ -265,7 +265,7 @@ type balance_of_param = {
 ```
 
 <details>
-<summary>where</summary>
+<summary>where LIGO to Michelson conversion is</summary>
 
 ```ocaml
 type balance_of_request_michelson = balance_of_request michelson_pair_right_comb
@@ -362,7 +362,7 @@ type update_operator =
 ```
 
 <details>
-<summary>where</summary>
+<summary>where LIGO to Michelson conversion is</summary>
 
 ```ocaml
 type operator_param_michelson = operator_param michelson_pair_right_comb
@@ -542,7 +542,7 @@ type token_metadata_param = {
 ```
 
 <details>
-<summary>where</summary>
+<summary>where LIGO to Michelson conversion is</summary>
 
 ```ocaml
 type token_metadata_michelson = token_metadata michelson_pair_right_comb
@@ -755,7 +755,7 @@ type fa2_token_sender =
 ```
 
 <details>
-<summary>where</summary>
+<summary>where LIGO to Michelson conversion is</summary>
 
 ```ocaml
 type transfer_destination_descriptor_michelson =
@@ -868,7 +868,7 @@ LIGO definition:
 ```
 
 <details>
-<summary>where</summary>
+<summary>where LIGO to Michelson conversion is</summary>
 
 ```ocaml
 type operator_transfer_policy_michelson = operator_transfer_policy michelson_or_right_comb
