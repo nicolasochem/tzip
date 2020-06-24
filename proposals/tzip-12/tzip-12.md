@@ -74,8 +74,7 @@ contract address and token ID, a natural number (`nat`). If the underlying contr
 implementation supports only a single token type (e.g. ERC-20-like contract),
 the token ID MUST be `0n`. In the case, when multiple token types are supported
 within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
-is fully responsible for assigning and managing token IDs. FA2 clients MUST NOT
-depend on particular ID values to infer information about a token.
+is fully responsible for assigning and managing token IDs.
 
 Most of the entry points are batch operations that allow querying or transfer of
 multiple token types atomically. If the underlying contract implementation supports
