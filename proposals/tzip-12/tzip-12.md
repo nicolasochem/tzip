@@ -15,16 +15,16 @@ created: 2020-01-24
 * [Interface Specification](#interface-specification)
   * [Entry Point Semantics](#entry-point-semantics)
     * [`transfer`](#transfer)
-      * [Core `transfer` Behavior](#core-transfer-behavior)
-      * [Default `transfer` Permission Policy](#default-transfer-permission-policy)
+      * [Core Transfer Behavior](#core-transfer-behavior)
+      * [Default Transfer Permission Policy](#default-transfer-permission-policy)
     * [`balance_of`](#balance_of)
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
     * [Token Metadata](#token-metadata)
       * [Implementing and Accessing FA2 Metadata](#implementing-and-accessing-fa2-metadata)
         * [`token_metadata_registry`](#token_metadata_registry)
-  * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
-    * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
+  * [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
+    * [A Taxonomy of Transfer Permission Policies](#a-taxonomy-of-transfer-permission-policies)
       * [`permissions_descriptor`](#permissions_descriptor)
   * [Error Handling](#error-handling)
 * [Implementing Different Token Types with FA2](#implementing-different-token-types-with-fa2)
@@ -50,8 +50,8 @@ based on public comment see FA2 Request for Comment on [Tezos Agora](https://tez
 
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. A variety of
-permission policies can be used to define how many tokens can be transferred, who
-can perform a transfer, and who can receive tokens. A token contract can be
+transfer permission policies can be used to define how many tokens can be transferred,
+who can perform a transfer, and who can receive tokens. A token contract can be
 designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple token
 types (e.g. ERC-1155) to optimize batch transfers and atomic swaps of the tokens.
 
@@ -86,15 +86,16 @@ the batch may contain zero or more entries and there may be duplicate token IDs.
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who can perform a
 transfer, the transfer amount, and who can receive tokens. This standard calls such
-logic a *permission policy*. The FA2 standard defines the
+logic a *transfer permission policy*. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
 specify who can transfer tokens. The default policy allows transfers by
 either token owner (an account that holds token balance) or by an operator
 (an account that is permitted to manage tokens on behalf of the token owner).
 
-Unlike many other standards, FA2 allows to customize the default permission policy
-(see [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration))
-using a set of predefined permission policies that are optional.
+Unlike many other standards, FA2 allows to customize the default transfer permission
+policy (see
+[FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration))
+using a set of predefined permission behaviors that are optional.
 
 This specification defines the set of [standard errors](#error-handling) and error
 mnemonics to be used when implementing FA2. However, some implementations MAY
@@ -187,7 +188,7 @@ For instance, mint and burn operations may be invoked by a special privileged
 administrative address only. In this case, regular operator restrictions may not
 be applicable.
 
-##### Core `transfer` Behavior
+##### Core Transfer Behavior
 
 FA2 token contracts MUST always implement this behavior.
 
@@ -214,7 +215,7 @@ FA2 token contracts MUST always implement this behavior.
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
   entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
-* Transfer implementations MUST apply permission policy logic (either
+* Transfer implementations MUST apply transfer permission policy logic (either
   [default transfer permission policy](#default-transfer-permission-policy) or
   [customized one](#customizing-permission-policy)).
   If permission logic rejects a transfer, the whole operation MUST fail.
@@ -224,7 +225,7 @@ FA2 token contracts MUST always implement this behavior.
   permission policies. If the additional permission fails, the whole transfer
   operation MUST fail with a custom error mnemonic.
 
-##### Default `transfer` Permission Policy
+##### Default Transfer Permission Policy
 
 * Token owner address MUST be able to perform a transfer of its own tokens (e. g.
   `SENDER` equals to `from_` parameter in the `transfer`).
@@ -588,42 +589,45 @@ off-chain.
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
   entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
-### FA2 Permission Policies and Configuration
+### FA2 Transfer Permission Policies and Configuration
 
 Most token standards specify logic such as who can perform a transfer, the amount
-of a transfer, and who can receive tokens. This standard calls such logic *permission
-policy* and defines a framework to compose such permission policies from the
-[standard behaviors](#permission-behaviors).
+of a transfer, and who can receive tokens. This standard calls such logic
+*transfer permission policy* and defines a framework to compose such permission
+policies from the [standard permission behaviors](#permission-behaviors).
 
 FA2 allows the contract developer to choose and customize from a variety of permissions
-behaviors, easily enabling non-transferrable tokens or centrally-administrated tokens without operators. 
-The particular implementation may be static (the permissions configuration
-cannot be changed after the contract is deployed) or dynamic (the FA2 contract
-may be upgradable and allow to change the permissions configuration). However, the 
-FA2 token contract MUST expose consistent and non-self-contradictory permissions 
-configuration (unlike ERC-777 that exposes two flavors of the transfer at the 
-same time).
+behaviors, easily enabling non-transferrable tokens or centrally-administrated
+tokens without operators. The particular implementation may be static
+(the permissions configuration cannot be changed after the contract is deployed)
+or dynamic (the FA2 contract may be upgradable and allow to change the permissions
+configuration). However, the  FA2 token contract MUST expose consistent and
+non-self-contradictory permissions configuration (unlike ERC-777 that exposes two
+flavors of the transfer at the same time).
 
-#### A Taxonomy of Permission Policies
+#### A Taxonomy of Transfer Permission Policies
 
 ##### Permission Behaviors
 
-Permission policy semantics are composed from several orthogonal behaviors.
-The concrete policy is expressed as a combination of those behaviors. Each permission
-policy defines a set of possible standard behaviors. An FA2 contract developer MAY
-chose to implement one or more behaviors that are different from the default ones
-depending on their business use case.
+Transfer permission policy is composed from several orthogonal permission behaviors.
+Each permission behavior defines a set of possible behavior configurations (one
+of those configuration is default). The concrete policy is expressed as a combination
+concrete configuration values for each standard permission behavior. An FA2 contract
+developer MAY chose to implement one or more permission behaviors configuration
+that are different from the default ones depending on their business use case.
 
 The FA2 defines the following standard permission behaviors, that can be chosen
 independently, when an FA2 contract is implemented:
 
 ###### `Operator` Permission Behavior
 
-This behavior specifies who is permitted to transfer tokens.
+This permission behavior specifies who is permitted to transfer tokens.
 
 Potentially token transfers can be performed by the token owner or by an operator
 permitted to transfer tokens on behalf of the token owner. An operator can transfer
 any tokens in any amount on behalf of the owner.
+
+Permission behavior available configurations:
 
 ```ocaml
 type operator_transfer_policy =
@@ -660,7 +664,7 @@ MAY implement either `fa2_token_sender` and/or `fa2_token_receiver` interfaces.
 Those interfaces define a hook entry point that accepts transfer description and
 invoked by the FA2 contract in the context of transfer, mint and burn operations.
 
-Token owner permission can be configured to behave in one of the following ways:
+Token owner hook behavior available configurations:
 
 ```ocaml
 type owner_hook_policy =
@@ -685,11 +689,11 @@ the hook interface is not implemented, the entire transfer transaction MUST fail
 
 * This policy can be applied to both token senders and token receivers. There are
   two owner hook interfaces, `fa2_token_receiver` and `fa2_token_sender`, that need
-  to be implemented by token owner contracts to expose the owner's hooks to FA2 token
-  contract.
+  to be implemented by token owner contracts to expose the token owner's hooks
+  to the FA2 token contract.
 
-* If a transfer failed because of the token owner permission behavior, the operation
-  MUST fail with the one of the following error mnemonics:
+* If a transfer failed because of the token owner hook permission behavior, the
+  operation MUST fail with the one of the following error mnemonics:
 
 | Error Mnemonic | Description |
 | :------------- | :---------- |
@@ -802,13 +806,13 @@ Michelson definition:
 )
 ```
 
-##### Permission Policy Formulae
+##### Transfer  Permission Policy Formulae
 
-Each concrete implementation of the permission policy can be described by a formula
-which combines permission behaviors in the following form:
+Each concrete implementation of the transfer permission policy can be described
+by a formula which combines permission behaviors in the following form:
 
 ```
-Operator(?) * Receiver(?) * Sender(?)
+Operator(operator_config) * Receiver(receiver_config) * Sender(sender_config)
 ```
 
 For instance, `Operator(Owner_transfer) * Receiver(Owner_no_hook) * Sender(Owner_no_hook)`
@@ -819,7 +823,7 @@ tokens.
 represents non-transferable token (neither token owner, nor operators can transfer
 tokens.
 
-Permission token policy formula is expressed by the `permissions_descriptor` type.
+Transfer permission policy formula is expressed by the `permissions_descriptor` type.
 
 ```ocaml
 type operator_transfer_policy =
@@ -845,13 +849,13 @@ type permissions_descriptor = {
 }
 ```
 
-It is possible to extend permission policy with a `custom` behavior, which does
-not overlap with already existing standard policies. This standard does not specify
-exact types for custom config entry points. FA2 token contract clients that support
-custom config entry points must know their types a priori and/or use a `tag` hint
-of `custom_permission_policy`.
+It is possible to extend transfer permission policy with a `custom` behavior,
+which does not overlap with already existing standard policies. This standard
+does not specify exact types for custom config entry points. FA2 token contract
+clients that support custom config entry points must know their types a priori
+and/or use a `tag` hint of `custom_permission_policy`.
 
-##### Customizing Permission Policy
+##### Customizing Transfer Permission Policy
 
 The FA2 contract MUST always implement the [core transfer behavior](#core-transfer-behavior).
 However, FA2 contract developer MAY chose to implement either the
@@ -860,6 +864,9 @@ custom policy.
 The FA2 contract implementation MAY customize one or more of the standard permission
 behaviors (`operator`, `receiver`, `sender` as specified in `permissions_descriptor`
 type), by choosing one of the available options for those permission behaviors.
+
+The composition of the described behaviors can be described as
+`Core_Transfer_Behavior AND (Default_transfer_permission_policy OR Custom_Transfer_Permission_Policy)`
 
 ##### `permissions_descriptor` Entry Point
 
