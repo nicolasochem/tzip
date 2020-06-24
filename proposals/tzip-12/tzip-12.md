@@ -21,9 +21,8 @@ created: 2020-01-24
     * [Operators](#operators)
       * [`update_operators`](#update_operators)
     * [Token Metadata](#token-metadata)
-      * [`token_metadata_registry`](#token_metadata_registry)
-      * [`token_metadata` `big_map`](#token_metadata-big_map)
-      * [`token_metadata` Entry Point](#token_metadata-entry-point)
+      * [Implementing and Accessing FA2 Metadata](#implementing-and-accessing-fa2-metadata)
+        * [`token_metadata_registry`](#token_metadata_registry)
   * [FA2 Permission Policies and Configuration](#fa2-permission-policies-and-configuration)
     * [A Taxonomy of Permission Policies](#a-taxonomy-of-permission-policies)
       * [`permissions_descriptor`](#permissions_descriptor)
@@ -462,7 +461,7 @@ Examples
 | 1n       | 123     | 12.3     |
 | 3n       | 123000  | 123      |
 
-**Implementing and Accessing FA2 Metadata**
+##### Implementing and Accessing FA2 Metadata
 
 * The FA2 contract MUST implement `token_metadata_registry` view entry point that
   returns an address of the contract holding tokens metadata. Token metadata can
@@ -477,8 +476,7 @@ Examples
 
   * Contract MUST implement entry point `token_metadata`
 
-
-##### `token_metadata_registry`
+###### `token_metadata_registry`
 
 LIGO definition:
 
@@ -497,7 +495,7 @@ holds its own tokens metadata, the entry point returns `SELF` address. The entry
 point parameter is some contract entry point to be called with the address of the
 token metadata registry.
 
-##### `token_metadata` `big_map`
+###### `token_metadata` `big_map`
 
 LIGO definition:
 
@@ -531,7 +529,7 @@ The FA2 contract storage MUST have a `big_map` with a key type `token_id` and
 value type `token_metadata`. This `big_map` MUST be annotated as `%token_metadata`
 and can be at any position within the storage.
 
-##### `token_metadata` Entry Point
+###### `token_metadata` Entry Point
 
 LIGO definition:
 
