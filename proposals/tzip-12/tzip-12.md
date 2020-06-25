@@ -955,7 +955,7 @@ let default_descriptor : permissions_descriptor = {
 ```
 
 * If the FA2 contract implements one or more non-default behaviors, it MUST implement
-  `permission_descriptor` entry point. The descriptor field values MUST reflect
+  `permissions_descriptor` entry point. The descriptor field values MUST reflect
   actual permission behavior implemented by the contract.
 
 * If the FA2 contract implements the default permission policy, it MAY omit the
