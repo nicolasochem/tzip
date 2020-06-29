@@ -180,12 +180,12 @@ amount to be transferred from the source address to the destination (`to_`) addr
 
 FA2 does NOT specify an interface for mint and burn operations; however, if an
 FA2 token contract implements mint and burn operations, it SHOULD, when possible,
-enforce the same rules and logic applied to the token transfer operation. Mint
-and burn can be considered special cases of the transfer. Although, it is possible
-that mint and burn have more or less restrictive rules than the regular transfer.
-For instance, mint and burn operations may be invoked by a special privileged
-administrative address only. In this case, regular operator restrictions may not
-be applicable.
+enforce the same logic (core transfer behavior and transfer permission logic)
+applied to the token transfer operation. Mint and burn can be considered special
+cases of the transfer. Although, it is possible that mint and burn have more or
+less restrictive rules than the regular transfer. For instance, mint and burn
+operations may be invoked by a special privileged administrative address only.
+In this case, regular operator restrictions may not be applicable.
 
 ##### Core Transfer Behavior
 
