@@ -78,8 +78,8 @@ is fully responsible for assigning and managing token IDs.
 
 Most of the entry points are batch operations that allow querying or transfer of
 multiple token types atomically. If the underlying contract implementation supports
-only a single token type, the batch may contain single or multiple entries where
-token ID will be a fixed `0n` value. Likewise, if multiple token types are supported,
+only a single token type, the batch may contain zero or multiple entries where
+token ID is a fixed `0n` value. Likewise, if multiple token types are supported,
 the batch may contain zero or more entries and there may be duplicate token IDs.
 
 Most token standards specify logic that validates a transfer transaction and can
