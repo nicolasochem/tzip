@@ -1011,7 +1011,7 @@ types:
 mnemonic and the second element is a custom error data.
 
 Some FA2 implementations MAY introduce their custom errors that MUST follow the
-same pattern as standard ones: define custom error mnemonics and use fail with one
+same pattern as standard ones: define custom error mnemonics and fail with one
 of the error types defined above.
 
 ## Implementing Different Token Types With FA2
