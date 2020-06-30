@@ -240,7 +240,7 @@ FA2 token contracts MUST always implement this behavior.
 
 * Transfer implementations MUST apply transfer permission policy logic (either
   [default transfer permission policy](#default-transfer-permission-policy) or
-  [customized one](#customizing-permission-policy)).
+  [customized one](#customizing-#fa2-transfer-permission-policies-and-configuration-policy)).
   If permission logic rejects a transfer, the whole operation MUST fail.
 
 * Core transfer behavior MAY be extended. If additional constraints on tokens
@@ -497,6 +497,8 @@ Examples
   
   * Contract storage MUST have a `big_map` that maps `token_id -> token_metadata`
     and annotated `%token_metadata`
+
+    OR
 
   * Contract MUST implement entry point `token_metadata`
 
