@@ -232,6 +232,9 @@ FA2 token contracts MUST always implement this behavior.
 
 * Transfers of zero amount MUST be treated as normal transfers.
 
+* Transfers with the same address (`from_` equals `to_`) MUST be treated as normal
+  transfers.
+
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
   entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
