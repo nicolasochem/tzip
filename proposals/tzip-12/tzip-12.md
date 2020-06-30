@@ -635,12 +635,12 @@ flavors of the transfer at the same time).
 Transfer permission policy is composed from several orthogonal permission behaviors.
 Each permission behavior defines a set of possible behavior configurations (one
 of those configuration is default). The concrete policy is expressed as a combination
-concrete configuration values for each standard permission behavior. An FA2 contract
+of concrete configuration values for each permission behavior. An FA2 contract
 developer MAY chose to implement one or more permission behaviors configuration
 that are different from the default ones depending on their business use case.
 
-The FA2 defines the following standard permission behaviors, that can be chosen
-independently, when an FA2 contract is implemented:
+The FA2 defines the following standard permission behaviors, which configuration
+can be chosen independently, when an FA2 contract is implemented:
 
 ###### `Operator` Permission Behavior
 
