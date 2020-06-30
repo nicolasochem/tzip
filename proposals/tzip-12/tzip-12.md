@@ -12,6 +12,7 @@ created: 2020-01-24
 * [Summary](#summary)
 * [Motivation](#motivation)
 * [Abstract](#abstract)
+* [General](#general)
 * [Interface Specification](#interface-specification)
   * [Entry Point Semantics](#entry-point-semantics)
     * [`transfer`](#transfer)
@@ -69,23 +70,19 @@ developers.
 
 ## Abstract
 
-Token type is uniquely identified on the chain by a pair composed of the token
-contract address and token ID, a natural number (`nat`). If the underlying contract
-implementation supports only a single token type (e.g. ERC-20-like contract),
-the token ID MUST be `0n`. In the case, when multiple token types are supported
-within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
-is fully responsible for assigning and managing token IDs.
+This standard defines the unified contract interface and its behavior to support
+a wide range of token types and implementations. The particular FA2 implementation
+may support either a single token type per contract or multiple tokens per contract,
+including hybrid implementations where multiple token kinds (fungible, non-fungible,
+non-transferable etc) are supported.
 
 Most of the entry points are batch operations that allow querying or transfer of
-multiple token types atomically. If the underlying contract implementation supports
-only a single token type, the batch may contain zero or multiple entries where
-token ID is a fixed `0n` value. Likewise, if multiple token types are supported,
-the batch may contain zero or more entries and there may be duplicate token IDs.
+multiple token types atomically.
 
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who can perform a
-transfer, the transfer amount, and who can receive tokens. This standard calls such
-logic a *transfer permission policy*. The FA2 standard defines the
+transfer, the transfer amount, and who can receive tokens. This standard calls
+such logic a *transfer permission policy*. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
 specify who can transfer tokens. The default policy allows transfers by
 either token owner (an account that holds token balance) or by an operator
@@ -99,6 +96,30 @@ using a set of predefined permission behaviors that are optional.
 This specification defines the set of [standard errors](#error-handling) and error
 mnemonics to be used when implementing FA2. However, some implementations MAY
 introduce their custom errors that MUST follow the same pattern as standard ones.
+
+## General
+
+* Token type is uniquely identified on the chain by a pair composed of the token
+ contract address and token ID, a natural number (`nat`). If the underlying contract
+ implementation supports only a single token type (e.g. ERC-20-like contract),
+ the token ID MUST be `0n`. In the case, when multiple token types are supported
+ within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
+ is fully responsible for assigning and managing token IDs.
+
+* The FA2 batch entry points accept a list (batch) of parameters describing a
+  single operation or a query. The batch MUST NOT be reordered or deduplicated and
+  MUST be processed in the same order it is receive received.
+  
+* Empty batch is a valid input and MUST be processed processed as a non-empty one.
+  For example, and empty transfer batch will not affect token balances, but applicable
+  transfer core behavior and permission policy MUST be applied. Invocation of the
+  `balance_of` entry point with an empty batch input MUST result in a call to a
+  callback contract with an empty response batch.
+
+* If the underlying contract implementation supports only a single token type,
+  the batch may contain zero or multiple entries where token ID is a fixed `0n`
+  value. Likewise, if multiple token types are supported, the batch may contain
+  zero or more entries and there may be duplicate token IDs.
 
 ## Interface Specification
 
@@ -195,7 +216,7 @@ FA2 token contracts MUST always implement this behavior.
   transfer in the batch cannot be completed, the whole transaction MUST fail, all
   token transfers MUST be reverted, and token balances MUST remain unchanged.
 
-* Each individual transfer MUST decrement token balance of the source (`from_`)
+* Each transfer in the batch MUST decrement token balance of the source (`from_`)
   address by the amount of the transfer and increment token balance of the destination
   (`to_`) address by the amount of the transfer.
   
