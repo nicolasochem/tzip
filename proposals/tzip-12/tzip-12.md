@@ -307,6 +307,7 @@ type balance_of_param_aux = {
 
 type balance_of_param_michelson = balance_of_param_aux michelson_pair_right_comb
 ```
+
 </details>
 
 Michelson definition:
@@ -495,7 +496,7 @@ Examples
 * Token registry contract MUST implement one of two ways to expose token metadata
   for off-chain clients:
   
-  * Contract storage MUST have a `big_map` that maps `token_id -> token_metadata`
+  * Contract storage MUST have a `big_map` that maps `token_id -> token_metadata_michelson`
     and annotated `%token_metadata`
 
     OR
@@ -528,10 +529,19 @@ LIGO definition:
 ```ocaml
 type <contract_storage> = {
   ...
-  token_metadata : (token_id, token_metadata) big_map;
+  token_metadata : (token_id, token_metadata_michelson) big_map;
   ...
 }
 ```
+
+<details>
+<summary>where LIGO to Michelson conversion is</summary>
+
+```ocaml
+type token_metadata_michelson = token_metadata michelson_pair_right_comb
+```
+
+</details>
 
 Michelson definition:
 
