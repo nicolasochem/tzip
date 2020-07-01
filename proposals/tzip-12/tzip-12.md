@@ -666,7 +666,7 @@ Potentially token transfers can be performed by the token owner or by an operato
 permitted to transfer tokens on behalf of the token owner. An operator can transfer
 any tokens in any amount on behalf of the owner.
 
-Permission behavior available configurations:
+Standard configurations of the operator permission behavior:
 
 ```ocaml
 type operator_transfer_policy =
@@ -691,6 +691,9 @@ type operator_transfer_policy =
   the token owner address ([`update_operators`](#update_operators)). Once an
   operator is added, it can manage all of its associated owner's tokens.
 
+The operation permission behavior also affects [`update_operators`](#update_operators)
+entry point:
+
 * If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
 [`update_operators`](#update_operators) entry point MUST fail if invoked with the
 error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
@@ -703,7 +706,7 @@ MAY implement either `fa2_token_sender` and/or `fa2_token_receiver` interfaces.
 Those interfaces define a hook entry point that accepts transfer description and
 invoked by the FA2 contract in the context of transfer, mint and burn operations.
 
-Token owner hook behavior available configurations:
+Standard configurations of the token owner hook permission behavior:
 
 ```ocaml
 type owner_hook_policy =
@@ -721,6 +724,8 @@ the hook interface is not implemented, it gets ignored.
 * `Required_owner_hook` - treat the owner hook interface as required. If a token
 owner contract implements a corresponding hook interface, it MUST be invoked. If
 the hook interface is not implemented, the entire transfer transaction MUST fail.
+
+Token owner hook implementation and semantics:
 
 * Sender and/or receiver hooks can approve the transaction or reject it
   by failing. If such a hook is invoked and failed, the whole transfer operation
