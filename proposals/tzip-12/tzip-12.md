@@ -662,9 +662,9 @@ can be chosen independently, when an FA2 contract is implemented:
 
 This permission behavior specifies who is permitted to transfer tokens.
 
-Potentially token transfers can be performed by the token owner or by an operator
-permitted to transfer tokens on behalf of the token owner. An operator can transfer
-any tokens in any amount on behalf of the owner.
+Depending on the configuration, token transfers can be performed by the token owner
+or by an operator permitted to transfer tokens on behalf of the token owner.
+An operator can transfer any tokens in any amount on behalf of the owner.
 
 Standard configurations of the operator permission behavior:
 
