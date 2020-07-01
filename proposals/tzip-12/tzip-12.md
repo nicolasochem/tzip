@@ -702,7 +702,7 @@ error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 
 Each transfer operation accepts a batch that defines token owners that send tokens
 (senders) and token owners that receive tokens (receivers). Token owner contracts
-MAY implement either `fa2_token_sender` and/or `fa2_token_receiver` interfaces.
+MAY implement `fa2_token_sender` and/or `fa2_token_receiver` interfaces.
 Those interfaces define a hook entry point that accepts transfer description and
 invoked by the FA2 contract in the context of transfer, mint and burn operations.
 
