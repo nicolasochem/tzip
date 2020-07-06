@@ -23,9 +23,9 @@ which is implemented in Lorentz, SmartPy, and partially in LIGO.
 ## Abstract
 
 Token contracts often need to control which users can perform transfers,
-especially when representing permissioned assets such as digital securities. In an 
-on-chain context, this often takes the form of user "_transferlists_", i.e.
-lists of which users may be the sender/receiver of a transfer.
+especially when representing permissioned assets such as digital securities. 
+This often takes form on-chain as user "_transferlists_", i.e. lists of which 
+users may be the sender/receiver of a transfer.
 
 Common features include the following:
 - Many users share the same permissions
