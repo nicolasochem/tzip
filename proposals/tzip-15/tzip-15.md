@@ -10,7 +10,7 @@ created: 2020-05-14
 ## Summary
 
 TZIP-15 proposes a standard for a transferlist interface:
-a lighteight permission schema suitable for asset allocation and transfer.
+a lightweight permission schema suitable for asset allocation and transfer.
 
 This schema is versatile and can either be used as part of a token
 contract (i.e. in a _monolith_ configuration) or as a separate contract that's
