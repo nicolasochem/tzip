@@ -29,7 +29,7 @@ validates a transaction and either approves it by finishing execution successful
 or rejects it by failing.
 
 The transfer hook makes it possible to model different transfer permission
-policies like whitelists, operator lists, etc. Although this approach introduces
+policies like transfer lists, operator lists, etc. Although this approach introduces
 gas consumption overhead (compared to an all-in-one contract) by requiring an extra
 inter-contract call, it also offers some other advantages:
 
@@ -227,20 +227,20 @@ Any address can be a recipient of the token transfer.
 
 [Hook contract](./examples/fa2_default_hook.mligo)
 
-#### Custom Receiver Hook/White List Permission Policy
+#### Custom Receiver Hook/Transfer List Permission Policy
 
 This is a sample implementation of the FA2 transfer hook, which supports receiver
-whitelist and `fa2_token_receiver` for token receivers. The hook contract also
+transfer list and `fa2_token_receiver` for token receivers. The hook contract also
 supports [operators](#operator-transfer-behavior).
 
-Only addresses that are whitelisted or implement the `fa2_token_receiver` interface
-can receive tokens. If one or more `to_` addresses in FA2 transfer batch are not
-permitted, the whole transfer operation MUST fail.
+Only addresses that on the transfer list or implement the `fa2_token_receiver`
+interface can receive tokens. If one or more `to_` addresses in FA2 transfer batch
+are not permitted, the whole transfer operation MUST fail.
 
 The following table demonstrates the required actions depending on `to_` address
 properties.
 
-| `to_` is whitelisted | `to_` implements `fa2_token_receiver` interface | Action |
+| `to_` is on transfer list | `to_` implements `fa2_token_receiver` interface | Action |
 | ------ | ----- | ----------|
 | No  | No  | Transaction MUST fail |
 | Yes | No  | Continue transfer |
