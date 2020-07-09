@@ -147,10 +147,58 @@ Example:
 
 ### Metadata JSON Format
 
-
 We first define the format in a rather informal way.
 
+The metadata should be a valid JSON object
+([STD-90](https://tools.ietf.org/html/std90) /
+[RFC-8259](https://www.rfc-editor.org/info/rfc8259))
+with various top-level fields.
 
+By default *all* top-level fields are optional, i.e. the empty object `{}` is
+valid metadata.
+
+For compatibility, a compliant parser should ignore any extra 
+fields it doesn't know about.
+
+#### Reserved Fields
+
+This standard defines a few top-level fields.
+
+
+`"version"`:
+
+- A single string, free format.
+- It is recommended to have version strings which attempt at uniquely
+  identifying the exact Michelson contract, or at least its behavior.
+
+`"license"`:
+
+- Either a single string value or an extensible object
+ `{ "name": <string> , "details" : <string> }`
+- It is recommended to use standard short names when possible, see Debian
+  [guidelines](https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/#license-short-name)
+
+`"authors"`:
+
+- A list of strings.
+- Each author should obey the `"Print Name <'contact'>"`, where the `'contact'`
+  string is either an email address, or a web URI.
+
+`"interfaces"`
+
+- A list of strings.
+- Each string should allow the consumer of the metadata to know which interfaces
+  and behaviors the contract *claims* to obey to (other than the obvious TZIP-16).
+- In the case of standards defined as TZIPs in the present repository, the
+  string should obey the pattern `"TZIP-<number>"`.
+- Example: an FA2 contract would (at least) have an `"interfaces"` field
+  containing `["TZIP-12"]`.
+
+`"views"`:
+
+- A list of off-chain-view objects, defined in the following section.
+
+#### Semantics of Off-chain Views
 
 
 
