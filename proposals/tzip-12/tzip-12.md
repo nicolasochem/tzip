@@ -443,7 +443,7 @@ or be limited to an administrator.
 Token metadata is primarily useful in off-chain, user-facing contexts (e.g.
 wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use
 of token metadata and minimal on-chain gas consumption. A related effort to create
-a separate metadata TZIP standard is also underway.
+a separate metadata standard is also underway via [TZIP-16](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
 
 Each FA2 `token_id` has associated metadata of the following type:
 
