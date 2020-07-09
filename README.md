@@ -33,7 +33,7 @@ alternative options, opinions, and objections.
 | [TZIP-12] | `FA2` - Multi-Asset Interface                        |  2020-01-24   | Draft            |
 | [TZIP-13] | `FA1.3` - Fungible Asset Standard                    |  2020-01-02   | Work In Progress |
 | [TZIP-14] | GraphQL interface to Tezos node data                 |  2020-04-01   | Draft            |
-| [TZIP-15] | Token Filterlisting                                  |  2020-05-14   | Draft            |
+| [TZIP-15] | Token Transferlist Interface                      |  2020-05-14   | Draft            |
 | [TZIP-16] | Contract Metadata                                    |  2020-06-30   | Work In Progress |
 
 ## How to Contribute
