@@ -175,8 +175,10 @@ This standard defines a few top-level fields.
 
 - Either a single string value or an extensible object
  `{ "name": <string> , "details" : <string> }`
-- It is recommended to use standard short names when possible, see Debian
+- It is recommended to use _de facto standard_ short names when possible, see
+  Debian
   [guidelines](https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/#license-short-name)
+  for instance.
 
 `"authors"`:
 
@@ -199,6 +201,49 @@ This standard defines a few top-level fields.
 - A list of off-chain-view objects, defined in the following section.
 
 #### Semantics of Off-chain Views
+
+An off-chain view object has at least 3 fields:
+
+- `"name"`; the conical name of the query (as in function name,
+  e.g. `"get-balance"`).
+- `"description"`: a human readable description of the behavior of the view
+  (optional field).
+- One or more implementation fields: a usable definition of the view where the
+  field name discriminates between various kinds of views. Below, this standard
+  defines 2 of those kinds, `"michelson-storage-view"` and `"rest-api"`, further
+  deriving standards may add new ones.
+
+##### Michelson Storage Views
+
+The `"michelson-storage-view"` field is a JSON object describing a sequence of
+Michelson instructions to run on a pair formed by a given parameter and the
+storage of the contract being queried in order to leave the execution stack with
+the queried value.  For this object we define 3 fields and a custom type
+“`michelson`” (see below) and an extra optional field:
+
+- `"parameter"` (optional): an (annotated) Michelson type of the potential
+  external parameters required by the view code; if the field is absent the view
+  does not require any external input parameter.
+- `"return-type"` (required): the type of the result of the view (i.e. for the
+  value left on the stack); the type can also be annotated.
+- `"code"` (required): the Michelson code expression implementing the view.
+- `"annotations"`: a list of objects documenting the annotations used in the 3
+  above fields. These objects have two string fields `"name"`, the annotation
+  string, and `"description"` a human-readable blob of text.
+
+The 3 “Michelson” fields have the same format, they are either:
+
+- an object with one field named `"concrete"` which is a string containing valid
+  Michelson concrete syntax, e.g. `"(pair (nat %hello) (string %world))"` or
+  `"{ CAR; CDR; FAILWITH}"`.
+- a JSON value obeying the Michelson JSON format of the Tezos protocol
+  (sometimes referred as “Micheline” encoding)
+
+It is recommended that a given view consistently uses either the concrete or
+JSON encodings for all the fields in a given view.
+
+#### Rest API Views
+
 
 
 
