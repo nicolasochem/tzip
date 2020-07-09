@@ -137,7 +137,7 @@ type permissions_descriptor_aux = {
 
 type permissions_descriptor_michelson = permissions_descriptor_aux michelson_pair_right_comb
 
-(* permissions descriptor entry point
+(* permissions descriptor entrypoint
 type fa2_entry_points_custom =
   ...
   | Permissions_descriptor of permissions_descriptor_michelson contract
@@ -178,7 +178,7 @@ type transfer_descriptor_param_aux = {
 
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
 (*
-Entry points for sender/receiver hooks
+Entrypoints for sender/receiver hooks
 
 type fa2_token_receiver =
   ...
