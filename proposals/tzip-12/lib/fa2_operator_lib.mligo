@@ -17,7 +17,7 @@ type operator_storage = ((address * address), unit) big_map
 
 (** 
   Updates operator storage using an `update_operator` command.
-  Helper function to implement `Update_operators` FA2 entry point
+  Helper function to implement `Update_operators` FA2 entrypoint
 *)
 let update_operators (update, storage : update_operator * operator_storage)
     : operator_storage =

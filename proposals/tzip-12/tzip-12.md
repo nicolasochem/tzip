@@ -14,7 +14,7 @@ created: 2020-01-24
 * [Abstract](#abstract)
 * [General](#general)
 * [Interface Specification](#interface-specification)
-  * [Entry Point Semantics](#entry-point-semantics)
+  * [Entrypoint Semantics](#entrypoint-semantics)
     * [`transfer`](#transfer)
       * [Core Transfer Behavior](#core-transfer-behavior)
       * [Default Transfer Permission Policy](#default-transfer-permission-policy)
@@ -76,7 +76,7 @@ may support either a single token type per contract or multiple tokens per contr
 including hybrid implementations where multiple token kinds (fungible, non-fungible,
 non-transferable etc) are supported.
 
-Most of the entry points are batch operations that allow querying or transfer of
+Most of the entrypoints are batch operations that allow querying or transfer of
 multiple token types atomically.
 
 Most token standards specify logic that validates a transfer transaction and can
@@ -110,14 +110,14 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
  within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
  is fully responsible for assigning and managing token IDs.
 
-* The FA2 batch entry points accept a list (batch) of parameters describing a
+* The FA2 batch entrypoints accept a list (batch) of parameters describing a
   single operation or a query. The batch MUST NOT be reordered or deduplicated and
   MUST be processed in the same order it is receive received.
   
 * Empty batch is a valid input and MUST be processed processed as a non-empty one.
   For example, and empty transfer batch will not affect token balances, but applicable
   transfer core behavior and permission policy MUST be applied. Invocation of the
-  `balance_of` entry point with an empty batch input MUST result in a call to a
+  `balance_of` entrypoint with an empty batch input MUST result in a call to a
   callback contract with an empty response batch.
 
 * If the underlying contract implementation supports only a single token type,
@@ -127,10 +127,10 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Interface Specification
 
-Token contract implementing the FA2 standard MUST have the following entry points.
+Token contract implementing the FA2 standard MUST have the following entrypoints.
 Notation is given in [cameLIGO language](https://ligolang.org) for readability
 and Michelson. The LIGO definition, when compiled, generates compatible Michelson
-entry points.
+entrypoints.
 
 `type fa2_entry_points =`
 
@@ -139,10 +139,10 @@ entry points.
 * [`| Update_operators of update_operator list`](#update_operators)
 * [`| Token_metadata_registry of address contract`](##token_metadata_registry)
 
-The full definition of the FA2 entry points in LIGO and related types can be found
+The full definition of the FA2 entrypoints in LIGO and related types can be found
 in [fa2_interface.mligo](./fa2_interface.mligo).
 
-### Entry Point Semantics
+### Entrypoint Semantics
 
 #### `transfer`
 
@@ -240,7 +240,7 @@ FA2 token contracts MUST always implement this behavior.
   transfers.
 
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
-  entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
+  entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 * Transfer implementations MUST apply transfer permission policy logic (either
   [default transfer permission policy](#default-transfer-permission-policy) or
@@ -349,14 +349,14 @@ Get the balance of multiple account/token pairs. Accepts a list of
   balance is interpreted as zero.
 
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
-  entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
+  entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
-*Notice:* The `balance_of` entry point implements a *continuation-passing style (CPS)
-view entry point* pattern that invokes the other callback contract with the requested
+*Notice:* The `balance_of` entrypoint implements a *continuation-passing style (CPS)
+view entrypoint* pattern that invokes the other callback contract with the requested
 data. This pattern, when not used carefully, could expose the callback contract
 to an inconsistent state and/or manipulatable outcome (see
 [view patterns](https://www.notion.so/Review-of-TZIP-12-95e4b631555d49429e2efdfe0f9ffdc0#6d68e18802734f059adf3f5ba8f32a74)).
-The `balance_of` entry point should be used on the chain with the extreme caution.
+The `balance_of` entrypoint should be used on the chain with the extreme caution.
 
 #### Operators
 
@@ -368,7 +368,7 @@ of the owner.
 An operator, other than the owner, MUST be approved to manage all tokens held by
 the owner to make a transfer from the owner account.
 
-FA2 interface specifies two entry points to update and inspect operators. Once
+FA2 interface specifies two entrypoints to update and inspect operators. Once
 permitted for the specific token owner, an operator can transfer any tokens belonging
 to the owner.
 
@@ -423,7 +423,7 @@ Michelson definition:
 
 Add or Remove token operators for the specified owners.
 
-* The entry point accepts a list of `update_operator` commands. If two different
+* The entrypoint accepts a list of `update_operator` commands. If two different
   commands in the list add and remove an operator for the same owner,
   the last command in the list MUST take effect.
 
@@ -492,7 +492,7 @@ Examples
 
 ##### Implementing and Accessing FA2 Metadata
 
-* The FA2 contract MUST implement `token_metadata_registry` view entry point that
+* The FA2 contract MUST implement `token_metadata_registry` view entrypoint that
   returns an address of the contract holding tokens metadata. Token metadata can
   be held either by the FA2 token contract itself (then `token_metadata_registry`
   returns `SELF` address) or by a separate token registry contract.
@@ -505,7 +505,7 @@ Examples
 
     OR
 
-  * Contract MUST implement entry point `token_metadata`
+  * Contract MUST implement entrypoint `token_metadata`
 
 ###### `token_metadata_registry`
 
@@ -522,8 +522,8 @@ Michelson definition:
 ```
 
 Return address of the contract that holds tokens metadata. If the FA2 contract
-holds its own tokens metadata, the entry point returns `SELF` address. The entry
-point parameter is some contract entry point to be called with the address of the
+holds its own tokens metadata, the entrypoint returns `SELF` address. The entry
+point parameter is some contract entrypoint to be called with the address of the
 token metadata registry.
 
 ###### `token_metadata` `big_map`
@@ -569,7 +569,7 @@ The FA2 contract storage MUST have a `big_map` with a key type `token_id` and
 value type `token_metadata`. This `big_map` MUST be annotated as `%token_metadata`
 and can be at any position within the storage.
 
-###### `token_metadata` Entry Point
+###### `token_metadata` Entrypoint
 
 LIGO definition:
 
@@ -619,14 +619,14 @@ Michelson definition:
 Get the metadata for multiple token types. Accepts a list of `token_id`s and a
 a lambda `handler`, which accepts a list of `token_metadata` records. The `handler`
 lambda may assert certain assumptions about the metadata and/or fail with the
-obtained metadata implementing a view entry point pattern to extract tokens metadata
+obtained metadata implementing a view entrypoint pattern to extract tokens metadata
 off-chain.
 
 * As with `balance_of`, the input `token_id`'s should not be deduplicated nor
   reordered.
 
 * If one of the specified `token_id`s is not defined within the FA2 contract, the
-  entry point MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
+  entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 ### FA2 Transfer Permission Policies and Configuration
 
@@ -687,15 +687,15 @@ type operator_transfer_policy =
   permitted to manage tokens on behalf of the owner. If `SENDER` is not the token
   owner and not an operator permitted to manage tokens on behalf of the owner,
   the transfer operation MUST fail with the error mnemonic `"FA2_NOT_OPERATOR"`.
-  The FA2 standard defines the entry point to manage operators associated with
+  The FA2 standard defines the entrypoint to manage operators associated with
   the token owner address ([`update_operators`](#update_operators)). Once an
   operator is added, it can manage all of its associated owner's tokens.
 
 The operation permission behavior also affects [`update_operators`](#update_operators)
-entry point:
+entrypoint:
 
 * If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
-[`update_operators`](#update_operators) entry point MUST fail if invoked with the
+[`update_operators`](#update_operators) entrypoint MUST fail if invoked with the
 error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 
 ###### `Token Owner Hook` Permission Behavior
@@ -703,7 +703,7 @@ error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 Each transfer operation accepts a batch that defines token owners that send tokens
 (senders) and token owners that receive tokens (receivers). Token owner contracts
 MAY implement `fa2_token_sender` and/or `fa2_token_receiver` interfaces.
-Those interfaces define a hook entry point that accepts transfer description and
+Those interfaces define a hook entrypoint that accepts transfer description and
 invoked by the FA2 contract in the context of transfer, mint and burn operations.
 
 Standard configurations of the token owner hook permission behavior:
@@ -756,7 +756,7 @@ Token owner hook implementation and semantics:
 | burn | MUST be `Some burner_address` | MUST be `None` |
 
 * If all of the following conditions are met, the FA2 contract MUST invoke both
-  `fa2_token_sender` and `fa2_token_receiver` entry points:
+  `fa2_token_sender` and `fa2_token_receiver` entrypoints:
   * the token owner implements both `fa2_token_sender` and `fa2_token_receiver`
     interfaces
   * the token owner receives and sends some tokens in the same transfer operation
@@ -895,8 +895,8 @@ type permissions_descriptor = {
 
 It is possible to extend transfer permission policy with a `custom` behavior,
 which does not overlap with already existing standard policies. This standard
-does not specify exact types for custom config entry points. FA2 token contract
-clients that support custom config entry points must know their types a priori
+does not specify exact types for custom config entrypoints. FA2 token contract
+clients that support custom config entrypoints must know their types a priori
 and/or use a `tag` hint of `custom_permission_policy`.
 
 ##### Customizing Transfer Permission Policy
@@ -912,7 +912,7 @@ type), by choosing one of the available options for those permission behaviors.
 The composition of the described behaviors can be described as
 `Core_Transfer_Behavior AND (Default_transfer_permission_policy OR Custom_Transfer_Permission_Policy)`
 
-##### `permissions_descriptor` Entry Point
+##### `permissions_descriptor` Entrypoint
 
 LIGO definition:
 
@@ -1000,11 +1000,11 @@ let default_descriptor : permissions_descriptor = {
 ```
 
 * If the FA2 contract implements one or more non-default behaviors, it MUST implement
-  `permissions_descriptor` entry point. The descriptor field values MUST reflect
+  `permissions_descriptor` entrypoint. The descriptor field values MUST reflect
   actual permission behavior implemented by the contract.
 
 * If the FA2 contract implements the default permission policy, it MAY omit the
-  implementation of the `permissions_descriptor` entry point.
+  implementation of the `permissions_descriptor` entrypoint.
 
 * In addition to the standard permission behaviors, the FA2 contract MAY also
   implement an optional custom permissions policy. If such custom a policy is
@@ -1013,8 +1013,8 @@ let default_descriptor : permissions_descriptor = {
   other parties which are aware of such custom extension. Some custom permission
   MAY require a config API (like [`update_operators`](#update_operators) entry
   point of the FA2 to configure `operator_transfer_policy`). The address of the
-  contract that provides config entry points is specified by
-  `custom_permission_policy.config_api` field. The config entry points MAY be
+  contract that provides config entrypoints is specified by
+  `custom_permission_policy.config_api` field. The config entrypoints MAY be
   implemented either within the FA2 token contract itself (then the returned
   address SHALL be `SELF`), or in a separate contract.
 
@@ -1039,16 +1039,16 @@ Standard error mnemonics:
 | `"FA2_TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
 | `"FA2_NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is invoked not by the token owner |
 | `"FA2_NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is invoked neither by the token owner nor a permitted operator |
-| `"FA2_OPERATORS_UNSUPPORTED"` | `update_operators` entry point is invoked and `operator_transfer_policy` is `No_transfer` or `Owner_transfer` |
+| `"FA2_OPERATORS_UNSUPPORTED"` | `update_operators` entrypoint is invoked and `operator_transfer_policy` is `No_transfer` or `Owner_transfer` |
 | `"FA2_RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
 | `"FA2_SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
 | `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
 | `"FA2_SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
 
-If more than one error conditions are met, the entry point MAY fail with any applicable
+If more than one error conditions are met, the entrypoint MAY fail with any applicable
 error.
 
-When error occurs, any FA2 contract entry point MUST fail with one of the following
+When error occurs, any FA2 contract entrypoint MUST fail with one of the following
 types:
 
 1. `string` value which represents an error code mnemonic.

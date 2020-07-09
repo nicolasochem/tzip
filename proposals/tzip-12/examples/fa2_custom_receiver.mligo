@@ -3,7 +3,7 @@ Implementation of the permission transfer hook, with custom behavior.
 It uses a combination of a receiver while list and `fa2_token_receiver` interface.
 Transfer is permitted if a receiver address is in the receiver white list OR implements
 `fa2_token_receiver` interface. If a receiver address implements `fa2_token_receiver`
-interface, its `tokens_received` entry point must be called.
+interface, its `tokens_received` entrypoint must be called.
 *)
 
 #include "../lib/fa2_transfer_hook_lib.mligo"
