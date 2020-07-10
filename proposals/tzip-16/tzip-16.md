@@ -59,8 +59,9 @@ Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw
 - Define Offchain views
     - micheline encoded as concrete strings? or JSON? or both options/
     - exact semantics with examples
-- Define Optional entry-point
+- Define Optional `assertMetadataSHA256` Entrypoint
     - not sure about this
+    - do we want other hashes?
 - How to “derive” from TZIP-16
     - should we also modify TZIP-12 or just provide examples?
 - Implementations
@@ -210,8 +211,8 @@ An off-chain view object has at least 3 fields:
   (optional field).
 - One or more implementation fields: a usable definition of the view where the
   field name discriminates between various kinds of views. Below, this standard
-  defines 2 of those kinds, `"michelson-storage-view"` and `"rest-api"`, further
-  deriving standards may add new ones.
+  defines 2 of those kinds, `"michelson-storage-view"` and `"rest-api-query"`,
+  further deriving standards may add new ones.
 
 ##### Michelson Storage Views
 
@@ -244,6 +245,35 @@ JSON encodings for all the fields in a given view.
 
 #### Rest API Views
 
+The `"rest-api-query"` field is an object describing how to map the view to an
+[Open API](https://github.com/OAI/OpenAPI-Specification) description of a
+REST-API.
 
+- `"speicification-uri"` (required): a string giving the location (URI) of the
+  full Open API specification.
+- `"base-uri"` (optional): The recommended `"server"` to use.
+- `"path"` (required): The API path within the Open API specification that
+  implements the view.
+- `"method"` (optional, default: `"GET"`): The method used for the view.
 
+### Optional `assertMetadataSHA256` Entrypoint
+
+For the cases when a batched transaction requires assurances that a (portion of)
+the contract metadata has not changed at the time the batch-operation is
+included in a block, the contract implementation may provide an
+`assertMetadataSHA256` entrypoint.
+
+If included, the type of the entrypoint must be:
+
+```
+(pair (string %key) (bytes %hash))
+```
+
+and behave as follows:
+
+- If the SHA256 hash of the value at key `%key` in the metadata `big_map` is
+  equal to `%hash`, then do nothing and succeed.
+- If the value is not present, call `FAILWITH` with the string `"NOT_FOUND"`,
+- If the value is present but its hash is not equal to `%hash`, call `FAILWITH`
+  with either `Unit` or with the correct hash if available.
 
