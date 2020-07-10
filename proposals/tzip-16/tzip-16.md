@@ -78,11 +78,9 @@ All the “Define …” could be sub-sections of a **Definition of The Standar
 
 ### Contract Storage
 
-To provide a TZIP-16-compliant initial
-access-point to the metadata from a given on-chain contract (`KT1...`
-address)
-one must 
-include the `%metadata` field in the contract-storage.
+To provide a TZIP-16-compliant initial access-point to the metadata from a given
+on-chain contract (`KT1...` address) one must include a `%metadata` field in
+the contract-storage.
 
 The field can be anywhere within the storage type but must have the following
 type:
@@ -94,8 +92,8 @@ type:
 At least one value must be present: 
 
 - the one for the empty string key (`""`).
-- the value must be an URI as specified in the following section which points to
-  a JSON document as specified in the one after
+- the value must be a URI as specified in the following section which points to
+  a JSON document as specified in the one after.
 
 ### Metdata URIs
 
@@ -107,25 +105,28 @@ See the specification an URI's generic format:
 
 In the context of this specification, valid schemes include:
 
-- `http`/`https` <https://tools.ietf.org/html/rfc7230#section-2.7>
-- `ipfs` <https://www.iana.org/assignments/uri-schemes/prov/ipfs>
-  <https://github.com/ipfs/in-web-browsers/blob/master/ADDRESSING.md#addressing-with-native-url>
-- `tezos-storage`: defined below
-- `sha256`: defined right after
+- `http`/`https`: see
+  [RFC 7230](https://tools.ietf.org/html/rfc7230#section-2.7).
+- `ipfs`: see IPFS URIs
+  [specification](https://www.iana.org/assignments/uri-schemes/prov/ipfs), and
+  [documentation](https://github.com/ipfs/in-web-browsers/blob/master/ADDRESSING.md#addressing-with-native-url).
+- `tezos-storage`: defined in the section below.
+- `sha256`: defined in the section right after.
 
 #### The `tezos-storage` URI Scheme
 
-URIs that point at the storage of a contract
+URIs that point at the storage of a contract, should provide the following
+information:
 
-Host:
+**Host:**
 
-- location of the contract pointed to
-- e.g. `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX.mainnet` or
+- Location of the contract pointed to, with the format `<address>.<network>`.
+- Example: `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX.mainnet` or
   `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX.NetXNfaaGTuJUGF`
-- this is all optional, if contract address or network are not provided the
-  defaults are “current” ones in a given context.
+- This is all optional, if contract address or network are not provided the
+  defaults are “current” ones within a given context.
 
-Path: a string used as key in the `%metadata` big-map of the contract
+**Path:** a string used as key in the `%metadata` big-map of the contract
 
 Examples:
 
@@ -135,11 +136,10 @@ Examples:
   `foo` from the metadata big-map of the contract
   `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX` (on the current network).
 
-
 #### The `sha256` URI Scheme
 
-This is a compound URI, the host must be understood the SHA256 hash of the
-resource being pointed at by the path of the URI in hexadecimal format.
+This is a compound URI, the *host* must be understood as the SHA256 hash in
+hexadecimal format of the resource being pointed at by the path of the URI.
 
 Example:
 
@@ -148,23 +148,23 @@ Example:
 
 ### Metadata JSON Format
 
-We first define the format in a rather informal way.
+We first define the format in a rather informal way; a JSON-Schema specification
+is provided as an annex to this document (**TODO**).
 
 The metadata should be a valid JSON object
 ([STD-90](https://tools.ietf.org/html/std90) /
-[RFC-8259](https://www.rfc-editor.org/info/rfc8259))
-with various top-level fields.
+[RFC-8259](https://www.rfc-editor.org/info/rfc8259)) with various top-level
+fields.
 
 By default *all* top-level fields are optional, i.e. the empty object `{}` is
 valid metadata.
 
-For compatibility, a compliant parser should ignore any extra 
-fields it doesn't know about.
+For compatibility, a compliant parser should ignore any extra fields it doesn't
+know about.
 
 #### Reserved Fields
 
-This standard defines a few top-level fields.
-
+This standard defines a few top-level fields:
 
 `"version"`:
 
@@ -177,7 +177,7 @@ This standard defines a few top-level fields.
 - Either a single string value or an extensible object
  `{ "name": <string> , "details" : <string> }`
 - It is recommended to use _de facto standard_ short names when possible, see
-  Debian
+  the Debian
   [guidelines](https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/#license-short-name)
   for instance.
 
@@ -193,13 +193,30 @@ This standard defines a few top-level fields.
 - Each string should allow the consumer of the metadata to know which interfaces
   and behaviors the contract *claims* to obey to (other than the obvious TZIP-16).
 - In the case of standards defined as TZIPs in the present repository, the
-  string should obey the pattern `"TZIP-<number>"`.
+  string should obey the pattern `"TZIP-<number><extras>"` where `<extras>` is
+  additional information prefixed with a space character.
 - Example: an FA2 contract would (at least) have an `"interfaces"` field
-  containing `["TZIP-12"]`.
+  containing `["TZIP-12"]` or `["TZIP-12 git 6544de32"]`.
 
 `"views"`:
 
 - A list of off-chain-view objects, defined in the following section.
+
+Example:
+
+```json
+{
+  "version": "foo.1.4.2",
+  "license": "ISC",
+  "authors": [ "Seb Mondet <seb@mondet.org>" ],
+  "interfaces": [ "TZIP-12" ],
+  "views": [
+     // ... see below ...
+  ]
+  // ... potential extensions ...
+}
+```
+
 
 #### Semantics of Off-chain Views
 
@@ -209,10 +226,25 @@ An off-chain view object has at least 3 fields:
   e.g. `"get-balance"`).
 - `"description"`: a human readable description of the behavior of the view
   (optional field).
-- One or more implementation fields: a usable definition of the view where the
-  field name discriminates between various kinds of views. Below, this standard
-  defines 2 of those kinds, `"michelson-storage-view"` and `"rest-api-query"`,
-  further deriving standards may add new ones.
+- `"implementations"`: a list of implementation objects: usable definitions of
+  the views. Each implementation is a one-field object where the field name
+  discriminates between various kinds of views. Below, this standard defines 2
+  of those kinds, `"michelson-storage-view"` and `"rest-api-query"`, further
+  deriving standards may add new ones.
+
+Example:
+
+```json
+{
+  "name": "get-allowance-for-user",
+  "description": "Get the current allowance for a user of the contract.",
+  "implementations": [
+     { "michelson-storage-view" : { /* ,,, see below ... */ } },
+     { "rest-api-query" : { /* ,,, see below ... */ } },
+     // ... potential extensions ...
+  ]
+}
+```
 
 ##### Michelson Storage Views
 
@@ -243,6 +275,20 @@ The 3 “Michelson” fields have the same format, they are either:
 It is recommended that a given view consistently uses either the concrete or
 JSON encodings for all the fields in a given view.
 
+Example:
+
+```json
+{
+  "parameter": "(pair (address %user) (nat %token_id))",
+  "return-type": "(pair (nat %allowance) (timestamp %expiration_date))",
+  "code": "UNPAIR ; CDR ; ... ",
+  "annotations": [
+     { "name": "user", "description": "The token-user being referred to" },
+     // ...
+  ]
+}
+```
+
 #### Rest API Views
 
 The `"rest-api-query"` field is an object describing how to map the view to an
@@ -255,6 +301,16 @@ REST-API.
 - `"path"` (required): The API path within the Open API specification that
   implements the view.
 - `"method"` (optional, default: `"GET"`): The method used for the view.
+
+Example:
+
+```json
+{
+  "specification-uri": "https://example.com/openapi/my-token",
+  "base-uri": "https://example.com/my-token/v2",
+  "path": "/allowances",
+}
+```
 
 ### Optional `assertMetadataSHA256` Entrypoint
 
