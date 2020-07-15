@@ -45,6 +45,8 @@ Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw
     - Get an IPFS URI, get the JSON, call an offchain view.
 - Define the piece of Michelson storage
     - Big-map + default “first key”
+    - There is a proposal to have the option of replacing the big-map with a
+      view entrypoint (*I*, Seb, don't think it's worth the extra complexity)
 - Define URI format
     - Refer to other known URIs: `https:`, `ipfs:`
     - Define how to point inside a contract
@@ -58,6 +60,7 @@ Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw
     - Other TZIP references
 - Define Offchain views
     - Micheline encoded as concrete strings? or JSON? or both options?
+        - Likely **going to move towards JSON-only** (WIP).
     - Exact semantics with examples
 - Define Optional `assertMetadataSHA256` Entrypoint
     - Not sure about this
