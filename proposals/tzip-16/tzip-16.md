@@ -319,14 +319,15 @@ Example:
 }
 ```
 
-### Optional `assertMetadataSHA256` Entrypoint
+### Optional `assertMetadata<hash>` Entrypoints
 
 For the cases when a batched transaction requires assurances that a (portion of)
 the contract metadata has not changed at the time the batch-operation is
-included in a block, the contract implementation may provide an
-`assertMetadataSHA256` entrypoint.
+included in a block, the contract implementation may provide one or more
+`assertMetadata<hash>` entrypoints where `<hash>` is any of the Michelson hash
+functions `SHA256`, `BLAKE2B`, or `SHA512`.
 
-If included, the type of the entrypoint must be:
+If included, the type of such an entrypoint must be:
 
 ```
 (pair (string %key) (bytes %hash))
@@ -334,8 +335,8 @@ If included, the type of the entrypoint must be:
 
 and behave as follows:
 
-- If the SHA256 hash of the value at key `%key` in the metadata `big_map` is
-  equal to `%hash`, then do nothing and succeed.
+- If the corresponding hash of the value at key `%key` in the metadata `big_map`
+  is equal to `%hash`, then do nothing and succeed.
 - If the value is not present, call `FAILWITH` with the string `"NOT_FOUND"`,
 - If the value is present but its hash is not equal to `%hash`, call `FAILWITH`
   with either `Unit` or with the correct hash if available.
