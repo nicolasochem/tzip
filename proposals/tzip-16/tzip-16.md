@@ -267,6 +267,9 @@ the queried value.  For this object we define 3 fields and a custom type
 - `"annotations"`: a list of objects documenting the annotations used in the 3
   above fields. These objects have two string fields `"name"`, the annotation
 string, and a human-readable blob of text `"description"`.
+- `"version"` (optional): a string representing the version of Michelson that
+  the view is meant to work with; Michelson versions *are* base58check-encoded
+  protocol hashes.
 
 The 3 “Michelson” fields have the same format, they are either:
 
