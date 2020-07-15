@@ -85,8 +85,9 @@ To provide a TZIP-16-compliant initial access-point to the metadata from a given
 on-chain contract (`KT1...` address) one must include a `%metadata` field in
 the contract-storage.
 
-The field can be anywhere within the storage type but must have the following
-type:
+The field can be anywhere within the top-level tree of nested pairs forming the
+storage type (meaning that it cannot be inside an `or`, an `option`, a `map`,
+etc.) and must have the following type:
 
 ```
 (big_map %metadata string string)
