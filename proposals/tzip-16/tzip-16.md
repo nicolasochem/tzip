@@ -23,7 +23,7 @@ The standard defines:
     - references to other standards implemented,
     - off-chain “views” (Michelson functions to query the contract), and
     - custom extensions.
-- an optional entry-point to validate metadata information
+- an optional entry-point to validate metadata information.
  
 The standard is meant to be extended/specialized by other TZIPs, for instance by
 adding fields to the JSON format of the metadata or imposing certain off-chain
@@ -37,37 +37,37 @@ views.
 Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw>
 
 - Intro
-    - justification: no need to change protocol for off-chain things
-    - justification: we need a standard for contract devs & tools, wallets, and
-      indexers/explorers to agree on formats and semantics
+    - Justification: no need to change protocol for off-chain things
+    - Justification: we need a standard for contract devs & tools, wallets, and
+      Indexers/explorers to agree on formats and semantics
 - Use-case Example
     - Quick round-trip / non-detailed “example”
     - Get an IPFS URI, get the JSON, call an offchain view.
 - Define the piece of Michelson storage
-    - big-map + default “first key”
+    - Big-map + default “first key”
 - Define URI format
-    - refer to other known URIs: `https:`, `ipfs:`
-    - define how to point inside a contract
+    - Refer to other known URIs: `https:`, `ipfs:`
+    - Define how to point inside a contract
 - Define The metadata blobs “meta-format”
     - In the `.md` file: only informal-ish but precise enough definition
     - Some fields are links which use the previous URI format
     - Attachment: [JSON Schema](https://en.wikipedia.org/wiki/JSON#JSON_Schema)
       or [JSON-LD](https://en.wikipedia.org/wiki/JSON-LD)
 - Define Reserved simple fields
-    - authorship/provenance
-    - other TZIP references
+    - Authorship/provenance
+    - Other TZIP references
 - Define Offchain views
-    - micheline encoded as concrete strings? or JSON? or both options/
-    - exact semantics with examples
+    - Micheline encoded as concrete strings? or JSON? or both options?
+    - Exact semantics with examples
 - Define Optional `assertMetadataSHA256` Entrypoint
-    - not sure about this
-    - do we want other hashes?
+    - Not sure about this
+    - Do we want other hashes?
 - How to “derive” from TZIP-16
-    - should we also modify TZIP-12 or just provide examples?
+    - Should we also modify TZIP-12 or just provide examples?
 - Implementations
-    - reference known implementations
+    - Reference known implementations
 
-All the “Define …” could be sub-sections of a **Definition of The Standard** section
+All the “Define …” could be sub-sections of a **Definition of The Standard** section.
 
 ## Introduction
 
@@ -175,7 +175,7 @@ This standard defines a few top-level fields:
 `"license"`:
 
 - Either a single string value or an extensible object
- `{ "name": <string> , "details" : <string> }`
+ `{ "name": <string> , "details" : <string> }`.
 - It is recommended to use _de facto standard_ short names when possible, see
   the Debian
   [guidelines](https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/#license-short-name)
@@ -191,7 +191,7 @@ This standard defines a few top-level fields:
 
 - A list of strings.
 - Each string should allow the consumer of the metadata to know which interfaces
-  and behaviors the contract *claims* to obey to (other than the obvious TZIP-16).
+  and behaviors the contract *claims* to obey (other than the obvious TZIP-16).
 - In the case of standards defined as TZIPs in the present repository, the
   string should obey the pattern `"TZIP-<number><extras>"` where `<extras>` is
   additional information prefixed with a space character.
@@ -262,7 +262,7 @@ the queried value.  For this object we define 3 fields and a custom type
 - `"code"` (required): the Michelson code expression implementing the view.
 - `"annotations"`: a list of objects documenting the annotations used in the 3
   above fields. These objects have two string fields `"name"`, the annotation
-  string, and `"description"` a human-readable blob of text.
+string, and a human-readable blob of text `"description"`.
 
 The 3 “Michelson” fields have the same format, they are either:
 
@@ -270,7 +270,7 @@ The 3 “Michelson” fields have the same format, they are either:
   Michelson concrete syntax, e.g. `"(pair (nat %hello) (string %world))"` or
   `"{ CAR; CDR; FAILWITH}"`.
 - a JSON value obeying the Michelson JSON format of the Tezos protocol
-  (sometimes referred as “Micheline” encoding)
+  (sometimes referred as “Micheline” encoding).
 
 It is recommended that a given view consistently uses either the concrete or
 JSON encodings for all the fields in a given view.
@@ -295,7 +295,7 @@ The `"rest-api-query"` field is an object describing how to map the view to an
 [Open API](https://github.com/OAI/OpenAPI-Specification) description of a
 REST-API.
 
-- `"speicification-uri"` (required): a string giving the location (URI) of the
+- `"specification-uri"` (required): a string giving the location (URI) of the
   full Open API specification.
 - `"base-uri"` (optional): The recommended `"server"` to use.
 - `"path"` (required): The API path within the Open API specification that
