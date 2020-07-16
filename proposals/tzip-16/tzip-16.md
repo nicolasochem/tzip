@@ -62,6 +62,9 @@ Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw
     - Micheline encoded as concrete strings? or JSON? or both options?
         - Likely **going to move towards JSON-only** (WIP).
     - Exact semantics with examples
+- (should-we) Define Offchain big-map-diffs or events (?)
+    - cf.
+      [agora](https://forum.tezosagora.org/t/deriving-fa-token-balance-updates-from-big-map-diff/1972)
 - Define Optional `assertMetadataSHA256` Entrypoint
     - Not sure about this
     - Do we want other hashes?
