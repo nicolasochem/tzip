@@ -8,7 +8,7 @@ In increasing complexity order:
 - `example-001.json` → just one field
 - `example-002.json`
 - `example-003.json`
-- `example-004.json` → on view with two implementations
+- `example-004.json` → one view with two implementations
 - `example-005.json` → `#004` + another view with more Michelson
 
 Here is `#005` pretty-printed by `tezos-client`:
