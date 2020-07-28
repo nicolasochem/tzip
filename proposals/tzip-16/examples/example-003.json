@@ -1,0 +1,13 @@
+{
+  "version": "0.42.0",
+  "license": {
+    "name": "MIT",
+    "details": "The MIT License"
+  },
+  "interfaces": [
+    "TZIP-16",
+    "TZIP-12"
+  ],
+  "source-repository": "https://gitlab.com/tezos/tezos",
+  "commit": "8d3077fb78ff157b36a72f15ff2d17df7c4763f7"
+}

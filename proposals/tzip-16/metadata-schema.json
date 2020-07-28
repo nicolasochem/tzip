@@ -1,0 +1,254 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/contract-metadata-tzip-16",
+  "definitions": {
+    "bignum": {
+      "title": "Big number",
+      "description": "Decimal representation of a big number",
+      "type": "string"
+    },
+    "contract-metadata-tzip-16": {
+      "title": "contract-metadata-tzip-16",
+      "description": "Smart Contract Metadata Standard (TZIP-16).",
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "license": {
+          "oneOf": [
+            {
+              "title": "License-name",
+              "type": "string"
+            },
+            {
+              "title": "License-object",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "views": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "implementations": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "title": "michelson-storage-view",
+                      "type": "object",
+                      "properties": {
+                        "parameter": {
+                          "$ref": "#/definitions/micheline.tzip-16.expression"
+                        },
+                        "return-type": {
+                          "$ref": "#/definitions/micheline.tzip-16.expression"
+                        },
+                        "code": {
+                          "$ref": "#/definitions/micheline.tzip-16.expression"
+                        },
+                        "annotations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "description",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "title": "rest-api-query-view",
+                      "type": "object",
+                      "properties": {
+                        "specification-uri": {
+                          "type": "string"
+                        },
+                        "base-uri": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "type": "string",
+                          "enum": [
+                            "GET",
+                            "POST"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "specification-uri"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "implementations",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "micheline.tzip-16.expression": {
+      "oneOf": [
+        {
+          "title": "Int",
+          "type": "object",
+          "properties": {
+            "int": {
+              "$ref": "#/definitions/bignum"
+            }
+          },
+          "required": [
+            "int"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "String",
+          "type": "object",
+          "properties": {
+            "string": {
+              "$ref": "#/definitions/unistring"
+            }
+          },
+          "required": [
+            "string"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Bytes",
+          "type": "object",
+          "properties": {
+            "bytes": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9]+$"
+            }
+          },
+          "required": [
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Sequence",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/micheline.tzip-16.expression"
+          }
+        },
+        {
+          "title": "Generic prim (any number of args with or without annot)",
+          "type": "object",
+          "properties": {
+            "prim": {
+              "$ref": "#/definitions/unistring"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/micheline.tzip-16.expression"
+              }
+            },
+            "annots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "prim"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "unistring": {
+      "title": "Universal string representation",
+      "description": "Either a plain UTF8 string, or a sequence of bytes for strings that contain invalid byte sequences.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "invalid_utf8_string": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              }
+            }
+          },
+          "required": [
+            "invalid_utf8_string"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

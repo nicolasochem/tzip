@@ -1,0 +1,25 @@
+{
+  "version": "0.42.0",
+  "license": {
+    "name": "MIT",
+    "details": "The MIT License"
+  },
+  "interfaces": [
+    "TZIP-16",
+    "TZIP-12"
+  ],
+  "views": [
+    {
+      "name": "view0",
+      "implementations": [
+        {
+          "code": []
+        },
+        {
+          "specification-uri": "https://example.com/v1.json",
+          "path": "/get-something"
+        }
+      ]
+    }
+  ]
+}
