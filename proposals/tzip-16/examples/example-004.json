@@ -13,11 +13,15 @@
       "name": "view0",
       "implementations": [
         {
-          "code": []
+          "michelson-storage-view": {
+            "code": []
+          }
         },
         {
-          "specification-uri": "https://example.com/v1.json",
-          "path": "/get-something"
+          "rest-api-query": {
+            "specification-uri": "https://example.com/v1.json",
+            "path": "/get-something"
+          }
         }
       ]
     }

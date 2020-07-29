@@ -70,40 +70,49 @@
                       "title": "michelson-storage-view",
                       "type": "object",
                       "properties": {
-                        "parameter": {
-                          "$ref": "#/definitions/micheline.tzip-16.expression"
-                        },
-                        "return-type": {
-                          "$ref": "#/definitions/micheline.tzip-16.expression"
-                        },
-                        "code": {
-                          "$ref": "#/definitions/micheline.tzip-16.expression"
-                        },
-                        "annotations": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              },
-                              "description": {
-                                "type": "string"
+                        "michelson-storage-view": {
+                          "type": "object",
+                          "properties": {
+                            "parameter": {
+                              "$ref": "#/definitions/micheline.tzip-16.expression"
+                            },
+                            "return-type": {
+                              "$ref": "#/definitions/micheline.tzip-16.expression"
+                            },
+                            "code": {
+                              "$ref": "#/definitions/micheline.tzip-16.expression"
+                            },
+                            "annotations": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "description",
+                                  "name"
+                                ],
+                                "additionalProperties": false
                               }
                             },
-                            "required": [
-                              "description",
-                              "name"
-                            ],
-                            "additionalProperties": false
-                          }
-                        },
-                        "version": {
-                          "type": "string"
+                            "version": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "code"
+                          ],
+                          "additionalProperties": false
                         }
                       },
                       "required": [
-                        "code"
+                        "michelson-storage-view"
                       ],
                       "additionalProperties": false
                     },
@@ -111,26 +120,35 @@
                       "title": "rest-api-query-view",
                       "type": "object",
                       "properties": {
-                        "specification-uri": {
-                          "type": "string"
-                        },
-                        "base-uri": {
-                          "type": "string"
-                        },
-                        "path": {
-                          "type": "string"
-                        },
-                        "method": {
-                          "type": "string",
-                          "enum": [
-                            "GET",
-                            "POST"
-                          ]
+                        "rest-api-query": {
+                          "type": "object",
+                          "properties": {
+                            "specification-uri": {
+                              "type": "string"
+                            },
+                            "base-uri": {
+                              "type": "string"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "method": {
+                              "type": "string",
+                              "enum": [
+                                "GET",
+                                "POST"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "path",
+                            "specification-uri"
+                          ],
+                          "additionalProperties": false
                         }
                       },
                       "required": [
-                        "path",
-                        "specification-uri"
+                        "rest-api-query"
                       ],
                       "additionalProperties": false
                     }
