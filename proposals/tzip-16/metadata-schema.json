@@ -106,7 +106,8 @@
                             }
                           },
                           "required": [
-                            "code"
+                            "code",
+                            "return-type"
                           ],
                           "additionalProperties": false
                         }
