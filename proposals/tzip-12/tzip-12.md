@@ -9,33 +9,33 @@ created: 2020-01-24
 
 ## Table Of Contents
 
-* [Summary](#summary)
-* [Motivation](#motivation)
-* [Abstract](#abstract)
-* [General](#general)
-* [Interface Specification](#interface-specification)
-  * [Entrypoint Semantics](#entrypoint-semantics)
-    * [`transfer`](#transfer)
-      * [Core Transfer Behavior](#core-transfer-behavior)
-      * [Default Transfer Permission Policy](#default-transfer-permission-policy)
-    * [`balance_of`](#balance_of)
-    * [Operators](#operators)
-      * [`update_operators`](#update_operators)
-    * [Token Metadata](#token-metadata)
-      * [Implementing and Accessing FA2 Metadata](#implementing-and-accessing-fa2-metadata)
-        * [`token_metadata_registry`](#token_metadata_registry)
-  * [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
-    * [A Taxonomy of Transfer Permission Policies](#a-taxonomy-of-transfer-permission-policies)
-      * [`permissions_descriptor`](#permissions_descriptor)
-  * [Error Handling](#error-handling)
-* [Implementing Different Token Types with FA2](#implementing-different-token-types-with-fa2)
-  * [Single Fungible Token](#single-fungible-token)
-  * [Multiple Fungible Tokens](#multiple-fungible-tokens)
-  * [Non-fungible Tokens](#non-fungible-tokens)
-  * [Mixing Fungible and Non-fungible Tokens](#mixing-fungible-and-non-fungible-tokens)
-  * [Non-transferable Tokens](#non-transferable-tokens)
-* [Future Directions](#future-directions)
-* [Copyright](#copyright)
+- [Summary](#summary)
+- [Motivation](#motivation)
+- [Abstract](#abstract)
+- [General](#general)
+- [Interface Specification](#interface-specification)
+  - [Entrypoint Semantics](#entrypoint-semantics)
+    - [`transfer`](#transfer)
+      - [Core Transfer Behavior](#core-transfer-behavior)
+      - [Default Transfer Permission Policy](#default-transfer-permission-policy)
+    - [`balance_of`](#balance_of)
+    - [Operators](#operators)
+      - [`update_operators`](#update_operators)
+    - [Token Metadata](#token-metadata)
+      - [Implementing and Accessing FA2 Metadata](#implementing-and-accessing-fa2-metadata)
+        - [`token_metadata_registry`](#token_metadata_registry)
+  - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
+    - [A Taxonomy of Transfer Permission Policies](#a-taxonomy-of-transfer-permission-policies)
+      - [`permissions_descriptor`](#permissions_descriptor)
+  - [Error Handling](#error-handling)
+- [Implementing Different Token Types with FA2](#implementing-different-token-types-with-fa2)
+  - [Single Fungible Token](#single-fungible-token)
+  - [Multiple Fungible Tokens](#multiple-fungible-tokens)
+  - [Non-fungible Tokens](#non-fungible-tokens)
+  - [Mixing Fungible and Non-fungible Tokens](#mixing-fungible-and-non-fungible-tokens)
+  - [Non-transferable Tokens](#non-transferable-tokens)
+- [Future Directions](#future-directions)
+- [Copyright](#copyright)
 
 ## Summary
 
@@ -82,7 +82,7 @@ multiple token types atomically.
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who can perform a
 transfer, the transfer amount, and who can receive tokens. This standard calls
-such logic a *transfer permission policy*. The FA2 standard defines the
+such logic a _transfer permission policy_. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
 specify who can transfer tokens. The default policy allows transfers by
 either token owner (an account that holds token balance) or by an operator
@@ -103,24 +103,24 @@ The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL 
 “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
 interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
-* Token type is uniquely identified on the chain by a pair composed of the token
- contract address and token ID, a natural number (`nat`). If the underlying contract
- implementation supports only a single token type (e.g. ERC-20-like contract),
- the token ID MUST be `0n`. In the case, when multiple token types are supported
- within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
- is fully responsible for assigning and managing token IDs.
+- Token type is uniquely identified on the chain by a pair composed of the token
+  contract address and token ID, a natural number (`nat`). If the underlying contract
+  implementation supports only a single token type (e.g. ERC-20-like contract),
+  the token ID MUST be `0n`. In the case, when multiple token types are supported
+  within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
+  is fully responsible for assigning and managing token IDs.
 
-* The FA2 batch entrypoints accept a list (batch) of parameters describing a
+- The FA2 batch entrypoints accept a list (batch) of parameters describing a
   single operation or a query. The batch MUST NOT be reordered or deduplicated and
   MUST be processed in the same order it is receive received.
-  
-* Empty batch is a valid input and MUST be processed processed as a non-empty one.
+
+- Empty batch is a valid input and MUST be processed processed as a non-empty one.
   For example, and empty transfer batch will not affect token balances, but applicable
   transfer core behavior and permission policy MUST be applied. Invocation of the
   `balance_of` entrypoint with an empty batch input MUST result in a call to a
   callback contract with an empty response batch.
 
-* If the underlying contract implementation supports only a single token type,
+- If the underlying contract implementation supports only a single token type,
   the batch may contain zero or multiple entries where token ID is a fixed `0n`
   value. Likewise, if multiple token types are supported, the batch may contain
   zero or more entries and there may be duplicate token IDs.
@@ -134,10 +134,10 @@ entrypoints.
 
 `type fa2_entry_points =`
 
-* [`| Transfer of transfer list`](#transfer)
-* [`| Balance_of of balance_of_param`](#balance_of)
-* [`| Update_operators of update_operator list`](#update_operators)
-* [`| Token_metadata_registry of address contract`](##token_metadata_registry)
+- [`| Transfer of transfer list`](#transfer)
+- [`| Balance_of of balance_of_param`](#balance_of)
+- [`| Update_operators of update_operator list`](#update_operators)
+- [`| Token_metadata_registry of address contract`](##token_metadata_registry)
 
 The full definition of the FA2 entrypoints in LIGO and related types can be found
 in [fa2_interface.mligo](./fa2_interface.mligo).
@@ -182,6 +182,7 @@ type transfer_michelson = transfer_aux michelson_pair_right_comb
 </details>
 
 Michelson definition:
+
 ```
 (list %transfer
   (pair
@@ -216,52 +217,52 @@ In this case, regular operator restrictions may not be applicable.
 
 FA2 token contracts MUST always implement this behavior.
 
-* Every transfer operation MUST happen atomically and in order. If at least one
+- Every transfer operation MUST happen atomically and in order. If at least one
   transfer in the batch cannot be completed, the whole transaction MUST fail, all
   token transfers MUST be reverted, and token balances MUST remain unchanged.
 
-* Each transfer in the batch MUST decrement token balance of the source (`from_`)
+- Each transfer in the batch MUST decrement token balance of the source (`from_`)
   address by the amount of the transfer and increment token balance of the destination
   (`to_`) address by the amount of the transfer.
-  
-* If the transfer amount exceeds current token balance of the source address,
+
+- If the transfer amount exceeds current token balance of the source address,
   the whole transfer operation MUST fail with the error mnemonic `"FA2_INSUFFICIENT_BALANCE"`.
 
-* If the token owner does not hold any tokens of type `token_id`, the owner's balance
+- If the token owner does not hold any tokens of type `token_id`, the owner's balance
   is interpreted as zero. No token owner can have a negative balance.
 
-* The transfer MUST update token balances exactly as the operation
+- The transfer MUST update token balances exactly as the operation
   parameters specify it. Transfer operations MUST NOT try to adjust transfer
   amounts or try to add/remove additional transfers like transaction fees.
 
-* Transfers of zero amount MUST be treated as normal transfers.
+- Transfers of zero amount MUST be treated as normal transfers.
 
-* Transfers with the same address (`from_` equals `to_`) MUST be treated as normal
+- Transfers with the same address (`from_` equals `to_`) MUST be treated as normal
   transfers.
 
-* If one of the specified `token_id`s is not defined within the FA2 contract, the
+- If one of the specified `token_id`s is not defined within the FA2 contract, the
   entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
-* Transfer implementations MUST apply transfer permission policy logic (either
+- Transfer implementations MUST apply transfer permission policy logic (either
   [default transfer permission policy](#default-transfer-permission-policy) or
   [customized one](#customizing-transfer-permission-policy)).
   If permission logic rejects a transfer, the whole operation MUST fail.
 
-* Core transfer behavior MAY be extended. If additional constraints on tokens
+- Core transfer behavior MAY be extended. If additional constraints on tokens
   transfer are required, FA2 token contract implementation MAY invoke additional
   permission policies. If the additional permission fails, the whole transfer
   operation MUST fail with a custom error mnemonic.
 
 ##### Default Transfer Permission Policy
 
-* Token owner address MUST be able to perform a transfer of its own tokens (e. g.
+- Token owner address MUST be able to perform a transfer of its own tokens (e. g.
   `SENDER` equals to `from_` parameter in the `transfer`).
 
-* An operator (a Tezos address that performs token transfer operation on behalf
+- An operator (a Tezos address that performs token transfer operation on behalf
   of the owner) MUST be permitted to manage all owner's tokens before it invokes
   a transfer transaction (see [`update_operators`](#update_operators)).
 
-* If the address that invokes a transfer operation is neither a token owner nor
+- If the address that invokes a transfer operation is neither a token owner nor
   one of the permitted operators, the transaction MUST fail with the error mnemonic
   `"FA2_NOT_OPERATOR"`. If at least one of the `transfer`s in the batch is not permitted,
   the whole transaction MUST fail.
@@ -342,17 +343,17 @@ Get the balance of multiple account/token pairs. Accepts a list of
 `balance_of_request`s and a callback contract `callback` which accepts a list of
 `balance_of_response` records.
 
-* There may be duplicate `balance_of_request`'s, in which case they should not be
+- There may be duplicate `balance_of_request`'s, in which case they should not be
   deduplicated nor reordered.
 
-* If the account does not hold any tokens, the account
+- If the account does not hold any tokens, the account
   balance is interpreted as zero.
 
-* If one of the specified `token_id`s is not defined within the FA2 contract, the
+- If one of the specified `token_id`s is not defined within the FA2 contract, the
   entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
-*Notice:* The `balance_of` entrypoint implements a *continuation-passing style (CPS)
-view entrypoint* pattern that invokes the other callback contract with the requested
+_Notice:_ The `balance_of` entrypoint implements a _continuation-passing style (CPS)
+view entrypoint_ pattern that invokes the other callback contract with the requested
 data. This pattern, when not used carefully, could expose the callback contract
 to an inconsistent state and/or manipulatable outcome (see
 [view patterns](https://www.notion.so/Review-of-TZIP-12-95e4b631555d49429e2efdfe0f9ffdc0#6d68e18802734f059adf3f5ba8f32a74)).
@@ -423,14 +424,14 @@ Michelson definition:
 
 Add or Remove token operators for the specified owners.
 
-* The entrypoint accepts a list of `update_operator` commands. If two different
+- The entrypoint accepts a list of `update_operator` commands. If two different
   commands in the list add and remove an operator for the same owner,
   the last command in the list MUST take effect.
 
-* It is possible to update operators for a token owner that does not hold any token
+- It is possible to update operators for a token owner that does not hold any token
   balances yet.
 
-* Operator relation is not transitive. If C is an operator of B , and if B is an
+- Operator relation is not transitive. If C is an operator of B , and if B is an
   operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
 
 The standard does not specify who is permitted to update operators on behalf of
@@ -474,38 +475,38 @@ Michelson definition:
 ))))
 ```
 
-* FA2 token amounts are represented by natural numbers (`nat`), and their
+- FA2 token amounts are represented by natural numbers (`nat`), and their
   **granularity** (the smallest amount of tokens which may be minted, burned, or
   transferred) is always 1.
 
-* `decimals` is the number of digits to use after the decimal point when displaying
+- `decimals` is the number of digits to use after the decimal point when displaying
   the token amounts. If 0, the asset is not divisible. Decimals are used for display
   purposes only and MUST NOT affect transfer operation.
 
 Examples
 
-| Decimals | Amount  | Display  |
-| -------- | ------- | -------- |
-| 0n       | 123     | 123      |
-| 1n       | 123     | 12.3     |
-| 3n       | 123000  | 123      |
+| Decimals | Amount | Display |
+| -------- | ------ | ------- |
+| 0n       | 123    | 123     |
+| 1n       | 123    | 12.3    |
+| 3n       | 123000 | 123     |
 
 ##### Implementing and Accessing FA2 Metadata
 
-* The FA2 contract MUST implement `token_metadata_registry` view entrypoint that
+- The FA2 contract MUST implement `token_metadata_registry` view entrypoint that
   returns an address of the contract holding tokens metadata. Token metadata can
   be held either by the FA2 token contract itself (then `token_metadata_registry`
   returns `SELF` address) or by a separate token registry contract.
 
-* Token registry contract MUST implement one of two ways to expose token metadata
+- Token registry contract MUST implement one of two ways to expose token metadata
   for off-chain clients:
-  
-  * Contract storage MUST have a `big_map` that maps `token_id -> token_metadata_michelson`
+
+  - Contract storage MUST have a `big_map` that maps `token_id -> token_metadata_michelson`
     and annotated `%token_metadata`
 
     OR
 
-  * Contract MUST implement entrypoint `token_metadata`
+  - Contract MUST implement entrypoint `token_metadata`
 
 ###### `token_metadata_registry`
 
@@ -622,17 +623,17 @@ lambda may assert certain assumptions about the metadata and/or fail with the
 obtained metadata implementing a view entrypoint pattern to extract tokens metadata
 off-chain.
 
-* As with `balance_of`, the input `token_id`'s should not be deduplicated nor
+- As with `balance_of`, the input `token_id`'s should not be deduplicated nor
   reordered.
 
-* If one of the specified `token_id`s is not defined within the FA2 contract, the
+- If one of the specified `token_id`s is not defined within the FA2 contract, the
   entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 ### FA2 Transfer Permission Policies and Configuration
 
 Most token standards specify logic such as who can perform a transfer, the amount
 of a transfer, and who can receive tokens. This standard calls such logic
-*transfer permission policy* and defines a framework to compose such permission
+_transfer permission policy_ and defines a framework to compose such permission
 policies from the [standard permission behaviors](#permission-behaviors).
 
 FA2 allows the contract developer to choose and customize from a variety of permissions
@@ -640,7 +641,7 @@ behaviors, easily enabling non-transferrable tokens or centrally-administrated
 tokens without operators. The particular implementation may be static
 (the permissions configuration cannot be changed after the contract is deployed)
 or dynamic (the FA2 contract may be upgradable and allow to change the permissions
-configuration). However, the  FA2 token contract MUST expose consistent and
+configuration). However, the FA2 token contract MUST expose consistent and
 non-self-contradictory permissions configuration (unlike ERC-777 that exposes two
 flavors of the transfer at the same time).
 
@@ -675,15 +676,15 @@ type operator_transfer_policy =
   | Owner_or_operator_transfer (* default *)
 ```
 
-* `No_transfer` - neither owner nor operator can transfer tokens. This permission
+- `No_transfer` - neither owner nor operator can transfer tokens. This permission
   configuration can be used for non-transferable tokens or for the FA2 implementation
   when a transfer can be performed only by some privileged and/or administrative
   account. The transfer operation MUST fail with the error mnemonic `"FA2_TX_DENIED"`.
 
-* `Owner_transfer` - If `SENDER` is not the token owner, the transfer operation
+- `Owner_transfer` - If `SENDER` is not the token owner, the transfer operation
   MUST fail with the error mnemonic `"FA2_NOT_OWNER"`.
 
-* `Owner_or_operator_transfer` - allows transfer for the token owner or an operator
+- `Owner_or_operator_transfer` - allows transfer for the token owner or an operator
   permitted to manage tokens on behalf of the owner. If `SENDER` is not the token
   owner and not an operator permitted to manage tokens on behalf of the owner,
   the transfer operation MUST fail with the error mnemonic `"FA2_NOT_OPERATOR"`.
@@ -694,9 +695,9 @@ type operator_transfer_policy =
 The operation permission behavior also affects [`update_operators`](#update_operators)
 entrypoint:
 
-* If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
-[`update_operators`](#update_operators) entrypoint MUST fail if invoked with the
-error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
+- If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
+  [`update_operators`](#update_operators) entrypoint MUST fail if invoked with the
+  error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 
 ###### `Token Owner Hook` Permission Behavior
 
@@ -715,61 +716,62 @@ type owner_hook_policy =
   | Required_owner_hook
 ```
 
-* `Owner_no_hook` - ignore the owner hook interface.
+- `Owner_no_hook` - ignore the owner hook interface.
 
-* `Optional_owner_hook` - treat the owner hook interface as optional. If a token
-owner contract implements a corresponding hook interface, it MUST be invoked. If
-the hook interface is not implemented, it gets ignored.
+- `Optional_owner_hook` - treat the owner hook interface as optional. If a token
+  owner contract implements a corresponding hook interface, it MUST be invoked. If
+  the hook interface is not implemented, it gets ignored.
 
-* `Required_owner_hook` - treat the owner hook interface as required. If a token
-owner contract implements a corresponding hook interface, it MUST be invoked. If
-the hook interface is not implemented, the entire transfer transaction MUST fail.
+- `Required_owner_hook` - treat the owner hook interface as required. If a token
+  owner contract implements a corresponding hook interface, it MUST be invoked. If
+  the hook interface is not implemented, the entire transfer transaction MUST fail.
 
 Token owner hook implementation and semantics:
 
-* Sender and/or receiver hooks can approve the transaction or reject it
+- Sender and/or receiver hooks can approve the transaction or reject it
   by failing. If such a hook is invoked and failed, the whole transfer operation
   MUST fail.
 
-* This policy can be applied to both token senders and token receivers. There are
+- This policy can be applied to both token senders and token receivers. There are
   two owner hook interfaces, `fa2_token_receiver` and `fa2_token_sender`, that need
   to be implemented by token owner contracts to expose the token owner's hooks
   to the FA2 token contract.
 
-* If a transfer failed because of the token owner hook permission behavior, the
+- If a transfer failed because of the token owner hook permission behavior, the
   operation MUST fail with the one of the following error mnemonics:
 
-| Error Mnemonic | Description |
-| :------------- | :---------- |
-| `"FA2_RECEIVER_HOOK_FAILED"` | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation |
-| `"FA2_SENDER_HOOK_FAILED"` | Sender hook is invoked and failed. This error MUST be raised by the hook implementation |
+| Error Mnemonic                  | Description                                                                                         |
+| :------------------------------ | :-------------------------------------------------------------------------------------------------- |
+| `"FA2_RECEIVER_HOOK_FAILED"`    | Receiver hook is invoked and failed. This error MUST be raised by the hook implementation           |
+| `"FA2_SENDER_HOOK_FAILED"`      | Sender hook is invoked and failed. This error MUST be raised by the hook implementation             |
 | `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"FA2_SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |
+| `"FA2_SENDER_HOOK_UNDEFINED"`   | Sender hook is required by the permission behavior, but is not implemented by a sender contract     |
 
-* `transfer_descriptor` type defined below can represent regular transfer, mint and
+- `transfer_descriptor` type defined below can represent regular transfer, mint and
   burn operations.
 
-| operation | `from_` | `to_` |
-| :-------- | :------ | :----- |
-| transfer | MUST be `Some sender_address` | MUST be `Some receiver_address` |
-| mint | MUST be `None` | MUST be `Some receiver_address` |
-| burn | MUST be `Some burner_address` | MUST be `None` |
+| operation | `from_`                       | `to_`                           |
+| :-------- | :---------------------------- | :------------------------------ |
+| transfer  | MUST be `Some sender_address` | MUST be `Some receiver_address` |
+| mint      | MUST be `None`                | MUST be `Some receiver_address` |
+| burn      | MUST be `Some burner_address` | MUST be `None`                  |
 
-* If all of the following conditions are met, the FA2 contract MUST invoke both
+- If all of the following conditions are met, the FA2 contract MUST invoke both
   `fa2_token_sender` and `fa2_token_receiver` entrypoints:
-  * the token owner implements both `fa2_token_sender` and `fa2_token_receiver`
+
+  - the token owner implements both `fa2_token_sender` and `fa2_token_receiver`
     interfaces
-  * the token owner receives and sends some tokens in the same transfer operation
-  * both sender and receiver hooks are enabled by the FA2 permissions policy
-  
-* If the token owner participates in multiple transfers within the transfer operation
+  - the token owner receives and sends some tokens in the same transfer operation
+  - both sender and receiver hooks are enabled by the FA2 permissions policy
+
+- If the token owner participates in multiple transfers within the transfer operation
   batch and hook invocation is required by the permissions policy, the hook MUST
   be invoked only once.
 
-* The hooks MUST NOT be invoked in the context of the operation other than transfer,
+- The hooks MUST NOT be invoked in the context of the operation other than transfer,
   mint and burn.
 
-* `transfer_descriptor_param.operator` MUST be initialized with the address that
+- `transfer_descriptor_param.operator` MUST be initialized with the address that
   invoked the FA2 contract (`SENDER`).
 
 A special consideration is required if FA2 implementation supports sender and/or
@@ -850,7 +852,7 @@ Michelson definition:
 )
 ```
 
-##### Transfer  Permission Policy Formulae
+##### Transfer Permission Policy Formulae
 
 Each concrete implementation of the transfer permission policy can be described
 by a formula which combines permission behaviors in the following form:
@@ -999,14 +1001,14 @@ let default_descriptor : permissions_descriptor = {
 }
 ```
 
-* If the FA2 contract implements one or more non-default behaviors, it MUST implement
+- If the FA2 contract implements one or more non-default behaviors, it MUST implement
   `permissions_descriptor` entrypoint. The descriptor field values MUST reflect
   actual permission behavior implemented by the contract.
 
-* If the FA2 contract implements the default permission policy, it MAY omit the
+- If the FA2 contract implements the default permission policy, it MAY omit the
   implementation of the `permissions_descriptor` entrypoint.
 
-* In addition to the standard permission behaviors, the FA2 contract MAY also
+- In addition to the standard permission behaviors, the FA2 contract MAY also
   implement an optional custom permissions policy. If such custom a policy is
   implemented, the FA2 contract SHOULD expose it using permissions descriptor
   `custom` field. `custom_permission_policy.tag` value would be available to
@@ -1032,18 +1034,18 @@ mnemonics for additional constraints.
 
 Standard error mnemonics:
 
-| Error mnemonic | Description |
-| :------------- | :---------- |
-| `"FA2_TOKEN_UNDEFINED"` | One of the specified `token_id`s is not defined within the FA2 contract |
-| `"FA2_INSUFFICIENT_BALANCE"` | A token owner does not have sufficient balance to transfer tokens from owner's account|
-| `"FA2_TX_DENIED"` | A transfer failed because of `operator_transfer_policy == No_transfer` |
-| `"FA2_NOT_OWNER"` | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is invoked not by the token owner |
-| `"FA2_NOT_OPERATOR"` | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is invoked neither by the token owner nor a permitted operator |
-| `"FA2_OPERATORS_UNSUPPORTED"` | `update_operators` entrypoint is invoked and `operator_transfer_policy` is `No_transfer` or `Owner_transfer` |
-| `"FA2_RECEIVER_HOOK_FAILED"` | The receiver hook failed. This error MUST be raised by the hook implementation |
-| `"FA2_SENDER_HOOK_FAILED"` | The sender failed. This error MUST be raised by the hook implementation |
-| `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract |
-| `"FA2_SENDER_HOOK_UNDEFINED"` | Sender hook is required by the permission behavior, but is not implemented by a sender contract |  
+| Error mnemonic                  | Description                                                                                                                                              |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `"FA2_TOKEN_UNDEFINED"`         | One of the specified `token_id`s is not defined within the FA2 contract                                                                                  |
+| `"FA2_INSUFFICIENT_BALANCE"`    | A token owner does not have sufficient balance to transfer tokens from owner's account                                                                   |
+| `"FA2_TX_DENIED"`               | A transfer failed because of `operator_transfer_policy == No_transfer`                                                                                   |
+| `"FA2_NOT_OWNER"`               | A transfer failed because `operator_transfer_policy == Owner_transfer` and it is invoked not by the token owner                                          |
+| `"FA2_NOT_OPERATOR"`            | A transfer failed because `operator_transfer_policy == Owner_or_operator_transfer` and it is invoked neither by the token owner nor a permitted operator |
+| `"FA2_OPERATORS_UNSUPPORTED"`   | `update_operators` entrypoint is invoked and `operator_transfer_policy` is `No_transfer` or `Owner_transfer`                                             |
+| `"FA2_RECEIVER_HOOK_FAILED"`    | The receiver hook failed. This error MUST be raised by the hook implementation                                                                           |
+| `"FA2_SENDER_HOOK_FAILED"`      | The sender failed. This error MUST be raised by the hook implementation                                                                                  |
+| `"FA2_RECEIVER_HOOK_UNDEFINED"` | Receiver hook is required by the permission behavior, but is not implemented by a receiver contract                                                      |
+| `"FA2_SENDER_HOOK_UNDEFINED"`   | Sender hook is required by the permission behavior, but is not implemented by a sender contract                                                          |
 
 If more than one error conditions are met, the entrypoint MAY fail with any applicable
 error.
@@ -1053,7 +1055,7 @@ types:
 
 1. `string` value which represents an error code mnemonic.
 2. a Michelson `pair`, where the first element is a `string` representing error code
-mnemonic and the second element is a custom error data.
+   mnemonic and the second element is a custom error data.
 
 Some FA2 implementations MAY introduce their custom errors that MUST follow the
 same pattern as standard ones: define custom error mnemonics and fail with one
@@ -1069,13 +1071,13 @@ implemented and what are the expected properties of such an implementation.
 
 An FA2 contract represents a single token similar to ERC-20 or FA1.2 standards.
 
-| Property         | Constrains |
-| :--------------- | :--------: |
-| `token_id`       |  Always `0n` |
-| transfer amount  | natural number |
-| account balance  | natural number |
-| total supply     | natural number |
-| decimals         | custom |
+| Property        |   Constrains   |
+| :-------------- | :------------: |
+| `token_id`      |  Always `0n`   |
+| transfer amount | natural number |
+| account balance | natural number |
+| total supply    | natural number |
+| decimals        |     custom     |
 
 ### Multiple Fungible Tokens
 
@@ -1083,13 +1085,13 @@ An FA2 contract may represent multiple tokens similar to ERC-1155 standard.
 The implementation can have a fixed predefined set of supported tokens or tokens
 can be created dynamically.
 
-| Property         | Constrains |
-| :--------------- | :--------: |
-| `token_id`       |  natural number |
-| transfer amount  | natural number |
-| account balance  | natural number |
-| total supply     | natural number |
-| decimals         | custom, per each `token_id` |
+| Property        |         Constrains          |
+| :-------------- | :-------------------------: |
+| `token_id`      |       natural number        |
+| transfer amount |       natural number        |
+| account balance |       natural number        |
+| total supply    |       natural number        |
+| decimals        | custom, per each `token_id` |
 
 ### Non-fungible Tokens
 
@@ -1100,13 +1102,13 @@ If multiple kinds of NFT is supported, each kind MAY be assigned a continuous ra
 of natural number (that does not overlap with other ranges) and have its own associated
 metadata.
 
-| Property         | Constrains |
-| :--------------- | :--------: |
-| `token_id`       |  natural number |
-| transfer amount  | `0n` or `1n` |
-| account balance  | `0n` or `1n` |
-| total supply     | `0n` or `1n` |
-| decimals         | `0n` or a natural number if a token represents a batch of items |
+| Property        |                           Constrains                            |
+| :-------------- | :-------------------------------------------------------------: |
+| `token_id`      |                         natural number                          |
+| transfer amount |                          `0n` or `1n`                           |
+| account balance |                          `0n` or `1n`                           |
+| total supply    |                          `0n` or `1n`                           |
+| decimals        | `0n` or a natural number if a token represents a batch of items |
 
 For any valid `token_id` only one account CAN hold the balance of one token (`1n`).
 The rest of the accounts MUST hold zero balance (`0n`) for that `token_id`.
@@ -1118,13 +1120,13 @@ contract similar to ERC-1155. The implementation MAY chose to select individual
 natural numbers to represent `token_id` for fungible tokens and continuous natural
 number ranges to represent `token_id`s for NFTs.
 
-| Property         | Constrains |
-| :--------------- | :--------: |
-| `token_id`       |  natural number |
-| transfer amount  | `0n` or `1n` for NFT and natural number for fungible tokens |
-| account balance  | `0n` or `1n` for NFT and natural number for fungible tokens |
-| total supply     | `0n` or `1n` for NFT and natural number for fungible tokens |
-| decimals         | custom |
+| Property        |                         Constrains                          |
+| :-------------- | :---------------------------------------------------------: |
+| `token_id`      |                       natural number                        |
+| transfer amount | `0n` or `1n` for NFT and natural number for fungible tokens |
+| account balance | `0n` or `1n` for NFT and natural number for fungible tokens |
+| total supply    | `0n` or `1n` for NFT and natural number for fungible tokens |
+| decimals        |                           custom                            |
 
 ### Non-transferable Tokens
 
