@@ -26,7 +26,7 @@ created: 2020-01-24
         - [`token_metadata_registry`](#token_metadata_registry)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
     - [A Taxonomy of Transfer Permission Policies](#a-taxonomy-of-transfer-permission-policies)
-      - [`permissions_descriptor`](#permissions_descriptor)
+      - [`Exposing Permissions Descriptor](#exposing-permissions-descriptor)
   - [Error Handling](#error-handling)
 - [Implementing Different Token Types with FA2](#implementing-different-token-types-with-fa2)
   - [Single Fungible Token](#single-fungible-token)
@@ -914,13 +914,21 @@ type), by choosing one of the available options for those permission behaviors.
 The composition of the described behaviors can be described as
 `Core_Transfer_Behavior AND (Default_transfer_permission_policy OR Custom_Transfer_Permission_Policy)`
 
-##### `permissions_descriptor` Entrypoint
+##### Exposing Permissions Descriptor
 
-LIGO definition:
+- If permissions descriptor is required, the FA2 contract MUST implement one of
+  two ways to expose it for off-chain clients:
 
-```ocaml
-| Permissions_descriptor of permissions_descriptor_michelson contract
-```
+  - Contract storage MUST have a field of type `permissions_descriptor_michelson`
+    annotated `%permissions_descriptor`
+
+    OR
+
+  - Contract MUST implement entry point `permissions_descriptor`.
+    LIGO definition:
+    ```ocaml
+    | Permissions_descriptor of permissions_descriptor_michelson contract
+    ```
 
 <details>
 <summary>where LIGO to Michelson conversion is</summary>
@@ -1131,7 +1139,7 @@ number ranges to represent `token_id`s for NFTs.
 ### Non-transferable Tokens
 
 Either fungible and non-fungible tokens can be non-transferable. Non-transferable
-tokens can be represented by the FA2 contract which [operator transfer behavior](#operator-transfer-behavior)
+tokens can be represented by the FA2 contract which [operator permission behavior](#operator-permission-behavior)
 is defined as `No_transfer`. Tokens cannot be transferred neither by the token owner
 nor by any operator. Only privileged operations like mint and burn can assign tokens
 to owner accounts.
