@@ -81,7 +81,7 @@ multiple token types atomically.
 
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who can perform a
-transfer, the transfer amount, and who can receive tokens. This standard calls
+transfer, the transfer amount and who can receive tokens. This standard calls
 such logic a *transfer permission policy*. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
 specify who can transfer tokens. The default policy allows transfers by
@@ -106,16 +106,16 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 * Token type is uniquely identified on the chain by a pair composed of the token
  contract address and token ID, a natural number (`nat`). If the underlying contract
  implementation supports only a single token type (e.g. ERC-20-like contract),
- the token ID MUST be `0n`. In the case, when multiple token types are supported
+ the token ID MUST be `0n`. In the case when multiple token types are supported
  within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
  is fully responsible for assigning and managing token IDs.
 
 * The FA2 batch entrypoints accept a list (batch) of parameters describing a
   single operation or a query. The batch MUST NOT be reordered or deduplicated and
-  MUST be processed in the same order it is receive received.
+  MUST be processed in the same order it is received.
   
-* Empty batch is a valid input and MUST be processed processed as a non-empty one.
-  For example, and empty transfer batch will not affect token balances, but applicable
+* Empty batch is a valid input and MUST be processed as a non-empty one.
+  For example, an empty transfer batch will not affect token balances, but applicable
   transfer core behavior and permission policy MUST be applied. Invocation of the
   `balance_of` entrypoint with an empty batch input MUST result in a call to a
   callback contract with an empty response batch.
@@ -338,7 +338,7 @@ Michelson definition:
 )
 ```
 
-Get the balance of multiple account/token pairs. Accepts a list of
+Gets the balance of multiple account/token pairs. Accepts a list of
 `balance_of_request`s and a callback contract `callback` which accepts a list of
 `balance_of_response` records.
 
@@ -356,7 +356,7 @@ view entrypoint* pattern that invokes the other callback contract with the reque
 data. This pattern, when not used carefully, could expose the callback contract
 to an inconsistent state and/or manipulatable outcome (see
 [view patterns](https://www.notion.so/Review-of-TZIP-12-95e4b631555d49429e2efdfe0f9ffdc0#6d68e18802734f059adf3f5ba8f32a74)).
-The `balance_of` entrypoint should be used on the chain with the extreme caution.
+The `balance_of` entrypoint should be used on the chain with extreme caution.
 
 #### Operators
 
@@ -430,7 +430,7 @@ Add or Remove token operators for the specified owners.
 * It is possible to update operators for a token owner that does not hold any token
   balances yet.
 
-* Operator relation is not transitive. If C is an operator of B , and if B is an
+* Operator relation is not transitive. If C is an operator of B and if B is an
   operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
 
 The standard does not specify who is permitted to update operators on behalf of
@@ -521,7 +521,7 @@ Michelson definition:
 (contract %token_metadata_registry address)
 ```
 
-Return address of the contract that holds tokens metadata. If the FA2 contract
+Returns address of the contract that holds tokens metadata. If the FA2 contract
 holds its own tokens metadata, the entrypoint returns `SELF` address. The entry
 point parameter is some contract entrypoint to be called with the address of the
 token metadata registry.
@@ -1007,7 +1007,7 @@ let default_descriptor : permissions_descriptor = {
   implementation of the `permissions_descriptor` entrypoint.
 
 * In addition to the standard permission behaviors, the FA2 contract MAY also
-  implement an optional custom permissions policy. If such custom a policy is
+  implement an optional custom permissions policy. If such a custom policy is
   implemented, the FA2 contract SHOULD expose it using permissions descriptor
   `custom` field. `custom_permission_policy.tag` value would be available to
   other parties which are aware of such custom extension. Some custom permission
@@ -1048,7 +1048,7 @@ Standard error mnemonics:
 If more than one error conditions are met, the entrypoint MAY fail with any applicable
 error.
 
-When error occurs, any FA2 contract entrypoint MUST fail with one of the following
+When an error occurs, any FA2 contract entrypoint MUST fail with one of the following
 types:
 
 1. `string` value which represents an error code mnemonic.
@@ -1130,8 +1130,8 @@ number ranges to represent `token_id`s for NFTs.
 
 Either fungible and non-fungible tokens can be non-transferable. Non-transferable
 tokens can be represented by the FA2 contract which [operator transfer behavior](#operator-transfer-behavior)
-is defined as `No_transfer`. Tokens cannot be transferred neither by the token owner
-nor by any operator. Only privileged operations like mint and burn can assign tokens
+is defined as `No_transfer`. Tokens cannot be transferred either by the token owner
+or by any operator. Only privileged operations like mint and burn can assign tokens
 to owner accounts.
 
 ## Future Directions
