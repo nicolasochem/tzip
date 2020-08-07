@@ -93,7 +93,7 @@ storage type (meaning that it cannot be inside an `or`, an `option`, a `map`,
 etc.) and must have the following type:
 
 ```
-(big_map %metadata string string)
+(big_map %metadata string bytes)
 ```
 
 At least one value must be present: 
