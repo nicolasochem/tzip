@@ -13,22 +13,28 @@
       "type": "object",
       "properties": {
         "version": {
+          "description": "The version of the contract code.",
           "type": "string"
         },
         "license": {
+          "description": "The software license of the contract.",
           "oneOf": [
             {
               "title": "License-name",
+              "description": "A single string usually referring to a common license, e.g. MT, CC-BY-SA, or ISC.",
               "type": "string"
             },
             {
               "title": "License-object",
+              "description": "A more detailed characterization of a license.",
               "type": "object",
               "properties": {
                 "name": {
+                  "description": "A mnemonic name for the license, see also the License-name case.",
                   "type": "string"
                 },
                 "details": {
+                  "description": "Paragraphs of free text, with punctuation and proper language.",
                   "type": "string"
                 }
               },
@@ -40,18 +46,21 @@
           ]
         },
         "authors": {
+          "description": "The list of authors of the contract.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "interfaces": {
+          "description": "The list of interfaces the contract claims to implement (e.g. TZIP-12).",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "views": {
+          "description": "The storage queries, a.k.a. off-chain views provided.",
           "type": "array",
           "items": {
             "type": "object",
@@ -60,29 +69,36 @@
                 "type": "string"
               },
               "description": {
+                "description": "Plain language documentation of the off-chain view; with punctuation.",
                 "type": "string"
               },
               "implementations": {
+                "description": "The list of available and equivalent implementations.",
                 "type": "array",
                 "items": {
                   "oneOf": [
                     {
                       "title": "michelson-storage-view",
+                      "description": "An off-chain view using Michelson as a scripting language to interpret the storage of a contract.",
                       "type": "object",
                       "properties": {
                         "michelson-storage-view": {
                           "type": "object",
                           "properties": {
                             "parameter": {
+                              "description": "The Michelson type of the potential external parameters required by the code of the view.",
                               "$ref": "#/definitions/micheline.tzip-16.expression"
                             },
                             "return-type": {
+                              "description": "The type of the result of the view, i.e. the value left on the stack by the code.",
                               "$ref": "#/definitions/micheline.tzip-16.expression"
                             },
                             "code": {
+                              "description": "The Michelson code expression implementing the view.",
                               "$ref": "#/definitions/micheline.tzip-16.expression"
                             },
                             "annotations": {
+                              "description": "List of objects documenting the annotations used in the 3 above fields.",
                               "type": "array",
                               "items": {
                                 "type": "object",
@@ -102,6 +118,7 @@
                               }
                             },
                             "version": {
+                              "description": "A string representing the version of Michelson that the view is meant to work with; versions here should be base58check-encoded protocol hashes.",
                               "type": "string"
                             }
                           },
@@ -119,25 +136,31 @@
                     },
                     {
                       "title": "rest-api-query-view",
+                      "description": "An off-chain view using a REST API described in a separate OpenAPI specification. The following parameters form a pointer to the localtion in the OpenAPI description.",
                       "type": "object",
                       "properties": {
                         "rest-api-query": {
                           "type": "object",
                           "properties": {
                             "specification-uri": {
+                              "description": "A URI pointing at the location of the OpenAPI specification.",
                               "type": "string"
                             },
                             "base-uri": {
+                              "description": "The URI-prefix to use to query the API.",
                               "type": "string"
                             },
                             "path": {
+                              "description": "The path component of the URI to look-up in the OpenAPI specification.",
                               "type": "string"
                             },
                             "method": {
+                              "description": "The HTTP method to use.",
                               "type": "string",
                               "enum": [
                                 "GET",
-                                "POST"
+                                "POST",
+                                "PUT"
                               ]
                             }
                           },
@@ -164,8 +187,7 @@
             "additionalProperties": false
           }
         }
-      },
-      "additionalProperties": false
+      }
     },
     "micheline.tzip-16.expression": {
       "oneOf": [
