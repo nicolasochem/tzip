@@ -26,11 +26,7 @@ created: 2020-01-24
         - [`token_metadata_registry`](#token_metadata_registry)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
     - [A Taxonomy of Transfer Permission Policies](#a-taxonomy-of-transfer-permission-policies)
-<<<<<<< HEAD
       - [`Exposing Permissions Descriptor](#exposing-permissions-descriptor)
-=======
-      - [`permissions_descriptor`](#permissions_descriptor)
->>>>>>> claudebarde/tzip-master
   - [Error Handling](#error-handling)
 - [Implementing Different Token Types with FA2](#implementing-different-token-types-with-fa2)
   - [Single Fungible Token](#single-fungible-token)
@@ -85,11 +81,7 @@ multiple token types atomically.
 
 Most token standards specify logic that validates a transfer transaction and can
 either approve or reject a transfer. Such logic could validate who can perform a
-<<<<<<< HEAD
-transfer, the transfer amount, and who can receive tokens. This standard calls
-=======
 transfer, the transfer amount and who can receive tokens. This standard calls
->>>>>>> claudebarde/tzip-master
 such logic a _transfer permission policy_. The FA2 standard defines the
 [default `transfer` permission policy](#default-transfer-permission-policy) that
 specify who can transfer tokens. The default policy allows transfers by
@@ -114,27 +106,16 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 - Token type is uniquely identified on the chain by a pair composed of the token
   contract address and token ID, a natural number (`nat`). If the underlying contract
   implementation supports only a single token type (e.g. ERC-20-like contract),
-<<<<<<< HEAD
-  the token ID MUST be `0n`. In the case, when multiple token types are supported
-=======
   the token ID MUST be `0n`. In the case when multiple token types are supported
->>>>>>> claudebarde/tzip-master
   within the same FA2 token contract (e. g. ERC-1155-like contract), the contract
   is fully responsible for assigning and managing token IDs.
 
 - The FA2 batch entrypoints accept a list (batch) of parameters describing a
   single operation or a query. The batch MUST NOT be reordered or deduplicated and
-<<<<<<< HEAD
-  MUST be processed in the same order it is receive received.
-
-- Empty batch is a valid input and MUST be processed processed as a non-empty one.
-  For example, and empty transfer batch will not affect token balances, but applicable
-=======
   MUST be processed in the same order it is received.
 
 - Empty batch is a valid input and MUST be processed as a non-empty one.
   For example, an empty transfer batch will not affect token balances, but applicable
->>>>>>> claudebarde/tzip-master
   transfer core behavior and permission policy MUST be applied. Invocation of the
   `balance_of` entrypoint with an empty batch input MUST result in a call to a
   callback contract with an empty response batch.
@@ -450,11 +431,7 @@ Add or Remove token operators for the specified owners.
 - It is possible to update operators for a token owner that does not hold any token
   balances yet.
 
-<<<<<<< HEAD
-- Operator relation is not transitive. If C is an operator of B , and if B is an
-=======
 - Operator relation is not transitive. If C is an operator of B and if B is an
->>>>>>> claudebarde/tzip-master
   operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
 
 The standard does not specify who is permitted to update operators on behalf of
@@ -1040,11 +1017,7 @@ let default_descriptor : permissions_descriptor = {
   implementation of the `permissions_descriptor` entrypoint.
 
 - In addition to the standard permission behaviors, the FA2 contract MAY also
-<<<<<<< HEAD
-  implement an optional custom permissions policy. If such custom a policy is
-=======
   implement an optional custom permissions policy. If such a custom policy is
->>>>>>> claudebarde/tzip-master
   implemented, the FA2 contract SHOULD expose it using permissions descriptor
   `custom` field. `custom_permission_policy.tag` value would be available to
   other parties which are aware of such custom extension. Some custom permission
@@ -1166,15 +1139,9 @@ number ranges to represent `token_id`s for NFTs.
 ### Non-transferable Tokens
 
 Either fungible and non-fungible tokens can be non-transferable. Non-transferable
-<<<<<<< HEAD
-tokens can be represented by the FA2 contract which [operator permission behavior](#operator-permission-behavior)
-is defined as `No_transfer`. Tokens cannot be transferred neither by the token owner
-nor by any operator. Only privileged operations like mint and burn can assign tokens
-=======
 tokens can be represented by the FA2 contract which [operator transfer behavior](#operator-transfer-behavior)
 is defined as `No_transfer`. Tokens cannot be transferred either by the token owner
 or by any operator. Only privileged operations like mint and burn can assign tokens
->>>>>>> claudebarde/tzip-master
 to owner accounts.
 
 ## Future Directions
