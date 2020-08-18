@@ -50,6 +50,8 @@ Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw
 - Define URI format
     - Refer to other known URIs: `https:`, `ipfs:`
     - Define how to point inside a contract
+    - Should the hash in `hash://` really start with `0x` to allow future other
+      encodings?
 - Define The metadata blobs “meta-format”
     - In the `.md` file: only informal-ish but precise enough definition
     - Some fields are links which use the previous URI format
@@ -146,11 +148,12 @@ Examples:
 #### The `sha256` URI Scheme
 
 This is a compound URI, the *host* must be understood as the SHA256 hash in
-hexadecimal format of the resource being pointed at by the path of the URI.
+hexadecimal format (preceded by `0x` as in Michelson) of the resource being
+pointed at by the path of the URI.
 
 Example:
 
-`sha256://eaa42ea06b95d7917d22135a630e65352cfd0a721ae88155a1512468a95cb750/https:%2F%2Ftezos.com`
+`sha256://0xeaa42ea06b95d7917d22135a630e65352cfd0a721ae88155a1512468a95cb750/https:%2F%2Ftezos.com`
 
 
 ### Metadata JSON Format
