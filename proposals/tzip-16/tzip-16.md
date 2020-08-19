@@ -135,7 +135,10 @@ information:
 - This is all optional, if contract address or network are not provided the
   defaults are “current” ones within a given context.
 
-**Path:** a string used as key in the `%metadata` big-map of the contract
+**Path:** a string used as key in the `%metadata` big-map of the contract. If
+the path starts with a `/` we remove it; only the first “slash” character is
+removed, if any (*rationale:* URIs containing a host component always start with
+a `/`).
 
 Examples:
 
@@ -144,6 +147,8 @@ Examples:
 - `tezos-storage://KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX/foo`: get the value at
   `foo` from the metadata big-map of the contract
   `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX` (on the current network).
+- `tezos-storage://KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX//foo`: like the above,
+  but the key is `/foo` (first `/` removed from the path).
 
 #### The `sha256` URI Scheme
 
