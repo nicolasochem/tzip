@@ -181,11 +181,23 @@ know about.
 
 This standard defines a few top-level fields:
 
+`"name"`:
+
+- A single string, free format.
+- It is recommended to have “name” strings help identifying the purpose of the
+  contract.
+
+`"description"`:
+
+- A single string, free format.
+- Preferably a set proper *natural language* paragraphs.
+
 `"version"`:
 
 - A single string, free format.
 - It is recommended to have version strings which attempt at uniquely
-  identifying the exact Michelson contract, or at least its behavior.
+  identifying the exact Michelson contract, or at least its behavior, as a
+  precision w.r.t the `name` field.  Of course, none of that can be enforced.
 
 `"license"`:
 
