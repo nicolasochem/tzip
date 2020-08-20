@@ -12,6 +12,14 @@
       "description": "Smart Contract Metadata Standard (TZIP-16).",
       "type": "object",
       "properties": {
+        "name": {
+          "description": "The identification of the contract.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Natural language description of the contract and/or its behavior.",
+          "type": "string"
+        },
         "version": {
           "description": "The version of the contract code.",
           "type": "string"
