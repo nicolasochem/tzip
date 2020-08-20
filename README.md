@@ -68,4 +68,4 @@ in your merge request. The exact TZIP workflow is explained in [TZIP-1].
 [TZIP-14]: proposals/tzip-14/tzip-14.md
 [TZIP-15]: proposals/tzip-15/tzip-15.md
 [TZIP-16]: proposals/tzip-16/tzip-16.md
-[TZIP-18]: proposals/tzip-17/tzip-18.md
+[TZIP-18]: proposals/tzip-18/tzip-18.md
