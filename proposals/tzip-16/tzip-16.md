@@ -138,7 +138,8 @@ information:
 **Path:** a string used as key in the `%metadata` big-map of the contract. If
 the path starts with a `/` we remove it; only the first “slash” character is
 removed, if any (*rationale:* URIs containing a host component always start with
-a `/`).
+a `/`, cf.  [section 3.3](https://tools.ietf.org/html/rfc3986#section-3.3) of
+RFC 3986).
 
 Examples:
 
