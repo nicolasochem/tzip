@@ -104,12 +104,12 @@ At least one value must be present:
 - the value must be a URI as specified in the following section which points to
   a JSON document as specified in the one after.
 
-### Metdata URIs
+### Metadata URIs
 
 URIs are used here first to locate metadata contents, but the format may be reused 
 in other similar cases for instance in extensions to this specification.
 
-See the specification an URI's generic format:
+See the specification of a URI's generic format:
 <https://tools.ietf.org/html/rfc3986>
 
 In the context of this specification, valid schemes include:
@@ -133,7 +133,8 @@ information:
 - Example: `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX.mainnet` or
   `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX.NetXNfaaGTuJUGF`
 - This is all optional, if contract address or network are not provided the
-  defaults are “current” ones within a given context.
+  defaults are “current” ones within a given context. If only one is present, it
+  should be interpreted as a contract address within the current network.
 
 **Path:** a string used as key in the `%metadata` big-map of the contract. If
 the path starts with a `/` we remove it; only the first “slash” character is
@@ -155,7 +156,8 @@ Examples:
 
 This is a compound URI, the *host* must be understood as the SHA256 hash in
 hexadecimal format (preceded by `0x` as in Michelson) of the resource being
-pointed at by the path of the URI.
+pointed at by the path of the URI (which should be percent-encoded to avoid
+ambiguity with `/` characters).
 
 Example:
 
@@ -172,8 +174,8 @@ The metadata should be a valid JSON object
 [RFC-8259](https://www.rfc-editor.org/info/rfc8259)) with various top-level
 fields.
 
-By default *all* top-level fields are optional, i.e. the empty object `{}` is
-valid metadata.
+*All* top-level fields are optional, i.e. the empty object `{}` is valid
+metadata.
 
 For compatibility, a compliant parser should ignore any extra fields it doesn't
 know about.
@@ -191,7 +193,7 @@ This standard defines a few top-level fields:
 `"description"`:
 
 - A single string, free format.
-- Preferably a set proper *natural language* paragraphs.
+- Preferably a set of proper *natural language* paragraphs.
 
 `"version"`:
 
@@ -250,7 +252,7 @@ Example:
 
 An off-chain view object has at least 3 fields:
 
-- `"name"`; the conical name of the query (as in function name,
+- `"name"`; the canonical name of the query (as in function name,
   e.g. `"get-balance"`).
 - `"description"`: a human readable description of the behavior of the view
   (optional field).
