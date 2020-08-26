@@ -297,26 +297,32 @@ string, and a human-readable blob of text `"description"`.
   the view is meant to work with; Michelson versions *are* base58check-encoded
   protocol hashes.
 
-The 3 “Michelson” fields have the same format, they are either:
-
-- an object with one field named `"concrete"` which is a string containing valid
-  Michelson concrete syntax, e.g. `"(pair (nat %hello) (string %world))"` or
-  `"{ CAR; CDR; FAILWITH}"`.
-- a JSON value obeying the Michelson JSON format of the Tezos protocol
-  (sometimes referred as “Micheline” encoding).
-
-It is recommended that a given view consistently uses either the concrete or
-JSON encodings for all the fields in a given view.
+The 3 “Michelson” fields have the same format, they are JSON values obeying the
+Michelson JSON format of the Tezos protocol (sometimes referred to as
+“Micheline” encoding).
 
 Example:
 
 ```json
 {
-  "parameter": "(pair (address %user) (nat %token_id))",
-  "return-type": "(pair (nat %allowance) (timestamp %expiration_date))",
-  "code": "UNPAIR ; CDR ; ... ",
+  "parameter": {
+    "prim": "pair", "args": [
+      {"prim": "mutez", "annots": ["%amount"]},
+      {"prim": "string", "annots": ["user"]}
+    ]
+  },
+  "return-type": {"prim": "nat"},
+  "code": [
+    {"prim": "DUP"},
+    {"prim": "DIP", "args": [
+        [
+          {"prim": "CDR"},
+          {"prim": "PUSH", "args": [
+    // ....
+  ],
   "annotations": [
-     { "name": "user", "description": "The token-user being referred to" },
+     { "name": "amount", "description": "The number of token in question." },
+     { "name": "user", "description": "The token-user being referred to." },
      // ...
   ]
 }
