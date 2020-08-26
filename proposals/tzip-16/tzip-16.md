@@ -250,7 +250,7 @@ Example:
 
 #### Semantics of Off-chain Views
 
-An off-chain view object has at least 3 fields:
+An off-chain view object has at least 2 fields:
 
 - `"name"`; the canonical name of the query (as in function name,
   e.g. `"get-balance"`).
