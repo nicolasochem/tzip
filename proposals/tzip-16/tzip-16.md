@@ -261,6 +261,12 @@ An off-chain view object has at least 3 fields:
   discriminates between various kinds of views. Below, this standard defines 2
   of those kinds, `"michelson-storage-view"` and `"rest-api-query"`, further
   deriving standards may add new ones.
+- `"pure"` (optional, default: `false`): a boolean “tag” advertising that the
+  view should be considered *a (pure) function* of the storage of the contract
+  and extra parameters passed to the view. I.e., that if no operation changes
+  the storage of the contract, one can assume that the view returns always the
+  same result for a given parameter. Examples of non-pure views are for instance
+  queries which depend on the current time & date.
 
 Example:
 
@@ -268,6 +274,7 @@ Example:
 {
   "name": "get-allowance-for-user",
   "description": "Get the current allowance for a user of the contract.",
+  "pure": "true",
   "implementations": [
      { "michelson-storage-view" : { /* ,,, see below ... */ } },
      { "rest-api-query" : { /* ,,, see below ... */ } },
