@@ -28,7 +28,8 @@
             "path": "/get-something"
           }
         }
-      ]
+      ],
+      "pure": true
     }
   ]
 }

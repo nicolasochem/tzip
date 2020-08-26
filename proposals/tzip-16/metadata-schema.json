@@ -186,6 +186,9 @@
                     }
                   ]
                 }
+              },
+              "pure": {
+                "type": "boolean"
               }
             },
             "required": [
