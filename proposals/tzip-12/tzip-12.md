@@ -259,7 +259,7 @@ FA2 token contracts MUST always implement this behavior.
   `SENDER` equals to `from_` parameter in the `transfer`).
 
 - An operator (a Tezos address that performs token transfer operation on behalf
-  of the owner) MUST be permitted to manage all owner's tokens before it invokes
+  of the owner) MUST be permitted to manage owner's tokens before it invokes
   a transfer transaction (see [`update_operators`](#update_operators)).
 
 - If the address that invokes a transfer operation is neither a token owner nor
@@ -366,21 +366,24 @@ of the owner.
 
 **Owner** is a Tezos address which can hold tokens.
 
-An operator, other than the owner, MUST be approved to manage all tokens held by
-the owner to make a transfer from the owner account.
+An operator, other than the owner, MUST be approved to manage tokens held by
+the owner to transfer them from the owner account.
 
-FA2 interface specifies two entrypoints to update and inspect operators. Once
-permitted for the specific token owner, an operator can transfer any tokens belonging
-to the owner.
+FA2 interface specifies an entrypoint to update operators. Operators are permitted
+per specific token owner and token ID (token type). Once permitted, an operator
+can transfer tokens of that type belonging to the owner.
 
 ##### `update_operators`
 
 LIGO definition:
 
 ```ocaml
+type token_id = nat
+
 type operator_param = {
   owner : address;
   operator : address;
+  token_id : token_id;
 }
 
 type update_operator =
@@ -412,24 +415,33 @@ Michelson definition:
   (or
     (pair %add_operator
       (address %owner)
-      (address %operator)
+      (pair
+        (address %operator)
+        (nat %token_id)
+      )
     )
     (pair %remove_operator
       (address %owner)
-      (address %operator)
+      (pair
+        (address %operator)
+        (nat %token_id)
+      )
     )
   )
 )
 ```
 
-Add or Remove token operators for the specified owners.
+Add or Remove token operators for the specified token owners and token IDs.
 
 - The entrypoint accepts a list of `update_operator` commands. If two different
-  commands in the list add and remove an operator for the same owner,
-  the last command in the list MUST take effect.
+  commands in the list add and remove an operator for the same token owner and
+  token ID, the last command in the list MUST take effect.
 
 - It is possible to update operators for a token owner that does not hold any token
   balances yet.
+
+- If one of the specified `token_id`s is not defined within the FA2 contract, the
+  entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
 
 - Operator relation is not transitive. If C is an operator of B and if B is an
   operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
@@ -444,7 +456,8 @@ or be limited to an administrator.
 Token metadata is primarily useful in off-chain, user-facing contexts (e.g.
 wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use
 of token metadata and minimal on-chain gas consumption. A related effort to create
-a separate metadata standard is also underway via [TZIP-16](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
+a separate metadata standard is also underway via
+[TZIP-16](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
 
 Each FA2 `token_id` has associated metadata of the following type:
 
@@ -664,8 +677,8 @@ can be chosen independently, when an FA2 contract is implemented:
 This permission behavior specifies who is permitted to transfer tokens.
 
 Depending on the configuration, token transfers can be performed by the token owner
-or by an operator permitted to transfer tokens on behalf of the token owner.
-An operator can transfer any tokens in any amount on behalf of the owner.
+or by an operator permitted to transfer specific tokens on behalf of the token owner.
+An operator can transfer permitted tokens in any amount on behalf of the owner.
 
 Standard configurations of the operator permission behavior:
 
@@ -686,11 +699,13 @@ type operator_transfer_policy =
 
 - `Owner_or_operator_transfer` - allows transfer for the token owner or an operator
   permitted to manage tokens on behalf of the owner. If `SENDER` is not the token
-  owner and not an operator permitted to manage tokens on behalf of the owner,
-  the transfer operation MUST fail with the error mnemonic `"FA2_NOT_OPERATOR"`.
+  owner and not an operator permitted to manage tokens to be transferred on behalf
+  of the token owner, the transfer operation MUST fail with the error mnemonic
+  `"FA2_NOT_OPERATOR"`.
   The FA2 standard defines the entrypoint to manage operators associated with
-  the token owner address ([`update_operators`](#update_operators)). Once an
-  operator is added, it can manage all of its associated owner's tokens.
+  the token owner address and specific token IDs (token types)
+  ([`update_operators`](#update_operators)). Once an operator is added, it can
+  manage permitted token types of the associated owner.
 
 The operation permission behavior also affects [`update_operators`](#update_operators)
 entrypoint:
