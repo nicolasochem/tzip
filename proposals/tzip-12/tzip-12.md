@@ -440,9 +440,6 @@ Add or Remove token operators for the specified token owners and token IDs.
 - It is possible to update operators for a token owner that does not hold any token
   balances yet.
 
-- If one of the specified `token_id`s is not defined within the FA2 contract, the
-  entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
-
 - Operator relation is not transitive. If C is an operator of B and if B is an
   operator of A, C cannot transfer tokens that are owned by A, on behalf of B.
 
