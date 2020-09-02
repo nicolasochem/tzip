@@ -259,8 +259,8 @@ FA2 token contracts MUST always implement this behavior.
   `SENDER` equals to `from_` parameter in the `transfer`).
 
 - An operator (a Tezos address that performs token transfer operation on behalf
-  of the owner) MUST be permitted to manage owner's tokens before it invokes
-  a transfer transaction (see [`update_operators`](#update_operators)).
+  of the owner) MUST be permitted to manage the specified owner's tokens before
+  it invokes a transfer transaction (see [`update_operators`](#update_operators)).
 
 - If the address that invokes a transfer operation is neither a token owner nor
   one of the permitted operators, the transaction MUST fail with the error mnemonic
@@ -366,8 +366,8 @@ of the owner.
 
 **Owner** is a Tezos address which can hold tokens.
 
-An operator, other than the owner, MUST be approved to manage tokens held by
-the owner to transfer them from the owner account.
+An operator, other than the owner, MUST be approved to manage specific tokens
+held by the owner to transfer them from the owner account.
 
 FA2 interface specifies an entrypoint to update operators. Operators are permitted
 per specific token owner and token ID (token type). Once permitted, an operator
@@ -695,10 +695,10 @@ type operator_transfer_policy =
   MUST fail with the error mnemonic `"FA2_NOT_OWNER"`.
 
 - `Owner_or_operator_transfer` - allows transfer for the token owner or an operator
-  permitted to manage tokens on behalf of the owner. If `SENDER` is not the token
-  owner and not an operator permitted to manage tokens to be transferred on behalf
-  of the token owner, the transfer operation MUST fail with the error mnemonic
-  `"FA2_NOT_OPERATOR"`.
+  permitted to manage specific tokens on behalf of the owner. If `SENDER` is not
+  the token owner and not an operator permitted to manage tokens to be transferred
+  on behalf of the token owner, the transfer operation MUST fail with the error
+  mnemonic `"FA2_NOT_OPERATOR"`.
   The FA2 standard defines the entrypoint to manage operators associated with
   the token owner address and specific token IDs (token types)
   ([`update_operators`](#update_operators)). Once an operator is added, it can
