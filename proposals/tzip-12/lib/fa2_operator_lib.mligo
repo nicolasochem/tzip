@@ -17,7 +17,7 @@ type operator_storage = ((address * (address * token_id)), unit) big_map
 
 (** 
   Updates operator storage using an `update_operator` command.
-  Helper function to implement `Update_operators` FA2 entry point
+  Helper function to implement `Update_operators` FA2 entrypoint
 *)
 let update_operators (update, storage : update_operator * operator_storage)
     : operator_storage =
@@ -40,7 +40,7 @@ let validate_update_operators_by_owner (update, updater : update_operator * addr
   if op.owner = updater then unit else failwith fa2_not_owner
 
 (**
-  Generic implementation of the FA2 `%update_operators` entry point.
+  Generic implementation of the FA2 `%update_operators` entrypoint.
   Assumes that only the token owner can change its operators.
  *)
 let fa2_update_operators (updates_michelson, storage
