@@ -53,7 +53,9 @@ let fa2_update_operators (updates_michelson, storage
   ) in
   List.fold process_update updates storage
 
-
+(** 
+  owner * operator * token_id * ops_storage -> unit
+*)
 type operator_validator = (address * address * token_id * operator_storage)-> unit
 
 (**
