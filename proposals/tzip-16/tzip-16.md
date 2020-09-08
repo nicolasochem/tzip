@@ -138,9 +138,13 @@ information:
 
 **Path:** a string used as key in the `%metadata` big-map of the contract. If
 the path starts with a `/` we remove it; only the first “slash” character is
-removed, if any (*rationale:* URIs containing a host component always start with
-a `/`, cf.  [section 3.3](https://tools.ietf.org/html/rfc3986#section-3.3) of
-RFC 3986).
+removed, if any (*rationale:* when URIs contain a host component, the path
+always starts with a `/`, cf.
+[section 3.3](https://tools.ietf.org/html/rfc3986#section-3.3) of RFC 3986).
+All other `/` characters are forbidden; if one needs to include such a character
+for the key in the big-map, it must be Percent-encoded (a.k.a. URL-encoded, cf.
+[section 2.1](https://tools.ietf.org/html/rfc3986#section-2.1)), i.e. written as
+`%2F`.
 
 Examples:
 
@@ -149,8 +153,11 @@ Examples:
 - `tezos-storage://KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX/foo`: get the value at
   `foo` from the metadata big-map of the contract
   `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX` (on the current network).
-- `tezos-storage://KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX//foo`: like the above,
-  but the key is `/foo` (first `/` removed from the path).
+- `tezos-storage://KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX/%2Ffoo`: like the above,
+  but the key is `/foo` (first `/` removed from the path, percent-encoded one is
+  kept).
+- `tezos-storage:hello/world` is invalid, while `tezos-storage:hello%2Fworld` is
+  valid (the key is `hello/world`).
 
 #### The `sha256` URI Scheme
 
