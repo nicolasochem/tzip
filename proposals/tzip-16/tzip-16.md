@@ -342,6 +342,31 @@ Example:
 }
 ```
 
+There are limitations on the contents of the `"code"` field:
+
+- The following instructions must not be used:
+  [AMOUNT](https://michelson.nomadic-labs.com/#instr-AMOUNT),
+  [CREATE_CONTRACT](https://michelson.nomadic-labs.com/#instr-CREATE_CONTRACT),
+  [SENDER](https://michelson.nomadic-labs.com/#instr-SENDER),
+  [SET_DELEGATE](https://michelson.nomadic-labs.com/#instr-SET_DELEGATE),
+  [SOURCE](https://michelson.nomadic-labs.com/#instr-SOURCE),
+  and
+  [TRANSFER_TOKENS](https://michelson.nomadic-labs.com/#instr-TRANSFER_TOKENS)
+- The following instructions should be understood, as relative to the contract
+  (and block) currently being queried:
+  [SELF](https://michelson.nomadic-labs.com/#instr-SELF),
+  [BALANCE](https://michelson.nomadic-labs.com/#instr-BALANCE),
+  [NOW](https://michelson.nomadic-labs.com/#instr-NOW), and
+  [CHAIN_ID](https://michelson.nomadic-labs.com/#instr-CHAIN_ID).
+- To simplify adoption by various implementations, in this first version of the
+  specification, the instruction
+  [SELF](https://michelson.nomadic-labs.com/#instr-SELF) should only be used
+  before [ADDRESS](https://michelson.nomadic-labs.com/#instr-ADDRESS) (i.e. only
+  as `SELF; ADDRESS` should be used).
+- All the above rules should apply to code contained in Michelson _lamdas_ or
+  serialized into `bytes` values (with `PACK`) but, as a recommendation, those
+  techniques should be avoided in off-chain-views.
+
 #### Rest API Views
 
 The `"rest-api-query"` field is an object describing how to map the view to an
