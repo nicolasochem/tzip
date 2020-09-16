@@ -64,18 +64,22 @@ Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw
     - Micheline encoded as concrete strings? or JSON? or both options?
         - Likely **going to move towards JSON-only** (WIP).
     - Exact semantics with examples
-- (should-we) Define Offchain big-map-diffs or events (?)
-    - cf.
-      [agora](https://forum.tezosagora.org/t/deriving-fa-token-balance-updates-from-big-map-diff/1972)
 - Define Optional `assertMetadataSHA256` Entrypoint
     - Not sure about this
     - Do we want other hashes?
 - How to “derive” from TZIP-16
     - Should we also modify TZIP-12 or just provide examples?
 - Implementations
-    - Reference known implementations
+    - Known implementations
+- Future work / extensions to the this standard.
+    - TZIP-12 and TZIP-7 metadata
+    - Offchain-events → cf.
+      [agora](https://forum.tezosagora.org/t/deriving-fa-token-balance-updates-from-big-map-diff/1972)
+      and this
+      [article](https://baking-bad.org/blog/2020/08/28/off-chain-events-and-tezos-tokens-indexing/).
+    - Multi-contract off-chain views (= functions on more than one KT1 storages)
 
-All the “Define …” could be sub-sections of a **Definition of The Standard** section.
+
 
 ## Introduction
 
