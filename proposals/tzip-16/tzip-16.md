@@ -232,6 +232,13 @@ This standard defines a few top-level fields:
 - Each author should obey the `"Print Name <'contact'>"`, where the `'contact'`
   string is either an email address, or a web URI.
 
+`"homepage"`:
+
+- A single string, representing a “web” URL (e.g. HTTPS).
+- The homepage is for human-consumption, it may be the location of the source of
+  the contract, how to submit issue tickets, or just a more elaborate
+  description.
+
 `"interfaces"`
 
 - A list of strings.
