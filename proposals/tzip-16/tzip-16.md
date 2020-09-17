@@ -134,6 +134,10 @@ information:
 **Host:**
 
 - Location of the contract pointed to, with the format `<address>.<network>`.
+    - Valid addresses are base58check-encoded Tezos contract addresses:
+      `KT1...`.
+    - Valid networks are base58check-encoded Tezos chain identifiers `Net....`
+      or known public network aliases: `mainnet`, `carthagenet`, `delphinet`, …
 - Example: `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX.mainnet` or
   `KT1QDFEu8JijYbsJqzoXq7mKvfaQQamHD1kX.NetXNfaaGTuJUGF`
 - This is all optional, if contract address or network are not provided the
