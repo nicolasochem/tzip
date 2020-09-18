@@ -60,6 +60,10 @@
             "type": "string"
           }
         },
+        "homepage": {
+          "description": "A link for humans to follow for documentation, sources, issues, etc.",
+          "type": "string"
+        },
         "interfaces": {
           "description": "The list of interfaces the contract claims to implement (e.g. TZIP-12).",
           "type": "array",
