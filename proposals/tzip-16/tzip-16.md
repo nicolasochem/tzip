@@ -29,60 +29,11 @@ The standard is meant to be extended/specialized by other TZIPs, for instance by
 adding fields to the JSON format of the metadata or imposing certain off-chain
 views.
 
-
-## Meta-draft Section
-
-<b style="color: red">This section will disappear as draft gets properly written</b>
-
-Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw>
-
-- Intro
-    - Justification: no need to change protocol for off-chain things
-    - Justification: we need a standard for contract devs & tools, wallets, and
-      Indexers/explorers to agree on formats and semantics
-- Use-case Example
-    - Quick round-trip / non-detailed “example”
-    - Get an IPFS URI, get the JSON, call an offchain view.
-- Define the piece of Michelson storage
-    - Big-map + default “first key”
-    - There is a proposal to have the option of replacing the big-map with a
-      view entrypoint (*I*, Seb, don't think it's worth the extra complexity)
-- Define URI format
-    - Refer to other known URIs: `https:`, `ipfs:`
-    - Define how to point inside a contract
-    - Should the hash in `hash://` really start with `0x` to allow future other
-      encodings?
-- Define The metadata blobs “meta-format”
-    - In the `.md` file: only informal-ish but precise enough definition
-    - Some fields are links which use the previous URI format
-    - Attachment: [JSON Schema](https://en.wikipedia.org/wiki/JSON#JSON_Schema)
-      or [JSON-LD](https://en.wikipedia.org/wiki/JSON-LD)
-- Define Reserved simple fields
-    - Authorship/provenance
-    - Other TZIP references
-- Define Offchain views
-    - Micheline encoded as concrete strings? or JSON? or both options?
-        - Likely **going to move towards JSON-only** (WIP).
-    - Exact semantics with examples
-- Define Optional `assertMetadataSHA256` Entrypoint
-    - Not sure about this
-    - Do we want other hashes?
-- How to “derive” from TZIP-16
-    - Should we also modify TZIP-12 or just provide examples?
-- Implementations
-    - Known implementations
-- Future work / extensions to the this standard.
-    - TZIP-12 and TZIP-7 metadata
-    - Offchain-events → cf.
-      [agora](https://forum.tezosagora.org/t/deriving-fa-token-balance-updates-from-big-map-diff/1972)
-      and this
-      [article](https://baking-bad.org/blog/2020/08/28/off-chain-events-and-tezos-tokens-indexing/).
-    - Multi-contract off-chain views (= functions on more than one KT1 storages)
-
 ## Introduction
 
-This document defines a proposal for an interoperable method for encoding
-access to off-chain data from a Tezos contract (_KT1 account_).
+This document defines a proposal for an interoperable method for encoding access
+to off-chain data from a Tezos contract (_KT1 account_).  The method does not
+require a protocol change and minimizes the use of on-chain storage.
 
 The goal is to allow smart contract authors, and wallet and indexer implementors
 to agree on the location and the shape of a contract's metadata.
@@ -463,9 +414,19 @@ described above. A few valid examples are available in the
 
 ## How To “Derive” From TZIP-16
 
+<b style="color: red">TODO:</b>
 
 ## Known Implementations
 
+<b style="color: red">TODO:</b>
 
 ## Future Work & Extensions
 
+<b style="color: red">TODO:</b>
+
+- TZIP-12 and TZIP-7 metadata
+- Offchain-events → cf.
+  [agora](https://forum.tezosagora.org/t/deriving-fa-token-balance-updates-from-big-map-diff/1972)
+  and this
+  [article](https://baking-bad.org/blog/2020/08/28/off-chain-events-and-tezos-tokens-indexing/).
+- Multi-contract off-chain views (= functions on more than one KT1 storages)
