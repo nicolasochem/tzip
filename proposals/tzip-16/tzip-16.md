@@ -17,13 +17,13 @@ The standard defines:
 - A basic structure to find _some_ metadata in a contract's storage.
 - An URI scheme to find data: on-chain (contract storage) or off-chain
   (web-services or IPFS).
-- An extensible JSON format (JSON-LD or JSON-Schema) to describe the metadata,
-  it contains among other things:
-    - provenance information,
+- An extensible JSON format (JSON-Schema) to describe the metadata, it contains
+  among other things:
+    - provenance and authorship information,
     - references to other standards implemented,
     - off-chain “views” (Michelson functions to query the contract), and
     - custom extensions.
-- an optional entry-point to validate metadata information.
+- An optional entry-point to validate metadata information.
  
 The standard is meant to be extended/specialized by other TZIPs, for instance by
 adding fields to the JSON format of the metadata or imposing certain off-chain
@@ -79,14 +79,40 @@ Cf. old HackMD with ideas/discussions: <https://hackmd.io/CiBPx3RYQZWGXmSXuAlpVw
       [article](https://baking-bad.org/blog/2020/08/28/off-chain-events-and-tezos-tokens-indexing/).
     - Multi-contract off-chain views (= functions on more than one KT1 storages)
 
-
-
 ## Introduction
 
+This document defines a proposal for an interoperable method for encoding
+access to off-chain data from a Tezos contract (_KT1 account_).
+
+The goal is to allow smart contract authors, and wallet and indexer implementors
+to agree on the location and the shape of a contract's metadata.
+
+We call metadata all information available on the contract that is not directly
+used for its operation, and _usually_ only for off-chain consumption.
+
+This includes authorship/copyright information, descriptions, and
+**off-chain-views**.  Off-chain-views are queries (for now REST-API queries or
+Michelson functions) that anyone can run off-chain to obtain processed
+information on the current storage of a given contract.
 
 ## Example Use-Case
 
+For instance, an FA1.2 (i.e. ERC20-like) token contract may provide, among its
+metadata fields, a Michelson function “`get-balance`” which gives an account's
+current balance from the storage. The author of the contract can store this
+information on IPFS and add only an IPFS-URI to the contract's storage.
+
+Conformity to the TZIP-16 (or a derivative) standard allows a wallet
+implementation to find the IPFS-URI and decode its contents to find the
+particular implementation of the `get-balance` off-chain-view in order to
+display a user's balance in its interface.
+
+
 ## Definition of The Standard
+
+In this section, we define the various components of the standard for human
+consumption (see annexes and reference implementations for more formal and
+machine-readable definitions).
 
 ### Contract Storage
 
