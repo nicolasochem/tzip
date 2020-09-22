@@ -416,9 +416,25 @@ described above. A few valid examples are available in the
 
 <b style="color: red">TODO:</b>
 
+
+
 ## Known Implementations
 
-<b style="color: red">TODO:</b>
+The section will reference known implementations of (part of) TZIP-16:
+
+- The work-in-progress merge-request
+  [`smondet/tezos!7`](https://gitlab.com/smondet/tezos/-/merge_requests/7) adds
+  support in `tezos-client`: fetching and displaying metadata for any given
+  contract as well as “calling” off-chain-views.
+- The project
+  [`github.com/smondet/comevitz`](https://github.com/smondet/comevitz) (live at
+  [`wr.mondet.org/comevitz`](https://wr.mondet.org/comevitz/)) provides
+  validating metadata URI and JSON editors with various examples, a Michelson
+  serialized data analyzer, and a (work-in-progress) metadata explorer which can
+  fetch metadata URI and JSON contents.
+- The Archetype language implementation has support in the compiler
+  ([unreleased](https://github.com/edukera/archetype-lang/blob/dev/CHANGES.md#added)).
+
 
 ## Future Work & Extensions
 
