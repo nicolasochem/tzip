@@ -453,3 +453,19 @@ and behave as follows:
 - If the value is present but its hash is not equal to `%hash`, call `FAILWITH`
   with either `Unit` or with the correct hash if available.
 
+## Machine-Readable Specifications
+
+In the present repository, `proposals/tzip-16/metadata-schema.json` is a
+JSON-Schema specification of the contents of the “Metadata JSON Format”
+described above. A few valid examples are available in the
+`proposals/tzip-16/examples/` directory.
+
+
+## How To “Derive” From TZIP-16
+
+
+## Known Implementations
+
+
+## Future Work & Extensions
+
