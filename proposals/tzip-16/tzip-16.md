@@ -432,8 +432,8 @@ The section will reference known implementations of (part of) TZIP-16:
   validating metadata URI and JSON editors with various examples, a Michelson
   serialized data analyzer, and a (work-in-progress) metadata explorer which can
   fetch metadata URI and JSON contents.
-- The Archetype language implementation has support in the compiler
-  ([unreleased](https://github.com/edukera/archetype-lang/blob/dev/CHANGES.md#added)).
+- The Archetype language implementation has support in the compiler (cf.
+  [documentation](https://docs.archetype-lang.org/archetype-language/metadata-tzip-16)).
 
 
 ## Future Work & Extensions
