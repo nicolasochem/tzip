@@ -13,6 +13,7 @@ created: 2020-01-24
 - [Motivation](#motivation)
 - [Abstract](#abstract)
 - [General](#general)
+- WIP: intro TZIP-16
 - [Interface Specification](#interface-specification)
   - [Entrypoint Semantics](#entrypoint-semantics)
     - [`transfer`](#transfer)
@@ -124,6 +125,34 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
   the batch may contain zero or multiple entries where token ID is a fixed `0n`
   value. Likewise, if multiple token types are supported, the batch may contain
   zero or more entries and there may be duplicate token IDs.
+
+
+## Contract Metadata in TZIP-12
+
+An FA2-compliant contract MUST implement TZIP-16.
+
+- If a contract does not contain the TZIP-16 `%metadata` big-map, it should be
+  considered “legacy FA2,” for compatibility with these contract, see the
+  corresponding sections for “legacy entrypoints” (**TODO: link**).
+
+The metadata JSON structure is precised below:
+
+The TZIP-16 `"interfaces"` field MUST be present:
+
+- It should contain `"TZIP-12[-<version-info>]"`
+    - `version-info` is an optional string extension, precising which version of
+      this document is implemented by the contract (commit hash prefix,
+      e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
+      e.g. `2020-10-23`).
+
+The TZIP-16 `"views"` field MUST be present, cf. section
+[Off-chain-views](#off-chain-views).
+
+A TZIP-12-specific field `"permissions"` is defined in **TODO** is required if
+it differs from the default value.
+
+A TZIP-12-specific field `"tokens"` is defined in **TODO** and it MUST be
+present.
 
 ## Interface Specification
 
