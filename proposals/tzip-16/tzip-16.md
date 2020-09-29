@@ -439,8 +439,8 @@ The section will reference known implementations of (part of) TZIP-16:
   support in `tezos-client`: fetching and displaying metadata for any given
   contract as well as “calling” off-chain-views.
 - The project
-  [`github.com/smondet/comevitz`](https://github.com/smondet/comevitz) (live at
-  [`wr.mondet.org/comevitz`](https://wr.mondet.org/comevitz/)) provides
+  [`github.com/tqtezos/comevitz`](https://github.com/tqtezos/comevitz) (live at
+  [`tqtezos.github.io/comevitz`](https://tqtezos.github.io/comevitz/)) provides
   validating metadata URI and JSON editors with various examples, a Michelson
   serialized data analyzer, and a (work-in-progress) metadata explorer which can
   fetch metadata URI and JSON contents.
