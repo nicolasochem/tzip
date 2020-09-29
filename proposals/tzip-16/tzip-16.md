@@ -461,3 +461,8 @@ A few extensions and improvements are already planned or in progress:
 - Specify *multi-contract off-chain views* which are off-chain-views defined
   over more than one contract-storages.
 
+## Copyright
+
+Copyright and related rights waived via
+[CC0](https://creativecommons.org/publicdomain/zero/1.0/).
+
