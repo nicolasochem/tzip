@@ -19,22 +19,23 @@ alternative options, opinions, and objections.
 
 |    TZIP   | Title                                                | Creation Date | Status           |
 | :-------: | :--------------------------------------------------- | :-----------: | :--------------- |
-| [TZIP-1]  | TZIP Purpose and Guidelines                          |  04/10/2019   | Final            |
-| [TZIP-2]  | TZIP Types and Naming                                |  04/10/2019   | Final            |
-| [TZIP-3]  | TZIP Code of Conduct                                 |  04/10/2019   | Final            |
-| [TZIP-4]  | `A1` - Michelson Contract Interfaces and Conventions |  04/11/2019   | Deprecated       |
-| [TZIP-5]  | `FA1` - Abstract Ledger                              |  04/12/2019   | Deprecated       |
-| [TZIP-6]  | `A1.1` - Balanced Trees for nested or and pair types |  05/04/2019   | Deprecated       |
-| [TZIP-7]  | `FA1.2` - Approvable Ledger                          |  06/20/2019   | Final            |
-| [TZIP-8]  | Payment Request Format                               |  06/25/2019   | Work In Progress |
-| [TZIP-9]  | Info Field for Payment Requests                      |  06/25/2019   | Work In Progress |
-| [TZIP-10] | `LA1` - Wallet Interaction Standard                  |  09/17/2019   | Draft            |
-| [TZIP-11] | Contract Specification Schema                        |  01/10/2020   | Work In Progress |
-| [TZIP-12] | `FA2` - Multi-Asset Interface                        |  01/24/2020   | Draft            |
-| [TZIP-13] | `FA1.3` - Fungible Asset Standard                    |  01/02/2020   | Work In Progress |
-| [TZIP-14] | GraphQL interface to Tezos node data                 |  04/01/2020   | Draft            |
-| [TZIP-15] | Token Filterlisting Interface                                  |  05/14/2020   | Draft            |
-| [TZIP-16] | Contract Metadata                                  |  06/30/2020   | Work In Progress            |
+| [TZIP-1]  | TZIP Purpose and Guidelines                          |  2019-04-10   | Final            |
+| [TZIP-2]  | TZIP Types and Naming                                |  2019-04-10   | Final            |
+| [TZIP-3]  | TZIP Code of Conduct                                 |  2019-04-10   | Final            |
+| [TZIP-4]  | `A1` - Michelson Contract Interfaces and Conventions |  2019-04-11   | Deprecated       |
+| [TZIP-5]  | `FA1` - Abstract Ledger                              |  2019-04-12   | Deprecated       |
+| [TZIP-6]  | `A1.1` - Balanced Trees for nested or and pair types |  2019-05-04   | Deprecated       |
+| [TZIP-7]  | `FA1.2` - Approvable Ledger                          |  2019-06-20   | Final            |
+| [TZIP-8]  | Payment Request Format                               |  2019-06-25   | Work In Progress |
+| [TZIP-9]  | Info Field for Payment Requests                      |  2019-06-25   | Work In Progress |
+| [TZIP-10] | `LA1` - Wallet Interaction Standard                  |  2019-09-17   | Draft            |
+| [TZIP-11] | Contract Specification Schema                        |  2020-01-10   | Work In Progress |
+| [TZIP-12] | `FA2` - Multi-Asset Interface                        |  2020-01-24   | Draft            |
+| [TZIP-13] | `FA1.3` - Fungible Asset Standard                    |  2020-01-02   | Work In Progress |
+| [TZIP-14] | GraphQL interface to Tezos node data                 |  2020-04-01   | Draft            |
+| [TZIP-15] | Token Transferlist Interface                         |  2020-05-14   | Draft            |
+| [TZIP-16] | Contract Metadata                                    |  2020-06-30   | Work In Progress |
+| [TZIP-18] | Upgradeable Contracts                                |  2020-08-17   | Work In Progress |
 
 ## How to Contribute
 
@@ -67,4 +68,4 @@ in your merge request. The exact TZIP workflow is explained in [TZIP-1].
 [TZIP-14]: proposals/tzip-14/tzip-14.md
 [TZIP-15]: proposals/tzip-15/tzip-15.md
 [TZIP-16]: proposals/tzip-16/tzip-16.md
-
+[TZIP-18]: proposals/tzip-18/tzip-18.md

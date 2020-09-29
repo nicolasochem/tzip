@@ -68,8 +68,23 @@ Each call of `transfer` entrypoint decreases the allowance amount on the transfe
 If this entrypoint is called again, it overwrites the current allowance
 with `value`.
 
-Changing allowance value from non-zero value to a non-zero value is
-forbidden to prevent the [corresponding attack vector](https://docs.google.com/document/d/1YLPtQxZu1UAvO9cZ1O2RPXBbT0mooh4DYKjA_jp-RLM).
+Changing allowance value from a non-zero value to a non-zero value is
+forbidden to prevent the [corresponding attack vector](https://docs.google.com/document/d/1YLPtQxZu1UAvO9cZ1O2RPXBbT0mooh4DYKjA_jp-RLM), however this is not enough on its
+own to guarantee a safe allowance change.
+
+<details>
+  <summary><b>How to safely change the allowance</b></summary>
+
+A token holder that intends to safely change the allowance for `X` to `K` token must:
+1. read the current allowance `M` for `X` from the latest transaction `S`.
+2. send a transaction `T` that sets the allowance to `0`.
+3. wait for the blockchain to confirm that `T` is included.
+4. scan all transactions between `S` and `T`.
+5. calculate the allowance `N <= M` spent by `X` in those transactions.
+6. set the allowance to `K - N` iff `N < K`.
+
+</details>
+
 
 This entrypoint can fail with the following errors:
 * `UnsafeAllowanceChange` - attempt to change approval value from non-zero to

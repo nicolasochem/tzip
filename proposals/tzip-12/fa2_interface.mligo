@@ -57,6 +57,7 @@ type balance_of_param_michelson = balance_of_param_aux michelson_pair_right_comb
 type operator_param = {
   owner : address;
   operator : address;
+  token_id: token_id;
 }
 
 type operator_param_michelson = operator_param michelson_pair_right_comb
@@ -137,8 +138,12 @@ type permissions_descriptor_aux = {
 
 type permissions_descriptor_michelson = permissions_descriptor_aux michelson_pair_right_comb
 
+(* permissions descriptor entrypoint
 type fa2_entry_points_custom =
+  ...
   | Permissions_descriptor of permissions_descriptor_michelson contract
+
+*)
 
 
 type transfer_destination_descriptor = {
@@ -173,11 +178,16 @@ type transfer_descriptor_param_aux = {
 }
 
 type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
+(*
+Entrypoints for sender/receiver hooks
 
 type fa2_token_receiver =
+  ...
   | Tokens_received of transfer_descriptor_param_michelson
 
 type fa2_token_sender =
+  ...
   | Tokens_sent of transfer_descriptor_param_michelson
+*)
 
 #endif
