@@ -159,7 +159,7 @@ Example:
 ### Metadata JSON Format
 
 We first define the format in a rather informal way; a JSON-Schema specification
-is provided as an annex to this document (**TODO**).
+is provided as an annex to this document.
 
 The metadata should be a valid JSON object
 ([STD-90](https://tools.ietf.org/html/std90) /
@@ -411,12 +411,24 @@ JSON-Schema specification of the contents of the “Metadata JSON Format”
 described above. A few valid examples are available in the
 `proposals/tzip-16/examples/` directory.
 
-
 ## How To “Derive” From TZIP-16
 
-<b style="color: red">TODO:</b>
+This proposal is meant to be extended and specialized by other standards.  Here
+are some of the ways one can define TZIP-16 extensions:
 
+- Defining new fields in the metadata-JSON.
+- Making some of the metadata content mandatory, e.g. requiring the
+  `"interfaces"` fields to be present, or requiring some off-chain-views to be
+  implemented in Michelson with fixed parameter and return types.
+- Using other _keys_ of the `%metadata` big-map for storing particular data.
+- Using the metadata-URI definition to locate other pieces of data.
 
+Other aspects are better proposed as a backwards-compatible changes to TZIP-16.
+For instance, adding a new URI scheme to locate (meta)data can be better handled
+within this standard.
+
+See also the future-work section for extensions that are already planned or in
+the works.
 
 ## Known Implementations
 
