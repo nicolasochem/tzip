@@ -9,8 +9,8 @@ created: 2020-06-30
 
 ## Abstract
 
-This document describes a standard for Tezos smart contracts to advertise
-metadata about themselves.
+This document describes a standard proposal for Tezos smart contracts to
+advertise metadata about themselves.
 
 The standard defines:
 
@@ -23,7 +23,7 @@ The standard defines:
     - references to other standards implemented,
     - off-chain “views” (Michelson functions to query the contract), and
     - custom extensions.
-- An optional entry-point to validate metadata information.
+- optional entrypoints to validate metadata information.
  
 The standard is meant to be extended/specialized by other TZIPs, for instance by
 adding fields to the JSON format of the metadata or imposing certain off-chain
