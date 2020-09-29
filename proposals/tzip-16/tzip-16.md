@@ -447,14 +447,17 @@ The section will reference known implementations of (part of) TZIP-16:
 - The Archetype language implementation has support in the compiler (cf.
   [documentation](https://docs.archetype-lang.org/archetype-language/metadata-tzip-16)).
 
-
 ## Future Work & Extensions
 
-<b style="color: red">TODO:</b>
+A few extensions and improvements are already planned or in progress:
 
-- TZIP-12 and TZIP-7 metadata
-- Offchain-events → cf.
+- Augment/upgrade the TZIP-12 and TZIP-7 standards with metadata support.
+- Specify *off-chain-events*: events are similar to off-chain-views, but they
+  extract knowledge from (the sequence of) contract **calls**, like “balance
+  updates”; cf.
   [agora](https://forum.tezosagora.org/t/deriving-fa-token-balance-updates-from-big-map-diff/1972)
   and this
   [article](https://baking-bad.org/blog/2020/08/28/off-chain-events-and-tezos-tokens-indexing/).
-- Multi-contract off-chain views (= functions on more than one KT1 storages)
+- Specify *multi-contract off-chain views* which are off-chain-views defined
+  over more than one contract-storages.
+
