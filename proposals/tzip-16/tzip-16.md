@@ -9,17 +9,21 @@ created: 2020-06-30
 
 ## Abstract
 
-Contract metadata provides information that is not directly
-used for a contract's operation, whether about the contract's code (e.g. its interface, versioning) 
-or the off-chain meaning of its contents (e.g. an artwork corresponding to an NFT). Currently, Tezos smart 
-contracts lack a standard way to access such important data, fragmenting 
-access to useful information that is needed for a scalabe integration experience by wallets, explorers, and applications.
+Contract metadata provides information that is not directly used for a
+contract's operation, whether about the contract's code (e.g. its interface,
+versioning) or the off-chain meaning of its contents (e.g. an artwork
+corresponding to an NFT). Currently, Tezos smart contracts lack a standard way
+to access such important data, fragmenting access to useful information that is
+needed for a scalabe integration experience by wallets, explorers, and
+applications.
 
-To address this need and ease the integration, discoverability, and querying of Tezos smart contracts, we propose TZIP-16. 
-TZIP-16 is a standard for encoding access to such smart contract metadata in JSON format
-either on-chain using tezos-storage or off-chain using IPFS or HTTP(S). 
+To address this need and ease the integration, discoverability, and querying of
+Tezos smart contracts, we propose TZIP-16.  TZIP-16 is a standard for encoding
+access to such smart contract metadata in JSON format either on-chain using
+tezos-storage or off-chain using IPFS or HTTP(S).
 
 TZIP-16 defines:
+
 - A basic structure to find _some_ metadata in a contract's storage.
 - An URI scheme to find data: on-chain (contract storage) or off-chain
   (web-services or IPFS).
@@ -36,17 +40,38 @@ adding fields to the JSON format of the metadata or imposing certain off-chain
 views. We intend to extend existing token APIs specified in TZIP-12 and TZIP-7 
 with such metadata and off-chain views using TZIP-16.
 
+## Table Of Contents
+
+-   [Introduction](#introduction)
+-   [Example Use-Case](#example-use-case)
+-   [Definition of The Standard](#definition-of-the-standard)
+    -   [Contract Storage](#contract-storage)
+    -   [Metadata URIs](#metadata-uris)
+    -   [Metadata JSON Format](#metadata-json-format)
+    -   [Optional `assertMetadata<hash>` Entrypoints](#optional-assertmetadatahash-entrypoints)
+-   [Machine-Readable Specifications](#machine-readable-specifications)
+-   [How To "Derive" From TZIP-16](#how-to-derive-from-tzip-16)
+-   [Known Implementations](#known-implementations)
+-   [Rationales / Design Choices](#rationales-design-choices)
+-   [Future Work & Extensions](#future-work-extensions)
+-   [Copyright](#copyright)
+
+<!-- TOC generation:
+pandoc -s -t gfm -i proposals/tzip-16/tzip-16.md -w markdown --toc | head -n 30
+-->
+
 ## Introduction
 
 This document defines a proposal for an interoperable method for encoding access
 to off-chain data from a Tezos contract (_KT1 account_).  The method does not
-require a protocol change and seeks to minimize the use and impact of on-chain storage.
+require a protocol change and seeks to minimize the use and impact of on-chain
+storage.
 
 The goal is to allow smart contract authors, and wallet and indexers
 to agree on the location and the shape of a contract's metadata.
 
-We define metadata as all information available on the contract that is not directly
-used for its operation, and _usually_ only for off-chain consumption.
+We define metadata as all information available on the contract that is not
+directly used for its operation, and _usually_ only for off-chain consumption.
 
 This includes authorship/copyright information, descriptions, and
 **off-chain-views**.  Off-chain-views are queries (for now REST-API queries or
