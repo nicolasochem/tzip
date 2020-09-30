@@ -13,7 +13,7 @@ Contract metadata provides information that is not directly
 used for a contract's operation, whether about the contract's code (e.g. its interface, versioning) 
 or the off-chain meaning of its contents (e.g. an artwork corresponding to an NFT). Currently, Tezos smart 
 contracts lack a standard way to access such important data about smart contracts, fragmenting 
-access to useful information that is needed for wallets, explorers, and applications.
+access to useful information that is needed for a scalabe integration experience by wallets, explorers, and applications.
 
 To address this need and ease the integration, discoverability, and querying of Tezos smart contracts, we propose TZIP-16. 
 TZIP-16 is a standard for encoding access to such smart contract metadata in JSON format
@@ -34,7 +34,7 @@ TZIP-16 defines:
 The standard is meant to be extended/specialized by other TZIPs, for instance by
 adding fields to the JSON format of the metadata or imposing certain off-chain
 views. We intend to extend existing token APIs specified in TZIP-12 and TZIP-7 
-with such metadata and off-chain views based.
+with such metadata and off-chain views based on TZIP-16.
 
 ## Introduction
 
