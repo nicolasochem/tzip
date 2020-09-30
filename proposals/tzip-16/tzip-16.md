@@ -484,7 +484,7 @@ This section keeps track of some of the choices made in the development of the
 specification.
 
 - *Use of the contract storage:* Another way of “storing” an URI on-chain could
-  have been to use an “operation event” (an contract-call that is only used to
+  have been to use an “operation event” (a contract-call that is only used to
   record its payload on the blockchain without keeping anything in the
   contract's storage). This method is the cheapest in gas and storage but it
   requires an indexer for any implementation to be able to do anything. We
