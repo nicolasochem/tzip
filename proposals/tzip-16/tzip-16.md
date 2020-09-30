@@ -447,6 +447,38 @@ The section will reference known implementations of (part of) TZIP-16:
 - The Archetype language implementation has support in the compiler (cf.
   [documentation](https://docs.archetype-lang.org/archetype-language/metadata-tzip-16)).
 
+## Rationales / Design Choices
+
+This section keeps track of some of the choices made in the development of the
+specification.
+
+- *Use of the contract storage:* Another way of “storing” an URI on-chain could
+  have been to use an “operation event” (an contract-call that is only used to
+  record its payload on the blockchain without keeping anything in the
+  contract's storage). This method is the cheapest in gas and storage but it
+  requires an indexer for any implementation to be able to do anything. We
+  consider this too much of a barrier for adoption. Moreover, we also want to
+  leave the option of storing the metadata JSON *on-chain* (strongly requested
+  by users).
+- *The use of a big-map:* Once the contract-storage solution is assumed, we
+  could have left the choice between `(bytes %metadata)` and `(big_map %metadata
+  string bytes)`. The former's gain in type-checking/deserialization gas seems
+  negligible (we measured to around 250 units) compared to the extra complexity
+  of the specification that it would incur.
+- *The `string` in `(big_map string bytes)`:* The keys of the big-map are used
+  for addressing values, including in the URI definition. The Michelson `string`
+  type is a good practical choice for this; it has an obvious and readable
+  concrete encoding: the string literal itself.
+- *The `bytes` in `(big_map string bytes)`:* Michelson strings are limited in
+  the characters one can encode (only ASCII printable and some whitespace), so
+  to allow arbitrary values we need to use the `bytes` type.  This includes the
+  metadata JSON which, when stored on-chain, requires full UTF-8 capabilities
+  (not supported by the `string` type).
+- *The use of JSON-Schema instead of JSON_LD or other specifications:* Basic
+  JSON(-Schema) was chosen because it is already pervasive in the Tezos
+  ecosystem, including in the node RPCs defined in all the Mainnet protocols.
+
+
 ## Future Work & Extensions
 
 A few extensions and improvements are already planned or in progress:
