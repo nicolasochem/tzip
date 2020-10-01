@@ -469,12 +469,12 @@ The section will reference known implementations of (part of) TZIP-16:
   [`smondet/tezos!7`](https://gitlab.com/smondet/tezos/-/merge_requests/7) adds
   support in `tezos-client`: fetching and displaying metadata for any given
   contract as well as “calling” off-chain-views.
-- The project
-  [`github.com/tqtezos/comevitz`](https://github.com/tqtezos/comevitz) (live at
-  [`tqtezos.github.io/comevitz`](https://tqtezos.github.io/comevitz/)) provides
-  validating metadata URI and JSON editors with various examples, a Michelson
-  serialized data analyzer, and a (work-in-progress) metadata explorer which can
-  fetch metadata URI and JSON contents.
+- The project [`github.com/tqtezos/TZComet`](https://github.com/tqtezos/TZComet)
+  (live at [`tqtezos.github.io/TZComet`](https://tqtezos.github.io/TZComet/),
+  previously known as *“Comevitz”*) provides validating metadata URI and JSON
+  editors with various examples, a Michelson serialized data analyzer, and a
+  (work-in-progress) metadata explorer which can fetch metadata URI and JSON
+  contents.
 - The Archetype language implementation has support in the compiler (cf.
   [documentation](https://docs.archetype-lang.org/archetype-language/metadata-tzip-16)).
 
