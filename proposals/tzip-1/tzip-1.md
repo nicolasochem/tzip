@@ -81,7 +81,7 @@ testing.
 
 A TZIP will always move along the following workflow:
 
-![TZIP workflow](proposals/tzip-1/tzip-workflow.png "TZIP Workflow")
+![TZIP workflow](tzip-workflow.png "TZIP Workflow")
 
 
 ### Status Description
