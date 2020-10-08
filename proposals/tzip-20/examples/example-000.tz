@@ -1,0 +1,23 @@
+parameter (or (pair %mint address nat) 
+              (nat %burn));
+storage (map address int);
+code {
+  DUP ;
+  CDR ;
+  SWAP ;
+  CAR ;
+  IF_LEFT 
+    { DUP ;
+      CDR ;
+      INT ;
+      SOME ;
+      SWAP ;
+      CAR } 
+    { INT ;
+      NEG ;
+      SOME ;
+      SENDER } ;
+  UPDATE ;
+  NIL operation ;
+  PAIR ;
+}
