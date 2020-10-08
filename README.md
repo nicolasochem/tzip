@@ -36,6 +36,7 @@ alternative options, opinions, and objections.
 | [TZIP-15] | Token Transferlist Interface                         |  2020-05-14   | Draft            |
 | [TZIP-16] | Contract Metadata                                    |  2020-06-30   | Work In Progress |
 | [TZIP-18] | Upgradeable Contracts                                |  2020-08-17   | Work In Progress |
+| [TZIP-20] | Off-chain Events                                     |  2020-10-07   | Work In Progress |
 
 ## How to Contribute
 
@@ -69,3 +70,4 @@ in your merge request. The exact TZIP workflow is explained in [TZIP-1].
 [TZIP-15]: proposals/tzip-15/tzip-15.md
 [TZIP-16]: proposals/tzip-16/tzip-16.md
 [TZIP-18]: proposals/tzip-18/tzip-18.md
+[TZIP-20]: proposals/tzip-20/tzip-20.md

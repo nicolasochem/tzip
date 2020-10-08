@@ -1,0 +1,42 @@
+{
+    "name": "vanilla-tzip-7-mint-burn-events",
+    "description": "Off-chain events for https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-7/ManagedLedger.tz",
+    "version": "0.1.0",
+    "license": {"name": "MIT", "details": "The MIT License"},
+    "interfaces": ["TZIP-7", "TZIP-16", "TZIP-20"],
+    "views": [
+        {
+            "name": "getChangedTokenBalances",
+            "description": "Get token balance updates",
+            "pure": "true",
+            "implementations": [
+                {
+                    "michelson-parameter-view": {
+                        "parameter": {
+                            "prim": "or",
+                            "args": [
+                                {"prim": "pair", "annots": ["%mint"], "args": [{"prim": "address"}, {"prim": "nat"}]},
+                                {"prim": "pair", "annots": ["%burn"], "args": [{"prim": "address"}, {"prim": "nat"}]}
+                            ]
+                        },
+                        "return-type": {"prim": "map", "args": [{"prim": "address"}, {"prim": "int"}]},
+                        "code": [
+                            {"prim": "DUP"},
+                            {"prim": "CDR"},
+                            {"prim": "SWAP"},
+                            {"prim": "CAR"},
+                            {"prim": "IF_LEFT", "args": [[{"prim": "DUP"}, {"prim": "CDR"}, {"prim": "INT"}], [{"prim": "DUP"}, {"prim": "CDR"}, {"prim": "INT"}, {"prim": "NEG"}]]},
+                            {"prim": "SOME"},
+                            {"prim": "SWAP"},
+                            {"prim": "CAR"},
+                            {"prim": "UPDATE"},
+                            {"prim": "NIL", "args": [{"prim": "operation"}]},
+                            {"prim": "PAIR"}
+                        ],
+                        "entrypoints": ["mint", "burn"]
+                    }
+                }
+            ]
+        }
+    ]
+}
