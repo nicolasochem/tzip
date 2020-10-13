@@ -100,20 +100,19 @@ let validate_schedule (policy : schedule_policy option) : unit =
     else unit
 
 type  entry_points =
-  | Tokens_transferred_hook of transfer_descriptor_param_michelson
+  | Tokens_transferred_hook of transfer_descriptor_param
   | Register_with_fa2 of fa2_with_hook_entry_points contract
   | Config_schedule of schedule_config
 
  let main (param, s : entry_points * storage) 
     : (operation list) * storage =
   match param with
-  | Tokens_transferred_hook pm ->
-    let p = transfer_descriptor_param_from_michelson pm in
+  | Tokens_transferred_hook p ->
     let u1 = validate_hook_call (Tezos.sender, s.fa2_registry) in
     let u2 = validate_schedule(s.policy.schedule_policy) in
     let hook_calls = get_owner_transfer_hooks(p, s.policy.descriptor) in
     let ops = List.map (fun (call : hook_entry_point) ->
-        Operation.transaction pm 0mutez call
+        Operation.transaction p 0mutez call
       ) hook_calls
     in
     ops, s
