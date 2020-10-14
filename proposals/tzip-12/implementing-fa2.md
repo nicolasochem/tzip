@@ -1,4 +1,3 @@
-
 # Implementing FA2
 
 ## Transfer Hook
@@ -33,15 +32,15 @@ policies like transfer lists, operator lists, etc. Although this approach introd
 gas consumption overhead (compared to an all-in-one contract) by requiring an extra
 inter-contract call, it also offers some other advantages:
 
-* FA2 core implementation can be verified once, and certain properties (not
+- FA2 core implementation can be verified once, and certain properties (not
   related to permission policy) remain unchanged.
 
-* Most likely, the core transfer semantic will remain unchanged. If
+- Most likely, the core transfer semantic will remain unchanged. If
   modification of the permission policy is required for an existing contract, it
   can be done by replacing a transfer hook only. No storage migration of the FA2
   ledger is required.
 
-* Transfer hooks could be used for purposes beyond permissioning, such as
+- Transfer hooks could be used for purposes beyond permissioning, such as
   implementing custom logic for a particular token application.
 
 ### Transfer Hook Specification
@@ -72,9 +71,9 @@ FA2 does NOT specify an interface for mint and burn operations; however, if an
 FA2 token contract implements mint and burn operations, these operations MUST
 invoke a transfer hook as well.
 
-|  Mint | Burn |
-| :---- | :--- |
-| Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None`|
+| Mint                                                    | Burn                                                  |
+| :------------------------------------------------------ | :---------------------------------------------------- |
+| Invoked if registered. `from_` parameter MUST be `None` | Invoked if registered. `to_` parameter MUST be `None` |
 
 Note that using the transfer hook design pattern with sender/receiver hooks may
 potentially be insecure. Sender and/or receiver contract hooks will be called
@@ -89,52 +88,29 @@ FA2 entrypoint with the following signature.
 LIGO definition:
 
 ```ocaml
-type transfer_destination_descriptor = {
+type transfer_destination_descriptor =
+[@layout:comb]
+{
   to_ : address option;
   token_id : token_id;
   amount : nat;
 }
 
-type transfer_descriptor = {
+type transfer_descriptor =
+[@layout:comb]
+{
   from_ : address option;
   txs : transfer_destination_descriptor list
 }
 
-type set_hook_param = {
-  hook : unit -> transfer_descriptor_param_michelson contract;
+type set_hook_param =
+[@layout:comb]
+{
+  hook : unit -> transfer_descriptor_param contract;
   permissions_descriptor : permissions_descriptor;
 }
 
-| Set_transfer_hook of set_hook_param_michelson
-```
-
-where
-
-```ocaml
-type transfer_destination_descriptor_michelson =
-  transfer_destination_descriptor michelson_pair_right_comb
-
-type transfer_descriptor_aux = {
-  from_ : address option;
-  txs : transfer_destination_descriptor_michelson list
-}
-
-type transfer_descriptor_michelson = transfer_descriptor_aux michelson_pair_right_comb
-
-type transfer_descriptor_param_aux = {
-  fa2 : address;
-  batch : transfer_descriptor_michelson list;
-  operator : address;
-}
-
-type transfer_descriptor_param_michelson = transfer_descriptor_param_aux michelson_pair_right_comb
-
-type set_hook_param_aux = {
-  hook : unit -> transfer_descriptor_param_michelson contract;
-  permissions_descriptor : permissions_descriptor_michelson;
-}
-
-type set_hook_param_michelson = set_hook_param_aux michelson_pair_right_comb
+| Set_transfer_hook of set_hook_param
 ```
 
 Michelson definition:
@@ -240,12 +216,12 @@ are not permitted, the whole transfer operation MUST fail.
 The following table demonstrates the required actions depending on `to_` address
 properties.
 
-| `to_` is on transfer list | `to_` implements `fa2_token_receiver` interface | Action |
-| ------ | ----- | ----------|
-| No  | No  | Transaction MUST fail |
-| Yes | No  | Continue transfer |
-| No  | Yes | Continue transfer, MUST call `tokens_received` |
-| Yes | Yes | Continue transfer, MUST call `tokens_received` |
+| `to_` is on transfer list | `to_` implements `fa2_token_receiver` interface | Action                                         |
+| ------------------------- | ----------------------------------------------- | ---------------------------------------------- |
+| No                        | No                                              | Transaction MUST fail                          |
+| Yes                       | No                                              | Continue transfer                              |
+| No                        | Yes                                             | Continue transfer, MUST call `tokens_received` |
+| Yes                       | Yes                                             | Continue transfer, MUST call `tokens_received` |
 
 Permission policy formula `S(true) * O(true) * ROH(None) * SOH(Custom)`.
 

@@ -166,7 +166,7 @@ type transfer =
   txs : transfer_destination list;
 }
 
-| Transfer of transfer_michelson list
+| Transfer of transfer list
 ```
 
 Michelson definition:
@@ -468,7 +468,7 @@ Examples
 - Token registry contract MUST implement one of two ways to expose token metadata
   for off-chain clients:
 
-  - Contract storage MUST have a `big_map` that maps `token_id -> token_metadata_michelson`
+  - Contract storage MUST have a `big_map` that maps `token_id -> token_metadata`
     and annotated `%token_metadata`
 
     OR
@@ -862,7 +862,7 @@ The composition of the described behaviors can be described as
 - If permissions descriptor is required, the FA2 contract MUST implement one of
   two ways to expose it for off-chain clients:
 
-  - Contract storage MUST have a field of type `permissions_descriptor_michelson`
+  - Contract storage MUST have a field of type `permissions_descriptor`
     annotated `%permissions_descriptor`
 
     OR
