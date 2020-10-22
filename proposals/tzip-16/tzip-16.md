@@ -116,6 +116,12 @@ At least one value must be present:
 - the value must be a URI as specified in the following section which points to
   a JSON document as specified further below.
 
+Unless otherwise-specified, the encoding of the values must be the direct stream
+of bytes of the data being stored. For instance, an URI starting with `http:`
+will start with the 5 bytes `0x687474703a` (`h` is `0x68`, `t` is `0x74`,
+etc.). There is no implicit conversion to Michelson's binary format (`PACK`) nor
+quoting mechanism.
+
 ### Metadata URIs
 
 URIs are used here first to locate metadata contents, but the format may be reused 
