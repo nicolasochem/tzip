@@ -271,7 +271,7 @@ This standard defines a few top-level fields:
   `{"tools": ["SmartPy dev-20201031", "Flextesa 20200921"], "location": "https://gitlab.com/smondet/fa2-smartpy/-/blob/c05d8ff0/multi_asset.py"}`
 
 
-`"interfaces"`
+`"interfaces"`:
 
 - A list of strings.
 - Each string should allow the consumer of the metadata to know which interfaces
@@ -281,6 +281,30 @@ This standard defines a few top-level fields:
   additional information prefixed with a space character.
 - Example: an FA2 contract would (at least) have an `"interfaces"` field
   containing `["TZIP-12"]` or `["TZIP-12 git 6544de32"]`.
+  
+`"errors"`:
+
+- A list of “error translation” objects, which allow one to interpret error
+  values output by the contract using the `FAILWITH` instruction. The
+  interpretation is a larger data-structure, for instance, to provide to a
+  wallet-user with a more understandable error message to act on (usually a
+  `string` or `bytes` natural language text value). They are either:
+    - static: `{ "error": <michelson>, "expansion": <michelson>, ... }`: where
+      `<michelson>` is a Michelson expression in JSON (see also the following
+      section on off-chain-views). The objects show the correspondences between
+      `FAILWITH` values and _expanded_ values.
+    - dynamic: `{"view": <view-name>, ... }`: which means that one needs to call
+      the off-chain-view `<view-name>` (a reference to a view in the `"views"`
+      field below). The view's input type should be the one of the error value,
+      and it should return the expanded structure.
+    - both objects allow an extra field `"languages": [<lang1>, <lang2>, ...]`:
+      a list of natural-language codes to filter-on if possible, the codes
+      should be “IETF language tags”
+      (cf. [Wikipedia](https://en.wikipedia.org/wiki/IETF_language_tag), and
+      [RFC-5646](https://tools.ietf.org/html/rfc5646)).
+    - the objects can be redundant (incl. for various languages),
+      implementations are expected to find the “best fit” according to their
+      own priorities.
 
 `"views"`:
 
