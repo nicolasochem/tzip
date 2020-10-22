@@ -80,6 +80,58 @@
             "type": "string"
           }
         },
+        "errors": {
+          "description": "Error translators.",
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "title": "static-error-translator",
+                "description": "A convertor between error codes and expanded messages.",
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "$ref": "#/definitions/micheline.tzip-16.expression"
+                  },
+                  "expansion": {
+                    "$ref": "#/definitions/micheline.tzip-16.expression"
+                  },
+                  "languages": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "expansion",
+                  "error"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "title": "dynamic-error-translator",
+                "description": "An off-chain-view to call to convert error codes to expanded messages.",
+                "type": "object",
+                "properties": {
+                  "view": {
+                    "type": "string"
+                  },
+                  "languages": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "view"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
         "views": {
           "description": "The storage queries, a.k.a. off-chain views provided.",
           "type": "array",
