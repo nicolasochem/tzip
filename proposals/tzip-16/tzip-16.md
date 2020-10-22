@@ -249,6 +249,21 @@ This standard defines a few top-level fields:
 - The homepage is for human-consumption, it may be the location of the source of
   the contract, how to submit issue tickets, or just a more elaborate
   description.
+  
+`"source"`:
+
+- An object
+ `{ "tools": [<string>], "location": <string> }`
+  describing the source code which was transformed or generated the Michelson
+  code of the contract.
+- `"tools"` is an informal list of
+  compilers/code-generators/libraries/post-processors used to generate the
+  originated code, if possible with version information.
+- The goal is to attempt to provide enough information for interested parties to
+  reproduce the Michelson from its source, or at least to inspect it.
+- Example:
+  `{"tools": ["SmartPy dev-20201031", "Flextesa 20200921"], "location": "https://gitlab.com/smondet/fa2-smartpy/-/blob/c05d8ff0/multi_asset.py"}`
+
 
 `"interfaces"`
 
