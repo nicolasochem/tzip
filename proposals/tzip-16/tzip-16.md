@@ -267,8 +267,6 @@ This standard defines a few top-level fields:
   originated code, if possible with version information.
 - The goal is to attempt to provide enough information for interested parties to
   reproduce the Michelson from its source, or at least to inspect it.
-- Example:
-  `{"tools": ["SmartPy dev-20201031", "Flextesa 20200921"], "location": "https://gitlab.com/smondet/fa2-smartpy/-/blob/c05d8ff0/multi_asset.py"}`
 
 
 `"interfaces"`:
@@ -315,9 +313,22 @@ Example:
 ```json
 {
   "version": "foo.1.4.2",
-  "license": "ISC",
+  "license": { "name": "ISC" },
   "authors": [ "Seb Mondet <seb@mondet.org>" ],
+  "source": {
+     "tools": ["SmartPy dev-20201031", "Flextesa 20200921"],
+     "location": "https://gitlab.com/smondet/fa2-smartpy/-/blob/c05d8ff0/multi_asset.py"
+  },
   "interfaces": [ "TZIP-12" ],
+  "errors":[
+    { "error": {"int": "42"}, 
+      "expansion": { "string": "You did something wrong"},
+      "languages": ["en"] },
+    { "error": {"int": "42"}, 
+      "expansion": { "bytes": "0x7175656c7175652063686f7365206e276120706173206d61726368c3a9"},
+      "languages": ["fr"] },
+    { "view": "translate-string-error" }
+  ],
   "views": [
      // ... see below ...
   ]
