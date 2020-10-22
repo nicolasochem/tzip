@@ -354,7 +354,8 @@ string, and a human-readable blob of text `"description"`.
 
 The 3 “Michelson” fields have the same format, they are JSON values obeying the
 Michelson JSON format of the Tezos protocol (sometimes referred to as
-“Micheline” encoding).
+“Micheline” encoding). Only protocol-level primitives are allowed, the so-called
+“Michelson macros” are not).
 
 Example:
 
