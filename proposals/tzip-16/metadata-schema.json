@@ -26,32 +26,21 @@
         },
         "license": {
           "description": "The software license of the contract.",
-          "oneOf": [
-            {
-              "title": "License-name",
-              "description": "A single string usually referring to a common license, e.g. MT, CC-BY-SA, or ISC.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "A mnemonic name for the license, see also the License-name case.",
               "type": "string"
             },
-            {
-              "title": "License-object",
-              "description": "A more detailed characterization of a license.",
-              "type": "object",
-              "properties": {
-                "name": {
-                  "description": "A mnemonic name for the license, see also the License-name case.",
-                  "type": "string"
-                },
-                "details": {
-                  "description": "Paragraphs of free text, with punctuation and proper language.",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "name"
-              ],
-              "additionalProperties": false
+            "details": {
+              "description": "Paragraphs of free text, with punctuation and proper language.",
+              "type": "string"
             }
-          ]
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false
         },
         "authors": {
           "description": "The list of authors of the contract.",

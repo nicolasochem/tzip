@@ -227,8 +227,8 @@ This standard defines a few top-level fields:
 
 `"license"`:
 
-- Either a single string value or an extensible object
- `{ "name": <string> , "details" : <string> }`.
+- An extensible object `{ "name": <string> , "details" : <string> }`,
+  `"details"` being optional.
 - It is recommended to use _de facto standard_ short names when possible, see
   the Debian
   [guidelines](https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/#license-short-name)
