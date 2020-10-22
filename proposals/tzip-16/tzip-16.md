@@ -151,6 +151,9 @@ information:
 - This is all optional, if contract address or network are not provided the
   defaults are “current” ones within a given context. If only one is present, it
   should be interpreted as a contract address within the current network.
+- It is expected that given implementation of a URI resolver may not be able to
+  handle every known network or even handle more than one; such cases should
+  return/display a proper error message.
 
 **Path:** a string used as key in the `%metadata` big-map of the contract. If
 the path starts with a `/` we remove it; only the first “slash” character is
