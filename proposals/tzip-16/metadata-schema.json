@@ -53,6 +53,26 @@
           "description": "A link for humans to follow for documentation, sources, issues, etc.",
           "type": "string"
         },
+        "source": {
+          "description": "Description of how the contract's Michelson was generated.",
+          "type": "object",
+          "properties": {
+            "tools": {
+              "title": "Contract Producing Tools",
+              "description": "List of tools/versions used in producing the Michelson.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "location": {
+              "title": "Source Location",
+              "description": "Location (URL) of the source code.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "interfaces": {
           "description": "The list of interfaces the contract claims to implement (e.g. TZIP-12).",
           "type": "array",
