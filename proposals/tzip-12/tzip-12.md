@@ -166,7 +166,7 @@ entrypoints.
 - [`| Transfer of transfer list`](#transfer)
 - [`| Balance_of of balance_of_param`](#balance_of)
 - [`| Update_operators of update_operator list`](#update_operators)
-- [`| Token_metadata_registry of address contract`](##token_metadata_registry)
+- [`| Assert_balances of balances_assertion`](#assert_balances) (optional)
 
 The full definition of the FA2 entrypoints in LIGO and related types can be found
 in [fa2_interface.mligo](./fa2_interface.mligo).
@@ -354,6 +354,42 @@ data. This pattern, when not used carefully, could expose the callback contract
 to an inconsistent state and/or manipulatable outcome (see
 [view patterns](https://www.notion.so/Review-of-TZIP-12-95e4b631555d49429e2efdfe0f9ffdc0#6d68e18802734f059adf3f5ba8f32a74)).
 The `balance_of` entrypoint should be used on the chain with extreme caution.
+
+
+#### `assert_balances`
+
+This entrypoint is optional.
+
+LIGO definition:
+
+```ocaml
+type token_id = nat
+
+type assert_balance = [@layout:comb] {
+  owner : address;
+  token_id : token_id;
+  balance: nat;
+}
+
+| Assert_balances of assert_balance list
+```
+
+Michelson definition:
+
+```
+(pair %assert_balances
+  (list
+    (pair
+      (address %owner)
+      (pair
+        (nat %token_id)
+        (nat %balance)))))
+```
+
+Checks the balances of a list of account/token pairs. If all the balances are
+correct, the entrypoint MUST do nothing (output same storage and no operations).
+If any of the balances is wrong it MUST interrupt the operation using
+`FAILWITH`.
 
 #### Operators
 
