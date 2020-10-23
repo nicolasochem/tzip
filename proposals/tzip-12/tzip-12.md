@@ -644,6 +644,24 @@ off-chain.
 
 - If one of the specified `token_id`s is not defined within the FA2 contract, the
   entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
+  
+### Off-Chain-Views
+
+Within its TZIP-16 metadata, an FA2 contract MUST provide a `get_balance`
+off-chain-view and can provide 2 other optional views: `total_supply` and
+`is_operator`. All of these MUST be implemented, at least, as *“Michelson
+Storage Views”*.
+
+- `get_balance` MUST have `(pair (nat %token_id) (address %owner))` as
+  parameter-type, and `nat` as return-type; it MUST return the balance
+  corresponding to the owner/token pair.
+- `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
+  to total number of tokens for the given token-id if known or fail if not.
+- `is_operator` has type
+  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
+   and should return whether `%operator` is allowed to transfer `%token_id`
+   tokens owned by `owner`.
+
 
 ### FA2 Transfer Permission Policies and Configuration
 
