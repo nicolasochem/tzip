@@ -13,7 +13,7 @@ created: 2020-01-24
 - [Motivation](#motivation)
 - [Abstract](#abstract)
 - [General](#general)
-- WIP: intro TZIP-16
+- [TZIP-16 Contract Metadata](#tzip-16-contract-metadata)
 - [Interface Specification](#interface-specification)
   - [Entrypoint Semantics](#entrypoint-semantics)
     - [`transfer`](#transfer)
@@ -127,13 +127,13 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
   zero or more entries and there may be duplicate token IDs.
 
 
-## Contract Metadata in TZIP-12
+## TZIP-16 Contract Metadata
 
 An FA2-compliant contract MUST implement TZIP-16.
 
 - If a contract does not contain the TZIP-16 `%metadata` big-map, it should be
   considered “legacy FA2,” for compatibility with these contract, see the
-  corresponding sections for “legacy entrypoints” (**TODO: link**).
+  [Legacy Interface](#legacy-interface) section.
 
 The metadata JSON structure is precised below:
 
@@ -152,8 +152,8 @@ A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
 Descriptor](#exposing-permissions-descriptor), and it is required if it differs
 from the default value.
 
-A TZIP-12-specific field `"tokens"` is defined in **TODO** and it MUST be
-present.
+A TZIP-12-specific field `"tokens"` is defined in [Token
+Metadata](#token-metadata) and it MUST be present.
 
 ## Interface Specification
 
@@ -496,7 +496,7 @@ type token_metadata =
   the token amounts. If 0, the asset is not divisible. Decimals are used for display
   purposes only and MUST NOT affect transfer operation.
 
-Examples
+Examples:
 
 | Decimals | Amount | Display |
 | -------- | ------ | ------- |
@@ -504,7 +504,7 @@ Examples
 | 1        | 123    | 12.3    |
 | 3        | 123000 | 123     |
 
-##### Implementing and Accessing FA2 Metadata
+##### Implementation
 
 Token metadata is contained in the contract metadata, in the required `"tokens"`
 field.
@@ -538,123 +538,6 @@ The `"tokens"` field is an object of the form
           JSON `token-metadata` type. The default value is `false`.
 
 
-## Legacy Token Metadata
-
-- The Legacy-FA2 contract MUST implement `token_metadata_registry` view
-  entrypoint that returns an address of the contract holding tokens
-  metadata. Token metadata can be held either by the FA2 token contract itself
-  (then `token_metadata_registry` returns `SELF` address) or by a separate token
-  registry contract.
-- Token registry contract MUST implement one of two ways to expose token
-  metadata for off-chain clients:
-   - Contract storage MUST have a `big_map` that maps `token_id ->
-     token_metadata` and annotated `%token_metadata`
-   - Contract MUST implement entrypoint `token_metadata`
-
-###### `token_metadata_registry`
-
-LIGO definition:
-
-```ocaml
-| Token_metadata_registry of address contract
-```
-
-Michelson definition:
-
-```
-(contract %token_metadata_registry address)
-```
-
-Returns address of the contract that holds tokens metadata. If the FA2 contract
-holds its own tokens metadata, the entrypoint returns `SELF` address. The entry
-point parameter is some contract entrypoint to be called with the address of the
-token metadata registry.
-
-###### `token_metadata` `big_map`
-
-LIGO definition:
-
-```ocaml
-type <contract_storage> = {
-  ...
-  token_metadata : (token_id, token_metadata) big_map;
-  ...
-}
-```
-
-Michelson definition:
-
-```
-(big_map %token_metadata
-  nat
-  (pair
-  (nat %token_id)
-  (pair
-    (string %symbol)
-    (pair
-      (string %name)
-      (pair
-        (nat %decimals)
-        (map %extras string string)
-  ))))
-)
-```
-
-The FA2 contract storage MUST have a `big_map` with a key type `token_id` and
-value type `token_metadata`. This `big_map` MUST be annotated as `%token_metadata`
-and can be at any position within the storage.
-
-###### `token_metadata` Entrypoint
-
-LIGO definition:
-
-```ocaml
-type token_metadata_param =
-[@layout:comb]
-{
-  token_ids : token_id list;
-  handler : (token_metadata list) -> unit;
-}
-
-| Token_metadata of token_metadata_param
-```
-
-Michelson definition:
-
-```
-(pair %token_metadata
-  (list %token_ids nat)
-  (lambda %handler
-      (list
-        (pair
-          (nat %token_id)
-          (pair
-            (string %symbol)
-            (pair
-              (string %name)
-              (pair
-                (nat %decimals)
-                (map %extras string string)
-        ))))
-      )
-      unit
-  )
-)
-```
-
-</details>
-
-Get the metadata for multiple token types. Accepts a list of `token_id`s and a
-a lambda `handler`, which accepts a list of `token_metadata` records. The `handler`
-lambda may assert certain assumptions about the metadata and/or fail with the
-obtained metadata implementing a view entrypoint pattern to extract tokens metadata
-off-chain.
-
-- As with `balance_of`, the input `token_id`'s should not be deduplicated nor
-  reordered.
-
-- If one of the specified `token_id`s is not defined within the FA2 contract, the
-  entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
   
 ### Off-Chain-Views
 
@@ -934,7 +817,8 @@ and/or use a `tag` hint of `custom_permission_policy`.
 
 ##### Customizing Transfer Permission Policy
 
-The FA2 contract MUST always implement the [core transfer behavior](#core-transfer-behavior).
+The FA2 contract MUST always implement the
+[core transfer behavior](#core-transfer-behavior).
 However, FA2 contract developer MAY chose to implement either the
 [default transfer permission policy](#default-transfer-permission-policy) or a
 custom policy.
@@ -1089,6 +973,178 @@ tokens can be represented by the FA2 contract which [operator transfer behavior]
 is defined as `No_transfer`. Tokens cannot be transferred either by the token owner
 or by any operator. Only privileged operations like mint and burn can assign tokens
 to owner accounts.
+
+## Legacy Interface
+
+Contracts which for historical reasons do not implement [TZIP-16 Contract
+Metadata](#tzip-16-contract-metadata) are expected to have implemented the
+interface in this section.
+
+### Token Metadata Entrypoints
+
+- The Legacy-FA2 contract MUST implement `token_metadata_registry` view
+  entrypoint that returns an address of the contract holding tokens
+  metadata. Token metadata can be held either by the FA2 token contract itself
+  (then `token_metadata_registry` returns `SELF` address) or by a separate token
+  registry contract.
+- Token registry contract MUST implement one of two ways to expose token
+  metadata for off-chain clients:
+   - Contract storage MUST have a `big_map` that maps `token_id ->
+     token_metadata` and annotated `%token_metadata`
+   - Contract MUST implement entrypoint `token_metadata`
+
+###### `token_metadata_registry`
+
+LIGO definition:
+
+```ocaml
+| Token_metadata_registry of address contract
+```
+
+Michelson definition:
+
+```
+(contract %token_metadata_registry address)
+```
+
+Returns address of the contract that holds tokens metadata. If the FA2 contract
+holds its own tokens metadata, the entrypoint returns `SELF` address. The entry
+point parameter is some contract entrypoint to be called with the address of the
+token metadata registry.
+
+###### `token_metadata` `big_map`
+
+LIGO definition:
+
+```ocaml
+type <contract_storage> = {
+  ...
+  token_metadata : (token_id, token_metadata) big_map;
+  ...
+}
+```
+
+Michelson definition:
+
+```
+(big_map %token_metadata
+  nat
+  (pair
+  (nat %token_id)
+  (pair
+    (string %symbol)
+    (pair
+      (string %name)
+      (pair
+        (nat %decimals)
+        (map %extras string string)
+  ))))
+)
+```
+
+The FA2 contract storage MUST have a `big_map` with a key type `token_id` and
+value type `token_metadata`. This `big_map` MUST be annotated as `%token_metadata`
+and can be at any position within the storage.
+
+###### `token_metadata` Entrypoint
+
+LIGO definition:
+
+```ocaml
+type token_metadata_param =
+[@layout:comb]
+{
+  token_ids : token_id list;
+  handler : (token_metadata list) -> unit;
+}
+
+| Token_metadata of token_metadata_param
+```
+
+Michelson definition:
+
+```
+(pair %token_metadata
+  (list %token_ids nat)
+  (lambda %handler
+      (list
+        (pair
+          (nat %token_id)
+          (pair
+            (string %symbol)
+            (pair
+              (string %name)
+              (pair
+                (nat %decimals)
+                (map %extras string string)
+        ))))
+      )
+      unit
+  )
+)
+```
+
+</details>
+
+Get the metadata for multiple token types. Accepts a list of `token_id`s and a
+a lambda `handler`, which accepts a list of `token_metadata` records. The `handler`
+lambda may assert certain assumptions about the metadata and/or fail with the
+obtained metadata implementing a view entrypoint pattern to extract tokens metadata
+off-chain.
+
+- As with `balance_of`, the input `token_id`'s should not be deduplicated nor
+  reordered.
+
+- If one of the specified `token_id`s is not defined within the FA2 contract, the
+  entrypoint MUST fail with the error mnemonic `"FA2_TOKEN_UNDEFINED"`.
+
+### Permissions Descriptor Entrypoint
+
+To advertise the permissions policy, a contract SHOULD have a
+`%permissions_descriptor` “callback-view” entrypoint with the following
+interface.
+
+Michelson definition:
+
+```
+(contract %permissions_descriptor
+  (pair
+    (or %operator
+      (unit %no_transfer)
+      (or
+        (unit %owner_transfer)
+        (unit %owner_or_operator_transfer)
+      )
+    )
+    (pair
+      (or %receiver
+        (unit %owner_no_hook)
+        (or
+          (unit %optional_owner_hook)
+          (unit %required_owner_hook)
+        )
+      )
+      (pair
+        (or %sender
+          (unit %owner_no_hook)
+          (or
+            (unit %optional_owner_hook)
+            (unit %required_owner_hook)
+          )
+        )
+        (option %custom
+          (pair
+            (string %tag)
+            (option %config_api address)
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+
 
 ## Future Directions
 
