@@ -471,11 +471,8 @@ or be limited to an administrator.
 
 #### Token Metadata
 
-Token metadata is primarily useful in off-chain, user-facing contexts (e.g.
-wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use
-of token metadata and minimal on-chain gas consumption. A related effort to create
-a separate metadata standard is also underway via
-[TZIP-16](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
+Token metadata is meant for off-chain, user-facing, contexts (e.g.  wallets,
+explorers, marketplaces). 
 
 Each FA2 `token_id` has associated metadata of the following type:
 
@@ -483,35 +480,18 @@ Each FA2 `token_id` has associated metadata of the following type:
 type token_id = nat
 
 type token_metadata =
-[@layout:comb]
 {
   token_id : token_id;
   symbol : string;
   name : string;
   decimals : nat;
-  extras : (string, string) map;
+  extras : Json.t;
 }
-```
-
-Michelson definition:
-
-```
-(pair
-  (nat %token_id)
-  (pair
-    (string %symbol)
-    (pair
-      (string %name)
-      (pair
-        (nat %decimals)
-        (map %extras string string)
-))))
 ```
 
 - FA2 token amounts are represented by natural numbers (`nat`), and their
   **granularity** (the smallest amount of tokens which may be minted, burned, or
   transferred) is always 1.
-
 - `decimals` is the number of digits to use after the decimal point when displaying
   the token amounts. If 0, the asset is not divisible. Decimals are used for display
   purposes only and MUST NOT affect transfer operation.
@@ -520,26 +500,56 @@ Examples
 
 | Decimals | Amount | Display |
 | -------- | ------ | ------- |
-| 0n       | 123    | 123     |
-| 1n       | 123    | 12.3    |
-| 3n       | 123000 | 123     |
+| 0        | 123    | 123     |
+| 1        | 123    | 12.3    |
+| 3        | 123000 | 123     |
 
 ##### Implementing and Accessing FA2 Metadata
 
-- The FA2 contract MUST implement `token_metadata_registry` view entrypoint that
-  returns an address of the contract holding tokens metadata. Token metadata can
-  be held either by the FA2 token contract itself (then `token_metadata_registry`
-  returns `SELF` address) or by a separate token registry contract.
+Token metadata is contained in the contract metadata, in the required `"tokens"`
+field.
 
-- Token registry contract MUST implement one of two ways to expose token metadata
-  for off-chain clients:
+The `"tokens"` field is an object of the form
+`{ "static": [ <token-metadata> ], "dynamic": [ <dynamic-token-access> ] }`:
 
-  - Contract storage MUST have a `big_map` that maps `token_id -> token_metadata`
-    and annotated `%token_metadata`
+- Both fields are optional but every token MUST be discoverable with one of the
+  2 ways, i.e. if a token is not present in the `"static"` list, it should be
+  discoverable dynamically.
+- `<token-metadata>` is a JSON object corresponding to the type `token_metadata`
+  above: `{ "token_id": <nat>, "symbol": <string>, "name": <string>, "decimals": <nat>, "extras": <arbitrary-json> }`
+- `<dynamic-token-access>` is either:
+    - A `{ "uri-of-id": <uri-of-if-object }` object, where
+      `<uri-of-id-object>`, is:
+        - `{ "token-placeholder": <token-placeholder>, "uri": <string> }` where
+          `"uri"` is any TZIP-16 URI (incl. `tezos-storage://...`) on which the
+          string given by `<token-placeholder>` is replaced by the token-id (as
+          a decimal integer).
+        - The URI must point to a `<token_metadata>` JSON object.
+        - Example:
+          `{ "token-placeholder": "%{tokid}", "uri": "https://example.com/tokens/%{tokid}/meta.json" }`
+    - Or a `{ "view": <view-name>, "indirect": <bool>, "address": <optional-KT1> }` object
+      where:
+        - The optional field `"address"` is the KT1 address of a contract to
+          query, by default it is the same FA2.
+        - The `view-name` (required) is the name of an off-chain-view of type `nat → bytes`
+           which MUST be present in the `"views"` list of the given contract.
+        - If `"indirect"` is `true` the view MUST return a TZIP-16 URI which
+          locates the token-metadata, if `false` it MUST return _directly_ the
+          JSON `token-metadata` type. The default value is `false`.
 
-    OR
 
-  - Contract MUST implement entrypoint `token_metadata`
+## Legacy Token Metadata
+
+- The Legacy-FA2 contract MUST implement `token_metadata_registry` view
+  entrypoint that returns an address of the contract holding tokens
+  metadata. Token metadata can be held either by the FA2 token contract itself
+  (then `token_metadata_registry` returns `SELF` address) or by a separate token
+  registry contract.
+- Token registry contract MUST implement one of two ways to expose token
+  metadata for off-chain clients:
+   - Contract storage MUST have a `big_map` that maps `token_id ->
+     token_metadata` and annotated `%token_metadata`
+   - Contract MUST implement entrypoint `token_metadata`
 
 ###### `token_metadata_registry`
 
