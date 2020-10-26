@@ -148,8 +148,9 @@ The TZIP-16 `"interfaces"` field MUST be present:
 The TZIP-16 `"views"` field MUST be present, cf. section
 [Off-chain-views](#off-chain-views).
 
-A TZIP-12-specific field `"permissions"` is defined in **TODO** is required if
-it differs from the default value.
+A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
+Descriptor](#exposing-permissions-descriptor), and it is required if it differs
+from the default value.
 
 A TZIP-12-specific field `"tokens"` is defined in **TODO** and it MUST be
 present.
@@ -705,7 +706,6 @@ Standard configurations of the operator permission behavior:
 
 ```ocaml
 type operator_transfer_policy =
-  [@layout:comb]
   | No_transfer
   | Owner_transfer
   | Owner_or_operator_transfer (* default *)
@@ -748,7 +748,6 @@ Standard configurations of the token owner hook permission behavior:
 
 ```ocaml
 type owner_hook_policy =
-  [@layout:comb]
   | Owner_no_hook (* default *)
   | Optional_owner_hook
   | Required_owner_hook
@@ -893,26 +892,22 @@ Transfer permission policy formula is expressed by the `permissions_descriptor` 
 
 ```ocaml
 type operator_transfer_policy =
-  [@layout:comb]
   | No_transfer
   | Owner_transfer
   | Owner_or_operator_transfer
 
 type owner_hook_policy =
-  [@layout:comb]
   | Owner_no_hook
   | Optional_owner_hook
   | Required_owner_hook
 
 type custom_permission_policy =
-[@layout:comb]
 {
   tag : string;
   config_api: address option;
 }
 
 type permissions_descriptor =
-[@layout:comb]
 {
   operator : operator_transfer_policy;
   receiver : owner_hook_policy;
@@ -942,95 +937,32 @@ The composition of the described behaviors can be described as
 
 ##### Exposing Permissions Descriptor
 
-- If permissions descriptor is required, the FA2 contract MUST implement one of
-  two ways to expose it for off-chain clients:
+In order to advertise its permissions, an FA2 SHOULD fill the `"permissions"`
+field in its contract metadata.
 
-  - Contract storage MUST have a field of type `permissions_descriptor`
-    annotated `%permissions_descriptor`
+The field is an object with 4 fields corresponding to the Ligo types defined in
+the previous sections:
 
-    OR
+- `"operator"` is `"no_transfer"`, `"owner_transfer"`, or
+  `"owner_or_operator_transfer"`.
+- "`receiver`" is`"owner_no_hook"`, `"optional_owner_hook"`, or
+  `"required_owner_hook"`.
+- `"sender"` is `"owner_no_hook"`, `"optional_owner_hook"`, or
+  `"required_owner_hook"`.
+- `"custom"` is an optional object `{ "tag": <string>, "config_api": <string> }`
+  where `"config_api"` is an optional contract adddress.
 
-  - Contract MUST implement entry point `permissions_descriptor`.
-    LIGO definition:
-    ```ocaml
-    | Permissions_descriptor of permissions_descriptor contract
-    ```
-
-Michelson definition:
-
-```
-(contract %permissions_descriptor
-  (pair
-    (or %operator
-      (unit %no_transfer)
-      (or
-        (unit %owner_transfer)
-        (unit %owner_or_operator_transfer)
-      )
-    )
-    (pair
-      (or %receiver
-        (unit %owner_no_hook)
-        (or
-          (unit %optional_owner_hook)
-          (unit %required_owner_hook)
-        )
-      )
-      (pair
-        (or %sender
-          (unit %owner_no_hook)
-          (or
-            (unit %optional_owner_hook)
-            (unit %required_owner_hook)
-          )
-        )
-        (option %custom
-          (pair
-            (string %tag)
-            (option %config_api address)
-          )
-        )
-      )
-    )
-  )
-)
-```
-
-Get the descriptor of the transfer permission policy. FA2 specifies
-`permissions_descriptor` allowing external contracts (e.g. an auction) to discover
-an FA2 contract's implemented permission policies.
-
-The implicit value of the descriptor for the
+The implicit value of the field corresponding to the
 [default `transfer` permission policy](#default-transfer-permission-policy) is
 the following:
 
-```ocaml
-let default_descriptor : permissions_descriptor = {
-  operator = Owner_or_operator_transfer;
-  receiver = Owner_no_hook;
-  sender = Owner_no_hook;
-  custom = (None: custom_permission_policy option);
+```json
+{
+  "operator": "Owner_or_operator_transfer",
+  "receiver": "Owner_no_hook",
+  "sender": "Owner_no_hook"
 }
 ```
-
-- If the FA2 contract implements one or more non-default behaviors, it MUST implement
-  `permissions_descriptor` entrypoint. The descriptor field values MUST reflect
-  actual permission behavior implemented by the contract.
-
-- If the FA2 contract implements the default permission policy, it MAY omit the
-  implementation of the `permissions_descriptor` entrypoint.
-
-- In addition to the standard permission behaviors, the FA2 contract MAY also
-  implement an optional custom permissions policy. If such a custom policy is
-  implemented, the FA2 contract SHOULD expose it using permissions descriptor
-  `custom` field. `custom_permission_policy.tag` value would be available to
-  other parties which are aware of such custom extension. Some custom permission
-  MAY require a config API (like [`update_operators`](#update_operators) entry
-  point of the FA2 to configure `operator_transfer_policy`). The address of the
-  contract that provides config entrypoints is specified by
-  `custom_permission_policy.config_api` field. The config entrypoints MAY be
-  implemented either within the FA2 token contract itself (then the returned
-  address SHALL be `SELF`), or in a separate contract.
 
 ### Error Handling
 
