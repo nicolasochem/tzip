@@ -519,7 +519,7 @@ The `"tokens"` field is an object of the form
 - `<token-metadata>` is a JSON object corresponding to the type `token_metadata`
   above: `{ "token_id": <nat>, "symbol": <string>, "name": <string>, "decimals": <nat>, "extras": <arbitrary-json> }`
 - `<dynamic-token-access>` is either:
-    - A `{ "uri-of-id": <uri-of-if-object }` object, where
+    - A `{ "uri-of-id": <uri-of-id-object> }` object, where
       `<uri-of-id-object>`, is:
         - `{ "token-placeholder": <token-placeholder>, "uri": <string> }` where
           `"uri"` is any TZIP-16 URI (incl. `tezos-storage://...`) on which the
@@ -840,7 +840,7 @@ the previous sections:
 
 - `"operator"` is `"no_transfer"`, `"owner_transfer"`, or
   `"owner_or_operator_transfer"`.
-- "`receiver`" is`"owner_no_hook"`, `"optional_owner_hook"`, or
+- `"receiver"` is`"owner_no_hook"`, `"optional_owner_hook"`, or
   `"required_owner_hook"`.
 - `"sender"` is `"owner_no_hook"`, `"optional_owner_hook"`, or
   `"required_owner_hook"`.
