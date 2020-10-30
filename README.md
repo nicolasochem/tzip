@@ -35,6 +35,7 @@ alternative options, opinions, and objections.
 | [TZIP-14] | GraphQL interface to Tezos node data                 |  2020-04-01   | Draft            |
 | [TZIP-15] | Token Transferlist Interface                         |  2020-05-14   | Draft            |
 | [TZIP-16] | Contract Metadata                                    |  2020-06-30   | Work In Progress |
+| [TZIP-17] | Contract Permit Interface                            |  2020-08-11   | Work In Progress |
 | [TZIP-18] | Upgradeable Contracts                                |  2020-08-17   | Work In Progress |
 | [TZIP-19] | Tezos Decentralized Identifier (DID) Manager         |  2020-09-16   | Work In Progress |
 | [TZIP-20] | Off-chain Events                                     |  2020-10-07   | Work In Progress |
@@ -70,6 +71,7 @@ in your merge request. The exact TZIP workflow is explained in [TZIP-1].
 [TZIP-14]: proposals/tzip-14/tzip-14.md
 [TZIP-15]: proposals/tzip-15/tzip-15.md
 [TZIP-16]: proposals/tzip-16/tzip-16.md
+[TZIP-17]: proposals/tzip-17/tzip-17.md
 [TZIP-18]: proposals/tzip-18/tzip-18.md
 [TZIP-19]: proposals/tzip-19/tzip-19.md
 [TZIP-20]: proposals/tzip-20/tzip-20.md
