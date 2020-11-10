@@ -146,7 +146,7 @@ The TZIP-16 `"interfaces"` field MUST be present:
       e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
       e.g. `2020-10-23`).
 
-The TZIP-16 `"views"` field MUST be present, cf. section
+The TZIP-16 `"views"` field MUST be present, see section
 [Off-chain-views](#off-chain-views).
 
 A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
