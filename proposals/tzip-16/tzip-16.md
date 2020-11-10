@@ -116,6 +116,12 @@ At least one value must be present:
 - the value must be a URI as specified in the following section which points to
   a JSON document as specified further below.
 
+Unless otherwise-specified, the encoding of the values must be the direct stream
+of bytes of the data being stored. For instance, an URI starting with `http:`
+will start with the 5 bytes `0x687474703a` (`h` is `0x68`, `t` is `0x74`,
+etc.). There is no implicit conversion to Michelson's binary format (`PACK`) nor
+quoting mechanism.
+
 ### Metadata URIs
 
 URIs are used here first to locate metadata contents, but the format may be reused 
@@ -151,6 +157,9 @@ information:
 - This is all optional, if contract address or network are not provided the
   defaults are “current” ones within a given context. If only one is present, it
   should be interpreted as a contract address within the current network.
+- It is expected that given implementation of a URI resolver may not be able to
+  handle every known network or even handle more than one; such cases should
+  return/display a proper error message.
 
 **Path:** a string used as key in the `%metadata` big-map of the contract. If
 the path starts with a `/` we remove it; only the first “slash” character is
@@ -227,8 +236,8 @@ This standard defines a few top-level fields:
 
 `"license"`:
 
-- Either a single string value or an extensible object
- `{ "name": <string> , "details" : <string> }`.
+- An extensible object `{ "name": <string> , "details" : <string> }`,
+  `"details"` being optional.
 - It is recommended to use _de facto standard_ short names when possible, see
   the Debian
   [guidelines](https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/#license-short-name)
@@ -246,8 +255,21 @@ This standard defines a few top-level fields:
 - The homepage is for human-consumption, it may be the location of the source of
   the contract, how to submit issue tickets, or just a more elaborate
   description.
+  
+`"source"`:
 
-`"interfaces"`
+- An object
+ `{ "tools": [<string>], "location": <string> }`
+  describing the source code which was transformed or generated the Michelson
+  code of the contract.
+- `"tools"` is an informal list of
+  compilers/code-generators/libraries/post-processors used to generate the
+  originated code, if possible with version information.
+- The goal is to attempt to provide enough information for interested parties to
+  reproduce the Michelson from its source, or at least to inspect it.
+
+
+`"interfaces"`:
 
 - A list of strings.
 - Each string should allow the consumer of the metadata to know which interfaces
@@ -257,6 +279,30 @@ This standard defines a few top-level fields:
   additional information prefixed with a space character.
 - Example: an FA2 contract would (at least) have an `"interfaces"` field
   containing `["TZIP-12"]` or `["TZIP-12 git 6544de32"]`.
+  
+`"errors"`:
+
+- A list of “error translation” objects, which allow one to interpret error
+  values output by the contract using the `FAILWITH` instruction. The
+  interpretation is a larger data-structure, for instance, to provide to a
+  wallet-user with a more understandable error message to act on (usually a
+  `string` or `bytes` natural language text value). They are either:
+    - static: `{ "error": <michelson>, "expansion": <michelson>, ... }`: where
+      `<michelson>` is a Michelson expression in JSON (see also the following
+      section on off-chain-views). The objects show the correspondences between
+      `FAILWITH` values and _expanded_ values.
+    - dynamic: `{"view": <view-name>, ... }`: which means that one needs to call
+      the off-chain-view `<view-name>` (a reference to a view in the `"views"`
+      field below). The view's input type should be the one of the error value,
+      and it should return the expanded structure.
+    - both objects allow an extra field `"languages": [<lang1>, <lang2>, ...]`:
+      a list of natural-language codes to filter-on if possible, the codes
+      should be “IETF language tags”
+      (cf. [Wikipedia](https://en.wikipedia.org/wiki/IETF_language_tag), and
+      [RFC-5646](https://tools.ietf.org/html/rfc5646)).
+    - the objects can be redundant (incl. for various languages),
+      implementations are expected to find the “best fit” according to their
+      own priorities.
 
 `"views"`:
 
@@ -267,9 +313,22 @@ Example:
 ```json
 {
   "version": "foo.1.4.2",
-  "license": "ISC",
+  "license": { "name": "ISC" },
   "authors": [ "Seb Mondet <seb@mondet.org>" ],
+  "source": {
+     "tools": ["SmartPy dev-20201031", "Flextesa 20200921"],
+     "location": "https://gitlab.com/smondet/fa2-smartpy/-/blob/c05d8ff0/multi_asset.py"
+  },
   "interfaces": [ "TZIP-12" ],
+  "errors":[
+    { "error": {"int": "42"}, 
+      "expansion": { "string": "You did something wrong"},
+      "languages": ["en"] },
+    { "error": {"int": "42"}, 
+      "expansion": { "bytes": "0x7175656c7175652063686f7365206e276120706173206d61726368c3a9"},
+      "languages": ["fr"] },
+    { "view": "translate-string-error" }
+  ],
   "views": [
      // ... see below ...
   ]
@@ -336,7 +395,8 @@ string, and a human-readable blob of text `"description"`.
 
 The 3 “Michelson” fields have the same format, they are JSON values obeying the
 Michelson JSON format of the Tezos protocol (sometimes referred to as
-“Micheline” encoding).
+“Micheline” encoding). Only protocol-level primitives are allowed, the so-called
+“Michelson macros” are not).
 
 Example:
 

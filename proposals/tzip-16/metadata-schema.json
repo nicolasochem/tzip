@@ -26,32 +26,21 @@
         },
         "license": {
           "description": "The software license of the contract.",
-          "oneOf": [
-            {
-              "title": "License-name",
-              "description": "A single string usually referring to a common license, e.g. MT, CC-BY-SA, or ISC.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "A mnemonic name for the license, see also the License-name case.",
               "type": "string"
             },
-            {
-              "title": "License-object",
-              "description": "A more detailed characterization of a license.",
-              "type": "object",
-              "properties": {
-                "name": {
-                  "description": "A mnemonic name for the license, see also the License-name case.",
-                  "type": "string"
-                },
-                "details": {
-                  "description": "Paragraphs of free text, with punctuation and proper language.",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "name"
-              ],
-              "additionalProperties": false
+            "details": {
+              "description": "Paragraphs of free text, with punctuation and proper language.",
+              "type": "string"
             }
-          ]
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false
         },
         "authors": {
           "description": "The list of authors of the contract.",
@@ -64,11 +53,83 @@
           "description": "A link for humans to follow for documentation, sources, issues, etc.",
           "type": "string"
         },
+        "source": {
+          "description": "Description of how the contract's Michelson was generated.",
+          "type": "object",
+          "properties": {
+            "tools": {
+              "title": "Contract Producing Tools",
+              "description": "List of tools/versions used in producing the Michelson.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "location": {
+              "title": "Source Location",
+              "description": "Location (URL) of the source code.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "interfaces": {
           "description": "The list of interfaces the contract claims to implement (e.g. TZIP-12).",
           "type": "array",
           "items": {
             "type": "string"
+          }
+        },
+        "errors": {
+          "description": "Error translators.",
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "title": "static-error-translator",
+                "description": "A convertor between error codes and expanded messages.",
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "$ref": "#/definitions/micheline.tzip-16.expression"
+                  },
+                  "expansion": {
+                    "$ref": "#/definitions/micheline.tzip-16.expression"
+                  },
+                  "languages": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "expansion",
+                  "error"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "title": "dynamic-error-translator",
+                "description": "An off-chain-view to call to convert error codes to expanded messages.",
+                "type": "object",
+                "properties": {
+                  "view": {
+                    "type": "string"
+                  },
+                  "languages": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "view"
+                ],
+                "additionalProperties": false
+              }
+            ]
           }
         },
         "views": {
