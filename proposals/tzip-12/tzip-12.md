@@ -838,14 +838,14 @@ field in its contract metadata.
 The field is an object with 4 fields corresponding to the Ligo types defined in
 the previous sections:
 
-- `"operator"` is `"no_transfer"`, `"owner_transfer"`, or
-  `"owner_or_operator_transfer"`.
-- `"receiver"` is`"owner_no_hook"`, `"optional_owner_hook"`, or
-  `"required_owner_hook"`.
-- `"sender"` is `"owner_no_hook"`, `"optional_owner_hook"`, or
-  `"required_owner_hook"`.
-- `"custom"` is an optional object `{ "tag": <string>, "config_api": <string> }`
-  where `"config_api"` is an optional contract adddress.
+- `"operator"` is `"no-transfer"`, `"owner-transfer"`, or
+  `"owner-or-operator-transfer"`.
+- `"receiver"` is`"owner-no-hook"`, `"optional-owner-hook"`, or
+  `"required-owner-hook"`.
+- `"sender"` is `"owner-no-hook"`, `"optional-owner-hook"`, or
+  `"required-owner-hook"`.
+- `"custom"` is an optional object `{ "tag": <string>, "config-api": <string> }`
+  where `"config-api"` is an optional contract adddress.
 
 The implicit value of the field corresponding to the
 [default `transfer` permission policy](#default-transfer-permission-policy) is
@@ -853,9 +853,9 @@ the following:
 
 ```json
 {
-  "operator": "Owner_or_operator_transfer",
-  "receiver": "Owner_no_hook",
-  "sender": "Owner_no_hook"
+  "operator": "owner-or-operator-transfer",
+  "receiver": "owner-no-hook",
+  "sender": "owner-no-hook"
 }
 ```
 
