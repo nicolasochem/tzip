@@ -39,7 +39,7 @@ alternative options, opinions, and objections.
 | [TZIP-18] | Upgradeable Contracts                                |  2020-08-17   | Work In Progress |
 | [TZIP-19] | Tezos Decentralized Identifier (DID) Manager         |  2020-09-16   | Work In Progress |
 | [TZIP-20] | Off-chain Events                                     |  2020-10-07   | Work In Progress |
-| [TZIP-21] | FA2 Multimedia Metadata                       |  2020-11-12   | Work In Progress |
+| [TZIP-21] | Contract Multimedia Metadata                       |  2020-11-12   | Work In Progress |
 
 ## How to Contribute
 
