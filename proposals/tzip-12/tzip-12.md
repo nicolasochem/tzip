@@ -33,7 +33,7 @@ created: 2020-01-24
   - [Non-fungible Tokens](#non-fungible-tokens)
   - [Mixing Fungible and Non-fungible Tokens](#mixing-fungible-and-non-fungible-tokens)
   - [Non-transferable Tokens](#non-transferable-tokens)
-- [Legacy Interface](#legacy-interface)
+- [Pure-Michelson Interface](#pure-michelson-interface)
   - [Token Metadata Entrypoints](#token-metadata-entrypoints)
   - [Permissions Descriptor Entrypoint](#permissions-descriptor-entrypoint)
 - [Future Directions](#future-directions)
@@ -130,11 +130,15 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## TZIP-16 Contract Metadata
 
-An FA2-compliant contract MUST implement TZIP-16.
+An FA2-compliant contract has two choices, it can either:
 
-- If a contract does not contain the TZIP-16 `%metadata` big-map, it should be
-  considered “legacy FA2,” for compatibility with these contract, see the
-  [Legacy Interface](#legacy-interface) section.
+- Implement TZIP-16 metadata with the additional requirements below
+  (recommended).
+- Or, implement the requirements of the
+  [Pure-Michelson Interface](#pure-michelson-interface) section.
+
+If a contract does not contain the TZIP-16 `%metadata` big-map, it is considered
+that it implements “pure-michelson-interface FA2”.
 
 The metadata JSON structure is precised below:
 
@@ -979,20 +983,20 @@ is defined as `No_transfer`. Tokens cannot be transferred either by the token ow
 or by any operator. Only privileged operations like mint and burn can assign tokens
 to owner accounts.
 
-## Legacy Interface
+## Pure-Michelson Interface
 
-Contracts which for historical reasons do not implement [TZIP-16 Contract
-Metadata](#tzip-16-contract-metadata) are expected to have implemented the
-interface in this section.
+Contracts which for historical or practical reasons do not implement [TZIP-16
+Contract Metadata](#tzip-16-contract-metadata) are expected to have implemented
+the interfaces in this section.
 
 ### Token Metadata Entrypoints
 
-- The Legacy-FA2 contract MUST implement `token_metadata_registry` view
+- The Pure-Michelson-FA2 contract MUST implement `token_metadata_registry` view
   entrypoint that returns an address of the contract holding tokens
   metadata. Token metadata can be held either by the FA2 token contract itself
   (then `token_metadata_registry` returns `SELF` address) or by a separate token
   registry contract.
-- Token registry contract MUST implement one of two ways to expose token
+- Tokenregistry contract MUST implement one of two ways to expose token
   metadata for off-chain clients:
    - Contract storage MUST have a `big_map` that maps `token_id ->
      token_metadata` and annotated `%token_metadata`
