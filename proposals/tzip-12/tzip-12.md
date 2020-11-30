@@ -545,15 +545,17 @@ The `"tokens"` field is an object of the form
 ### Off-Chain-Views
 
 Within its TZIP-16 metadata, an FA2 contract MUST provide a `get_balance`
-off-chain-view and can provide 2 other optional views: `total_supply` and
-`is_operator`. All of these MUST be implemented, at least, as *“Michelson
-Storage Views”*.
+off-chain-view and can provide any of 3 other optional views: `total_supply`,
+`all_tokens`, and `is_operator`. All of these MUST be implemented, at least, as
+*“Michelson Storage Views”*.
 
 - `get_balance` MUST have `(pair (nat %token_id) (address %owner))` as
   parameter-type, and `nat` as return-type; it MUST return the balance
   corresponding to the owner/token pair.
 - `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
   to total number of tokens for the given token-id if known or fail if not.
+-  `all_tokens` has no parameter and returns the list of all the token IDs,
+   `(list nat)`, known to the contract.
 - `is_operator` has type
   `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
    and should return whether `%operator` is allowed to transfer `%token_id`
