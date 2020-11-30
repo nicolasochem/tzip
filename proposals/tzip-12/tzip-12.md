@@ -519,13 +519,15 @@ The `"tokens"` field is an object of the form
 - `<token-metadata>` is a JSON object corresponding to the type `token_metadata`
   above: `{ "token_id": <nat>, "symbol": <string>, "name": <string>, "decimals": <nat>, "extras": <arbitrary-json> }`
 - `<dynamic-token-access>` is either:
-    - A `{ "uri-of-id": <uri-of-id-object> }` object, where
+    - A `{ "uri-of-id": <uri-of-id-object>, "indirect": <bool> }` object, where
       `<uri-of-id-object>`, is:
         - `{ "token-placeholder": <token-placeholder>, "uri": <string> }` where
           `"uri"` is any TZIP-16 URI (incl. `tezos-storage://...`) on which the
           string given by `<token-placeholder>` is replaced by the token-id (as
           a decimal integer).
-        - The URI must point to a `<token_metadata>` JSON object.
+        - If `"indirect"` is `true` the URI MUST point to a TZIP-16 URI which
+          locates the token-metadata, if `false` it MUST return _directly_ the
+          JSON `token-metadata` type. The default value is `false`.
         - Example:
           `{ "token-placeholder": "%{tokid}", "uri": "https://example.com/tokens/%{tokid}/meta.json" }`
     - Or a `{ "view": <view-name>, "indirect": <bool>, "address": <optional-KT1> }` object
