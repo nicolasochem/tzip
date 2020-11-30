@@ -996,11 +996,30 @@ the interfaces in this section.
   metadata. Token metadata can be held either by the FA2 token contract itself
   (then `token_metadata_registry` returns `SELF` address) or by a separate token
   registry contract.
-- Tokenregistry contract MUST implement one of two ways to expose token
+- Token-registry contract MUST implement one of two ways to expose token
   metadata for off-chain clients:
    - Contract storage MUST have a `big_map` that maps `token_id ->
      token_metadata` and annotated `%token_metadata`
    - Contract MUST implement entrypoint `token_metadata`
+   
+All entry-points rely on the Michelson type of the token metadata:
+
+```
+(pair
+  (nat %token_id)
+  (pair
+    (string %symbol)
+    (pair
+      (string %name)
+      (pair
+        (nat %decimals)
+        (map %extras string bytes)
+  ))))
+```
+
+A previous version of this specification used a `(map %extras string string)`,
+the `string` was changed to `bytes` to allow arbitrary values, and not be
+limited by Michelson's allowed characters.
 
 ###### `token_metadata_registry`
 
@@ -1046,7 +1065,7 @@ Michelson definition:
       (string %name)
       (pair
         (nat %decimals)
-        (map %extras string string)
+        (map %extras string bytes)
   ))))
 )
 ```
@@ -1085,7 +1104,7 @@ Michelson definition:
               (string %name)
               (pair
                 (nat %decimals)
-                (map %extras string string)
+                (map %extras string bytes)
         ))))
       )
       unit
