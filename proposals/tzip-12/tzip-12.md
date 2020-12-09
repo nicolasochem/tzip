@@ -515,13 +515,15 @@ Token metadata is contained in the contract metadata, in the required `"tokens"`
 field.
 
 The `"tokens"` field is an object of the form
-`{ "static": [ <token-metadata> ], "dynamic": [ <dynamic-token-access> ] }`:
+`{ "static": [ <token-metadata-tuple> ], "dynamic": [ <dynamic-token-access> ] }`:
 
 - Both fields are optional but every token MUST be discoverable with one of the
   2 ways, i.e. if a token is not present in the `"static"` list, it should be
   discoverable dynamically.
-- `<token-metadata>` is a JSON object corresponding to the type `token_metadata`
-  above: `{ "token_id": <nat>, "symbol": <string>, "name": <string>, "decimals": <nat>, "extras": <arbitrary-json> }`
+- `<token-metadata-tuple>` is a JSON object:
+  `{ "token-id": <nat>, "token-metadata": <token-metadata> }`
+- `<token-metadata>` is:
+  `{ "symbol": <string>, "name": <string>, "decimals": <nat>, "extras": <arbitrary-json> }`
 - `<dynamic-token-access>` is either:
     - A `{ "uri-of-id": <uri-of-id-object>, "indirect": <bool> }` object, where
       `<uri-of-id-object>`, is:
@@ -537,9 +539,11 @@ The `"tokens"` field is an object of the form
     - Or a `{ "view": <view-name>, "indirect": <bool>, "address": <optional-KT1> }` object
       where:
         - The optional field `"address"` is the KT1 address of a contract to
-          query, by default it is the same FA2.
-        - The `view-name` (required) is the name of an off-chain-view of type `nat → bytes`
-           which MUST be present in the `"views"` list of the given contract.
+          query, by default it is the FA2 contract representing the token.
+        - The `view-name` (required) is the name of an off-chain-view of type
+          `nat → (pair nat bytes)`
+          which MUST be present in the `"views"` list of the given contract
+          (it returns the `token_id` back for convenience).
         - If `"indirect"` is `true` the view MUST return a TZIP-16 URI which
           locates the token-metadata, if `false` it MUST return _directly_ the
           JSON `token-metadata` type. The default value is `false`.
