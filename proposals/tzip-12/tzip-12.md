@@ -160,6 +160,59 @@ from the default value.
 A TZIP-12-specific field `"tokens"` is defined in [Token
 Metadata](#token-metadata) and it MUST be present.
 
+### Examples
+
+A single-NFT FA2 token can be augmented with the following JSON:
+
+```json
+{
+  "description": "This is my NFT",
+  "interfaces": ["TZIP-12-2020-11-17"],
+  "views": [
+    { "name": "get_balance",
+      "description": "This is the `get_balance` view required by TZIP-12.",
+      "implementations": [
+          { "michelson-storage-view": {
+              "parameter": {
+                  "prim": "pair",
+                  "args": [{"prim": "nat", "annots": ["%token_id"]},
+                           {"prim": "address", "annots": ["%owner"]}]},
+              "return-type": {"prim": "nat"},
+              "code": [
+                  {"prim": "TODO"}]}}]}],
+  "permissions": { "operator": "owner-or-operator-transfer",
+                   "receiver": "owner-no-hook",
+                   "sender": "owner-no-hook" },
+  "tokens": {
+    "static": [
+      { "token-id": 0,
+        "token-metadata": { "name": "My TZIP-12 NFT", "symbol": "TQZ", "decimals": 0} }
+    ]
+  }
+}
+```
+
+Whereas A multi-(fungible-)token FA2 contract could use “dynamic” access to
+token-metadata:
+
+```json
+// ...
+  "views": [
+// ...
+    { "name": "token-metadata-view-name",
+      "implementations": [
+          { "michelson-storage-view": {
+// ...
+  ]
+  "tokens": {
+    "dynamic": [
+      { "view": "token-metadata-view-name" }
+    ]
+  }
+// ...
+```
+
+
 ## Interface Specification
 
 Token contract implementing the FA2 standard MUST have the following entrypoints.
