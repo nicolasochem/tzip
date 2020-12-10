@@ -1,8 +1,7 @@
-# Tezos Interoperability Proposals (TZIPs)
+# Tezos Improvement Proposals (TZIPs)
 
-TZIP (pronounce "tee-zip") stands for Tezos Interoperability Proposal, which are
-documents that explain how the Tezos blockchain can be improved with new and
-updated standards and concepts, such as smart contract specifications.
+TZIP (pronounce "tee-zip") stands for Tezos Improvement Proposal, which are
+documents that explain how the Tezos blockchain can be improved with new features or standards (e.g. a smart contract specification).
 
 ## What is a TZIP?
 
