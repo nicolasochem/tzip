@@ -262,12 +262,16 @@ LIGO definition:
 ```ocaml
 type token_id = nat
 
-type balance_of_request = {
+type balance_of_request =
+[@layout:comb]
+{
   owner : address;
   token_id : token_id;
 }
 
-type balance_of_response = {
+type balance_of_response =
+[@layout:comb]
+{
   request : balance_of_request;
   balance : nat;
 }
