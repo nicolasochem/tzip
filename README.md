@@ -1,18 +1,22 @@
 # Tezos Improvement Proposals (TZIPs)
 
-TZIP (pronounce "tee-zip") stands for Tezos Improvement Proposal, which are
-documents that explain how the Tezos blockchain can be improved with new features or standards (e.g. smart contract specifications).
+A Tezos Improvement Proposal (or TZIP, pronounced "tee-zip") is a document which offers ways to improve Tezos via new features, tools, or standards (e.g. smart contract specifications).
 
 ## What is a TZIP?
 
 A TZIP is a design document providing information to the Tezos community,
-describing a feature for Tezos or its processes or environment, and supporting
-the formal protocol governance process. A TZIP should contain a concise
-technical specification and rationale which unambiguously articulates what the
-proposal is, how it may be implemented, and why the proposal is an improvement.
+describing a feature for Tezos, interoperability standards, or an update to its processes or environment. 
+The TZIP process complements (but is subsidiary to) Tezos' formal on-chain governance process. 
 
-A TZIP should additionally contain an FAQ which documents, compares, and answers
-alternative options, opinions, and objections.
+A TZIP should contain a concise technical specification and rationale which unambiguously articulates what the
+proposal entails, how it may be implemented, and why the proposal improves on the status quo.
+
+A TZIP begins as a **TZIP draft**. Once adopted, 
+a TZIP draft becomes a numbered TZIP-## (e.g. TZIP-10).
+
+## How to Contribute
+
+Open a [merge request](https://gitlab.com/tzip/tzip/-/merge_requests) using the [TZIP draft template](https://gitlab.com/tzip/tzip/-/tree/tzip-updates/drafts). An overview of TZIP drafts can be found [here](https://gitlab.com/tzip/tzip/-/tree/tzip-updates/drafts).
 
 ## Current TZIPs
 
@@ -39,21 +43,6 @@ alternative options, opinions, and objections.
 | [TZIP-19] | Tezos Decentralized Identifier (DID) Manager         |  2020-09-16   | Work In Progress |
 | [TZIP-20] | Off-chain Events                                     |  2020-10-07   | Work In Progress |
 | [TZIP-21] | Contract Multimedia Metadata                       |  2020-11-12   | Work In Progress |
-
-## How to Contribute
-
-If you want to contribute a proposal, please review the TZIP structure in
-[TZIP-1]. You may find TZIP templates in the [templates](/templates) folder
-helpful.
-
-Create a new subfolder in [proposals](/proposals) named for your TZIP, and
-include the proposal, FAQ, and any assets (e.g. contract implementation) in that
-subfolder. TZIPs and FAQs should be written in
-[Markdown](https://docs.gitlab.com/ee/user/markdown.html) format.
-
-Once you have written your proposal, please open a merge request with your
-proposal for review. Please remember to update the *Current TZIPs* table above
-in your merge request. The exact TZIP workflow is explained in [TZIP-1].
 
 [TZIP-1]: proposals/tzip-1/tzip-1.md
 [TZIP-2]: proposals/tzip-2/tzip-2.md
