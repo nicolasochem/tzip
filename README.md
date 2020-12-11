@@ -16,7 +16,7 @@ a TZIP draft becomes a numbered TZIP-## (e.g. TZIP-10).
 
 ## How to Contribute
 
-Open a [merge request](https://gitlab.com/tzip/tzip/-/merge_requests) using the [TZIP draft template](https://gitlab.com/tzip/tzip/-/tree/tzip-updates/drafts). An overview of TZIP drafts can be found [here](https://gitlab.com/tzip/tzip/-/tree/tzip-updates/drafts).
+Open a [merge request](https://gitlab.com/tzip/tzip/-/merge_requests) using the [TZIP draft template](https://gitlab.com/tzip/tzip/drafts). An overview of TZIP drafts can be found [here](https://gitlab.com/tzip/tzip/drafts).
 
 ## Current TZIPs
 
