@@ -2,7 +2,7 @@
 title: TZIP Title - a short descriptive title (max 44 characters)
 status: Draft - will remain "Draft" until accepted
 author: Name(s) of author(s), ideally with their username(s) or email address(es)
-type: TZIP type as defined in TZIP-2
+type: TZIP type as defined in TZIP-002
 created: Date the TZIP was created, format yyyy-mm-dd
 requires: Optional. TZIP numbers, representing TZIPs that this TZIP depends on
 replaces: Optional. TZIP numbers, representing the TZIPs the current TZIP is
