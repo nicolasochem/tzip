@@ -130,11 +130,11 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## TZIP-16 Contract Metadata
 
-An FA2-compliant contract MUST implement TZIP-16.
+An FA2-compliant contract should implement TZIP-16.
 
-- If a contract does not contain the TZIP-16 `%metadata` big-map, it should be
-  considered “legacy FA2,” for compatibility with these contract, see the
-  [Legacy Interface](#legacy-interface) section.
+If a contract does not contain the TZIP-16 `%metadata` big-map, it should be
+considered “legacy FA2,” for compatibility with these contracts, 
+see the [Legacy Interface](#legacy-interface) section.
 
 The metadata JSON structure is precised below:
 
@@ -152,9 +152,6 @@ The TZIP-16 `"views"` field MUST be present, see section
 A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
 Descriptor](#exposing-permissions-descriptor), and it is required if it differs
 from the default value.
-
-A TZIP-12-specific field `"tokens"` is defined in [Token
-Metadata](#token-metadata) and it MUST be present.
 
 ### Examples
 
@@ -178,36 +175,31 @@ A single-NFT FA2 token can be augmented with the following JSON:
                   {"prim": "TODO"}]}}]}],
   "permissions": { "operator": "owner-or-operator-transfer",
                    "receiver": "owner-no-hook",
-                   "sender": "owner-no-hook" },
-  "tokens": {
-    "static": [
-      { "token-id": 0,
-        "token-metadata": { "name": "My TZIP-12 NFT", "symbol": "TQZ", "decimals": 0} }
-    ]
-  }
+                   "sender": "owner-no-hook" }
 }
 ```
 
-Whereas A multi-(fungible-)token FA2 contract could use “dynamic” access to
-token-metadata:
+  
+### Off-Chain-Views
 
-```json
-// ...
-  "views": [
-// ...
-    { "name": "token-metadata-view-name",
-      "implementations": [
-          { "michelson-storage-view": {
-// ...
-  ]
-  "tokens": {
-    "dynamic": [
-      { "view": "token-metadata-view-name" }
-    ]
-  }
-// ...
-```
+Within its TZIP-16 metadata, an FA2 contract MUST provide a `get_balance`
+off-chain-view and can provide any of 3 other optional views: `total_supply`,
+`all_tokens`, `is_operator`, and `token_metadata`. All of these MUST be
+implemented, at least, as *“Michelson Storage Views”*.
 
+- `get_balance` MUST have `(pair (nat %token_id) (address %owner))` as
+  parameter-type, and `nat` as return-type; it MUST return the balance
+  corresponding to the owner/token pair.
+- `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
+  to total number of tokens for the given token-id if known or fail if not.
+-  `all_tokens` has no parameter and returns the list of all the token IDs,
+   `(list nat)`, known to the contract.
+- `is_operator` has type
+  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
+   and should return whether `%operator` is allowed to transfer `%token_id`
+   tokens owned by `owner`.
+- `token_metadata` is one of the 2 ways of providing token-specific metadata, it
+  is defined in section [Token Metadata](#token-metadata).
 
 ## Interface Specification
 
@@ -523,100 +515,47 @@ the token owner. Depending on the business use case, the particular implementati
 of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
 
-#### Token Metadata
+### Token Metadata
 
 Token metadata is meant for off-chain, user-facing, contexts (e.g.  wallets,
 explorers, marketplaces). 
 
-Each FA2 `token_id` has associated metadata of the following type:
+#### Token-Metadata Values
 
-```ocaml
-type token_id = nat
+Token-specific metadata is stored/presented as a Michelson value of type
+`(map string bytes)`.  A few of the keys are reserved and predefined by
+TZIP-12:
 
-type token_metadata =
-{
-  token_id : token_id;
-  symbol : string;
-  name : string;
-  decimals : nat;
-  extras : Json.t;
-}
-```
+- `""` (empty-string): should correspond to a TZIP-16 URI which points to a JSON
+  representation of the token metadata.
+- `"name"`: should be a UTf-8 string giving a “display name” to the token.
+- `"symbol"`: should be an ASCII string for the short identifier of the token
+  (e.g. XTZ, EUR, …).
+- `"decimals"`: should be an integer (spelled in decimal) which 
 
-- FA2 token amounts are represented by natural numbers (`nat`), and their
-  **granularity** (the smallest amount of tokens which may be minted, burned, or
-  transferred) is always 1.
-- `decimals` is the number of digits to use after the decimal point when displaying
-  the token amounts. If 0, the asset is not divisible. Decimals are used for display
-  purposes only and MUST NOT affect transfer operation.
+In the case, of a TZIP-16 URI pointing to a JSON blob, the JSON preserves the
+same 3 reserved non-empty fields:
 
-Examples:
+`{ "symbol": <string>, "name": <string>, "decimals": <number>, ... }`
 
-| Decimals | Amount | Display |
-| -------- | ------ | ------- |
-| 0        | 123    | 123     |
-| 1        | 123    | 12.3    |
-| 3        | 123000 | 123     |
+It is highly recommended to provide the 3 values either in the map or in the
+external JSON; the default value for decimals is zero.
 
-##### Implementation
+Other standards deriving from TZIP-12 may reserve other keys (e.g. `"icon"`,
+`"homepage"`, …).
 
-Token metadata is contained in the contract metadata, in the required `"tokens"`
-field.
+#### Storage & Access
 
-The `"tokens"` field is an object of the form
-`{ "static": [ <token-metadata-tuple> ], "dynamic": [ <dynamic-token-access> ] }`:
+A given contract can use 2 methods to provide access to the token-metadata.  In
+both cases the “key” is the token-id (of type `nat`) and one MUST store or
+return a value of type `(pair nat (map string bytes))`: the token-id and the
+metadata defined above. The following methods are allowed (future upgrades of
+TZIP-12 may add new cases):
 
-- Both fields are optional but every token MUST be discoverable with one of the
-  2 ways, i.e. if a token is not present in the `"static"` list, it should be
-  discoverable dynamically.
-- `<token-metadata-tuple>` is a JSON object:
-  `{ "token-id": <nat>, "token-metadata": <token-metadata> }`
-- `<token-metadata>` is:
-  `{ "symbol": <string>, "name": <string>, "decimals": <nat>, "extras": <arbitrary-json> }`
-- `<dynamic-token-access>` is either:
-    - A `{ "uri-of-id": <uri-of-id-object>, "indirect": <bool> }` object, where
-      `<uri-of-id-object>`, is:
-        - `{ "token-placeholder": <token-placeholder>, "uri": <string> }` where
-          `"uri"` is any TZIP-16 URI (incl. `tezos-storage://...`) on which the
-          string given by `<token-placeholder>` is replaced by the token-id (as
-          a decimal integer).
-        - If `"indirect"` is `true` the URI MUST point to a TZIP-16 URI which
-          locates the token-metadata, if `false` it MUST return _directly_ the
-          JSON `token-metadata` type. The default value is `false`.
-        - Example:
-          `{ "token-placeholder": "%{tokid}", "uri": "https://example.com/tokens/%{tokid}/meta.json" }`
-    - Or a `{ "view": <view-name>, "indirect": <bool>, "address": <optional-KT1> }` object
-      where:
-        - The optional field `"address"` is the KT1 address of a contract to
-          query, by default it is the FA2 contract representing the token.
-        - The `view-name` (required) is the name of an off-chain-view of type
-          `nat → (pair nat bytes)`
-          which MUST be present in the `"views"` list of the given contract
-          (it returns the `token_id` back for convenience).
-        - If `"indirect"` is `true` the view MUST return a TZIP-16 URI which
-          locates the token-metadata, if `false` it MUST return _directly_ the
-          JSON `token-metadata` type. The default value is `false`.
-
-
-  
-### Off-Chain-Views
-
-Within its TZIP-16 metadata, an FA2 contract MUST provide a `get_balance`
-off-chain-view and can provide any of 3 other optional views: `total_supply`,
-`all_tokens`, and `is_operator`. All of these MUST be implemented, at least, as
-*“Michelson Storage Views”*.
-
-- `get_balance` MUST have `(pair (nat %token_id) (address %owner))` as
-  parameter-type, and `nat` as return-type; it MUST return the balance
-  corresponding to the owner/token pair.
-- `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
-  to total number of tokens for the given token-id if known or fail if not.
--  `all_tokens` has no parameter and returns the list of all the token IDs,
-   `(list nat)`, known to the contract.
-- `is_operator` has type
-  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
-   and should return whether `%operator` is allowed to transfer `%token_id`
-   tokens owned by `owner`.
+1. One can store the values in a big-map annotated `%token_metadata` of type
+   `(big_map nat (pair nat (map string bytes)))`.
+2. Or one can provide a `token_metadata` off-chain-view which takes as parameter
+   the `nat` token-id and returns the `(pair nat (map string bytes))` value.
 
 
 ### FA2 Transfer Permission Policies and Configuration
@@ -1040,9 +979,41 @@ to owner accounts.
 
 Contracts which for historical reasons do not implement [TZIP-16 Contract
 Metadata](#tzip-16-contract-metadata) are expected to have implemented the
-interface in this section.
+interface in this section (now deprecated).
 
-### Token Metadata Entrypoints
+### Token Metadata
+
+Each FA2 `token_id` has associated metadata of the following type:
+
+```ocaml
+type token_id = nat
+
+type token_metadata =
+{
+  token_id : token_id;
+  symbol : string;
+  name : string;
+  decimals : nat;
+  extras : (string, bytes) map;
+}
+```
+
+- FA2 token amounts are represented by natural numbers (`nat`), and their
+  **granularity** (the smallest amount of tokens which may be minted, burned, or
+  transferred) is always 1.
+- `decimals` is the number of digits to use after the decimal point when displaying
+  the token amounts. If 0, the asset is not divisible. Decimals are used for display
+  purposes only and MUST NOT affect transfer operation.
+
+Examples:
+
+| Decimals | Amount | Display |
+| -------- | ------ | ------- |
+| 0        | 123    | 123     |
+| 1        | 123    | 12.3    |
+| 3        | 123000 | 123     |
+
+
 
 - The Legacy-FA2 contract MUST implement `token_metadata_registry` view
   entrypoint that returns an address of the contract holding tokens
