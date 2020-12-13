@@ -37,7 +37,7 @@ TZIP-016 defines:
  
 The standard is meant to be extended/specialized by other TZIPs, for instance by
 adding fields to the JSON format of the metadata or imposing certain off-chain
-views. We intend to extend existing token APIs specified in TZIP-012 and TZIP-07 
+views. We intend to extend existing token APIs specified in TZIP-012 and TZIP-007 
 with such metadata and off-chain views using TZIP-016.
 
 ## Table Of Contents
@@ -574,7 +574,7 @@ specification.
 
 A few extensions and improvements of TZIP-016 are already planned or in progress:
 
-- Augment/upgrade the TZIP-012 and TZIP-07 standards with metadata support.
+- Augment/upgrade the TZIP-012 and TZIP-007 standards with metadata support.
 - Specify *off-chain-events*: events are similar to off-chain-views, but they
   extract knowledge from (the sequence of) contract **calls**, like “balance
   updates”; cf.
