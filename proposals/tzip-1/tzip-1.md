@@ -10,7 +10,7 @@ created: 2019-04-10
 
 ## Summary
 
-TZIP (pronounce "tee-zip") stands for Tezos Interoperability Proposal, which are
+TZIP (pronounce "tee-zip") stands for Tezos Improvement Proposal, which are
 documents that explain how the Tezos blockchain can be improved with new and
 updated standards and concepts, such as smart contract specifications.
 
@@ -238,7 +238,7 @@ Bitcoin's [BIP-0001] written by Amir Taaki and Python's [PEP-0001], written by
 Barry Warsaw, Jeremy Hylton, and David Goodger.
 
 None of the authors of [EIP-1], [BIP-0001], or [PEP-0001] are responsible for
-its use in the Tezos Interoperability Process, and should not be bothered with
+its use in the Tezos Improvement Process, and should not be bothered with
 technical questions specific to TZIP.
 
 
