@@ -1,5 +1,5 @@
 ---
-tzip: 1
+tzip: 001
 title: TZIP Purpose and Guidelines
 status: Final
 type: Meta
@@ -56,11 +56,11 @@ Maintainers of Tezos tools and libraries can list the TZIPs that they have
 implemented, which can give the community a convenient way to know the current
 status of a given project.
 
-There are many types of TZIP defined in [TZIP-2]. Some TZIPs, such as contract
+There are many types of TZIP defined in [TZIP-002]. Some TZIPs, such as contract
 specifications, also have a *name* that consists of the TZIP type (e.g. `A`,
 `FA`, `I`), concatenated with a serial numbers which may be extended with a `.`
 character (e.g. `FA1.2` is an extension of `FA1`). Again, this is defined in
-details in [TZIP-2].
+details in [TZIP-002].
 
 It is highly recommended that a single TZIP contain a single key proposal or new
 idea corresponding to its type. A change to a single library or application may
@@ -91,9 +91,9 @@ A TZIP can have the following statuses:
 
 | Status             | Actor    | Description                                                                                                                            | Action(s) to get that Status                                      | Next Status(es)         |
 | :----------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- | :---------------------- |
-| `Work In Progress` | Author   | This covers the initial work being done to create the TZIP and its accompanying resources                                              | 1. Author submits a MR to:<br/>&nbsp;&nbsp;- reserve a TZIP number, say *xx*, in the [README](/README.md#current-tzips)<br/>&nbsp;&nbsp;- add the *Work In Progress* status in the README<br/>&nbsp;&nbsp;- create a *tzip-xx* folder in [proposals](/proposals)<br/>2. Author creates a new branch, *tzip-xx*, to work on it      | Draft, Withdrawn |
-| `Draft`            | Author   | The TZIP is now in good shape, and is ready to be shared with the community to get iterative feedback                                  | 1. Author submits a MR from the *tzip-xx* branch, including the status change to *Draft* in the README<br/>2. Reviewer merges the MR to *master* | Submitted, Withdrawn |
-| `Withdrawn`        | -        | The authors decide that the TZIP is no longer needed, or the reviewers decide to reject it (e.g. for non-compliance)                   | 1. Author or Reviewer closes the *tzip-xx* branch<br/>2. Author or Reviewer updates the TZIP and README with the *Withdrawn* status                       | -                    | 
+| `Work In Progress` | Author   | This covers the initial work being done to create the TZIP and its accompanying resources                                              | 1. Author submits a MR to:<br/>&nbsp;&nbsp;- reserve a TZIP number, say *xxx*, in the [README](/README.md#current-tzips)<br/>&nbsp;&nbsp;- add the *Work In Progress* status in the README<br/>&nbsp;&nbsp;- create a *tzip-xxx* folder in [proposals](/proposals)<br/>2. Author creates a new branch, *tzip-xx*, to work on it      | Draft, Withdrawn |
+| `Draft`            | Author   | The TZIP is now in good shape, and is ready to be shared with the community to get iterative feedback                                  | 1. Author submits a MR from the *tzip-xxx* branch, including the status change to *Draft* in the README<br/>2. Reviewer merges the MR to *master* | Submitted, Withdrawn |
+| `Withdrawn`        | -        | The authors decide that the TZIP is no longer needed, or the reviewers decide to reject it (e.g. for non-compliance)                   | 1. Author or Reviewer closes the *tzip-xxx* branch<br/>2. Author or Reviewer updates the TZIP and README with the *Withdrawn* status                       | -                    | 
 | `Submitted`        | Reviewer | The TZIP has been approved by the community and is submitted to the reviewers                                                          | Author updates the TZIP and README with the *Submitted* status    | Final, Draft, Withdrawn |
 | `Final`            | Reviewer | The TZIP has been approved by the reviewers                                                                                            | Reviewer updates the TZIP and README with the *Final* status      | Deprecated, Superseded  |
 | `Deprecated`       | -        | The TZIP is no longer valid and shouldn't be used anymore. It is kept here as a reference but hasn't been superseded by any newer TZIP | Reviewer updates the TZIP and README with the *Deprecated* status | -                       |
@@ -185,7 +185,7 @@ bottom of this TZIP for an example copyright waiver.
 TZIPs should be written in [Markdown] format. TZIP templates are available in
 the [Templates](/templates) folder.
 Additionally, the authors agree to follow and enforce the TZIP Code of Conduct,
-described in [TZIP-3].
+described in [TZIP-003].
 
 To make the text easier to review, all TZIPs should be hard-wrapped at 80
 characters.
@@ -200,7 +200,7 @@ order.
 - `tzip:` TZIP number. The number should be requested via a merge request as
 soon as the TZIP is in *Work In Progress* status
 - `title:` A short descriptive title, maximum 44 characters. If the TZIP has a
-*name* (see [TZIP-2]), then it is added as a title prefix (e.g. *FA1 - Abstract
+*name* (see [TZIP-002]), then it is added as a title prefix (e.g. *FA1 - Abstract
 Ledger*)
 - `author:` Name(s) of author(s), ideally with their username(s) or email
 address(es). Examples: *John Doe*, *John Doe (@username)*, *John Doe
@@ -210,7 +210,7 @@ receiving gratuities from grateful Tezos users
 - `discussions-to:` Optional. A url pointing to the official discussion thread
 - `status:` Can be: Work In Progress | Draft | Withdrawn | Submitted |
 Deprecated | Superseded
-- `type:` TZIP type as defined in [TZIP-2]
+- `type:` TZIP type as defined in [TZIP-002]
 - `created:` Date the TZIP was created, format yyyy-mm-dd
 - `requires:` Optional. TZIP numbers, representing TZIPs that this TZIP depends
 on
@@ -248,8 +248,8 @@ Copyright and related rights waived via
 [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
 
 
-[TZIP-2]: /proposals/tzip-2/tzip-2.md
-[TZIP-3]: /proposals/tzip-3/tzip-3.md
+[TZIP-002]: /proposals/tzip-2/tzip-2.md
+[TZIP-003]: /proposals/tzip-3/tzip-3.md
 [Markdown]: https://docs.gitlab.com/ee/user/markdown.html
 [EIP-1]: https://github.com/ethereum/EIPs
 [BIP-0001]: https://github.com/bitcoin/bips

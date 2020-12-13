@@ -1,5 +1,5 @@
 ---
-tzip: 4
+tzip: 004
 title: A1 - Michelson Contract Interfaces and Conventions
 status: Deprecated
 type: Application
@@ -72,7 +72,7 @@ with field annotations, and all top-level union type arguments are unannotated.
 
 Nevertheless, it is advisable that specific implementations adhere to a
 consistent tree-struct convention, examples of which can be seen in various
-extensions of this standard (such as [`TZIP-6`](/proposals/tzip-6/tzip-6.md)).
+extensions of this standard (such as [`TZIP-006`](/proposals/tzip-6/tzip-6.md)).
 
 ### Example
 
@@ -185,7 +185,7 @@ indentation and whitespacing rules.
 This standard defines only tuples and unions of size two.
 Introduced syntax sugar becomes especially useful in extensions of the
 standard where this syntax is generalized
-(see [`TZIP-6`](/proposals/tzip-6/tzip-6.md) for example).
+(see [`TZIP-006`](/proposals/tzip-6/tzip-6.md) for example).
 
 # CASE macro
 

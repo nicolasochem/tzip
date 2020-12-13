@@ -1,5 +1,5 @@
 ---
-tzip: 13
+tzip: 013
 title: FA1.3 - Fungible Asset
 author: Kirill Kuvshinov (@kkirka)
 advocate: Kirill Kuvshinov (@kkirka)

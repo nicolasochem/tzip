@@ -1,5 +1,5 @@
 ---
-tzip: 8
+tzip: 008
 title: Payment Request Format
 status: Work In Progress
 type: Interface
@@ -257,7 +257,7 @@ Decoding usually involves the following:
 ### Extensions
 Some use cases would benefit from being able to transmit more information in the payment requests. This can be done by extending the standard. The extensions should be described by a separate standard and use a field based on the name of the standard to store their data. This will help avoid collisions with other extensions.
 
-For example, an extension described in TZIP-0009 that adds an information field could store its data like this:
+For example, an extension described in TZIP-009 that adds an information field could store its data like this:
 
 ```json
 [
@@ -296,7 +296,7 @@ The payload format closely mirrors the format expected by Tezos RPC, so that it 
 To make the standard as simple to implement as possible, we have decided against a more abstract payload format.
 
 ### Misc. Information Field
-The requests only include a subset of fields from the RPC format. To keep the standard simple, there are no extra fields such as a miscellaneous information field to describe a transaction. This could then be displayed by users' wallet, but wouldn't be sent anywhere. Extensions to the standard are possible, and a misc. information field is described by [TZIP-9](/proposals/tzip-9/tzip-9.md).
+The requests only include a subset of fields from the RPC format. To keep the standard simple, there are no extra fields such as a miscellaneous information field to describe a transaction. This could then be displayed by users' wallet, but wouldn't be sent anywhere. Extensions to the standard are possible, and a misc. information field is described by [TZIP-009](/proposals/tzip-9/tzip-9.md).
 ## Implementation
 
 JavaScript implementation is provided as an [npm package called tezos-uri](https://www.npmjs.com/package/tezos-uri). The code can be viewed [at gitlab](https://gitlab.com/smartcontractlabs/tezos-uri). This section contains advice and ideas related to implementing the standard and integrating it with wallets.

@@ -1,5 +1,5 @@
 ---
-tzip: 10
+tzip: 010
 title: LA1 - Wallet Interaction Standard
 author: Alessandro De Carli <a.decarli@papers.ch>, Mike Godenzi <m.godenzi@papers.ch>, Andreas Gassmann <a.gassmann@papers.ch>, Pascal Brun <@pascuin>
 discussions-to: https://forum.tezosagora.org/t/wallet-interaction-standard/1399

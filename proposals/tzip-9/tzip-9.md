@@ -1,5 +1,5 @@
 ---
-tzip: 9
+tzip: 009
 title: Info Field for Payment Requests
 status: Work In Progress
 type: Informational
@@ -13,7 +13,7 @@ Miscellaneous information extension for payment requests.
 
 ## Abstract
 
-This document describes an extension to [TZIP-8](/proposals/tzip-8/tzip-8.md) that adds an extra field to Tezos payment requests. The field can contain simple description of payment or their purpose. Wallets can dispay this in transaction history or when approving the payment.
+This document describes an extension to [TZIP-008](/proposals/tzip-8/tzip-8.md) that adds an extra field to Tezos payment requests. The field can contain simple description of payment or their purpose. Wallets can dispay this in transaction history or when approving the payment.
 
 ## Motivation
 
@@ -44,7 +44,7 @@ Information about the purpose of the payment will use a field called `info` with
 
 ## Appendix
 
-### TZIP-8 Implementations Supporting the Standard
+### TZIP-008 Implementations Supporting the Standard
 * TBA
 
 ### Wallets Implementing the Standard

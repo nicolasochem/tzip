@@ -1,5 +1,5 @@
 ---
-tzip: 21
+tzip: 021
 title: Contract Multimedia Metadata
 author: Josh Dechant (@codecrafting)
 status: Work In Progress
@@ -9,7 +9,7 @@ created: 2020-11-12
 
 ## Abstract
 
-This proposal is an extension of [TZIP-16][1] and describes a metadata standard for
+This proposal is an extension of [TZIP-016][1] and describes a metadata standard for
 multimedia asset(s) linked with contracts.
 
 ## Motivation

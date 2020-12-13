@@ -1,5 +1,5 @@
 ---
-tzip: 12
+tzip: 012
 title: FA2 - Multi-Asset Interface
 status: Draft
 type: Financial Application (FA)
@@ -39,7 +39,7 @@ created: 2020-01-24
 
 ## Summary
 
-TZIP-12 proposes a standard for a unified token contract interface,
+TZIP-012 proposes a standard for a unified token contract interface,
 supporting a wide range of token types and implementations. This document provides
 an overview and rationale for the interface, token transfer semantics, and support
 for various transfer permission policies.
@@ -413,7 +413,7 @@ Token metadata is primarily useful in off-chain, user-facing contexts (e.g.
 wallets, explorers, marketplaces). As a result, FA2 optimizes for off-chain use
 of token metadata and minimal on-chain gas consumption. A related effort to create
 a separate metadata standard is also underway via
-[TZIP-16](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
+[TZIP-016](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
 
 Each FA2 `token_id` has associated metadata of the following type:
 
