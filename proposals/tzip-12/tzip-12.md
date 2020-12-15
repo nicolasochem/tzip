@@ -561,6 +561,8 @@ TZIP-12 may add new cases):
 2. Or one can provide a `token_metadata` off-chain-view which takes as parameter
    the `nat` token-id and returns the `(pair nat (map string bytes))` value.
 
+If both options are present, the off-chain-view is preferred since it allows
+the implementor to customize and augment the response.
 
 ### FA2 Transfer Permission Policies and Configuration
 
