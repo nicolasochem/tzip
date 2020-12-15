@@ -533,9 +533,11 @@ TZIP-12:
 - `""` (empty-string): should correspond to a TZIP-16 URI which points to a JSON
   representation of the token metadata.
 - `"name"`: should be a UTf-8 string giving a “display name” to the token.
-- `"symbol"`: should be an ASCII string for the short identifier of the token
+- `"symbol"`: should be a UTF-8 string for the short identifier of the token
   (e.g. XTZ, EUR, …).
-- `"decimals"`: should be an integer (spelled in decimal) which 
+- `"decimals"`: should be an integer (converted to a UTF-8 string in decimal)
+  which defines the position of the decimal point in token balances for display
+  purposes.
 
 In the case, of a TZIP-16 URI pointing to a JSON blob, the JSON preserves the
 same 3 reserved non-empty fields:
