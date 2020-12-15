@@ -150,8 +150,8 @@ The TZIP-16 `"views"` field can be present, some optional off-chain-views are
 specifed below, see section [Off-chain-views](#off-chain-views).
 
 A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
-Descriptor](#exposing-permissions-descriptor), and it is required if it differs
-from the default value.
+Descriptor](#exposing-permissions-descriptor), and it is optional, but
+recommended if it differs from the default value.
 
 ### Examples
 
@@ -834,7 +834,7 @@ The composition of the described behaviors can be described as
 
 ##### Exposing Permissions Descriptor
 
-In order to advertise its permissions, an FA2 SHOULD fill the `"permissions"`
+In order to advertise its permissions, an FA2 should fill the `"permissions"`
 field in its contract metadata.
 
 The field is an object with 4 fields corresponding to the Ligo types defined in
