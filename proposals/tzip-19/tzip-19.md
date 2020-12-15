@@ -1,5 +1,5 @@
 ---
-tzip: 19
+tzip: 019
 title: A3 - Tezos Decentralized Identifier (DID) Manager
 author: Wayne Chang (@wyc) <wayne@spruceid.com>
 status: Work In Progress

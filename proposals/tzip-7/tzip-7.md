@@ -1,5 +1,5 @@
 ---
-tzip: 7
+tzip: 007
 title: FA1.2 - Approvable Ledger
 status: Final
 type: Financial Application
@@ -33,7 +33,7 @@ See also:
 
 This document does not specify contract metadata.
 For a metadata specification, see
-[TZIP-12](/proposals/tzip-12/tzip-12.md#token_metadata)
+[TZIP-012](/proposals/tzip-12/tzip-12.md#token_metadata)
 
 ## Errors
 
@@ -105,5 +105,5 @@ Also, ERC-20 is known to suffer from some vulnerabilities, and we took them into
 account when implementing our interface.
 
 
-[TZIP-12](/proposals/tzip-12/tzip-12.md) defines `FA2`: a contract standard
+[TZIP-012](/proposals/tzip-12/tzip-12.md) defines `FA2`: a contract standard
 that generalizes and extends `FA1.2`.

@@ -1,5 +1,5 @@
 ---
-tzip: 17
+tzip: 017
 title: Contract Permit Interface
 author: Michael J. Klein (@michaeljklein)
 status: Draft
@@ -9,7 +9,7 @@ created: 2020-08-11
 
 ## Summary
 
-TZIP-17 proposes a standard for a pre-sign or _"Permit"_ interface:
+TZIP-017 proposes a standard for a pre-sign or _"Permit"_ interface:
 a lightweight on-chain emulation of `tzn` accounts.
 
 This document provides an overview and rationale for the interface as well as an implementation in Lorentz
@@ -209,9 +209,9 @@ See `Cleaning up Permits` for more detail.
 
 Individual permits may be revoked by setting the expiry for that Permit to `0 seconds`
 
-### TZIP-16
+### TZIP-016
 
-This contract MUST implement [TZIP-16](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
+This contract MUST implement [TZIP-016](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
 
 The following off-chain-views are required and MUST be provided with Michelson
 implementations:

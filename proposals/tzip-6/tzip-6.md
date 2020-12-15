@@ -1,5 +1,5 @@
 ---
-tzip: 6
+tzip: 006
 title: A1.1 - Balanced Trees for nested or and pair types
 status: Deprecated
 type: Application
@@ -9,9 +9,9 @@ created: 2019-05-04
 
 ## Summary
 
-This standard extends `TZIP-4 (A1)` by defining a right-hand balance tree structure
+This standard extends `TZIP-004 (A1)` by defining a right-hand balance tree structure
 for `or` and `pair` types. Structure of comb defined in
-[TZIP-4](/proposals/tzip-4/tzip-4.md#entrypoints) is the most obvious one, but the worst-case
+[TZIP-004](/proposals/tzip-4/tzip-4.md#entrypoints) is the most obvious one, but the worst-case
 performance of operations on it scales linearly with number of elements
 in the comb which is suboptimal. Whereas tree structure allows reaching better
 average performance of access and update operations.

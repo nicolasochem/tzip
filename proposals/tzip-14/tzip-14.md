@@ -1,5 +1,5 @@
 ---
-tzip: 14
+tzip: 014
 title: GraphQL interface to Tezos node data - Scalars
 status: Draft
 type: Interface

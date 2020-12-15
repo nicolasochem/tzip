@@ -1,5 +1,5 @@
 ---
-tzip: 18
+tzip: 018
 title: A2 - Upgradeable Contracts
 author: Diogo Castro (@diogo.castro)
 status: Work In Progress
@@ -20,7 +20,7 @@ created: 2020-08-17
 
 ## Summary
 
-TZIP-18 proposes mechanisms for defining upgradeable contracts. More
+TZIP-018 proposes mechanisms for defining upgradeable contracts. More
 precisely, we describe how to define administrator-forced upgrades and
 user-defined upgrades.
 
