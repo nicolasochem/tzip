@@ -130,11 +130,13 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## TZIP-16 Contract Metadata
 
-An FA2-compliant contract should implement TZIP-16.
+An FA2-compliant contract can implement TZIP-16:
 
-If a contract does not contain the TZIP-16 `%metadata` big-map, it should be
-considered “legacy FA2,” for compatibility with these contracts, 
-see the [Legacy Interface](#legacy-interface) section.
+- If a contract does not contain the TZIP-16 `%metadata` big-map, it must
+  provide token-specific-metadata through the `%metadata_token` big-map method.
+- Contracts implemented before the current revision of TZIP-12, should
+  considered “legacy FA2,” for compatibility with these contracts, see the
+  (deprecated) [Legacy Interface](#legacy-interface) section.
 
 The metadata JSON structure is precised below:
 
