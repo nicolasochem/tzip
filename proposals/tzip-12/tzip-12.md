@@ -146,8 +146,8 @@ The TZIP-16 `"interfaces"` field MUST be present:
       e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
       e.g. `2020-10-23`).
 
-The TZIP-16 `"views"` field MUST be present, see section
-[Off-chain-views](#off-chain-views).
+The TZIP-16 `"views"` field can be present, some optional off-chain-views are
+specifed below, see section [Off-chain-views](#off-chain-views).
 
 A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
 Descriptor](#exposing-permissions-descriptor), and it is required if it differs
@@ -182,13 +182,14 @@ A single-NFT FA2 token can be augmented with the following JSON:
   
 ### Off-Chain-Views
 
-Within its TZIP-16 metadata, an FA2 contract MUST provide a `get_balance`
-off-chain-view and can provide any of 3 other optional views: `total_supply`,
-`all_tokens`, `is_operator`, and `token_metadata`. All of these MUST be
-implemented, at least, as *“Michelson Storage Views”*.
+Within its TZIP-16 metadata, an FA2 contract does not have to provide any
+off-chain-view but can provide 4 optional views: `get_balance`, `total_supply`,
+`all_tokens`, `is_operator`, and `token_metadata`. If present, all of these
+SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
+following types (Michelson annotations are optional) and semantics:
 
-- `get_balance` MUST have `(pair (nat %token_id) (address %owner))` as
-  parameter-type, and `nat` as return-type; it MUST return the balance
+- `get_balance` has `(pair (nat %token_id) (address %owner))` as
+  parameter-type, and `nat` as return-type; it must return the balance
   corresponding to the owner/token pair.
 - `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
   to total number of tokens for the given token-id if known or fail if not.
@@ -199,7 +200,8 @@ implemented, at least, as *“Michelson Storage Views”*.
    and should return whether `%operator` is allowed to transfer `%token_id`
    tokens owned by `owner`.
 - `token_metadata` is one of the 2 ways of providing token-specific metadata, it
-  is defined in section [Token Metadata](#token-metadata).
+  is defined in section [Token Metadata](#token-metadata) and is not optional if
+  the contract does not have a `%token_metadata` big-map.
 
 ## Interface Specification
 
