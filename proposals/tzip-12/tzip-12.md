@@ -1,5 +1,5 @@
 ---
-tzip: 12
+tzip: 012
 title: FA2 - Multi-Asset Interface
 status: Draft
 type: Financial Application (FA)
@@ -41,7 +41,7 @@ created: 2020-01-24
 
 ## Summary
 
-TZIP-12 proposes a standard for a unified token contract interface,
+TZIP-012 proposes a standard for a unified token contract interface,
 supporting a wide range of token types and implementations. This document provides
 an overview and rationale for the interface, token transfer semantics, and support
 for various transfer permission policies.
@@ -342,12 +342,16 @@ LIGO definition:
 ```ocaml
 type token_id = nat
 
-type balance_of_request = {
+type balance_of_request =
+[@layout:comb]
+{
   owner : address;
   token_id : token_id;
 }
 
-type balance_of_response = {
+type balance_of_response =
+[@layout:comb]
+{
   request : balance_of_request;
   balance : nat;
 }

@@ -1,11 +1,11 @@
 ---
-tzip: 20
+tzip: 020
 title: Off-chain Events
 author: Michael Zaikin <mz@baking-bad.org>
 status: Work In Progress
 type: Interface
 created: 2020-10-07
-requires: TZIP-16
+requires: TZIP-016
 ---
 
 ## Summary
@@ -22,4 +22,4 @@ The current approach is using custom handlers for known contracts. Obviously, it
 * Simple enough to implement/integrate with existing codebase;
 * Not tied to any specific entity nor implementation.
 
-A reasonable approach is to take all the custom logic out of the indexer and enable contract developers to write those pieces of logic. A suggested path is to reuse TZIP-16 inerface and introduce several new Off-chain View kinds for deriving token balance updates (receipts).
+A reasonable approach is to take all the custom logic out of the indexer and enable contract developers to write those pieces of logic. A suggested path is to reuse TZIP-016 inerface and introduce several new Off-chain View kinds for deriving token balance updates (receipts).

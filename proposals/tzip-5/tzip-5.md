@@ -1,5 +1,5 @@
 ---
-tzip: 5
+tzip: 005
 title: FA1 - Abstract Ledger
 status: Deprecated
 type: Financial Application

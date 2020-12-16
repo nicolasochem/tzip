@@ -1,5 +1,5 @@
 ---
-tzip: 3
+tzip: 003
 title: TZIP Code of Conduct
 status: Final
 type: Meta

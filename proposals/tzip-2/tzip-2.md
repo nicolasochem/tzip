@@ -1,5 +1,5 @@
 ---
-tzip: 2
+tzip: 002
 title: TZIP Types and Naming
 status: Final
 type: Meta
@@ -28,7 +28,7 @@ LA1).
 
 Additional types of TZIP may be proposed, and existing TZIP types may also be
 deprecated by future Meta TZIPs. All the updates will be maintained in this TZIP
-([TZIP-2](/proposals/tzip-2/tzip-2.md)).
+([TZIP-002](/proposals/tzip-2/tzip-2.md)).
 
 
 ## Naming
