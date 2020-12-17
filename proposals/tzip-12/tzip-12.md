@@ -21,7 +21,7 @@ created: 2020-01-24
     - [Operators](#operators)
       - [`update_operators`](#update_operators)
   - [Metadata](#contract-metadata)
-    - [Contract Metadata](#contract-metadata)
+    - [Contract Metadata (TZIP-016)](#contract-metadata)
     - [Token Metadata](#token-metadata)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
   - [Error Handling](#error-handling)
@@ -273,7 +273,7 @@ of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDE
 or be limited to an administrator.
 
 
-## Contract Metadata
+## Contract Metadata (TZIP-016)
 
 An FA2-compliant contract should provide contract-level metadata via TZIP-016:
 
