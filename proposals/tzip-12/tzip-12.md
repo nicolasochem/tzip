@@ -277,7 +277,7 @@ or be limited to an administrator.
 An FA2-compliant contract can implement TZIP-016:
 
 - If a contract does not contain the TZIP-016 `%metadata` big-map, it must
-  provide token-specific-metadata through the `%metadata_token` big-map method.
+  provide token-specific-metadata through the `%token_metadata` big-map method.
 - Contracts implemented before the current revision of TZIP-12, should
   considered “legacy FA2,” for compatibility with these contracts, see the
   (deprecated) [Legacy Interface](#legacy-interface) section.
@@ -306,10 +306,10 @@ A single-NFT FA2 token can be augmented with the following JSON:
 ```json
 {
   "description": "This is my NFT",
-  "interfaces": ["TZIP-12-2020-11-17"],
+  "interfaces": ["TZIP-012-2020-11-17"],
   "views": [
     { "name": "get_balance",
-      "description": "This is the `get_balance` view required by TZIP-12.",
+      "description": "This is the `get_balance` view required by TZIP-012.",
       "implementations": [
           { "michelson-storage-view": {
               "parameter": {
@@ -318,10 +318,7 @@ A single-NFT FA2 token can be augmented with the following JSON:
                            {"prim": "address", "annots": ["%owner"]}]},
               "return-type": {"prim": "nat"},
               "code": [
-                  {"prim": "TODO"}]}}]}],
-  "permissions": { "operator": "owner-or-operator-transfer",
-                   "receiver": "owner-no-hook",
-                   "sender": "owner-no-hook" }
+                  {"prim": "TODO"}]}}]}]
 }
 ```
   
@@ -351,14 +348,14 @@ following types (Michelson annotations are optional) and semantics:
 
 ### Token Metadata
 
-Token metadata is meant for off-chain, user-facing, contexts (e.g.  wallets,
-explorers, marketplaces). 
+Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
+explorers, marketplaces).
 
 #### Token-Metadata Values
 
 Token-specific metadata is stored/presented as a Michelson value of type
 `(map string bytes)`.  A few of the keys are reserved and predefined by
-TZIP-12:
+TZIP-012:
 
 - `""` (empty-string): should correspond to a TZIP-016 URI which points to a JSON
   representation of the token metadata.
@@ -369,33 +366,32 @@ TZIP-12:
   which defines the position of the decimal point in token balances for display
   purposes.
 
-In the case, of a TZIP-016 URI pointing to a JSON blob, the JSON preserves the
+In the case of a TZIP-016 URI pointing to a JSON blob, the JSON preserves the
 same 3 reserved non-empty fields:
 
 `{ "symbol": <string>, "name": <string>, "decimals": <number>, ... }`
 
-It is highly recommended to provide the 3 values either in the map or in the
-external JSON; the default value for decimals is zero.
+Although not required, it is highly recommended for most tokens to provide the 3 values either in the map or the JSON found via the
+TZIP-016 URI.
 
 Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
 `"homepage"`, …).
 
 #### Token Metadata Storage & Access
 
-A given contract can use 2 methods to provide access to the token-metadata.  In
-both cases the “key” is the token-id (of type `nat`) and one MUST store or
-return a value of type `(pair nat (map string bytes))`: the token-id and the
-metadata defined above. The following methods are allowed (future upgrades of
-TZIP-12 may add new cases):
+A contract can use two methods to provide access to the token-metadata.
 
-1. Implied View: One can store the values in a big-map annotated `%token_metadata` of type
+- **Basic**: Store the values in a big-map annotated `%token_metadata` of type
    `(big_map nat (pair nat (map string bytes)))`.
-2. Explicit View: Or one can provide a `token_metadata` off-chain-view which takes as parameter
+
+- **Custom**: Provide a `token_metadata` off-chain-view which takes as parameter
    the `nat` token-id and returns the `(pair nat (map string bytes))` value.
 
-If both options are present, the off-chain-view takes precedence because it allows
-the implementor to customize the response.
+In both cases the “key” is the token-id (of type `nat`) and one MUST store or
+return a value of type `(pair nat (map string bytes))`: the token-id and the
+metadata defined above.
 
+If both options are present, it is recommended to give precedence to the the off-chain-view (custom).
 
 ## FA2 Transfer Permission Policies and Configuration
 
