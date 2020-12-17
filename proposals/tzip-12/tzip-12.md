@@ -20,7 +20,7 @@ created: 2020-01-24
     - [`balance_of`](#balance_of)
     - [Operators](#operators)
       - [`update_operators`](#update_operators)
-  - [TZIP-16 Contract Metadata](#tzip-16-contract-metadata)
+  - [TZIP-016 Contract Metadata](#tzip-016-contract-metadata)
     - [Token Metadata](#token-metadata)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
   - [Error Handling](#error-handling)
@@ -35,49 +35,22 @@ an overview and rationale for the interface, token transfer semantics, and token
 
 ## Abstract
 
-There are multiple dimensions and considerations while implementing a particular
-token smart contract. Tokens might be fungible or non-fungible. A variety of
-transfer permission policies can be used to define how many tokens can be transferred,
+Many considerations weigh on the implementer of a token contract. Tokens might be fungible or non-fungible. 
+A variety of transfer permission policies can be used to define how many tokens can be transferred,
 who can perform a transfer, and who can receive tokens. A token contract can be
 designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple token
 types (e.g. ERC-1155) to optimize batch transfers and atomic swaps of the tokens.
 
-Such considerations can easily lead to the proliferation of many token standards,
-each optimized for a particular token type or use case. This situation is apparent
-in the Ethereum ecosystem, where many standards have been proposed, but ERC-20
-(fungible tokens) and ERC-721 (non-fungible tokens) are dominant.
+The FA2 standard aims to provide significant expressivity to contract developers 
+to create new types of tokens while maintaining a common interface standard for wallet 
+integrators and external developers.
 
-Token wallets, token exchanges, and other clients then need to support multiple
-standards and multiple token APIs. The FA2 standard proposes a unified token
-contract interface that accommodates all mentioned concerns. It aims to provide
-significant expressivity to contract developers to create new types of tokens
-while maintaining a common interface standard for wallet integrators and external
-developers.
+A particular FA2 implementation may support either a single token type per contract or 
+multiple tokens per contract, including hybrid implementations where multiple token kinds 
+(fungible, non-fungible, non-transferable etc) can coexist (e.g. in a fractionalized NFT contract).
 
-This standard defines the unified contract interface and its behavior to support
-a wide range of token types and implementations. The particular FA2 implementation
-may support either a single token type per contract or multiple tokens per contract,
-including hybrid implementations where multiple token kinds (fungible, non-fungible,
-non-transferable etc) are supported.
-
-Most of the entrypoints are batch operations that allow querying or transfer of
-multiple token types atomically.
-
-Most token standards specify logic that validates a transfer transaction and can
-either approve or reject a transfer. Such logic could validate who can perform a
-transfer, the transfer amount and who can receive tokens. This standard calls
-such logic a _transfer permission policy_. The FA2 standard defines the
-[default `transfer` permission policy](#default-transfer-permission-policy) that
-specify who can transfer tokens. The default policy allows transfers by
-either token owner (an account that holds token balance) or by an operator
-(an account that is permitted to manage tokens on behalf of the token owner).
-
-Unlike many other standards, FA2 allows customization of the default transfer permission
-policy (see
-[FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration))
-using a set of predefined permission behaviors that are optional.
-
-This specification defines the set of [standard errors](#error-handling) and error
+This document also specifies metadata at the token and contract level based on [TZIP-016](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
+It also defines the set of [standard errors](#error-handling) and error
 mnemonics to be used when implementing FA2.
 
 ## General
@@ -299,11 +272,11 @@ of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDE
 or be limited to an administrator.
 
 
-## TZIP-16 Contract Metadata
+## TZIP-016 Contract Metadata
 
-An FA2-compliant contract can implement TZIP-16:
+An FA2-compliant contract can implement TZIP-016:
 
-- If a contract does not contain the TZIP-16 `%metadata` big-map, it must
+- If a contract does not contain the TZIP-016 `%metadata` big-map, it must
   provide token-specific-metadata through the `%metadata_token` big-map method.
 - Contracts implemented before the current revision of TZIP-12, should
   considered “legacy FA2,” for compatibility with these contracts, see the
@@ -311,7 +284,7 @@ An FA2-compliant contract can implement TZIP-16:
 
 The metadata JSON structure is precised below:
 
-The TZIP-16 `"interfaces"` field MUST be present:
+The TZIP-016 `"interfaces"` field MUST be present:
 
 - It should contain `"TZIP-12[-<version-info>]"`
     - `version-info` is an optional string extension, precising which version of
@@ -319,10 +292,10 @@ The TZIP-16 `"interfaces"` field MUST be present:
       e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
       e.g. `2020-10-23`).
 
-The TZIP-16 `"views"` field can be present, some optional off-chain-views are
+The TZIP-016 `"views"` field can be present, some optional off-chain-views are
 specifed below, see section [Off-chain-views](#off-chain-views).
 
-A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
+A TZIP-012-specific field `"permissions"` is defined in [Exposing Permissions
 Descriptor](#exposing-permissions-descriptor), and it is optional, but
 recommended if it differs from the default value.
 
@@ -354,7 +327,7 @@ A single-NFT FA2 token can be augmented with the following JSON:
   
 ### Off-Chain-Views
 
-Within its TZIP-16 metadata, an FA2 contract does not have to provide any
+Within its TZIP-016 metadata, an FA2 contract does not have to provide any
 off-chain-view but can provide 4 optional views: `get_balance`, `total_supply`,
 `all_tokens`, `is_operator`, and `token_metadata`. If present, all of these
 SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
@@ -387,7 +360,7 @@ Token-specific metadata is stored/presented as a Michelson value of type
 `(map string bytes)`.  A few of the keys are reserved and predefined by
 TZIP-12:
 
-- `""` (empty-string): should correspond to a TZIP-16 URI which points to a JSON
+- `""` (empty-string): should correspond to a TZIP-016 URI which points to a JSON
   representation of the token metadata.
 - `"name"`: should be a UTf-8 string giving a “display name” to the token.
 - `"symbol"`: should be a UTF-8 string for the short identifier of the token
@@ -396,7 +369,7 @@ TZIP-12:
   which defines the position of the decimal point in token balances for display
   purposes.
 
-In the case, of a TZIP-16 URI pointing to a JSON blob, the JSON preserves the
+In the case, of a TZIP-016 URI pointing to a JSON blob, the JSON preserves the
 same 3 reserved non-empty fields:
 
 `{ "symbol": <string>, "name": <string>, "decimals": <number>, ... }`
@@ -404,7 +377,7 @@ same 3 reserved non-empty fields:
 It is highly recommended to provide the 3 values either in the map or in the
 external JSON; the default value for decimals is zero.
 
-Other standards deriving from TZIP-12 may reserve other keys (e.g. `"icon"`,
+Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
 `"homepage"`, …).
 
 #### Storage & Access
@@ -490,10 +463,12 @@ implemented and what are the expected properties of such an implementation.
 
 ## Future Directions
 
-Future amendments to Tezos are likely to enable new functionality by which this
-standard can be upgraded. Namely, [read-only
-calls](https://forum.tezosagora.org/t/adding-read-only-calls/1227), event logging,
-and [contract signatures](https://forum.tezosagora.org/t/contract-signatures/1458), now known as "tickets".
+Several **backwards-compatible** TZIP-012 upgrades are likely depending on proposed Tezos protocol amendments:
+- On-chain Views and Events
+  - Extending TZIP-012 to include on-chain views and reduce complexity of off-chain views and events.
+- Tickets
+  - Extending TZIP-012 to allow wrapping of FA2 tokens as tickets and marking `update_operators` as optional.
+
 
 ## Copyright
 
