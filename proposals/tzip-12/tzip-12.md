@@ -31,7 +31,7 @@ created: 2020-01-24
 
 TZIP-012 proposes a standard for a unified token contract interface,
 supporting a wide range of token types and implementations. This document provides
-an overview and rationale for the interface, token transfer semantics, and token metadata.
+an overview of the interface, token transfer semantics, and token metadata.
 
 ## Abstract
 
