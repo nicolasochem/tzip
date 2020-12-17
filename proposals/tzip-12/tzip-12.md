@@ -388,13 +388,13 @@ return a value of type `(pair nat (map string bytes))`: the token-id and the
 metadata defined above. The following methods are allowed (future upgrades of
 TZIP-12 may add new cases):
 
-1. One can store the values in a big-map annotated `%token_metadata` of type
+1. Implied View: One can store the values in a big-map annotated `%token_metadata` of type
    `(big_map nat (pair nat (map string bytes)))`.
-2. Or one can provide a `token_metadata` off-chain-view which takes as parameter
+2. Explicit View: Or one can provide a `token_metadata` off-chain-view which takes as parameter
    the `nat` token-id and returns the `(pair nat (map string bytes))` value.
 
-If both options are present, the off-chain-view is preferred since it allows
-the implementor to customize and augment the response.
+If both options are present, the off-chain-view takes precedence because it allows
+the implementor to customize the response.
 
 
 ## FA2 Transfer Permission Policies and Configuration
