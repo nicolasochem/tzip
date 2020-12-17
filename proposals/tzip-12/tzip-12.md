@@ -464,8 +464,8 @@ implemented and what are the expected properties of such an implementation.
 ## Future Directions
 
 Several **backwards-compatible** TZIP-012 upgrades are likely depending on proposed Tezos protocol amendments:
-- On-chain Views and Events
-  - Extending TZIP-012 to include on-chain views and reduce complexity of off-chain views and events.
+- Views and Events
+  - Extending TZIP-012 to include on-chain views (and removal of `balance_of`). Reduce complexity of off-chain views and events.
 - Tickets
   - Extending TZIP-012 to allow wrapping of FA2 tokens as tickets and marking `update_operators` as optional.
 
