@@ -299,7 +299,7 @@ A TZIP-012-specific field `"permissions"` is defined in [Exposing Permissions
 Descriptor](#exposing-permissions-descriptor), and it is optional, but
 recommended if it differs from the default value.
 
-### Examples
+### Example
 
 A single-NFT FA2 token can be augmented with the following JSON:
 
