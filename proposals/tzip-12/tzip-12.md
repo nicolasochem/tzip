@@ -110,36 +110,11 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Interface Specification
 
-Token contract implementing the FA2 standard MUST have the following entrypoints: [`transfer`](#transfer), [`balance_of`](#balance_of), [`update_operators`](#update_operators)
+Token contract implementing the FA2 standard MUST have the following [**Michelson**](http://michelson.nomadic-labs.com) entrypoints: [`transfer`](#transfer), [`balance_of`](#balance_of), [`update_operators`](#update_operators)
 
 ### Entrypoint Semantics
 
 #### `transfer`
-
-LIGO definition:
-
-```ocaml
-type token_id = nat
-
-type transfer_destination =
-[@layout:comb]
-{
-  to_ : address;
-  token_id : token_id;
-  amount : nat;
-}
-
-type transfer =
-[@layout:comb]
-{
-  from_ : address;
-  txs : transfer_destination list;
-}
-
-| Transfer of transfer list
-```
-
-Michelson definition:
 
 ```
 (list %transfer
@@ -227,37 +202,6 @@ FA2 token contracts MUST always implement this behavior.
 
 #### `balance_of`
 
-LIGO definition:
-
-```ocaml
-type token_id = nat
-
-type balance_of_request =
-[@layout:comb]
-{
-  owner : address;
-  token_id : token_id;
-}
-
-type balance_of_response =
-[@layout:comb]
-{
-  request : balance_of_request;
-  balance : nat;
-}
-
-type balance_of_param =
-[@layout:comb]
-{
-  requests : balance_of_request list;
-  callback : (balance_of_response list) contract;
-}
-
-| Balance_of of balance_of_param
-```
-
-Michelson definition:
-
 ```
 (pair %balance_of
   (list %requests
@@ -315,29 +259,6 @@ per specific token owner and token ID (token type). Once permitted, an operator
 can transfer tokens of that type belonging to the owner.
 
 ##### `update_operators`
-
-LIGO definition:
-
-```ocaml
-type token_id = nat
-
-type operator_param =
-[@layout:comb]
-{
-  owner : address;
-  operator : address;
-  token_id : token_id;
-}
-
-type update_operator =
-  [@layout:comb]
-  | Add_operator of operator_param
-  | Remove_operator of operator_param
-
-| Update_operators of update_operator list
-```
-
-Michelson definition:
 
 ```
 (list %update_operators
