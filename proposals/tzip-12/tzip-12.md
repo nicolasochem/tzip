@@ -20,7 +20,7 @@ created: 2020-01-24
     - [`balance_of`](#balance_of)
     - [Operators](#operators)
       - [`update_operators`](#update_operators)
-  - [Metadata](#contract-metadata)
+  - [Metadata](#contract-metadata-tzip-016)
     - [Contract Metadata (TZIP-016)](#contract-metadata-tzip-016)
     - [Token Metadata](#token-metadata)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
