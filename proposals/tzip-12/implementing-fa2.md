@@ -21,6 +21,150 @@
 The full definition of the FA2 entrypoints in LIGO and related types can be found
 in [fa2_interface.mligo](./fa2_interface.mligo).
 
+#### `transfer`
+
+LIGO definition:
+
+```ocaml
+type token_id = nat
+
+type transfer_destination =
+[@layout:comb]
+{
+  to_ : address;
+  token_id : token_id;
+  amount : nat;
+}
+
+type transfer =
+[@layout:comb]
+{
+  from_ : address;
+  txs : transfer_destination list;
+}
+
+| Transfer of transfer list
+```
+
+Michelson definition:
+
+```
+(list %transfer
+  (pair
+    (address %from_)
+    (list %txs
+      (pair
+        (address %to_)
+        (pair
+          (nat %token_id)
+          (nat %amount)
+        )
+      )
+    )
+  )
+)
+```
+
+#### `balance_of`
+
+LIGO definition:
+
+```ocaml
+type token_id = nat
+
+type balance_of_request =
+[@layout:comb]
+{
+  owner : address;
+  token_id : token_id;
+}
+
+type balance_of_response =
+[@layout:comb]
+{
+  request : balance_of_request;
+  balance : nat;
+}
+
+type balance_of_param =
+[@layout:comb]
+{
+  requests : balance_of_request list;
+  callback : (balance_of_response list) contract;
+}
+
+| Balance_of of balance_of_param
+```
+
+Michelson definition:
+
+```
+(pair %balance_of
+  (list %requests
+    (pair
+      (address %owner)
+      (nat %token_id)
+    )
+  )
+  (contract %callback
+    (list
+      (pair
+        (pair %request
+          (address %owner)
+          (nat %token_id)
+        )
+        (nat %balance)
+      )
+    )
+  )
+)
+```
+
+##### `update_operators`
+
+LIGO definition:
+
+```ocaml
+type token_id = nat
+
+type operator_param =
+[@layout:comb]
+{
+  owner : address;
+  operator : address;
+  token_id : token_id;
+}
+
+type update_operator =
+  [@layout:comb]
+  | Add_operator of operator_param
+  | Remove_operator of operator_param
+
+| Update_operators of update_operator list
+```
+
+Michelson definition:
+
+```
+(list %update_operators
+  (or
+    (pair %add_operator
+      (address %owner)
+      (pair
+        (address %operator)
+        (nat %token_id)
+      )
+    )
+    (pair %remove_operator
+      (address %owner)
+      (pair
+        (address %operator)
+        (nat %token_id)
+      )
+    )
+  )
+)
+```
 
 ## Implementing Different Token Types With FA2
 
