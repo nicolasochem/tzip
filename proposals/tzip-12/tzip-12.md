@@ -124,7 +124,6 @@ entrypoints.
 - [`| Transfer of transfer list`](#transfer)
 - [`| Balance_of of balance_of_param`](#balance_of)
 - [`| Update_operators of update_operator list`](#update_operators)
-- [`| Assert_balances of assert_balance list`](#assert_balances) (optional)
 
 The full definition of the FA2 entrypoints in LIGO and related types can be found
 in [fa2_interface.mligo](./fa2_interface.mligo).
