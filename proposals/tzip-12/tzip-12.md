@@ -10,7 +10,6 @@ created: 2020-01-24
 ## Table Of Contents
 
 - [Summary](#summary)
-- [Motivation](#motivation)
 - [Abstract](#abstract)
 - [General](#general)
 - [Interface Specification](#interface-specification)
@@ -32,10 +31,9 @@ created: 2020-01-24
 
 TZIP-012 proposes a standard for a unified token contract interface,
 supporting a wide range of token types and implementations. This document provides
-an overview and rationale for the interface, token transfer semantics, and support
-for various transfer permission policies.
+an overview and rationale for the interface, token transfer semantics, and token metadata.
 
-## Motivation
+## Abstract
 
 There are multiple dimensions and considerations while implementing a particular
 token smart contract. Tokens might be fungible or non-fungible. A variety of
@@ -55,8 +53,6 @@ contract interface that accommodates all mentioned concerns. It aims to provide
 significant expressivity to contract developers to create new types of tokens
 while maintaining a common interface standard for wallet integrators and external
 developers.
-
-## Abstract
 
 This standard defines the unified contract interface and its behavior to support
 a wide range of token types and implementations. The particular FA2 implementation
