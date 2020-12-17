@@ -13,7 +13,6 @@ created: 2020-01-24
 - [Motivation](#motivation)
 - [Abstract](#abstract)
 - [General](#general)
-- [TZIP-16 Contract Metadata](#tzip-16-contract-metadata)
 - [Interface Specification](#interface-specification)
   - [Entrypoint Semantics](#entrypoint-semantics)
     - [`transfer`](#transfer)
@@ -22,6 +21,7 @@ created: 2020-01-24
     - [`balance_of`](#balance_of)
     - [Operators](#operators)
       - [`update_operators`](#update_operators)
+  - [TZIP-16 Contract Metadata](#tzip-16-contract-metadata)
     - [Token Metadata](#token-metadata)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
     - [A Taxonomy of Transfer Permission Policies](#a-taxonomy-of-transfer-permission-policies)
@@ -45,9 +45,6 @@ TZIP-012 proposes a standard for a unified token contract interface,
 supporting a wide range of token types and implementations. This document provides
 an overview and rationale for the interface, token transfer semantics, and support
 for various transfer permission policies.
-
-**PLEASE NOTE:** This API specification remains a work-in-progress and may evolve
-based on public comment see FA2 Request for Comment on [Tezos Agora](https://tezosagora.org).
 
 ## Motivation
 
@@ -90,14 +87,13 @@ specify who can transfer tokens. The default policy allows transfers by
 either token owner (an account that holds token balance) or by an operator
 (an account that is permitted to manage tokens on behalf of the token owner).
 
-Unlike many other standards, FA2 allows to customize the default transfer permission
+Unlike many other standards, FA2 allows customization of the default transfer permission
 policy (see
 [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration))
 using a set of predefined permission behaviors that are optional.
 
 This specification defines the set of [standard errors](#error-handling) and error
-mnemonics to be used when implementing FA2. However, some implementations MAY
-introduce their custom errors that MUST follow the same pattern as standard ones.
+mnemonics to be used when implementing FA2.
 
 ## General
 
@@ -126,84 +122,6 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
   the batch may contain zero or multiple entries where token ID is a fixed `0n`
   value. Likewise, if multiple token types are supported, the batch may contain
   zero or more entries and there may be duplicate token IDs.
-
-
-## TZIP-16 Contract Metadata
-
-An FA2-compliant contract can implement TZIP-16:
-
-- If a contract does not contain the TZIP-16 `%metadata` big-map, it must
-  provide token-specific-metadata through the `%metadata_token` big-map method.
-- Contracts implemented before the current revision of TZIP-12, should
-  considered “legacy FA2,” for compatibility with these contracts, see the
-  (deprecated) [Legacy Interface](#legacy-interface) section.
-
-The metadata JSON structure is precised below:
-
-The TZIP-16 `"interfaces"` field MUST be present:
-
-- It should contain `"TZIP-12[-<version-info>]"`
-    - `version-info` is an optional string extension, precising which version of
-      this document is implemented by the contract (commit hash prefix,
-      e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
-      e.g. `2020-10-23`).
-
-The TZIP-16 `"views"` field can be present, some optional off-chain-views are
-specifed below, see section [Off-chain-views](#off-chain-views).
-
-A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
-Descriptor](#exposing-permissions-descriptor), and it is optional, but
-recommended if it differs from the default value.
-
-### Examples
-
-A single-NFT FA2 token can be augmented with the following JSON:
-
-```json
-{
-  "description": "This is my NFT",
-  "interfaces": ["TZIP-12-2020-11-17"],
-  "views": [
-    { "name": "get_balance",
-      "description": "This is the `get_balance` view required by TZIP-12.",
-      "implementations": [
-          { "michelson-storage-view": {
-              "parameter": {
-                  "prim": "pair",
-                  "args": [{"prim": "nat", "annots": ["%token_id"]},
-                           {"prim": "address", "annots": ["%owner"]}]},
-              "return-type": {"prim": "nat"},
-              "code": [
-                  {"prim": "TODO"}]}}]}],
-  "permissions": { "operator": "owner-or-operator-transfer",
-                   "receiver": "owner-no-hook",
-                   "sender": "owner-no-hook" }
-}
-```
-
-  
-### Off-Chain-Views
-
-Within its TZIP-16 metadata, an FA2 contract does not have to provide any
-off-chain-view but can provide 4 optional views: `get_balance`, `total_supply`,
-`all_tokens`, `is_operator`, and `token_metadata`. If present, all of these
-SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
-following types (Michelson annotations are optional) and semantics:
-
-- `get_balance` has `(pair (nat %token_id) (address %owner))` as
-  parameter-type, and `nat` as return-type; it must return the balance
-  corresponding to the owner/token pair.
-- `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
-  to total number of tokens for the given token-id if known or fail if not.
--  `all_tokens` has no parameter and returns the list of all the token IDs,
-   `(list nat)`, known to the contract.
-- `is_operator` has type
-  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
-   and should return whether `%operator` is allowed to transfer `%token_id`
-   tokens owned by `owner`.
-- `token_metadata` is one of the 2 ways of providing token-specific metadata, it
-  is defined in section [Token Metadata](#token-metadata) and is not optional if
-  the contract does not have a `%token_metadata` big-map.
 
 ## Interface Specification
 
@@ -522,6 +440,84 @@ The standard does not specify who is permitted to update operators on behalf of
 the token owner. Depending on the business use case, the particular implementation
 of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
+
+
+## TZIP-16 Contract Metadata
+
+An FA2-compliant contract can implement TZIP-16:
+
+- If a contract does not contain the TZIP-16 `%metadata` big-map, it must
+  provide token-specific-metadata through the `%metadata_token` big-map method.
+- Contracts implemented before the current revision of TZIP-12, should
+  considered “legacy FA2,” for compatibility with these contracts, see the
+  (deprecated) [Legacy Interface](#legacy-interface) section.
+
+The metadata JSON structure is precised below:
+
+The TZIP-16 `"interfaces"` field MUST be present:
+
+- It should contain `"TZIP-12[-<version-info>]"`
+    - `version-info` is an optional string extension, precising which version of
+      this document is implemented by the contract (commit hash prefix,
+      e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
+      e.g. `2020-10-23`).
+
+The TZIP-16 `"views"` field can be present, some optional off-chain-views are
+specifed below, see section [Off-chain-views](#off-chain-views).
+
+A TZIP-12-specific field `"permissions"` is defined in [Exposing Permissions
+Descriptor](#exposing-permissions-descriptor), and it is optional, but
+recommended if it differs from the default value.
+
+### Examples
+
+A single-NFT FA2 token can be augmented with the following JSON:
+
+```json
+{
+  "description": "This is my NFT",
+  "interfaces": ["TZIP-12-2020-11-17"],
+  "views": [
+    { "name": "get_balance",
+      "description": "This is the `get_balance` view required by TZIP-12.",
+      "implementations": [
+          { "michelson-storage-view": {
+              "parameter": {
+                  "prim": "pair",
+                  "args": [{"prim": "nat", "annots": ["%token_id"]},
+                           {"prim": "address", "annots": ["%owner"]}]},
+              "return-type": {"prim": "nat"},
+              "code": [
+                  {"prim": "TODO"}]}}]}],
+  "permissions": { "operator": "owner-or-operator-transfer",
+                   "receiver": "owner-no-hook",
+                   "sender": "owner-no-hook" }
+}
+```
+  
+### Off-Chain-Views
+
+Within its TZIP-16 metadata, an FA2 contract does not have to provide any
+off-chain-view but can provide 4 optional views: `get_balance`, `total_supply`,
+`all_tokens`, `is_operator`, and `token_metadata`. If present, all of these
+SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
+following types (Michelson annotations are optional) and semantics:
+
+- `get_balance` has `(pair (nat %token_id) (address %owner))` as
+  parameter-type, and `nat` as return-type; it must return the balance
+  corresponding to the owner/token pair.
+- `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
+  to total number of tokens for the given token-id if known or fail if not.
+-  `all_tokens` has no parameter and returns the list of all the token IDs,
+   `(list nat)`, known to the contract.
+- `is_operator` has type
+  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
+   and should return whether `%operator` is allowed to transfer `%token_id`
+   tokens owned by `owner`.
+- `token_metadata` is one of the 2 ways of providing token-specific metadata, it
+  is defined in section [Token Metadata](#token-metadata) and is not optional if
+  the contract does not have a `%token_metadata` big-map.
+
 
 ### Token Metadata
 
