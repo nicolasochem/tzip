@@ -84,6 +84,41 @@ is defined as `No_transfer`. Tokens cannot be transferred either by the token ow
 or by any operator. Only privileged operations like mint and burn can assign tokens
 to owner accounts.
 
+## `assert_balances`
+
+`assert_balances` entrypoint is optional.
+
+LIGO definition:
+
+```ocaml
+type token_id = nat
+
+type assert_balance = [@layout:comb] {
+  owner : address;
+  token_id : token_id;
+  balance: nat;
+}
+
+| Assert_balances of assert_balance list
+```
+
+Michelson definition:
+
+```
+(pair %assert_balances
+  (list
+    (pair
+      (address %owner)
+      (pair
+        (nat %token_id)
+        (nat %balance)))))
+```
+
+Checks the balances of a list of account/token pairs. If all the balances are
+correct, the entrypoint MUST do nothing (output same storage and no operations).
+If any of the balances is wrong it MUST interrupt the operation using
+`FAILWITH`.
+
 
 ## Transfer Hook
 
