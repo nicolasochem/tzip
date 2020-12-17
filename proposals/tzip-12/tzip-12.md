@@ -110,19 +110,7 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Interface Specification
 
-Token contract implementing the FA2 standard MUST have the following entrypoints.
-Notation is given in [cameLIGO language](https://ligolang.org) for readability
-and Michelson. The LIGO definition, when compiled, generates compatible Michelson
-entrypoints.
-
-`type fa2_entry_points =`
-
-- [`| Transfer of transfer list`](#transfer)
-- [`| Balance_of of balance_of_param`](#balance_of)
-- [`| Update_operators of update_operator list`](#update_operators)
-
-The full definition of the FA2 entrypoints in LIGO and related types can be found
-in [fa2_interface.mligo](./fa2_interface.mligo).
+Token contract implementing the FA2 standard MUST have the following entrypoints: [`transfer`](#transfer), [`balance_of`](#balance_of), [`update_operators`](#update_operators)
 
 ### Entrypoint Semantics
 
