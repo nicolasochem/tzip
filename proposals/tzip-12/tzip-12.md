@@ -380,7 +380,7 @@ external JSON; the default value for decimals is zero.
 Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
 `"homepage"`, …).
 
-#### Storage & Access
+#### Token Metadata Storage & Access
 
 A given contract can use 2 methods to provide access to the token-metadata.  In
 both cases the “key” is the token-id (of type `nat`) and one MUST store or
@@ -396,7 +396,8 @@ TZIP-12 may add new cases):
 If both options are present, the off-chain-view is preferred since it allows
 the implementor to customize and augment the response.
 
-### FA2 Transfer Permission Policies and Configuration
+
+## FA2 Transfer Permission Policies and Configuration
 
 Most token standards specify logic such as who can perform a transfer, the amount
 of a transfer, and who can receive tokens. This standard calls such logic
