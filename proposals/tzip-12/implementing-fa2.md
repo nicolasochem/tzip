@@ -1,5 +1,7 @@
 # Implementing FA2
 
+
+- [LIGO implementation](#ligo-implementation)
 - [Implementing Different Token Types with FA2](#implementing-different-token-types-with-fa2)
   - [Single Fungible Token](#single-fungible-token)
   - [Multiple Fungible Tokens](#multiple-fungible-tokens)
@@ -7,6 +9,17 @@
   - [Mixing Fungible and Non-fungible Tokens](#mixing-fungible-and-non-fungible-tokens)
   - [Non-transferable Tokens](#non-transferable-tokens)
 
+
+## LIGO implementation
+
+`type fa2_entry_points =`
+
+- [`| Transfer of transfer list`](#transfer)
+- [`| Balance_of of balance_of_param`](#balance_of)
+- [`| Update_operators of update_operator list`](#update_operators)
+
+The full definition of the FA2 entrypoints in LIGO and related types can be found
+in [fa2_interface.mligo](./fa2_interface.mligo).
 
 
 ## Implementing Different Token Types With FA2
