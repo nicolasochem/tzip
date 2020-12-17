@@ -19,9 +19,9 @@ created: 2020-01-24
       - [Default Transfer Permission Policy](#default-transfer-permission-policy)
     - [`balance_of`](#balance_of)
     - [`update_operators`](#operators)
-  - [Metadata](#contract-metadata-tzip-016)
-    - [Contract Metadata (TZIP-016)](#contract-metadata-tzip-016)
+  - [Metadata](#token-metadata)
     - [Token Metadata](#token-metadata)
+    - [Contract Metadata (TZIP-016)](#contract-metadata-tzip-016)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
   - [Error Handling](#error-handling)
 - [Future Directions](#future-directions)
@@ -271,6 +271,51 @@ the token owner. Depending on the business use case, the particular implementati
 of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDER`)
 or be limited to an administrator.
 
+## Token Metadata
+
+Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
+explorers, marketplaces).
+
+#### Token-Metadata Values
+
+Token-specific metadata is stored/presented as a Michelson value of type
+`(map string bytes)`.  A few of the keys are reserved and predefined by
+TZIP-012:
+
+- `""` (empty-string): should correspond to a TZIP-016 URI which points to a JSON
+  representation of the token metadata.
+- `"name"`: should be a UTf-8 string giving a “display name” to the token.
+- `"symbol"`: should be a UTF-8 string for the short identifier of the token
+  (e.g. XTZ, EUR, …).
+- `"decimals"`: should be an integer (converted to a UTF-8 string in decimal)
+  which defines the position of the decimal point in token balances for display
+  purposes.
+
+In the case of a TZIP-016 URI pointing to a JSON blob, the JSON preserves the
+same 3 reserved non-empty fields:
+
+`{ "symbol": <string>, "name": <string>, "decimals": <number>, ... }`
+
+Providing a value for `"decimals"` is required for all token types. `"name”` and `"symbol"` are not required but it is highly recommended for most tokens to provide the values either in the map or the JSON found via the TZIP-016 URI. 
+
+Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
+`"homepage"`, …).
+
+#### Token Metadata Storage & Access
+
+A contract can use two methods to provide access to the token-metadata.
+
+- **Basic**: Store the values in a big-map annotated `%token_metadata` of type
+   `(big_map nat (pair nat (map string bytes)))`.
+
+- **Custom**: Provide a `token_metadata` off-chain-view which takes as parameter
+   the `nat` token-id and returns the `(pair nat (map string bytes))` value.
+
+In both cases the “key” is the token-id (of type `nat`) and one MUST store or
+return a value of type `(pair nat (map string bytes))`: the token-id and the
+metadata defined above.
+
+If both options are present, it is recommended to give precedence to the the off-chain-view (custom).
 
 ## Contract Metadata (TZIP-016)
 
@@ -320,52 +365,6 @@ A single-NFT FA2 token can be augmented with the following JSON:
                   {"prim": "TODO"}]}}]}]
 }
 ```
-
-## Token Metadata
-
-Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
-explorers, marketplaces).
-
-#### Token-Metadata Values
-
-Token-specific metadata is stored/presented as a Michelson value of type
-`(map string bytes)`.  A few of the keys are reserved and predefined by
-TZIP-012:
-
-- `""` (empty-string): should correspond to a TZIP-016 URI which points to a JSON
-  representation of the token metadata.
-- `"name"`: should be a UTf-8 string giving a “display name” to the token.
-- `"symbol"`: should be a UTF-8 string for the short identifier of the token
-  (e.g. XTZ, EUR, …).
-- `"decimals"`: should be an integer (converted to a UTF-8 string in decimal)
-  which defines the position of the decimal point in token balances for display
-  purposes.
-
-In the case of a TZIP-016 URI pointing to a JSON blob, the JSON preserves the
-same 3 reserved non-empty fields:
-
-`{ "symbol": <string>, "name": <string>, "decimals": <number>, ... }`
-
-Providing a value for `"decimals"` is required for all token types. `"name”` and `"symbol"` are not required but it is highly recommended for most tokens to provide the values either in the map or the JSON found via the TZIP-016 URI. 
-
-Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
-`"homepage"`, …).
-
-#### Token Metadata Storage & Access
-
-A contract can use two methods to provide access to the token-metadata.
-
-- **Basic**: Store the values in a big-map annotated `%token_metadata` of type
-   `(big_map nat (pair nat (map string bytes)))`.
-
-- **Custom**: Provide a `token_metadata` off-chain-view which takes as parameter
-   the `nat` token-id and returns the `(pair nat (map string bytes))` value.
-
-In both cases the “key” is the token-id (of type `nat`) and one MUST store or
-return a value of type `(pair nat (map string bytes))`: the token-id and the
-metadata defined above.
-
-If both options are present, it is recommended to give precedence to the the off-chain-view (custom).
 
 ### Off-Chain-Views
 
