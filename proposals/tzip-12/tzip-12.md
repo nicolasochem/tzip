@@ -346,8 +346,7 @@ same 3 reserved non-empty fields:
 
 `{ "symbol": <string>, "name": <string>, "decimals": <number>, ... }`
 
-Although not required, it is highly recommended for most tokens to provide the 3 values either in the map or the JSON found via the
-TZIP-016 URI.
+Providing a value for `"decimals"` is required for all token types. `"name”` and `"symbol"` are not required but it is highly recommended for most tokens to provide the values either in the map or the JSON found via the TZIP-016 URI. 
 
 Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
 `"homepage"`, …).
