@@ -20,7 +20,8 @@ created: 2020-01-24
     - [`balance_of`](#balance_of)
     - [Operators](#operators)
       - [`update_operators`](#update_operators)
-  - [TZIP-016 Contract Metadata](#tzip-016-contract-metadata)
+  - [Metadata](#contract-metadata)
+    - [Contract Metadata](#contract-metadata)
     - [Token Metadata](#token-metadata)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
   - [Error Handling](#error-handling)
@@ -272,30 +273,29 @@ of the FA2 contract MAY limit operator updates to a token owner (`owner == SENDE
 or be limited to an administrator.
 
 
-## TZIP-016 Contract Metadata
+## Contract Metadata
 
-An FA2-compliant contract can implement TZIP-016:
+An FA2-compliant contract should provide contract-level metadata via TZIP-016:
 
 - If a contract does not contain the TZIP-016 `%metadata` big-map, it must
-  provide token-specific-metadata through the `%token_metadata` big-map method.
-- Contracts implemented before the current revision of TZIP-12, should
+  provide token-specific-metadata through the `%token_metadata` big-map method described below in [Token Metadata](#token-metadata).
+- Contracts implemented before the current revision of TZIP-012, should be
   considered “legacy FA2,” for compatibility with these contracts, see the
-  (deprecated) [Legacy Interface](#legacy-interface) section.
+  (deprecated) [Legacy Interface](#legacy-interface) section of the Legacy FA2 document.
 
-The metadata JSON structure is precised below:
+The TZIP-016 contract metadata JSON structure is described below:
 
-The TZIP-016 `"interfaces"` field MUST be present:
-
-- It should contain `"TZIP-12[-<version-info>]"`
+- The TZIP-016 `"interfaces"` field MUST be present
+  - It should contain `"TZIP-012[-<version-info>]"`
     - `version-info` is an optional string extension, precising which version of
       this document is implemented by the contract (commit hash prefix,
       e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
       e.g. `2020-10-23`).
 
-The TZIP-016 `"views"` field can be present, some optional off-chain-views are
+- The TZIP-016 `"views"` field is optional, with common off-chain-view examples
 specifed below, see section [Off-chain-views](#off-chain-views).
 
-A TZIP-012-specific field `"permissions"` is defined in [Exposing Permissions
+- A TZIP-012-specific field `"permissions"` is defined in [Exposing Permissions
 Descriptor](#exposing-permissions-descriptor), and it is optional, but
 recommended if it differs from the default value.
 
@@ -321,32 +321,8 @@ A single-NFT FA2 token can be augmented with the following JSON:
                   {"prim": "TODO"}]}}]}]
 }
 ```
-  
-### Off-Chain-Views
 
-Within its TZIP-016 metadata, an FA2 contract does not have to provide any
-off-chain-view but can provide 4 optional views: `get_balance`, `total_supply`,
-`all_tokens`, `is_operator`, and `token_metadata`. If present, all of these
-SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
-following types (Michelson annotations are optional) and semantics:
-
-- `get_balance` has `(pair (nat %token_id) (address %owner))` as
-  parameter-type, and `nat` as return-type; it must return the balance
-  corresponding to the owner/token pair.
-- `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
-  to total number of tokens for the given token-id if known or fail if not.
--  `all_tokens` has no parameter and returns the list of all the token IDs,
-   `(list nat)`, known to the contract.
-- `is_operator` has type
-  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
-   and should return whether `%operator` is allowed to transfer `%token_id`
-   tokens owned by `owner`.
-- `token_metadata` is one of the 2 ways of providing token-specific metadata, it
-  is defined in section [Token Metadata](#token-metadata) and is not optional if
-  the contract does not have a `%token_metadata` big-map.
-
-
-### Token Metadata
+## Token Metadata
 
 Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
 explorers, marketplaces).
@@ -392,6 +368,29 @@ return a value of type `(pair nat (map string bytes))`: the token-id and the
 metadata defined above.
 
 If both options are present, it is recommended to give precedence to the the off-chain-view (custom).
+
+### Off-Chain-Views
+
+Within its TZIP-016 metadata, an FA2 contract does not have to provide any
+off-chain-view but can provide 4 optional views: `get_balance`, `total_supply`,
+`all_tokens`, `is_operator`, and `token_metadata`. If present, all of these
+SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
+following types (Michelson annotations are optional) and semantics:
+
+- `get_balance` has `(pair (nat %token_id) (address %owner))` as
+  parameter-type, and `nat` as return-type; it must return the balance
+  corresponding to the owner/token pair.
+- `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
+  to total number of tokens for the given token-id if known or fail if not.
+-  `all_tokens` has no parameter and returns the list of all the token IDs,
+   `(list nat)`, known to the contract.
+- `is_operator` has type
+  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
+   and should return whether `%operator` is allowed to transfer `%token_id`
+   tokens owned by `owner`.
+- `token_metadata` is one of the 2 ways of providing token-specific metadata, it
+  is defined in section [Token Metadata](#token-metadata) and is not optional if
+  the contract does not have a `%token_metadata` big-map.
 
 ## FA2 Transfer Permission Policies and Configuration
 
