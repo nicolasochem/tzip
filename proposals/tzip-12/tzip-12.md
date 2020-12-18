@@ -322,7 +322,7 @@ If both options are present, it is recommended to give precedence to the the off
 An FA2-compliant contract should provide contract-level metadata via TZIP-016:
 
 - If a contract does not contain the TZIP-016 `%metadata` big-map, it must
-  provide token-specific-metadata through the `%token_metadata` big-map method described below in [Token Metadata](#token-metadata).
+  provide token-specific-metadata through the `%token_metadata` big-map method described above in [Token Metadata](#token-metadata).
 - Contracts implemented before the current revision of TZIP-012, should be
   considered “legacy FA2,” for compatibility with these contracts, see the
   (deprecated) [Legacy Interface](#legacy-interface) section of the Legacy FA2 document.
