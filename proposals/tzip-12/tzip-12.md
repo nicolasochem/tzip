@@ -274,7 +274,8 @@ or be limited to an administrator.
 ## Token Metadata
 
 Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
-explorers, marketplaces).
+explorers, marketplaces). An earlier (superseded) specification of TZIP-012 token metadata is 
+contained in the [Legacy Interface](#legacy-interface) section of the Legacy FA2 document.
 
 #### Token-Metadata Values
 
@@ -303,7 +304,7 @@ Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
 
 #### Token Metadata Storage & Access
 
-A contract can use two methods to provide access to the token-metadata.
+A contract can use two methods to provide access to the token-metadata. 
 
 - **Basic**: Store the values in a big-map annotated `%token_metadata` of type
    `(big_map nat (pair nat (map string bytes)))`.
@@ -319,13 +320,9 @@ If both options are present, it is recommended to give precedence to the the off
 
 ## Contract Metadata (TZIP-016)
 
-An FA2-compliant contract should provide contract-level metadata via TZIP-016:
+An FA2-compliant contract SHOULD provide contract-level metadata via TZIP-016:
 
-- If a contract does not contain the TZIP-016 `%metadata` big-map, it must
-  provide token-specific-metadata through the `%token_metadata` big-map method described above in [Token Metadata](#token-metadata).
-- Contracts implemented before the current revision of TZIP-012, should be
-  considered “legacy FA2,” for compatibility with these contracts, see the
-  (deprecated) [Legacy Interface](#legacy-interface) section of the Legacy FA2 document.
+- If a contract does not contain the TZIP-016 `%metadata` big-map, it must provide token-specific-metadata through the `%token_metadata` big-map method described above in [Token Metadata](#token-metadata).
 
 The TZIP-016 contract metadata JSON structure is described below:
 
