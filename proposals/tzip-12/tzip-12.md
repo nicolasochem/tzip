@@ -275,7 +275,7 @@ or be limited to an administrator.
 
 Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
 explorers, marketplaces). An earlier (superseded) specification of TZIP-012 token metadata is 
-contained in the [Legacy Interface](#legacy-interface) section of the Legacy FA2 document.
+contained in the *Legacy Interface* section of the Legacy FA2 document.
 
 #### Token-Metadata Values
 
@@ -333,8 +333,8 @@ The TZIP-016 contract metadata JSON structure is described below:
       e.g. `6883675` or an [RFC-3339](https://tools.ietf.org/html/rfc3339) date,
       e.g. `2020-10-23`).
 
-- The TZIP-016 `"views"` field is optional, with common off-chain-view examples
-specifed below, see section [Off-chain-views](#off-chain-views).
+- The TZIP-016 `"views"` field is optional, a few optional off-chain-views are
+  specifed below, see section [Off-chain-views](#off-chain-views).
 
 - A TZIP-012-specific field `"permissions"` is defined in [Exposing Permissions
 Descriptor](#exposing-permissions-descriptor), and it is optional, but
@@ -366,7 +366,7 @@ A single-NFT FA2 token can be augmented with the following JSON:
 ### Off-Chain-Views
 
 Within its TZIP-016 metadata, an FA2 contract does not have to provide any
-off-chain-view but can provide 4 optional views: `get_balance`, `total_supply`,
+off-chain-view but can provide 5 optional views: `get_balance`, `total_supply`,
 `all_tokens`, `is_operator`, and `token_metadata`. If present, all of these
 SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
 following types (Michelson annotations are optional) and semantics:
