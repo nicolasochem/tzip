@@ -30,19 +30,17 @@ the draft template for details.
 ## Updated Process
 
 - A TZIP draft is written in order to propose a new change
-or standard related to core changes, new core features, 
+or standard related to protocol or shell changes, new protocol or shell features, 
 interoperability, etc. 
 - The draft is submitted as a merge request in Gitlab by the 
-author
-- The commenting period on the draft by the Tezos community
-begins, with feedback given in order to improve
-the proposal
+author. The commenting period begins after it is merged.
+- The author should open a thread on [Tezos Agora](https://forum.tezosagora.org/), linking to the TZIP, for the community to provide feedback.
 - New versions of the draft (with updated version numbers) may
 be submitted to incorporate feedback.
 - If accepted, the TZIP will be granted a number and included
-in the core TZIP list
+in the main TZIP directory, list, and [explorer](https://tzip.tezosagora.org/).
 - If not accepted or updated within 6 months, the TZIP draft
-will expire and be removed from the repository.
+will expire and be archived in another directory.
  
 ## Feedback
 
