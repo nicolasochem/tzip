@@ -4,7 +4,7 @@ status: draft
 author: Sophia Gold <sophia.gold@tqtezos.com>
 type: protocol
 date: 2020-12-28
-version: 0
+version: 1
 ---
 
 ## Summary
