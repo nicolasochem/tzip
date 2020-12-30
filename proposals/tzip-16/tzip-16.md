@@ -327,7 +327,7 @@ Example:
     { "error": {"int": "42"}, 
       "expansion": { "bytes": "0x7175656c7175652063686f7365206e276120706173206d61726368c3a9"},
       "languages": ["fr"] },
-    { "view": "translate-string-error" }
+    { "view": "translateStringError" }
   ],
   "views": [
      // ... see below ...
@@ -348,7 +348,7 @@ An off-chain view object has at least 2 fields:
 - `"implementations"`: a list of implementation objects: usable definitions of
   the views. Each implementation is a one-field object where the field name
   discriminates between various kinds of views. Below, this standard defines 2
-  of those kinds, `"michelson-storage-view"` and `"rest-api-query"`, further
+  of those kinds, `"michelsonStorageView"` and `"restApiQuery"`, further
   deriving standards may add new ones.
 - `"pure"` (optional, default: `false`): a boolean “tag” advertising that the
   view should be considered *a (pure) function* of the storage of the contract
@@ -365,8 +365,8 @@ Example:
   "description": "Get the current allowance for a user of the contract.",
   "pure": "true",
   "implementations": [
-     { "michelson-storage-view" : { /* ,,, see below ... */ } },
-     { "rest-api-query" : { /* ,,, see below ... */ } },
+     { "michelsonStorageView" : { /* ,,, see below ... */ } },
+     { "restApiQuery" : { /* ,,, see below ... */ } },
      // ... potential extensions ...
   ]
 }
@@ -374,7 +374,7 @@ Example:
 
 ##### Michelson Storage Views
 
-The `"michelson-storage-view"` field is a JSON object describing a sequence of
+The `"michelsonStorageView"` field is a JSON object describing a sequence of
 Michelson instructions to run on a pair formed by a given parameter and the
 storage of the contract being queried in order to leave the execution stack with
 the queried value.  For this object we define 3 fields and a custom type
@@ -383,7 +383,7 @@ the queried value.  For this object we define 3 fields and a custom type
 - `"parameter"` (optional): an (annotated) Michelson type of the potential
   external parameters required by the view code; if the field is absent the view
   does not require any external input parameter.
-- `"return-type"` (required): the type of the result of the view (i.e. for the
+- `"returnType"` (required): the type of the result of the view (i.e. for the
   value left on the stack); the type can also be annotated.
 - `"code"` (required): the Michelson code expression implementing the view.
 - `"annotations"`: a list of objects documenting the annotations used in the 3
@@ -408,7 +408,7 @@ Example:
       {"prim": "string", "annots": ["user"]}
     ]
   },
-  "return-type": {"prim": "nat"},
+  "returnType": {"prim": "nat"},
   "code": [
     {"prim": "DUP"},
     {"prim": "DIP", "args": [
@@ -452,13 +452,13 @@ There are limitations on the contents of the `"code"` field:
 
 #### Rest API Views
 
-The `"rest-api-query"` field is an object describing how to map the view to an
+The `"restApiQuery"` field is an object describing how to map the view to an
 [Open API](https://github.com/OAI/OpenAPI-Specification) description of a
 REST-API.
 
-- `"specification-uri"` (required): a string giving the location (URI) of the
+- `"specificationUri"` (required): a string giving the location (URI) of the
   full Open API specification.
-- `"base-uri"` (optional): The recommended `"server"` to use.
+- `"baseUri"` (optional): The recommended `"server"` to use.
 - `"path"` (required): The API path within the Open API specification that
   implements the view.
 - `"method"` (optional, default: `"GET"`): The method used for the view.
@@ -467,8 +467,8 @@ Example:
 
 ```json
 {
-  "specification-uri": "https://example.com/openapi/my-token",
-  "base-uri": "https://example.com/my-token/v2",
+  "specificationUri": "https://example.com/openapi/my-token",
+  "baseUri": "https://example.com/my-token/v2",
   "path": "/allowances",
 }
 ```
