@@ -16,16 +16,16 @@
       "name": "view0",
       "implementations": [
         {
-          "michelson-storage-view": {
-            "return-type": {
+          "michelsonStorageView": {
+            "returnType": {
               "prim": "nat"
             },
             "code": []
           }
         },
         {
-          "rest-api-query": {
-            "specification-uri": "https://example.com/v1.json",
+          "restApiQuery": {
+            "specificationUri": "https://example.com/v1.json",
             "path": "/get-something"
           }
         }
