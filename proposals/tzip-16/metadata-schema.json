@@ -1,14 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "$ref": "#/definitions/contract-metadata-tzip-16",
+  "$ref": "#/definitions/contractMetadataTzip16",
   "definitions": {
     "bignum": {
       "title": "Big number",
       "description": "Decimal representation of a big number",
       "type": "string"
     },
-    "contract-metadata-tzip-16": {
-      "title": "contract-metadata-tzip-16",
+    "contractMetadataTzip16": {
+      "title": "contractMetadataTzip16",
       "description": "Smart Contract Metadata Standard (TZIP-16).",
       "type": "object",
       "properties": {
@@ -86,7 +86,7 @@
           "items": {
             "oneOf": [
               {
-                "title": "static-error-translator",
+                "title": "staticErrorTranslator",
                 "description": "A convertor between error codes and expanded messages.",
                 "type": "object",
                 "properties": {
@@ -110,7 +110,7 @@
                 "additionalProperties": false
               },
               {
-                "title": "dynamic-error-translator",
+                "title": "dynamicErrorTranslator",
                 "description": "An off-chain-view to call to convert error codes to expanded messages.",
                 "type": "object",
                 "properties": {
@@ -151,18 +151,18 @@
                 "items": {
                   "oneOf": [
                     {
-                      "title": "michelson-storage-view",
+                      "title": "michelsonStorageView",
                       "description": "An off-chain view using Michelson as a scripting language to interpret the storage of a contract.",
                       "type": "object",
                       "properties": {
-                        "michelson-storage-view": {
+                        "michelsonStorageView": {
                           "type": "object",
                           "properties": {
                             "parameter": {
                               "description": "The Michelson type of the potential external parameters required by the code of the view.",
                               "$ref": "#/definitions/micheline.tzip-16.expression"
                             },
-                            "return-type": {
+                            "returnType": {
                               "description": "The type of the result of the view, i.e. the value left on the stack by the code.",
                               "$ref": "#/definitions/micheline.tzip-16.expression"
                             },
@@ -197,29 +197,29 @@
                           },
                           "required": [
                             "code",
-                            "return-type"
+                            "returnType"
                           ],
                           "additionalProperties": false
                         }
                       },
                       "required": [
-                        "michelson-storage-view"
+                        "michelsonStorageView"
                       ],
                       "additionalProperties": false
                     },
                     {
-                      "title": "rest-api-query-view",
+                      "title": "restApiQueryView",
                       "description": "An off-chain view using a REST API described in a separate OpenAPI specification. The following parameters form a pointer to the localtion in the OpenAPI description.",
                       "type": "object",
                       "properties": {
-                        "rest-api-query": {
+                        "restApiQuery": {
                           "type": "object",
                           "properties": {
-                            "specification-uri": {
+                            "specificationUri": {
                               "description": "A URI pointing at the location of the OpenAPI specification.",
                               "type": "string"
                             },
-                            "base-uri": {
+                            "baseUri": {
                               "description": "The URI-prefix to use to query the API.",
                               "type": "string"
                             },
@@ -239,13 +239,13 @@
                           },
                           "required": [
                             "path",
-                            "specification-uri"
+                            "specificationUri"
                           ],
                           "additionalProperties": false
                         }
                       },
                       "required": [
-                        "rest-api-query"
+                        "restApiQuery"
                       ],
                       "additionalProperties": false
                     }
