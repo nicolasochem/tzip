@@ -352,12 +352,12 @@ A single-NFT FA2 token can be augmented with the following JSON:
     { "name": "get_balance",
       "description": "This is the `get_balance` view required by TZIP-012.",
       "implementations": [
-          { "michelson-storage-view": {
+          { "michelsonStorageView": {
               "parameter": {
                   "prim": "pair",
                   "args": [{"prim": "address", "annots": ["%owner"]},
                            {"prim": "nat", "annots": ["token_id"]}]},
-              "return-type": {"prim": "nat"},
+              "returnType": {"prim": "nat"},
               "code": [
                   {"prim": "TODO"}]}}]}]
 }
