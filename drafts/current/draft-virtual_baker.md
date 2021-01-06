@@ -4,12 +4,12 @@ status: draft
 author: Sophia Gold <sophia.gold@tqtezos.com>
 type: protocol
 date: 2020-12-28
-version: 1
+version: 2
 ---
 
 ## Summary
 
-The virtual baker is a contract that holds deposits from other contracts and whose balance is automatically inflated by the protocol at a level roughly comparable with baking rewards.
+The virtual baker is a contract that holds tez from other contracts and whose balance is automatically inflated by the protocol at a level roughly comparable with baking rewards.
 
 ## Abstract
 
@@ -29,7 +29,7 @@ So the virtual baker rewards can be accounted for by indexers, they are included
 
 During voting cycles, quorum is adjusted to account for the virtual baker share: `(1 - virtual_baker_share) * quorum_without_virtual_baker`.
 
-The virtual baker contract stores a `nat` equal to the total amount deposited. One can think about this as the outstanding amount of "ctez", a currency backed by tez deposited in the virtual baker. To calculate the tez/ctez and ctez/tez exchange rates, the virtual baker either divides its storage by its balance or vice-versa.
+The virtual baker contract stores a `nat` equal to the total amount deposited. One can think about this as the outstanding amount of "ctez", a currency backed by tez held in the virtual baker. To calculate the tez/ctez and ctez/tez exchange rates, the virtual baker either divides its storage by its balance or vice-versa.
 
 The virtual baker contract has two entrypoints:
 - `%create` takes type `contract` and returns type `ticket unit`. It generates a ticket with the amount it's called with, subtracting 0.04%, and applying the tez/ctez exchange rate (e.g. `9087` if called with `10000 mutez`, storage of `100000` a current balance of `110000 mutez`), and transfers it to the contract in the parameter.
