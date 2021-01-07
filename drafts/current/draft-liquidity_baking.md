@@ -3,8 +3,8 @@ title: Liquidity baking
 status: Draft
 author: Gabriel Alfour, Sophia Gold, Arthur Breitman, et al.
 type: Protocol
-created: 2020-01-05
-date: 2020-01-05
+created: 2021-01-05
+date: 2021-01-05
 version: 0
 ---
 
