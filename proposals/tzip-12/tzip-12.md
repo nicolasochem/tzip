@@ -355,8 +355,8 @@ A single-NFT FA2 token can be augmented with the following JSON:
           { "michelson-storage-view": {
               "parameter": {
                   "prim": "pair",
-                  "args": [{"prim": "nat", "annots": ["%token_id"]},
-                           {"prim": "address", "annots": ["%owner"]}]},
+                  "args": [{"prim": "address", "annots": ["%owner"]},
+                           {"prim": "nat", "annots": ["token_id"]}]},
               "return-type": {"prim": "nat"},
               "code": [
                   {"prim": "TODO"}]}}]}]
@@ -371,7 +371,7 @@ off-chain-view but can provide 5 optional views: `get_balance`, `total_supply`,
 SHOULD be implemented, at least, as *“Michelson Storage Views”* and have the
 following types (Michelson annotations are optional) and semantics:
 
-- `get_balance` has `(pair (nat %token_id) (address %owner))` as
+- `get_balance` has `(pair (address %owner) (nat %token_id))` as
   parameter-type, and `nat` as return-type; it must return the balance
   corresponding to the owner/token pair.
 - `total_supply` has type `(nat %token_id) → (nat %supply)` and should return
@@ -379,7 +379,7 @@ following types (Michelson annotations are optional) and semantics:
 -  `all_tokens` has no parameter and returns the list of all the token IDs,
    `(list nat)`, known to the contract.
 - `is_operator` has type
-  `(pair (nat %token_id) (pair (address %owner) (address %operator))) → bool`
+  `(pair (address %owner) (pair (address %operator) (nat %token_id))) → bool`
    and should return whether `%operator` is allowed to transfer `%token_id`
    tokens owned by `owner`.
 - `token_metadata` is one of the 2 ways of providing token-specific metadata, it
