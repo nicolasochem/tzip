@@ -65,7 +65,7 @@ These tests can be perfomed as unit tests using a Flextesa environment.
 
 ## Implementations
 
-A full implementation is given in the following merge request: _TBD._
+A full implementation is given in the following merge request: https://gitlab.com/tezos/tezos/-/merge_requests/2460
 
 ## Appendix
 
