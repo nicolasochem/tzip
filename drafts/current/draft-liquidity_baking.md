@@ -29,7 +29,7 @@ This represents a minimal amount of development effort, provides an important pu
 
 ### Contract
 
-A constant product market making (CPMM) Michelson contract is first deployed on the chain. This contracts maintains a balance  in tez of tzBTC of `a` tez and `b` tzBTC, where tzBTC is the FA1.2 token found at address KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn. The smart contract accepts deposits of `da` tez and returns `db` tez where the invariant `(a + da * (1 - f)) * (b - db) = a b` is preserved, and `f` is a fee, set at 0.1%. 
+A constant product market making (CPMM) Michelson contract is first deployed on the chain. This contract maintains a balance of `a` tez and `b` tzBTC, where tzBTC is the FA1.2 token found at address KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn. The smart contract accepts deposits of `da` tez and returns `db` tzBTC (or vice versa) where the invariant `(a + da * (1 - f)) * (b - db) = a b` is preserved, and `f` is a fee, set at 0.1%.
 
 To implement this contract, we use a fork of the open source code base used by the "Dexter" project. The implementation of this contract has been [formally verified](https://blog.nomadic-labs.com/dexter-decentralized-exchange-for-tezos-formal-verification-work-by-nomadic-labs.html) against its functional specification. The contract code is modified in the following way:
 
