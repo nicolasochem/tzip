@@ -1,7 +1,7 @@
 ---
 title: Faster Finality with Emmy<sup>&#9733;</sup>
 status: Draft
-author: Lacramioara Astefanoaei (@astefano, lacramioara.astefanoaei@nomadic-labs.com), Eugen Zalinescu (@eugenz, eugenz.zalinescu@nomadic-labs.com)
+author: Lacramioara Astefanoaei (@astefano, lacramioara.astefanoaei@nomadic-labs.com), Eugen Zalinescu (@eugenz, eugen.zalinescu@nomadic-labs.com)
 type:
 created: 2021-01-14
 date: 2021-01-14
