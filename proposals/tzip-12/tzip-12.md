@@ -310,7 +310,7 @@ A contract can use two methods to provide access to the token-metadata.
    `(big_map nat (pair nat (map string bytes)))`.
 
 - **Custom**: Provide a `token_metadata` off-chain-view which takes as parameter
-   the `nat` token-id and returns the `(pair nat (map string bytes))` value.
+   the `nat` token-id and returns the `(pair (nat %token_id) (map %extras string bytes))` value.
 
 In both cases the “key” is the token-id (of type `nat`) and one MUST store or
 return a value of type `(pair nat (map string bytes))`: the token-id and the
