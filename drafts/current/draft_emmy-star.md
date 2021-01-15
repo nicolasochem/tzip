@@ -4,8 +4,8 @@ status: Draft
 author: Lacramioara Astefanoaei (@astefano, lacramioara.astefanoaei@nomadic-labs.com), Eugen Zalinescu (@eugenz, eugen.zalinescu@nomadic-labs.com)
 type:
 created: 2021-01-14
-date: 2021-01-14
-version: 0
+date: 2021-01-15
+version: 1
 ---
 
 
@@ -119,8 +119,8 @@ This way, security deposits are proportional with the maximum reward. The consta
 Each of the [two mentioned updates](#Abstract) helps decrease the time to finality:
 * Increasing the number of required endorsements makes nodes converge faster on the same chain. In other words, the number of confirmations decreases, as detailed below.
 * While the new block delay formula does not help with decreasing the number of confirmations, it helps decrease the confirmation times simply by decreasing the time between blocks.
-
-We note that simply decreasing the time between blocks in Emmy<sup>+</sup> would not be a very sensible thing to do. This is because, as suggested by [the analysis of Emmy+ in the partial synchrony network model](https://blog.nomadic-labs.com/emmy-in-the-partial-synchrony-model.html), we have that the smaller the time between blocks (that is, the smaller the constant $\db$), the more sensitive is the algorithm to message delays. In Emmy<sup>&#9733;</sup>, time between blocks is decreased only when the network conditions are good (as otherwise not enough endorsements would be gathered in time).
+    
+We note that simply decreasing the time between blocks in Emmy<sup>+</sup> would not be a very sensible thing to do. This is because, as suggested by [the analysis of Emmy<sup>+</sup> in the partial synchrony network model](https://blog.nomadic-labs.com/emmy-in-the-partial-synchrony-model.html), we have that the smaller the time between blocks (that is, the smaller the constant $\db$), the more sensitive is the algorithm to message delays. In Emmy<sup>&#9733;</sup>, time between blocks is decreased only when the network conditions are good (as otherwise not enough endorsements would be gathered in time).
 
 The following plot shows the number of confirmations (in log scale) for different $\te$ values when varying the stake fraction from 0.1 to 0.45 and different numbers of total endorsements. This plot assumes the ["forks started in the past" scenario](https://blog.nomadic-labs.com/analysis-of-emmy.html#forks-started-in-the-past), meaning that we are interested in the finality of a block which already has a number of confirmations on top of it (and therefore, importantly, we know how healthy the chain was in the meanwhile), and we ask ourselves whether this number is sufficient. Here we assume a perfectly healthy chain.
 In the plot, the highest red point corresponds to 18 confirmations.
@@ -162,7 +162,20 @@ To complement the above plot, the following table presents a subset of the data 
 
 The format of endorsements changes to include the endorsement slot. This change enables checking an endorsement in constant time, instead of the current check which is linear in the total number of endorsement slots. However, the new format is a wrapper of the old format, and the slot field is not signed. Concretely, the `tezos-endorser` will produce the endorsement by having the signer stack provide the signature, then wrapping it with its slot, before injecting it in the node. In this way, the signing infrastructure of bakers does not need to change. Instead, this update will only introduce a breaking but light API change, mostly impacting block explorers and monitoring tools.
 
-Another consequence is that cycles and voting periods will be almost two times shorter than they currently are.
+To keep the duration of cycles and voting period the same, their length in number of blocks is doubled. The number of seed nonce commitments per cycle and of roll snapshots per cycle are kept the same. Concretely, the following constants and their values in Emmy<sup>+</sup>
+```
+      blocks_per_cycle = 4096
+      blocks_per_voting_period = 20480
+      blocks_per_commitment = 32
+      blocks_per_roll_snapshot = 256
+```
+are changed to the following values in Emmy<sup>&#9733;</sup>
+```
+      blocks_per_cycle = 8192
+      blocks_per_voting_period = 40960
+      blocks_per_commitment = 64
+      blocks_per_roll_snapshot = 512
+```
 
 ## Security Considerations
 
