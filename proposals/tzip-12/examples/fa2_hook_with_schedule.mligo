@@ -54,7 +54,7 @@ let configure_schedule (cfg, policy : schedule_config * schedule_policy option)
     | Some p -> Some p.schedule
     | None -> (None : schedule option)
     in
-    let op = Operation.transaction s 0mutez v in
+    let op = Tezos.transaction s 0mutez v in
     [op], policy
 
 let custom_policy_to_descriptor (p : permission_policy) : permissions_descriptor =
@@ -112,7 +112,7 @@ type  entry_points =
     let u2 = validate_schedule(s.policy.schedule_policy) in
     let hook_calls = get_owner_transfer_hooks(p, s.policy.descriptor) in
     let ops = List.map (fun (call : hook_entry_point) ->
-        Operation.transaction p 0mutez call
+        Tezos.transaction p 0mutez call
       ) hook_calls
     in
     ops, s

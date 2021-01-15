@@ -25,7 +25,7 @@ let custom_validate_receivers (p, wl : transfer_descriptor_param * address set)
       match to_receiver_hook r with
       | Hook_entry_point h ->
         (* receiver contract implements fa2_token_receiver interface: invoke it*)
-        let op = Operation.transaction p 0mutez h in
+        let op = Tezos.transaction p 0mutez h in
         op :: ops
       | Hook_undefined err ->
         (* receiver contract does not implement fa2_token_receiver interface: check whitelist*)
