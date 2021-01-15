@@ -30,7 +30,7 @@ Emmy<sup>&#9733;</sup> updates Emmy<sup>+</sup> by:
 
 both of which bring faster times to finality.
 
-Concretely, in Emmy<sup>&#9733;</sup> a block can be produced with a delay of 30 seconds with respect to the previous block if it has priority 0 and more than half of the total endorsing power[^endos] per block. The number of endorsement slots per block is increased from 32 to say[^testnet] 256. <!--(This means that for a block to be produced after 30 seconds, it needs to have endorsements with at least 128 endorsing power.)--> 
+Concretely, in Emmy<sup>&#9733;</sup> a block can be produced with a delay of 30 seconds with respect to the previous block if it has priority 0 and more than half of the total endorsing power[^endos] per block. The number of endorsement slots per block is increased from 32 to say[^testnet] 256. <!--(This means that for a block to be produced after 30 seconds, it needs to have endorsements with at least 128 endorsing power.)-->
 
 [^endos]: The *endorsing power* of a set of endorsements is the number of endorsement slots these endorsements represent.
 
@@ -38,9 +38,9 @@ Concretely, in Emmy<sup>&#9733;</sup> a block can be produced with a delay of 30
 
 With these changes, on a healthy chain and for a Byzantine attacker with 33% stake for instance, the number of confirmations decreases to 2 blocks, therefore 1 minute, a 6 fold improvement.
 
-[^fin]: Here, _reasonably sure_ means "with probability smaller than some reasonable threshold", which we quantify as $\small 10^{-8}$, which puts our expectation of being wrong about a block being final at [roughly once every two centuries](https://blog.nomadic-labs.com/analysis-of-emmy.html#preliminaries).
+[^fin]: Here, _reasonably sure_ means "with probability smaller than some reasonable threshold", which we quantify as $5\cdot 10^{-9}$, which puts our expectation of being wrong about a block being final at roughly once every two centuries.
 
-[^healthy]: We say a chain is *healthy* over a period of time if in this period blocks have priority 0 and (almost) all its endorsement slots are filled. A concrete healthiness measure is the delay of the chain with respect to the ideal chain where each block has a delay of one minute with respect to the previous block. 
+[^healthy]: We say a chain is *healthy* over a period of time if in this period blocks have priority 0 and (almost) all its endorsement slots are filled. A concrete healthiness measure is the delay of the chain with respect to the ideal chain where each block has a delay of one minute with respect to the previous block.
 
 ## Motivation
 
@@ -95,15 +95,15 @@ $$
 
 Since with Emmy<sup>&#9733;</sup> there will normally be two times as many blocks per year, to preserve the inflation rate from Emmy<sup>+</sup>, $\trz$ and $\tr$ are updated to $40$, resp. $3$.
 
-Therefore, rewards per endorsement slot are 16 times smaller in Emmy<sup>&#9733;</sup> versus Emmy<sup>+</sup>: 
+Therefore, rewards per endorsement slot are 16 times smaller in Emmy<sup>&#9733;</sup> versus Emmy<sup>+</sup>:
 
-- 2 times smaller because blocks would be produced two times faster, and 
+- 2 times smaller because blocks would be produced two times faster, and
 - 8 times smaller because there are 8 times more endorsement slots per level.
 
-Concretely, 
-* the constant `baking_reward_per_endorsement` is changed from `[ "1250000", "187500" ]` to `[ "78125", "11719" ]`; 
-* the constant `endorsement_reward` is changed from `[ "1250000", "833333" ]`  to `[ "78125", "52083" ]` (Recall that these are values in mutez.) 
- 
+Concretely,
+* the constant `baking_reward_per_endorsement` is changed from `[ "1250000", "187500" ]` to `[ "78125", "11719" ]`;
+* the constant `endorsement_reward` is changed from `[ "1250000", "833333" ]`  to `[ "78125", "52083" ]` (Recall that these are values in mutez.)
+
 
 ### Security deposits
 
@@ -112,17 +112,17 @@ The values of the security deposits are updated with respect to the new value of
 *  $32 \cdot \frac{\trz}{2} = 32 \cdot \frac{40}{2} = 640$ for baking
 *  $32 \cdot \frac{\trz}{2 \cdot \te} = 32 \cdot \frac{40}{2\cdot 256} = 2.5$ for endorsing.
 
-This way, security deposits are proportional with the maximum reward. The constant 32 is the one used in Emmy. 
+This way, security deposits are proportional with the maximum reward. The constant 32 is the one used in Emmy.
 
 ## Rationale
 
 Each of the [two mentioned updates](#Abstract) helps decrease the time to finality:
 * Increasing the number of required endorsements makes nodes converge faster on the same chain. In other words, the number of confirmations decreases, as detailed below.
 * While the new block delay formula does not help with decreasing the number of confirmations, it helps decrease the confirmation times simply by decreasing the time between blocks.
-    
-We note that simply decreasing the time between blocks in Emmy+ would not be a very sensible thing to do. This is because, as suggested by [the analysis of Emmy+ in the partial synchrony network model](https://blog.nomadic-labs.com/emmy-in-the-partial-synchrony-model.html), we have that the smaller the time between blocks (that is, the smaller the constant $\db$), the more sensitive is the algorithm to message delays. In Emmy<sup>&#9733;</sup>, time between blocks is decreased only when the network conditions are good (as otherwise not enough endorsements would be gathered in time). 
 
-The following plot shows the number of confirmations (in log scale) for different $\te$ when varying the stake fraction from 0.1 to 0.45 and different numbers of total endorsements. This plot assumes the ["forks started in the past" scenario](https://blog.nomadic-labs.com/analysis-of-emmy.html#forks-started-in-the-past), meaning that we are interested in the finality of a block which already has a number of confirmations on top of it (and therefore, importantly, we know how healthy the chain was in the meanwhile), and we ask ourselves whether this number is sufficient. Here we assume a perfectly healthy chain. 
+We note that simply decreasing the time between blocks in Emmy<sup>+</sup> would not be a very sensible thing to do. This is because, as suggested by [the analysis of Emmy+ in the partial synchrony network model](https://blog.nomadic-labs.com/emmy-in-the-partial-synchrony-model.html), we have that the smaller the time between blocks (that is, the smaller the constant $\db$), the more sensitive is the algorithm to message delays. In Emmy<sup>&#9733;</sup>, time between blocks is decreased only when the network conditions are good (as otherwise not enough endorsements would be gathered in time).
+
+The following plot shows the number of confirmations (in log scale) for different $\te$ values when varying the stake fraction from 0.1 to 0.45 and different numbers of total endorsements. This plot assumes the ["forks started in the past" scenario](https://blog.nomadic-labs.com/analysis-of-emmy.html#forks-started-in-the-past), meaning that we are interested in the finality of a block which already has a number of confirmations on top of it (and therefore, importantly, we know how healthy the chain was in the meanwhile), and we ask ourselves whether this number is sufficient. Here we assume a perfectly healthy chain.
 In the plot, the highest red point corresponds to 18 confirmations.
 
 ![](images/emmystar_past.png)
@@ -131,16 +131,16 @@ To complement the above plot, the following table presents a subset of the data 
 
 | $f$ \ $\te$ |   32 |   64 |   96 |   128 |   196 |   256 |
 |--------:|-----:|-----:|-----:|------:|------:|------:|
-|    **0.1**  |    2 |    2 |    2 |     2 |     2 |     2 |
-|    **0.15** |    3 |    2 |    2 |     2 |     2 |     2 |
-|    **0.2**  |    4 |    2 |    2 |     2 |     2 |     2 |
-|    **0.25** |    5 |    3 |    2 |     2 |     2 |     2 |
-|    **0.3**  |    6 |    4 |    3 |     3 |     2 |     2 |
-|    **0.33** |    8 |    5 |    4 |     3 |     3 |     2 |
-|    **0.35** |   10 |    5 |    4 |     4 |     3 |     3 |
-|    **0.4**  |   18 |   10 |    7 |     6 |     4 |     4 |
+| **0.1** |    2 |    2 |    2 |     2 |     2 |     2 |
+| **0.15**|    3 |    2 |    2 |     2 |     2 |     2 |
+| **0.2** |    4 |    2 |    2 |     2 |     2 |     2 |
+| **0.25**|    5 |    3 |    3 |     2 |     2 |     2 |
+| **0.3** |    7 |    4 |    3 |     3 |     2 |     2 |
+| **0.33**|    8 |    5 |    4 |     3 |     3 |     2 |
+| **0.35**|   10 |    6 |    4 |     4 |     3 |     3 |
+| **0.4** |   18 |   10 |    7 |     6 |     4 |     4 |
 
-The following plot shows the *expected* number of confirmations (in log scale) for different $\te$ when varying the stake fraction from 0.1 to 0.45. This plot assumes the ["forks starting now" scenario](https://blog.nomadic-labs.com/analysis-of-emmy.html#forks-starting-now), meaning that we are interested in the finality of the last injected block. (The number are expectedly higher because we have no information about how healthy the chain will be.)
+The following plot shows the *expected* number of confirmations (in log scale) for different $\te$ values when varying the stake fraction from 0.1 to 0.45. This plot assumes the ["forks starting now" scenario](https://blog.nomadic-labs.com/analysis-of-emmy.html#forks-starting-now), meaning that we are interested in the finality of the last injected block. (The number are expectedly higher because we have no information about how healthy the chain will be.)
 In the plot, the highest red point corresponds to 205 expected confirmations.
 
 ![](images/emmystar_now.png)
@@ -148,15 +148,15 @@ In the plot, the highest red point corresponds to 205 expected confirmations.
 To complement the above plot, the following table presents a subset of the data in text form. As above, $f$ stands for the attacker's stake fraction and a value in the table gives the expected number of confirmation for a given $f$ and a given $\te$.
 
 | $f$ \ $\te$ |   32 |   64 |   96 |   128 |   196 |   256 |
-|--------:|-----:|-----:|-----:|------:|------:|------:|
-| **0.1** |    4 |    3 |    2 |     2 |     2 |     2 |
-| **0.15**|    5 |    3 |    3 |     2 |     2 |     2 |
-| **0.2** |    7 |    4 |    3 |     3 |     2 |     2 |
-| **0.25**|   10 |    5 |    4 |     3 |     3 |     2 |
-| **0.3** |   15 |    8 |    6 |     5 |     4 |     3 |
-| **0.33**|   21 |   11 |    8 |     6 |     5 |     4 |
-| **0.35**|   27 |   14 |   10 |     8 |     6 |     5 |
-| **0.4** |   64 |   33 |   21 |    17 |    12 |     9 |
+|---------:|-----:|-----:|-----:|------:|------:|------:|
+| **0.1**  |    4 |    3 |    2 |     2 |     2 |     2 |
+| **0.15** |    5 |    3 |    3 |     2 |     2 |     2 |
+| **0.2**  |    7 |    4 |    3 |     3 |     2 |     2 |
+| **0.25** |   10 |    6 |    4 |     3 |     3 |     2 |
+| **0.3**  |   16 |    9 |    6 |     5 |     4 |     3 |
+| **0.33** |   22 |   12 |    8 |     6 |     5 |     4 |
+| **0.35** |   28 |   15 |   10 |     8 |     6 |     5 |
+| **0.4**  |   67 |   34 |   22 |    17 |    12 |    10 |
 
 ## Backwards Compatibility
 
@@ -170,7 +170,7 @@ As it was the case for Emmy<sup>+</sup>, we do not have a full security proof fo
 
 ### Selfish baking
 
-We recall that the rewards in Carthage were defined in such a way that a non-cooperative baker obtains no "benefit" from [deflationary baking](https://blog.nomadic-labs.com/a-new-reward-formula-for-carthage.html). This was mainly obtained by having the reward for including an endorsement set to the same amount as the reward to have one endorsement included. As this property is still satisfied in Emmy<sup>&#9733;</sup>, we only consider here [selfish baking](https://blog.nomadic-labs.com/analysis-of-emmy.html). That is, an attacker tries to bake its own secret chain by withholding its own endorsements. 
+We recall that the rewards in Carthage were defined in such a way that a non-cooperative baker obtains no "benefit" from [deflationary baking](https://blog.nomadic-labs.com/a-new-reward-formula-for-carthage.html). This was mainly obtained by having the reward for including an endorsement set to the same amount as the reward to have one endorsement included. As this property is still satisfied in Emmy<sup>&#9733;</sup>, we only consider here [selfish baking](https://blog.nomadic-labs.com/analysis-of-emmy.html). That is, an attacker tries to bake its own secret chain by withholding its own endorsements.
 
 First, stealing just one block is not profitable, just from the definition of the delay function.
 
