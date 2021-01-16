@@ -186,7 +186,7 @@ We recall that the rewards in Carthage were defined in such a way that a non-coo
 
 First, stealing just one block is not profitable, just from the definition of the delay function.
 
-Second, by stealing two blocks, the expected gains are negligible. For instance for an attacker with 33% of stake the expected gain is `1.42233 * 1e-23` tez. We note that the gains decrease with a higher `te` value. However, even for `te = 32` the expected gains are tiny, namely `1.38303 * 1e-12`.
+Second, by stealing two blocks, the expected gains are negligible. For instance for an attacker with 33% of stake the expected gain is `1.42233 * 1e-23` tez. We note that the gains decrease with a higher `te` value. However, even for `te = 32` the expected gains are tiny, namely `1.38303 * 1e-12` tez.
 
 Finally, given that the probability of stealing more than 2 blocks is very low, the expected gains are even smaller in such cases.
 
