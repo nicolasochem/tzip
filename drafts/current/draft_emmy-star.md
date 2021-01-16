@@ -63,11 +63,12 @@ Since [Babylon](https://tezos.gitlab.io/protocols/005_babylon.html#emmy), the va
 
 Emmy<sup>&#9733;</sup> builds on top of the above definition while taking advantage of the observation that most blocks are baked at priority 0 and with almost all endorsements:
 ```
-  emmy*_delay(p, e) = md                if p = 0 and e >= te/2
-                      emmy+_delay(p,e)  otherwise
+  emmy*_delay(p, e) = 
+    md                   if p = 0 and e >= te/2
+    emmy+_delay(p, e)    otherwise
 ```
 
-`md` is a new constant, called `minimal_block_delay`, whose value is proposed to be 30 seconds; while `te` refers to the existing constant `endorsers_per_block` whose value is changed from 32 to 256.
+where `md` is a new constant, called `minimal_block_delay`, whose value is proposed to be 30 seconds; while `te` refers to the existing constant `endorsers_per_block` whose value is changed from 32 to 256.
 
 ### Rewards
 
@@ -75,16 +76,16 @@ To keep roughly the same inflation rate as in Emmy<sup>+</sup>, in Emmy<sup>&#97
 
 ```
   baking_reward(p, e) = 
-    e/te * level_rewards_prio_zero / 2    if p = 0
-    e/te * level_rewards_prio_nonzero     otherwise
+    (level_rewards_prio_zero / 2) * e / te    if p = 0
+    level_rewards_prio_nonzero * e / te       otherwise
 ```
 
-Above, `level_rewards_prio_zero`, resp. `level_rewards_prio_nonzero` stands for rewards per level at priority 0, resp. rewards per level at a non-zero priority. Their values in Emmy<sup>+</sup> are: `level_rewards_prio_zero = 80` and `level_rewards_prio_nonzero=6`.
+Above, `level_rewards_prio_zero`, resp. `level_rewards_prio_nonzero` stands for rewards per level at priority 0, resp. rewards per level at a non-zero priority. Their values in Emmy<sup>+</sup> are: `level_rewards_prio_zero = 80` and `level_rewards_prio_nonzero = 6`.
 
 ```
   endorsing_reward(p, e) = 
     baking_reward(0, e)          if p = 0
-    2/3 * baking_reward(0, e)    otherwise
+    baking_reward(0, e) * 2/3    otherwise
 ```
 
 Since with Emmy<sup>&#9733;</sup> there will normally be two times as many blocks per year, to preserve the inflation rate from Emmy<sup>+</sup>, in Emmy<sup>&#9733;</sup> `level_rewards_prio_zero = 40` and `level_rewards_prio_nonzero = 3`.
@@ -106,8 +107,8 @@ Concretely,
 
 The values of the security deposits are updated with respect to the new value of `level_rewards_prio_zero`:
 
-*  `32 * level_rewards_prio_zero / 2 = 32 * 40/2 = 640` tez for baking,
-*  `32 * level_rewards_prio_zero / (2 * te) = 32 * 40 / (2 * 256) = 2.5` tez for endorsing.
+*  `32 * level_rewards_prio_zero / 2 = 32 * 40 / 2 = 640` tez for baking,
+*  `32 * level_rewards_prio_zero / 2 / te = 32 * 40 / (2 * 256) = 2.5` tez for endorsing.
 
 This way, security deposits are proportional with the maximum reward. The constant 32 is the one used in Emmy.
 
@@ -201,3 +202,5 @@ Finally, given that the probability of stealing more than 2 blocks is very low, 
 ## Copyright
 
 Copyright and related rights waived via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
+
+## Footnotes
