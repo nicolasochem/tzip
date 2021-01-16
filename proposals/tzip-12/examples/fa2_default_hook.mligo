@@ -23,7 +23,7 @@ type  entry_points =
     let u = validate_hook_call (Tezos.sender, s.fa2_registry) in
     let hook_calls = get_owner_transfer_hooks (p, s.descriptor) in
     let ops = List.map (fun (call : hook_entry_point) ->
-        Operation.transaction p 0mutez call
+        Tezos.transaction p 0mutez call
       ) hook_calls
     in
     ops, s
