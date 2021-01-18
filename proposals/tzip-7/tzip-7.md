@@ -53,7 +53,7 @@ the user transfers their own money and this does not require approval.
 * Otherwise, the transaction sender must be previously authorized to transfer at least the requested number of tokens from the `"from"` account using the `approve` entrypoint.
 In this case current number of tokens that sender is allowed to withdraw from the `"from"` address is decreased by the number of transferred tokens.
 
-In addition to `NotEnoughBalance` error specified by FA1, this enrypoint can fail with:
+In addition to `NotEnoughBalance` error specified by FA1, this entrypoint can fail with:
 * `NotEnoughAllowance` - a given account has no permission to withdraw a given
 amount of funds. The error will contain a `(nat :required, nat :present)` pair,
 where `required` is the requested amount of tokens, `present` is the current allowance.
