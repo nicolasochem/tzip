@@ -32,7 +32,7 @@ other in-game items.
 
 ## Specification & Schemas
 
-A JSON-Schema specification is provided as an annex to this document.
+A [JSON-Schema specification][6] is provided as an annex to this document.
 
 The schema may be applied to the contract level metadata, to the token level
 metadata in the case of FA2 tokens, or any combination thereof.
@@ -297,3 +297,4 @@ Copyright and related rights waived via
 [3]: https://creativecommons.org/publicdomain/zero/1.0/
 [4]: https://tools.ietf.org/html/rfc1766
 [5]: https://www.iana.org/assignments/media-types/media-types.xhtml
+[6]: metadata-schema.json
