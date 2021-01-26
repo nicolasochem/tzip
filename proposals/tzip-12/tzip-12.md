@@ -307,10 +307,10 @@ Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
 A contract can use two methods to provide access to the token-metadata. 
 
 - **Basic**: Store the values in a big-map annotated `%token_metadata` of type
-   `(big_map nat (pair nat (map string bytes)))`.
+   `(big_map nat (pair (nat %token_id) (map %token_info string bytes)))`.
 
 - **Custom**: Provide a `token_metadata` off-chain-view which takes as parameter
-   the `nat` token-id and returns the `(pair (nat %token_id) (map %extras string bytes))` value.
+   the `nat` token-id and returns the `(pair (nat %token_id) (map %token_info string bytes))` value.
 
 In both cases the “key” is the token-id (of type `nat`) and one MUST store or
 return a value of type `(pair nat (map string bytes))`: the token-id and the
