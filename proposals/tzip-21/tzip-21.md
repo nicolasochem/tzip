@@ -18,7 +18,7 @@ Many of the terms in this standard are derrived from [The Dublin Core, RCF 2413]
 
 This rich metdata standard aims to:
 
-1. Simplify the creation of asset rich metadata
+1. Simplify the creation of rich metadata for assets
 2. Provide a commonly understood interface
 3. Confirm to existing and emerging standards
 4. Allow global and international scope
