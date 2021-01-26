@@ -1,6 +1,6 @@
 ---
 tzip: 021
-title: Contract Rich Metadata
+title: Rich Contract Metadata
 author: Josh Dechant (@codecrafting)
 status: Work In Progress
 type: Interface
