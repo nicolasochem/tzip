@@ -42,7 +42,7 @@ Open a [merge request](https://gitlab.com/tzip/tzip/-/merge_requests) using the 
 | [TZIP-018] | Upgradeable Contracts                                |  2020-08-17   | Work In Progress |
 | [TZIP-019] | Tezos Decentralized Identifier (DID) Manager         |  2020-09-16   | Work In Progress |
 | [TZIP-020] | Off-chain Events                                     |  2020-10-07   | Work In Progress |
-| [TZIP-021] | Contract Multimedia Metadata                       |  2020-11-12   | Work In Progress |
+| [TZIP-021] | Contract Rich Metadata                       |  2020-11-12   | Work In Progress |
 
 [TZIP-001]: proposals/tzip-1/tzip-1.md
 [TZIP-002]: proposals/tzip-2/tzip-2.md
