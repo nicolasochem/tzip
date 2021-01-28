@@ -33,7 +33,7 @@ Open a [merge request](https://gitlab.com/tzip/tzip/-/merge_requests) using the 
 | [TZIP-009]  | Info Field for Payment Requests                      |  2019-06-25   | Work In Progress |
 | [TZIP-010] | `LA1` - Wallet Interaction Standard                  |  2019-09-17   | Draft            |
 | [TZIP-011] | Contract Specification Schema                        |  2020-01-10   | Work In Progress |
-| [TZIP-012] | `FA2` - Multi-Asset Interface                        |  2020-01-24   | Draft            |
+| [TZIP-012] | `FA2` - Multi-Asset Interface                        |  2020-01-24   | Final            |
 | [TZIP-013] | `FA1.3` - Fungible Asset Standard                    |  2020-01-02   | Work In Progress |
 | [TZIP-014] | GraphQL interface to Tezos node data                 |  2020-04-01   | Draft            |
 | [TZIP-015] | Token Transferlist Interface                         |  2020-05-14   | Draft            |
