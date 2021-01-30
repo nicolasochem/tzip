@@ -285,7 +285,7 @@ TZIP-012:
 
 - `""` (empty-string): should correspond to a TZIP-016 URI which points to a JSON
   representation of the token metadata.
-- `"name"`: should be a UTf-8 string giving a “display name” to the token.
+- `"name"`: should be a UTF-8 string giving a “display name” to the token.
 - `"symbol"`: should be a UTF-8 string for the short identifier of the token
   (e.g. XTZ, EUR, …).
 - `"decimals"`: should be an integer (converted to a UTF-8 string in decimal)
