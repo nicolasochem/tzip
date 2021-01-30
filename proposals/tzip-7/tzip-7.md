@@ -5,6 +5,7 @@ status: Final
 type: Financial Application
 author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka), Keefer Taylor <keefer@hover.engineering>
 created: 2019-06-20
+updated: 2021-01-29
 ---
 
 ## Summary
