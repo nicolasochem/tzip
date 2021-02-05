@@ -78,7 +78,7 @@ In addition to the Base Token Standard, the following fields are reccomended for
 
 #### Example:
 
-- Example FA token (TZ21): [JSON](examples/example-010-fungible-tzbtc.json)
+- Example FA token (TZ21): [JSON](examples/example-010-fungible-tz21.json)
 
 ### Semi-fungible and NFT Token Recommendations
 
