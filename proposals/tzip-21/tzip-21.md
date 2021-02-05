@@ -9,28 +9,103 @@ created: 2020-11-12
 
 ## Abstract
 
-This proposal is an extension of [TZIP-016][1] and describes a rich metadata 
-standard for asset(s) linked with contracts.
+This proposal is an extension of [TZIP-016][1] and describes a metadata schema
+and standards for contract tokens.
+
+The document is boken into two main sections: 1) The metadata schema, and 2)
+standards and recommendations for how to apply the schema to different token types.
 
 Many of the terms in this standard are derrived from [The Dublin Core, RCF 2413][2].
 
+## TODO
+
+- Semi-fungible and NFT Token examples
+- More specialized examples (video, 3d, etc)
+- Examples in an FA2 on delphinet (both metadata on chain and in IPFS)
+
 ## Motivation & Goals
 
-This rich metdata standard aims to:
+This metdata standard aims to:
 
-1. Simplify the creation of rich metadata for assets
+1. Simplify the creation of rich metadata for tokens and assets
 2. Provide a commonly understood interface
 3. Confirm to existing and emerging standards
 4. Allow global and international scope
 5. Be extensible
 6. Provide interoperability among ecosystem members (contracts, indexers, wallets, libraries, etc)
 
-This standard also aims to rich enough to describe a wide variety of asset types,
-from real-life assets such as paintings, books, sculptures, and other works of art
-to digital art, 3D objects, audio tracks and record albums, to digital collectibles or
-other in-game items.
+This standard also aims to rich enough to describe a wide variety of asset and
+token types, from fungible tokens to semi-fungible tokens to nonfungibles.
 
-## Specification & Schemas
+## Table of Contents
+
+1. [Standards and Recommendations](#standards-and-recommendations)
+    1. Base Token Standard
+    3. Fungible Token Recommendations
+    4. Semi-fungible and NFT Token Recommendations
+        1. Multimedia NFT Token Recommendations
+2. Schema Defintion
+
+## Standards and Recommendations
+
+_All fields are defined and described in the [Schema Defintion][#schema-defintion] section of the document._
+
+It is strongly advised -- but not required -- that all tokens follow the following
+standards and reccomendations.
+
+### Base Token Standard
+
+The base token standard extends the metadata standard pre-defined in [TZIP-012][7] which
+defines the following fields:
+
+* name
+* symbol
+* decimals
+
+`decimals` is the only required field. However, the TZIP-021 Base Token Standard
+further emphasizes that either `name` or `symbol` should be present.
+
+#### Example:
+
+- Base example: [JSON](examples/example-000-base.json)
+
+### Fungible Token Recommendations
+
+In addition to the Base Token Standard, the following fields are reccomended for all fungible tokens:
+
+* symbolPreference
+* thumbnailUri
+
+#### Example:
+
+- Example FA token (TZ21): [JSON](examples/example-010-fungible-tzbtc.json)
+
+### Semi-fungible and NFT Token Recommendations
+
+In addition to the Base Token Standard, the following fields are reccomended for all
+nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
+
+* artifactUri
+* displayUri
+* thumbnailUri
+* description
+* creator
+* date
+* booleanAmount
+
+### Multimedia NFT Token Recommendations
+
+In addition to the Semi-fungible and NFT Token Recommendations, the following fields
+are reccomended for all Multimedia NFTs:
+
+* formats
+* tags
+
+#### Example:
+
+- CryptoTaco Digital Collectible: [JSON](examples/example-020-digital-collectible.json)
+
+## Schema Defintion
 
 A [JSON-Schema specification][6] is provided as an annex to this document.
 
@@ -45,10 +120,6 @@ The schema defines the following additional types:
 
 Properties of the `asset` object are designed to live at the root level of the
 contract metadata or root level of the token metadata.
-
-#### `title` (string)
-
-The name given to the asset.
 
 #### `description` (string)
 
@@ -74,13 +145,17 @@ A date associated with the creation or availability of the asset.
 
 A broad definition of the type of content of the asset.
 
-#### `tags` (string)
+#### `tags` (array)
 
-A comma-separated list of tags that describe the subject or content of the asset.
+A list of tags that describe the subject or content of the asset.
 
-#### `genres` (string)
+The field is an array with all elements of the type `string`. Each of the elements in the array must be unique.
 
-A comma-separated list of genres that describe the subject or content of the asset.
+#### `genres` (array)
+
+A list of genres that describe the subject or content of the asset.
+
+The field is an array with all elements of the type `string`. Each of the elements in the array must be unique.
 
 #### `language` (string) *[format: [RFC 1776][4]]*
 
@@ -98,17 +173,37 @@ A statement about the asset rights.
 
 Links to a statement of rights.
 
-#### `assetUri` (string) *[format: uri-reference]*
+#### `artifactUri` (string) *[format: uri-reference]*
 
 A URI to the asset.
 
-#### `imageUri` (string) *[format: uri-reference]*
+#### `displayUri` (string) *[format: uri-reference]*
 
 A URI to an image of the asset. Used for display purposes.
+
+#### `thumbnailUri` (string) *[format: uri-reference]*
+
+A URI to an image of the asset for wallets and client applications to have a scaled
+down image to present to end-users. Reccomened maximum size of 350x350px.
 
 #### `externalUri` (string) *[format: uri-reference]*
 
 A URI with additional information about the subject or content of the asset.
+
+#### `nonTransferable` (boolean) *[default: false]*
+
+All tokens will be transferable by default to allow end-users to send them to other end-users.
+However, this field exists to serve in special cases where owners will not be able to transfer the token.
+
+#### `booleanAmount` (boolean) *[default: false]*
+
+Describes whether an account can have an amount of exactly 0 or 1. (The purpose
+of this field is for wallets to determine whether or not to display balance information
+and an amount field when transferring.)
+
+#### `symbolPreference` (boolean) *[default: false]*
+
+Allows wallets to decide whether or not a symbol should be displayed in place of a name.
 
 #### `formats` (array)
 
@@ -298,3 +393,4 @@ Copyright and related rights waived via
 [4]: https://tools.ietf.org/html/rfc1766
 [5]: https://www.iana.org/assignments/media-types/media-types.xhtml
 [6]: metadata-schema.json
+[7]: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#token-metadata-values
