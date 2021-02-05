@@ -40,15 +40,15 @@ token types, from fungible tokens to semi-fungible tokens to nonfungibles.
 ## Table of Contents
 
 1. [Standards and Recommendations](#standards-and-recommendations)
-    1. Base Token Standard
-    3. Fungible Token Recommendations
-    4. Semi-fungible and NFT Token Recommendations
-        1. Multimedia NFT Token Recommendations
-2. Schema Defintion
+    1. [Base Token Standard](#base-token-standard)
+    3. [Fungible Token Recommendations](#fungible-token-recommendations)
+    4. [Semi-fungible and NFT Token Recommendations](#semi-fungible-and-nft-token-recommendations)
+        1. [Multimedia NFT Token Recommendations](#multimedia-nft-token-recommendations)
+2. [Schema Defintion](#schema-defintion)
 
 ## Standards and Recommendations
 
-_All fields are defined and described in the [Schema Defintion][#schema-defintion] section of the document._
+_All fields are defined and described in the [Schema Defintion](#schema-defintion) section of the document._
 
 It is strongly advised -- but not required -- that all tokens follow the following
 standards and reccomendations.
@@ -73,8 +73,8 @@ further emphasizes that either `name` or `symbol` should be present.
 
 In addition to the Base Token Standard, the following fields are reccomended for all fungible tokens:
 
-* symbolPreference
-* thumbnailUri
+* [symbolPreference](#symbolpreference-boolean-default-false)
+* [thumbnailUri](#thumbnailuri-string-format-uri-reference)
 
 #### Example:
 
@@ -85,21 +85,21 @@ In addition to the Base Token Standard, the following fields are reccomended for
 In addition to the Base Token Standard, the following fields are reccomended for all
 nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
 
-* artifactUri
-* displayUri
-* thumbnailUri
-* description
-* creator
-* date
-* booleanAmount
+* [artifactUri](#artifacturi-string-format-uri-reference)
+* [displayUri](#displayuri-string-format-uri-reference)
+* [thumbnailUri](#thumbnailuri-string-format-uri-reference)
+* [description](#description-string)
+* [creator](#creator-string)
+* [date](#type-string)
+* [booleanAmount](#booleanamount-boolean-default-false)
 
 ### Multimedia NFT Token Recommendations
 
 In addition to the Semi-fungible and NFT Token Recommendations, the following fields
 are reccomended for all Multimedia NFTs:
 
-* formats
-* tags
+* [formats](#formats-array)
+* [tags](#tags-array)
 
 #### Example:
 
