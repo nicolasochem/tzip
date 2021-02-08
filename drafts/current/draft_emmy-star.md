@@ -4,8 +4,8 @@ status: Draft
 author: Lacramioara Astefanoaei (@astefano, lacramioara.astefanoaei@nomadic-labs.com), Eugen Zalinescu (@eugenz, eugen.zalinescu@nomadic-labs.com)
 type:
 created: 2021-01-14
-date: 2021-01-15
-version: 1
+date: 2021-02-08
+version: 2
 ---
 
 # Faster Finality with Emmy<sup>&#9733;</sup>
@@ -175,6 +175,8 @@ are changed to the following values in Emmy<sup>&#9733;</sup>:
       blocks_per_commitment = 64
       blocks_per_roll_snapshot = 512
 ```
+
+Also, to be able to reduce block propagation times, which depend on the block validation times, the value of the constant `hard_gas_limit_per_block` is halved (from `10,400,000` to `5,200,000` gas units).
 
 ## Security Considerations
 
