@@ -31,7 +31,7 @@ Concretely, in Emmy<sup>&#9733;</sup> a block can be produced with a delay of 30
 
 [^endos]: The *endorsing power* of a set of endorsements is the number of endorsement slots these endorsements represent.
 
-[^testnet]: A testnet is in preparation to check that the new value of the `endorsers_per_block` constant, 256, does not have any negative impact.
+[^testnet]: A testnet is in preparation to check that the new value of the `endorsers_per_block` parameter, 256, does not have any negative impact.
 
 With these changes, on a healthy chain and for a Byzantine attacker with 33% stake for instance, the number of confirmations decreases to 2 blocks, therefore 1 minute, a 6 fold improvement.
 
@@ -68,7 +68,7 @@ Emmy<sup>&#9733;</sup> builds on top of the above definition while taking advant
     emmy+_delay(p, e)    otherwise
 ```
 
-where `md` is a new constant, called `minimal_block_delay`, whose value is proposed to be 30 seconds; while `te` refers to the existing constant `endorsers_per_block` whose value is changed from 32 to 256.
+where `md` is a new parameter, called `minimal_block_delay`, whose value is proposed to be 30 seconds; while `te` refers to the existing parameter `endorsers_per_block` whose value is changed from 32 to 256.
 
 ### Rewards
 
@@ -97,8 +97,8 @@ Therefore, the rewards per endorsement slot are 16 times smaller in Emmy<sup>&#9
 
 Concretely,
 
-* the constant `baking_reward_per_endorsement` is changed from `["1250000", "187500"]` to `["78125", "11719"]`;
-* the constant `endorsement_reward` is changed from `["1250000", "833333"]`  to `["78125", "52083"]`.
+* the parameter `baking_reward_per_endorsement` is changed from `["1250000", "187500"]` to `["78125", "11719"]`;
+* the parameter `endorsement_reward` is changed from `["1250000", "833333"]`  to `["78125", "52083"]`.
 
 (Recall that these are values in mutez.)
 
@@ -110,7 +110,7 @@ The values of the security deposits are updated with respect to the new value of
 *  `32 * level_rewards_prio_zero / 2 = 32 * 40 / 2 = 640` tez for baking,
 *  `32 * level_rewards_prio_zero / 2 / te = 32 * 40 / (2 * 256) = 2.5` tez for endorsing.
 
-This way, security deposits are proportional with the maximum reward. The constant 32 is the one used in Emmy.
+This way, security deposits are proportional with the maximum reward. The parameter value 32 is the one used in Emmy.
 
 ## Rationale
 
@@ -119,7 +119,7 @@ Each of the [two mentioned updates](#Abstract) helps decrease the time to finali
 * Increasing the number of required endorsements makes nodes converge faster on the same chain. In other words, the number of confirmations decreases, as detailed below.
 * While the new block delay formula does not help with decreasing the number of confirmations, it helps decrease the confirmation times simply by decreasing the time between blocks.
     
-We note that simply decreasing the time between blocks in Emmy<sup>+</sup> would not be a very sensible thing to do. This is because, as suggested by [the analysis of Emmy<sup>+</sup> in the partial synchrony network model](https://blog.nomadic-labs.com/emmy-in-the-partial-synchrony-model.html), we have that the smaller the time between blocks (that is, the smaller the constant `bd`), the more sensitive is the algorithm to message delays. In Emmy<sup>&#9733;</sup>, time between blocks is decreased only when the network conditions are good (as otherwise not enough endorsements would be gathered in time).
+We note that simply decreasing the time between blocks in Emmy<sup>+</sup> would not be a very sensible thing to do. This is because, as suggested by [the analysis of Emmy<sup>+</sup> in the partial synchrony network model](https://blog.nomadic-labs.com/emmy-in-the-partial-synchrony-model.html), we have that the smaller the time between blocks (that is, the smaller the parameter `bd`), the more sensitive is the algorithm to message delays. In Emmy<sup>&#9733;</sup>, time between blocks is decreased only when the network conditions are good (as otherwise not enough endorsements would be gathered in time).
 
 The following plot shows the number of confirmations (in log scale) for different `te` values when varying the stake fraction from 0.1 to 0.45 and different numbers of total endorsements. This plot assumes the ["forks started in the past" scenario](https://blog.nomadic-labs.com/analysis-of-emmy.html#forks-started-in-the-past), meaning that we are interested in the finality of a block which already has a number of confirmations on top of it (and therefore, importantly, we know how healthy the chain was in the meanwhile), and we ask ourselves whether this number is sufficient. Here we assume a perfectly healthy chain.
 In the plot, the highest red point corresponds to 18 confirmations.
@@ -161,7 +161,7 @@ To complement the above plot, the following table presents a subset of the data 
 
 The format of endorsements changes to include the endorsement slot. This change enables checking an endorsement in constant time, instead of the current check which is linear in the total number of endorsement slots. However, the new format is a wrapper of the old format, and the slot field is not signed. Concretely, the `tezos-endorser` will produce the endorsement by having the signer stack provide the signature, then wrapping it with its slot, before injecting it in the node. In this way, the signing infrastructure of bakers does not need to change. Instead, this update will only introduce a breaking but light API change, mostly impacting block explorers and monitoring tools.
 
-To keep the duration of cycles and voting period the same, their length in number of blocks is doubled. The number of seed nonce commitments per cycle and of roll snapshots per cycle are kept the same. Concretely, the following constants and their values in Emmy<sup>+</sup>
+To keep the duration of cycles and voting period the same, their length in number of blocks is doubled. The number of seed nonce commitments per cycle and of roll snapshots per cycle are kept the same. Concretely, the following parameters and their values in Emmy<sup>+</sup>
 ```
       blocks_per_cycle = 4096
       blocks_per_voting_period = 20480
@@ -176,7 +176,7 @@ are changed to the following values in Emmy<sup>&#9733;</sup>:
       blocks_per_roll_snapshot = 512
 ```
 
-Also, to be able to reduce block propagation times, which depend on the block validation times, the value of the constant `hard_gas_limit_per_block` is halved (from `10,400,000` to `5,200,000` gas units).
+Also, to be able to reduce block propagation times, which depend on the block validation times, the value of the parameter `hard_gas_limit_per_block` is halved (from `10,400,000` to `5,200,000` gas units).
 
 ## Security Considerations
 
