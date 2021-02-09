@@ -3,8 +3,9 @@ tzip: 007
 title: FA1.2 - Approvable Ledger
 status: Final
 type: Financial Application
-author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka)
+author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka), Keefer Taylor <keefer@hover.engineering>
 created: 2019-06-20
+updated: 2021-01-29
 ---
 
 ## Summary
@@ -95,6 +96,15 @@ non-zero was performed. The error will contain `nat :previous` value, where
 
 This view returns the approval value between two given addresses.
 
+## Token Metadata
+
+Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
+explorers, marketplaces). 
+
+Token metadata for TZIP-7 should be presented in the same form as 
+[TZIP-12's token metadata](/proposals/tzip-12/tzip-12.md#token-metadata) and 
+conforms to the same semantic rules. The `token-id` used for FA1.2 tokens must be `0`.
+
 ## Related work
 
 [ERC-20](https://eips.ethereum.org/EIPS/eip-20) is a standard used in Ethereum for implementing tokens.
@@ -107,3 +117,4 @@ account when implementing our interface.
 
 [TZIP-012](/proposals/tzip-12/tzip-12.md) defines `FA2`: a contract standard
 that generalizes and extends `FA1.2`.
+
