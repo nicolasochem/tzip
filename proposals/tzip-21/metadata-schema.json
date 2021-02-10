@@ -86,15 +86,15 @@
           "format": "uri-reference",
           "description": "A URI with additional information about the subject or content of the asset."
         },
-        "nonTransferable": {
+        "isTransferable": {
           "type": "boolean",
           "description": "All tokens will be transferable by default to allow end-users to send them to other end-users. However, this field exists to serve in special cases where owners will not be able to transfer the token."
         },
-        "booleanAmount": {
+        "isBooleanAmount": {
           "type": "boolean",
           "description": "Describes whether an account can have an amount of exactly 0 or 1. (The purpose of this field is for wallets to determine whether or not to display balance information and an amount field when transferring.)"
         },
-        "symbolPreference": {
+        "shouldPreferSymbol": {
           "type": "boolean",
           "description": "Allows wallets to decide whether or not a symbol should be displayed in place of a name."
         },

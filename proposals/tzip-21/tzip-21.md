@@ -91,7 +91,7 @@ nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
 * [description](#description-string)
 * [creator](#creator-string)
 * [date](#type-string)
-* [booleanAmount](#booleanamount-boolean-default-false)
+* [isBooleanAmount](#isbooleanamount-boolean-default-false)
 
 ### Multimedia NFT Token Recommendations
 
@@ -190,18 +190,18 @@ down image to present to end-users. Reccomened maximum size of 350x350px.
 
 A URI with additional information about the subject or content of the asset.
 
-#### `nonTransferable` (boolean) *[default: false]*
+#### `isTransferable` (boolean) *[default: true]*
 
 All tokens will be transferable by default to allow end-users to send them to other end-users.
 However, this field exists to serve in special cases where owners will not be able to transfer the token.
 
-#### `booleanAmount` (boolean) *[default: false]*
+#### `isBooleanAmount` (boolean) *[default: false]*
 
 Describes whether an account can have an amount of exactly 0 or 1. (The purpose
 of this field is for wallets to determine whether or not to display balance information
 and an amount field when transferring.)
 
-#### `symbolPreference` (boolean) *[default: false]*
+#### `shouldPreferSymbol` (boolean) *[default: false]*
 
 Allows wallets to decide whether or not a symbol should be displayed in place of a name.
 
