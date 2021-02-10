@@ -15,7 +15,7 @@ and standards for contract tokens.
 The document is boken into two main sections: 1) The metadata schema, and 2)
 standards and recommendations for how to apply the schema to different token types.
 
-Many of the terms in this standard are derrived from [The Dublin Core, RCF 2413][2].
+Many of the terms in this standard are derived from [The Dublin Core, RCF 2413][2].
 
 ## TODO
 
@@ -40,29 +40,29 @@ token types, from fungible tokens to semi-fungible tokens to nonfungibles.
 ## Table of Contents
 
 1. [Standards and Recommendations](#standards-and-recommendations)
-    1. [Base Token Standard](#base-token-standard)
+    1. [Base Token Metadata Standard](#base-token-metadata-standard)
     3. [Fungible Token Recommendations](#fungible-token-recommendations)
     4. [Semi-fungible and NFT Token Recommendations](#semi-fungible-and-nft-token-recommendations)
         1. [Multimedia NFT Token Recommendations](#multimedia-nft-token-recommendations)
-2. [Schema Defintion](#schema-defintion)
+2. [Schema Definition](#schema-definition)
 
 ## Standards and Recommendations
 
-_All fields are defined and described in the [Schema Defintion](#schema-defintion) section of the document._
+_All fields are defined and described in the [Schema Definition](#schema-definition) section of the document._
 
 It is strongly advised -- but not required -- that all tokens follow the following
 standards and reccomendations.
 
-### Base Token Standard
+### Base Token Metadata Standard
 
-The base token standard extends the metadata standard pre-defined in [TZIP-012][7] which
-defines the following fields:
+The base token metadata standard extends the metadata standard previously defined
+in the FA2 ([TZIP-012][7]) and FA1.2 ([TZIP-007][8]) token standards, which defined the following fields:
 
 * name
 * symbol
 * decimals
 
-`decimals` is the only required field. However, the TZIP-021 Base Token Standard
+`decimals` is the only required field. However, the TZIP-021 Base Token Metadata Standard
 further emphasizes that either `name` or `symbol` should be present.
 
 #### Example:
@@ -71,7 +71,7 @@ further emphasizes that either `name` or `symbol` should be present.
 
 ### Fungible Token Recommendations
 
-In addition to the Base Token Standard, the following fields are reccomended for all fungible tokens:
+In addition to the Base Token Metadata Standard, the following fields are recommended for all fungible tokens:
 
 * [symbolPreference](#symbolpreference-boolean-default-false)
 * [thumbnailUri](#thumbnailuri-string-format-uri-reference)
@@ -82,7 +82,7 @@ In addition to the Base Token Standard, the following fields are reccomended for
 
 ### Semi-fungible and NFT Token Recommendations
 
-In addition to the Base Token Standard, the following fields are reccomended for all
+In addition to the Base Token Metadata Standard, the following fields are recommended for all
 nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
 
 * [artifactUri](#artifacturi-string-format-uri-reference)
@@ -96,7 +96,7 @@ nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
 ### Multimedia NFT Token Recommendations
 
 In addition to the Semi-fungible and NFT Token Recommendations, the following fields
-are reccomended for all Multimedia NFTs:
+are recommended for all Multimedia NFTs:
 
 * [formats](#formats-array)
 * [tags](#tags-array)
@@ -105,7 +105,7 @@ are reccomended for all Multimedia NFTs:
 
 - CryptoTaco Digital Collectible: [JSON](examples/example-020-digital-collectible.json)
 
-## Schema Defintion
+## Schema Definition
 
 A [JSON-Schema specification][6] is provided as an annex to this document.
 
@@ -394,3 +394,4 @@ Copyright and related rights waived via
 [5]: https://www.iana.org/assignments/media-types/media-types.xhtml
 [6]: metadata-schema.json
 [7]: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#token-metadata-values
+[8]: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-7/tzip-7.md#token-metadata
