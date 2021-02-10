@@ -3,7 +3,7 @@ tzip: 007
 title: FA1.2 - Approvable Ledger
 status: Final
 type: Financial Application
-author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka), Keefer Taylor <keefer@hover.engineering>
+author: Konstantin Ivanov <kivanov@serokell.io>, Ivan Gromakovskii (@gromak), Kirill Kuvshinov (@kkirka)
 created: 2019-06-20
 updated: 2021-01-29
 ---
