@@ -11,17 +11,29 @@
           "type": "string",
           "description": "General notes, abstracts, or summaries about the contents of an asset."
         },
-        "creator": {
-          "type": "string",
-          "description": "The primary person, people, or organization(s) responsible for creating the intellectual content of the asset."
+        "creators": {
+          "type": "array",
+          "description": "The primary person, people, or organization(s) responsible for creating the intellectual content of the asset.",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
         },
-        "contributor": {
-          "type": "string",
-          "description": "The person, people, or organization(s) that have made substantial creative contributions to the asset."
+        "contributors": {
+          "type": "array",
+          "description": "The person, people, or organization(s) that have made substantial creative contributions to the asset.",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
         },
-        "publisher": {
-          "type": "string",
-          "description": "The person, people, or organization(s) primarily responsible for distributing or making the asset available to others in its present form."
+        "publishers": {
+          "type": "array",
+          "description": "The person, people, or organization(s) primarily responsible for distributing or making the asset available to others in its present form.",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
         },
         "date": {
           "type": "string",

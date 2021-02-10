@@ -89,7 +89,7 @@ nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
 * [displayUri](#displayuri-string-format-uri-reference)
 * [thumbnailUri](#thumbnailuri-string-format-uri-reference)
 * [description](#description-string)
-* [creator](#creator-string)
+* [creators](#creators-array)
 * [date](#type-string)
 * [isBooleanAmount](#isbooleanamount-boolean-default-false)
 
@@ -125,17 +125,23 @@ contract metadata or root level of the token metadata.
 
 General notes, abstracts, or summaries about the contents of an asset.
 
-#### `creator` (string)
+#### `creators` (array)
 
 The primary person, people, or organization(s) responsible for creating the intellectual content of the asset.
 
-#### `contributor` (string)
+The field is an array with all elements of the type `string`. Each of the elements in the array must be unique.
+
+#### `contributors` (array)
 
 The person, people, or organization(s) that have made substantial creative contributions to the asset.
 
-#### `publisher` (string)
+The field is an array with all elements of the type `string`. Each of the elements in the array must be unique.
+
+#### `publishers` (array)
 
 The person, people, or organization(s) primarily responsible for distributing or making the asset available to others in its present form.
+
+The field is an array with all elements of the type `string`. Each of the elements in the array must be unique.
 
 #### `date` (string) *[format: date]*
 
