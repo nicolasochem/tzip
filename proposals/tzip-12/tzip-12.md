@@ -299,8 +299,7 @@ same 3 reserved non-empty fields:
 
 Providing a value for `"decimals"` is required for all token types. `"name”` and `"symbol"` are not required but it is highly recommended for most tokens to provide the values either in the map or the JSON found via the TZIP-016 URI. 
 
-Other standards deriving from TZIP-012 may reserve other keys (e.g. `"icon"`,
-`"homepage"`, …).
+Other standards such as [TZIP-021](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-21/tzip-21.md) describe token metadata schemas which reserve additional keys for different token types for enable greater compatibility across indexers, wallets, and tooling.
 
 #### Token Metadata Storage & Access
 
