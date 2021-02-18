@@ -17,12 +17,6 @@ standards and recommendations for how to apply the schema to different token typ
 
 Many of the terms in this standard are derived from [The Dublin Core, RCF 2413][2].
 
-## TODO
-
-- Semi-fungible and NFT Token examples
-- More specialized examples (video, 3d, etc)
-- Examples in an FA2 on delphinet (both metadata on chain and in IPFS)
-
 ## Motivation & Goals
 
 This metdata standard aims to:
