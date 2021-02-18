@@ -90,7 +90,6 @@ nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
 * [thumbnailUri](#thumbnailuri-string-format-uri-reference)
 * [description](#description-string)
 * [creators](#creators-array)
-* [date](#type-string)
 * [isBooleanAmount](#isbooleanamount-boolean-default-false)
 
 ### Multimedia NFT Token Recommendations
@@ -143,9 +142,9 @@ The person, people, or organization(s) primarily responsible for distributing or
 
 The field is an array with all elements of the type `string`. Each of the elements in the array must be unique.
 
-#### `date` (string) *[format: date]*
+#### `date` (string) *[format: date-time]*
 
-A date associated with the creation or availability of the asset.
+A date associated with the creation or availability of the asset as defined in the [JSON Schema Specification][9].
 
 #### `type` (string)
 
@@ -401,3 +400,4 @@ Copyright and related rights waived via
 [6]: metadata-schema.json
 [7]: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#token-metadata-values
 [8]: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-7/tzip-7.md#token-metadata
+[9]: https://json-schema.org/understanding-json-schema/reference/string.html#dates-and-times

@@ -37,7 +37,7 @@
         },
         "date": {
           "type": "string",
-          "format": "date",
+          "format": "date-time",
           "description": "A date associated with the creation or availability of the asset."
         },
         "type": {
