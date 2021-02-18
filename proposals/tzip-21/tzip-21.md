@@ -10,7 +10,7 @@ created: 2020-11-12
 ## Abstract
 
 This proposal is an extension of [TZIP-016][1] and describes a metadata schema
-and standards for contract tokens.
+and standards for contracts and tokens.
 
 The document is boken into two main sections: 1) The metadata schema, and 2)
 standards and recommendations for how to apply the schema to different token types.
@@ -108,8 +108,13 @@ are recommended for all Multimedia NFTs:
 
 A [JSON-Schema specification][6] is provided as an annex to this document.
 
-The schema may be applied to the contract level metadata, to the token level
-metadata in the case of FA2 tokens, or any combination thereof.
+The schema may be provided at the contract metadata level and/or at the token metadata level.
+
+If provided at the token metadata level, content should be provided in accordance with
+the recommendations of the token standard used (see [TZIP-12][7], [TZIP-7][8]).
+
+If provided at the contract metadata level, to prevent pollution in the top level of the
+metadata, content should be provided as a nested object under the key `assets`. 
 
 The schema defines the following additional types:
 
@@ -117,8 +122,8 @@ The schema defines the following additional types:
 
 ### `asset` (object)
 
-Properties of the `asset` object are designed to live at the root level of the
-contract metadata or root level of the token metadata.
+Properties of the `asset` object are designed to live at the root level of the token metadata,
+or as an object array under the key `assets`. at the contract metadata level. 
 
 #### `description` (string)
 
