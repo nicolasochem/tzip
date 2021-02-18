@@ -2,7 +2,7 @@
 tzip: 021
 title: Rich Metadata
 author: Josh Dechant (@codecrafting)
-status: Work In Progress
+status: Draft
 type: Interface
 created: 2020-11-12
 ---
