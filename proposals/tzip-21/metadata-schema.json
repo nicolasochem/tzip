@@ -40,6 +40,10 @@
           "format": "date-time",
           "description": "A date associated with the creation or availability of the asset."
         },
+        "blockLevel": {
+          "type": "integer",
+          "description": "Chain block level associated with the creation or availability of the asset."
+        },
         "type": {
           "type": "string",
           "description": "A broad definition of the type of content of the asset."

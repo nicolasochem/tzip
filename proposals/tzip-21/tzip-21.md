@@ -145,6 +145,10 @@ The field is an array with all elements of the type `string`. Each of the elemen
 
 A date associated with the creation or availability of the asset as defined in the [JSON Schema Specification][9].
 
+#### `blockLevel` (integer)
+
+Chain block level associated with the creation or availability of the asset.
+
 #### `type` (string)
 
 A broad definition of the type of content of the asset.
