@@ -176,24 +176,29 @@ A statement about the asset rights.
 
 #### `rightUri` (string) *[format: uri-reference]*
 
-Links to a statement of rights.
+A URI (as defined in the [JSON Schema Specification][10]) to a statement of rights.
 
 #### `artifactUri` (string) *[format: uri-reference]*
 
-A URI to the asset.
+A URI (as defined in the [JSON Schema Specification][10]) to the asset.
 
 #### `displayUri` (string) *[format: uri-reference]*
 
-A URI to an image of the asset. Used for display purposes.
+A URI (as defined in the [JSON Schema Specification][10]) to an image of the asset.
+
+Used for display purposes.
 
 #### `thumbnailUri` (string) *[format: uri-reference]*
 
-A URI to an image of the asset for wallets and client applications to have a scaled
-down image to present to end-users. Reccomened maximum size of 350x350px.
+A URI (as defined in the [JSON Schema Specification][10]) to an image of the asset
+for wallets and client applications to have a scaled down image to present to end-users.
+
+Reccomened maximum size of 350x350px.
 
 #### `externalUri` (string) *[format: uri-reference]*
 
-A URI with additional information about the subject or content of the asset.
+A URI (as defined in the [JSON Schema Specification][10]) with additional information
+about the subject or content of the asset.
 
 #### `isTransferable` (boolean) *[default: true]*
 
@@ -268,7 +273,7 @@ Properties of the `format` object:
 
 #### `uri` (string) *[format: uri-reference]*
 
-A URI to the asset represented in this format.
+A URI (as defined in the [JSON Schema Specification][10]) to the asset represented in this format.
 
 #### `hash` (string)
 
@@ -401,3 +406,4 @@ Copyright and related rights waived via
 [7]: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#token-metadata-values
 [8]: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-7/tzip-7.md#token-metadata
 [9]: https://json-schema.org/understanding-json-schema/reference/string.html#dates-and-times
+[10]: https://json-schema.org/understanding-json-schema/reference/string.html#resource-identifiers
