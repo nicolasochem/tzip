@@ -1,7 +1,7 @@
 ---
 tzip: 012
 title: FA2 - Multi-Asset Interface
-status: Draft
+status: Final
 type: Financial Application (FA)
 author: Eugene Mishura (@e-mishura), Seb Mondet (@smondet)
 created: 2020-01-24
