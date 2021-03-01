@@ -196,8 +196,8 @@ Finally, given that the probability of stealing more than 2 blocks is very low, 
 
 ## Implementations
 
-* [MR](https://gitlab.com/tezos/tezos/-/merge_requests/2386) for Emmy<sup>&#9733;</sup>
-* [MR](https://gitlab.com/tezos/tezos/-/merge_requests/2471) for improving the complexity of checking the validity of an endorsement; <span style="color:red">this MR changes the RPC API</span>
+* [MR](https://gitlab.com/tezos/tezos/-/merge_requests/2386) for Emmy<sup>&#9733;</sup>'s new block delay formula
+* [MR](https://gitlab.com/tezos/tezos/-/merge_requests/2531) for the change of `blocks_per_cycle` and related constants
 
 <!-- ## Appendix -->
 
