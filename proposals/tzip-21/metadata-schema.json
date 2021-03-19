@@ -11,6 +11,11 @@
           "type": "string",
           "description": "General notes, abstracts, or summaries about the contents of an asset."
         },
+        "minter": {
+          "type": "string",
+          "format": "tzaddress",
+          "description": "The tz address responsible for minting the asset."
+        },
         "creators": {
           "type": "array",
           "description": "The primary person, people, or organization(s) responsible for creating the intellectual content of the asset.",
