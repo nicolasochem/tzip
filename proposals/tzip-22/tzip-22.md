@@ -42,7 +42,7 @@ A contract implementing TZIP-022 MUST also implement TZIP-016, identifying itsel
 ### The `resolve-name` off-chain view
 An implementing contract MUST implement a TZIP-016 off-chain view called `resolve-name`:
 
-|                  | Type                       | Meaning                                                                                  |
+|                  | Type (CameLIGO syntax)     | Meaning                                                                                  |
 | -----------------|----------------------------| -----------------------------------------------------------------------------------------|
 | **Parameter**    | `bytes`                    | Name to resolve, encoded in UTF-8.                                                       |
 | **Return value** | `resolution_result option` | Resolved information associated with the name, or `None` if no valid information exists. |
@@ -50,7 +50,7 @@ An implementing contract MUST implement a TZIP-016 off-chain view called `resolv
 ### The `resolve-address` off-chain view
 An implementing contract MUST implement a TZIP-016 off-chain view called `resolve-address`:
 
-|                   | Type                       | Meaning                                                                                     |
+|                   | Type (CameLIGO syntax)     | Meaning                                                                                     |
 | ----------------- |----------------------------| --------------------------------------------------------------------------------------------|
 | **Parameter**     | `address`                  | Address to resolve.                                                                         |
 | **Return value**  | `resolution_result option` | Resolved information associated with the address, or `None` if no valid information exists. |
@@ -59,11 +59,11 @@ An implementing contract MUST implement a TZIP-016 off-chain view called `resolv
 
 A resolution result is a right-combed record containing:
 
-|               | Type                     | Meaning                                                                                                                               |
+|               | Type (CameLIGO syntax)   | Meaning                                                                                                                               |
 | ------------- |--------------------------| --------------------------------------------------------------------------------------------------------------------------------------|
 | **name**      | `bytes`                  | Resolved name, encoded in UTF-8.                                                                                                      |
 | **address**   | `address option`         | Resolved address, or `None` if the resolved information does not include an address.                                                  |
-| **data**      | `map string bytes`       | Any additional data, with key being an arbitrary field identifier and value being a UTF-8 encoded string containing any valid JSON.   |
+| **data**      | `(string, bytes) map`    | Any additional data, with key being an arbitrary field identifier and value being a UTF-8 encoded string containing any valid JSON.   |
 | **expiry**    | `timestamp option`       | Expiry timestamp (the first second when the information ceases to be valid) or `None` if the information does not have an expiration. |
 
 Note that the returned `expiry` timestamp will never be in the past. If the information has already expired,
