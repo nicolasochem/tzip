@@ -4,8 +4,8 @@ status: Draft
 author: Gabriel Alfour, Sophia Gold, Arthur Breitman, et al.
 type: Protocol
 created: 2021-01-05
-date: 2021-01-05
-version: 1
+date: 2021-03-30
+version: 2
 ---
 
 ## Summary
@@ -22,26 +22,27 @@ The Tezos position paper mentions in section 4.3 that the governance model of Te
 
 Liquidity provision is among the most important public goods of a currency and a perfect example of a collective action problem that can be solved by governance.
 
-This represents a minimal amount of development effort, provides an important public good to the Tezos ecosystem, and directly demonstrates the power of decentralized on-chain governance.
+This provides an important public good to the Tezos ecosystem and directly demonstrates the power of decentralized on-chain governance.
 
 
 ## Specification
 
 ### Contract
 
-A constant product market making (CPMM) Michelson contract is first deployed on the chain. This contract maintains a balance of `a` tez and `b` tzBTC, where tzBTC is the FA1.2 token found at address KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn. The smart contract accepts deposits of `da` tez and returns `db` tzBTC (or vice versa) where the invariant `(a + da * (1 - f)) * (b - db) = a b` is preserved, and `f` is a fee, set at 0.1%.
+A constant product market making (CPMM) Michelson contract is first deployed on the chain. This contract maintains a balance of `a` tez and `b` tzBTC, where tzBTC is the FA1.2 token found at address KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn. The smart contract accepts deposits of `da` tez and returns `db` tzBTC (or vice versa) where the invariant `(a + da * (1 - f - n)) * (b - db) = a b` is preserved, and `f` and `n` are a fee and burn, set at 0.1% each.
 
-To implement this contract, we use a fork of the open source code base used by the "Dexter" project. The implementation of this contract has been [formally verified](https://blog.nomadic-labs.com/dexter-decentralized-exchange-for-tezos-formal-verification-work-by-nomadic-labs.html) against its functional specification. The contract code is modified in the following way:
+To implement this contract, we use a fork of the open source code base used by [version two](https://gitlab.com/dexter2tz/dexter2tz) of the "Dexter" project. The implementation of this contract has been [formally verified](https://gitlab.com/dexter2tz/dexter2tz/-/blob/master/dexter_spec.v) against its functional specification. The contract code is modified in the following way:
 
 1. The fee is set to 0.1% only. Rationale: given the subsidy it is not necessary to charge a large fee and better to improve liquidity.
-2. The ability to set a manager has been removed.
-3. The ability to set a delegate and receive rewards has been removed. Rationale: the subsidy means there is no need for a baker for that contract and having one would create an imbalance.
+2. An additional 0.1% of every trade is burned by being transferred to the null implicit account. __With 7.2mm daily tez volume this will offset all inflation from the subsidy.__
+3. The ability to set a manager has been removed.
+4. The ability to set a delegate and receive rewards has been removed. Rationale: the subsidy means there is no need for a baker for that contract and having one would create an imbalance.
 
 ### Subsidy
 
 At every block in the chain, 5 tez are minted and credited to the CPMM contract, and the CPMM's `%default` entrypoint is called to update the `xtz_pool` balance in its storage. This corresponds to 1/16th of 80 tez which is the typical block reward and endorsement reward for a block of priority 0 with all endorsements. If for any reason this constant changes, the amount of 5 tez should also be changed adequately.
 
-So the credits to the CPMM contract can be accounted for by indexers, they are included in block metadata as a balance update of a new type, `Misc`, that can also be used for things such as invoices for protocol upgrades.
+So the credits to the CPMM contract can be accounted for by indexers, they are included in block metadata as a balance update with a new update origin constructor, `Subsidy`.
 
 As a safety precaution, the subsidy expires automatically after 6 months but it can be renewed periodically by protocol amendment.
 
@@ -75,15 +76,11 @@ The sunset mechanism and escape hatch are simply to implement security measures 
 
 The idea is that instead of being able to delegate, the contract receives a fixed subsidy per block. Assuming as a first approximation that participants in the CPMM liquidity pool are neutral with respect to the cost of holding liquidity pool capital, the impermanent loss, and the swapping fees they collect, then the subsidy should attract tez away from delegation and towards the CPMM contract. This happens until the balance of tez held in the CPMM contract and the balance of all delegated or baking tez are in the same proportion as the subsidy and the total reward in the block for bakers and endorsers. This means that the liquidity in the pool should far exceed the amount of the subsidy that goes in.
 
-Since this reduces the amount of delegated tez without decreasing block rewards paid to bakers and endorsers, the economic effect is a 1/16th increase in the baking reward collected by bakers, since they end up producing slightly more blocks, but they may need to also slightly increase their security deposit (by 1/16th).
-
-Given that the security deposit requirements have not been adjusted upwards since the launch of the chain, this is a useful adjustment.
-
 Instead of adding a subsidy, the subsidy could be taken from the existing reward by rescaling the block reward and endorsement reward. However, adding a reward is easier to explain, means less integration work for block explorers, and does not create pressure for bakers to adjust how they split the block rewards between themselves and delegates. It also makes the safety hatch and sunset provision easier to implement because there is no need to readjust block rewards 
 
 ## Backwards Compatibility
 
-Block explorers will need to support the new `Misc` balance update type in order to reconcile the balance of the CPMM contract.
+Block explorers will need to support the new `Subsidy` update origin type constructor in order to reconcile the balance of the CPMM contract.
 
 ## Security consideration
 
@@ -91,15 +88,15 @@ The risk to the chain itself is bounded by the cost of the subsidy itself, which
 
 The three main security risks we identify are as follows. They only affect those who chose to provide liquidity in the CPMM..
 
-1. While the codebase the CPMM is forked from has been [audited](https://github.com/trailofbits/publications/blob/master/reviews/dexter.pdf) and its [functional specification](https://gitlab.com/nomadic-labs/mi-cho-coq/-/merge_requests/71) formally verified, a new round of review and testing would be worthwhile.
+1. While the codebase the CPMM is forked from has been formally verified against its [functional specification](https://gitlab.com/dexter2tz/dexter2tz/-/blob/master/dexter_spec.v) and is currently being audited by Least Authority, a [vulnerability](https://blog.nomadic-labs.com/a-technical-description-of-the-dexter-flaw.html) was discovered in the previous version. The new version is a complete rewrite and we are confident that the increased attention from its use in liquidity baking will harden its security, noting that this is partly what led to the discovery of the vulnerability in the previous version.
 2. Although the tzBTC contract has already been [audited once](https://leastauthority.com/static/publications/LeastAuthority-Tezos-TzBTC-Final-Audit-Report.pdf) by Least Authority, another review of the contract is worthwhile.
 3. tzBTC, while controlled by multiple reputable institutions via a multisignature is not trustless, therefore the mechanism depends on the continuing availability of tzBTC portals. We note that large amounts of liquidity exist for the similar WBTC contract on Uniswap (an Ethereum-based CPMM).
 
 ## Implementations
 
-[Protocol upgrade](https://gitlab.com/sophiagold/tezos/-/tree/liquidity_baking)
+[Merge request](https://gitlab.com/tezos/tezos/-/merge_requests/2765)
 
-[CPMM contract](https://gitlab.com/sophiagold/tezos/-/blob/a169b7cd32167327405926cb8b167513cfe9db36/src/proto_alpha/lib_protocol/test/contracts/cpmm.tz)
+[CPMM contract](https://gitlab.com/dexter2tz/dexter2tz/-/tree/liquidity_baking)
 
 ## Copyright 
 
