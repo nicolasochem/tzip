@@ -31,7 +31,7 @@ This provides an important public good to the Tezos ecosystem and directly demon
 
 A constant product market making (CPMM) Michelson contract is first deployed on the chain. This contract maintains a balance of `a` tez and `b` tzBTC, where tzBTC is the FA1.2 token found at address KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn. The smart contract accepts deposits of `da` tez and returns `db` tzBTC (or vice versa) where the invariant `(a + da * (1 - f - n)) * (b - db) = a b` is preserved, and `f` and `n` are a fee and burn, set at 0.1% each.
 
-To implement this contract, we use a fork of the open source code base used by [version two](https://gitlab.com/dexter2tz/dexter2tz) of the "Dexter" project. The implementation of this contract has been [formally verified](https://gitlab.com/dexter2tz/dexter2tz/-/blob/master/dexter_spec.v) against its functional specification. The contract code is modified in the following way:
+To implement this contract, we use a fork of the open source code base used by [version two](https://gitlab.com/dexter2tz/dexter2tz) of the "Dexter" project (note that this new version includes a liquidity token). The implementation of this contract has been [formally verified](https://gitlab.com/dexter2tz/dexter2tz/-/blob/master/dexter_spec.v) against its functional specification. The contract code is modified in the following way:
 
 1. The fee is set to 0.1% only. Rationale: given the subsidy it is not necessary to charge a large fee and better to improve liquidity.
 2. An additional 0.1% of every trade is burned by being transferred to the null implicit account. __With 7.2mm daily tez volume this will offset all inflation from the subsidy.__
