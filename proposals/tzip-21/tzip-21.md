@@ -83,6 +83,7 @@ nonfungible tokens (NFT) and semi-fungible tokens that act as NFTs:
 * [displayUri](#displayuri-string-format-uri-reference)
 * [thumbnailUri](#thumbnailuri-string-format-uri-reference)
 * [description](#description-string)
+* [minter](#minter-string-format-tzaddress)
 * [creators](#creators-array)
 * [isBooleanAmount](#isbooleanamount-boolean-default-false)
 
@@ -122,6 +123,10 @@ or as an object array under the key `assets`. at the contract metadata level.
 #### `description` (string)
 
 General notes, abstracts, or summaries about the contents of an asset.
+
+#### `minter` (string) *[format: tzaddress]*
+
+The tz address responsible for minting the asset.
 
 #### `creators` (array)
 
