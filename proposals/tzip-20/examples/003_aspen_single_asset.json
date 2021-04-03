@@ -1,0 +1,214 @@
+{
+    "name": "aspencoin",
+    "interfaces": ["TZIP-7", "TZIP-16", "TZIP-20"],
+    "events": [
+        {
+            "name": "singleAssetTokenBalances",
+            "implementations": [
+                {
+                    "michelsonInitialStorageEvent": {
+                        "parameter": {
+                            "prim": "pair",
+                            "args": [
+                                {
+                                    "prim": "pair",
+                                    "args": [
+                                        {
+                                            "prim": "pair",
+                                            "args": [
+                                                {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                        {
+                                                            "prim": "set",
+                                                            "annots": [
+                                                                "%admins"
+                                                            ],
+                                                            "args": [
+                                                                {
+                                                                    "prim": "address"
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "prim": "map",
+                                                            "annots": [
+                                                                "%allowances"
+                                                            ],
+                                                            "args": [
+                                                                {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                        {
+                                                                            "prim": "address"
+                                                                        },
+                                                                        {
+                                                                            "prim": "address"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "prim": "nat"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                        {
+                                                            "prim": "map",
+                                                            "annots": [
+                                                                "%balances"
+                                                            ],
+                                                            "args": [
+                                                                {
+                                                                    "prim": "address"
+                                                                },
+                                                                {
+                                                                    "prim": "nat"
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "prim": "string",
+                                                            "annots": [
+                                                                "%description"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "prim": "pair",
+                                            "args": [
+                                                {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                        {
+                                                            "prim": "bool",
+                                                            "annots": [
+                                                                "%issuance_finished"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "prim": "address",
+                                                            "annots": [
+                                                                "%issuer"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                        {
+                                                            "prim": "bool",
+                                                            "annots": [
+                                                                "%paused"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "prim": "address",
+                                                            "annots": [
+                                                                "%registry"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "prim": "pair",
+                                    "args": [
+                                        {
+                                            "prim": "pair",
+                                            "args": [
+                                                {
+                                                    "prim": "address",
+                                                    "annots": [
+                                                        "%rules"
+                                                    ]
+                                                },
+                                                {
+                                                    "prim": "string",
+                                                    "annots": [
+                                                        "%symbol"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "prim": "nat",
+                                            "annots": [
+                                                "%total_supply"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "returnType": {
+                            "prim": "map",
+                            "args": [
+                                {
+                                    "prim": "address"
+                                },
+                                {
+                                    "prim": "int"
+                                }
+                            ]
+                        },
+                        "code": [
+                            [
+                                {
+                                    "prim": "CAR"
+                                },
+                                {
+                                    "prim": "CAR"
+                                },
+                                {
+                                    "prim": "CAR"
+                                },
+                                {
+                                    "prim": "CDR"
+                                },
+                                {
+                                    "prim": "CAR"
+                                }
+                            ],
+                            {
+                                "prim": "MAP",
+                                "args": [
+                                    [
+                                        {
+                                            "prim": "CDR"
+                                        },
+                                        {
+                                            "prim": "INT"
+                                        }
+                                    ]
+                                ]
+                            },
+                            {
+                                "prim": "NIL",
+                                "args": [
+                                    {
+                                        "prim": "operation"
+                                    }
+                                ]
+                            },
+                            {
+                                "prim": "PAIR"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

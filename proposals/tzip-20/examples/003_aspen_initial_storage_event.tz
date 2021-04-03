@@ -1,0 +1,15 @@
+parameter (pair
+            (pair
+                (pair (pair (set %admins address)
+                            (map %allowances (pair address address) nat))  # big_map -> map
+                      (pair (map %balances address nat) (string %description)))  # big_map -> map
+                (pair (pair (bool %issuance_finished) (address %issuer))
+                      (pair (bool %paused) (address %registry))))
+            (pair (pair (address %rules) (string %symbol)) (nat %total_supply)));
+storage (map address int);
+code {
+  CAAADAR ;
+  MAP { CDR ; INT } ;
+  NIL operation ;
+  PAIR ;
+}

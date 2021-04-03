@@ -1,19 +1,16 @@
 {
-    "name": "tzbtc-mint-burn-events",
-    "description": "Off-chain events for https://github.com/tz-wrapped/tezos-btc",
-    "version": "0.5.0",
-    "license": {"name": "MIT", "details": "The MIT License"},
+    "name": "tzbtc",
+    "description": "https://github.com/tz-wrapped/tezos-btc",
     "interfaces": ["TZIP-7", "TZIP-16", "TZIP-20"],
-    "views": [
+    "events": [
         {
-            "name": "getChangedTokenBalances",
-            "description": "Get token balance updates",
-            "pure": "true",
+            "name": "singleAssetBalanceUpdates",
+            "description": "Get token balance updates as map { account => delta } based on tx params (reduced)",
             "implementations": [
                 {
-                    "michelson-parameter-view": {
+                    "michelsonParameterEvent": {
                         "parameter": {"prim": "or", "args": [{"prim": "pair", "annots": ["%mint"], "args": [{"prim": "address"}, {"prim": "nat"}]}, {"prim": "nat", "annots": ["%burn"]}]},
-                        "return-type": {"prim": "map", "args": [{"prim": "address"}, {"prim": "int"}]},
+                        "returnType": {"prim": "map", "args": [{"prim": "address"}, {"prim": "int"}]},
                         "code": [
                             {"prim": "DUP"},
                             {"prim": "CDR"},

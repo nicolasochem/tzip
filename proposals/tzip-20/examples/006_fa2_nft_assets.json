@@ -1,0 +1,208 @@
+{
+    "name": "fa2-nft-assets",
+    "description": "Off-chain events for https://github.com/tqtezos/smart-contracts/tree/master/nft_assets/ligo",
+    "license": {"name": "MIT", "details": "MIT License"},
+    "interfaces": ["TZIP-7", "TZIP-16", "TZIP-20"],
+    "events": [
+        {
+            "name": "multiAssetBalanceUpdates",
+            "description": "Get token balance updates",
+            "implementations": [
+                {
+                    "michelsonInitialStorageEvent": {
+                        "parameter": {
+                            "prim": "pair",
+                            "args": [
+                                {
+                                    "prim": "pair",
+                                    "annots": ["%admin"],
+                                    "args": [
+                                        {"prim": "pair", "args": [{"prim": "address", "annots": ["%admin"]}, {"prim": "bool", "annots": ["%paused"]}]},
+                                        {"prim": "option", "annots": ["%pending_admin"], "args": [{"prim": "address"}]}
+                                    ]
+                                },
+                                {
+                                    "prim": "pair",
+                                    "annots": ["%assets"],
+                                    "args": [
+                                        {
+                                            "prim": "pair",
+                                            "args": [
+                                                {"prim": "map", "annots": ["%ledger"], "args": [{"prim": "nat"}, {"prim": "address"}]},
+                                                {
+                                                    "prim": "pair",
+                                                    "annots": ["%metadata"],
+                                                    "args": [
+                                                        {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                                {
+                                                                    "prim": "map",
+                                                                    "annots": ["%metadata"],
+                                                                    "args": [
+                                                                        {"prim": "pair", "args": [{"prim": "nat", "annots": ["%from_"]}, {"prim": "nat", "annots": ["%to_"]}]},
+                                                                        {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                                {
+                                                                                    "prim": "pair",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "prim": "pair",
+                                                                                            "args": [
+                                                                                                {"prim": "nat", "annots": ["%decimals"]},
+                                                                                                {"prim": "map", "annots": ["%extras"], "args": [{"prim": "string"}, {"prim": "string"}]}
+                                                                                            ]
+                                                                                        },
+                                                                                        {"prim": "pair", "args": [{"prim": "string", "annots": ["%name"]}, {"prim": "string", "annots": ["%symbol"]}]}
+                                                                                    ]
+                                                                                },
+                                                                                {"prim": "nat", "annots": ["%token_id"]}
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {"prim": "nat", "annots": ["%next_token_id"]}
+                                                            ]
+                                                        },
+                                                        {
+                                                            "prim": "set",
+                                                            "annots": ["%token_defs"],
+                                                            "args": [{"prim": "pair", "args": [{"prim": "nat", "annots": ["%from_"]}, {"prim": "nat", "annots": ["%to_"]}]}]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "prim": "map",
+                                            "annots": ["%operators"],
+                                            "args": [
+                                                {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                        {"prim": "address", "annots": ["%owner"]},
+                                                        {"prim": "pair", "args": [{"prim": "address", "annots": ["%operator"]}, {"prim": "nat", "annots": ["%token_id"]}]}
+                                                    ]
+                                                },
+                                                {"prim": "unit"}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "returnType": {"prim": "map", "args": [
+                            {"prim": "nat"},
+                            {"prim": "option", "args": [{"prim": "address"}]}]},
+                        "code": [
+                            [{"prim": "CAR"}, {"prim": "CDR"}, {"prim": "CAR"}, {"prim": "CAR"}],
+                            {
+                                "prim": "MAP",
+                                "args": [                                    
+                                    {"prim": "CDR"},
+                                    {"prim": "SOME"}
+                                ]
+                            },
+                            {"prim": "NIL", "args": [{"prim": "operation"}]},
+                            {"prim": "PAIR"}
+                        ]
+                    },
+                    "michelson-extended-storage-event": {
+                        "parameter": {
+                            "prim": "pair",
+                            "args": [
+                                {
+                                    "prim": "pair",
+                                    "annots": ["%admin"],
+                                    "args": [
+                                        {"prim": "pair", "args": [{"prim": "address", "annots": ["%admin"]}, {"prim": "bool", "annots": ["%paused"]}]},
+                                        {"prim": "option", "annots": ["%pending_admin"], "args": [{"prim": "address"}]}
+                                    ]
+                                },
+                                {
+                                    "prim": "pair",
+                                    "annots": ["%assets"],
+                                    "args": [
+                                        {
+                                            "prim": "pair",
+                                            "args": [
+                                                {"prim": "map", "annots": ["%ledger"], "args": [{"prim": "nat"}, {"prim": "option", "args":[{"prim": "address"}]}]},
+                                                {
+                                                    "prim": "pair",
+                                                    "annots": ["%metadata"],
+                                                    "args": [
+                                                        {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                                {
+                                                                    "prim": "map",
+                                                                    "annots": ["%metadata"],
+                                                                    "args": [
+                                                                        {"prim": "pair", "args": [{"prim": "nat", "annots": ["%from_"]}, {"prim": "nat", "annots": ["%to_"]}]},
+                                                                        {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                                {
+                                                                                    "prim": "pair",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "prim": "pair",
+                                                                                            "args": [
+                                                                                                {"prim": "nat", "annots": ["%decimals"]},
+                                                                                                {"prim": "map", "annots": ["%extras"], "args": [{"prim": "string"}, {"prim": "string"}]}
+                                                                                            ]
+                                                                                        },
+                                                                                        {"prim": "pair", "args": [{"prim": "string", "annots": ["%name"]}, {"prim": "string", "annots": ["%symbol"]}]}
+                                                                                    ]
+                                                                                },
+                                                                                {"prim": "nat", "annots": ["%token_id"]}
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {"prim": "nat", "annots": ["%next_token_id"]}
+                                                            ]
+                                                        },
+                                                        {
+                                                            "prim": "set",
+                                                            "annots": ["%token_defs"],
+                                                            "args": [{"prim": "pair", "args": [{"prim": "nat", "annots": ["%from_"]}, {"prim": "nat", "annots": ["%to_"]}]}]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "prim": "map",
+                                            "annots": ["%operators"],
+                                            "args": [
+                                                {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                        {"prim": "address", "annots": ["%owner"]},
+                                                        {"prim": "pair", "args": [{"prim": "address", "annots": ["%operator"]}, {"prim": "nat", "annots": ["%token_id"]}]}
+                                                    ]
+                                                },
+                                                {"prim": "unit"}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "returnType": {"prim": "map", "args": [
+                            {"prim": "nat"},
+                            {"prim": "option", "args": [{"prim": "address"}]}]},
+                        "code": [
+                            [{"prim": "CAR"}, {"prim": "CDR"}, {"prim": "CAR"}, {"prim": "CAR"}],                           
+                            {"prim": "NIL", "args": [{"prim": "operation"}]},
+                            {"prim": "PAIR"}
+                        ],
+                        "entrypoints": ["mint_tokens"]
+                    }
+                }
+            ]
+        }
+    ]
+}
