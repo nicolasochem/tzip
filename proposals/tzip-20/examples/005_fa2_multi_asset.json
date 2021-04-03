@@ -1,17 +1,14 @@
 {
-    "name": "fa2-multi-token-mint-burn-events",
-    "description": "Off-chain events for https://github.com/tqtezos/smart-contracts/tree/master/multi_asset/ligo",
-    "version": "0.1.0",
-    "license": {"name": "MIT", "details": "The MIT License"},
+    "name": "fa2-multi-asset",
+    "description": "https://github.com/tqtezos/smart-contracts/tree/master/multi_asset/ligo",
     "interfaces": ["TZIP-7", "TZIP-16", "TZIP-20"],
-    "views": [
+    "events": [
         {
-            "name": "getChangedTokenBalances",
-            "description": "Get token balance updates",
-            "pure": "true",
+            "name": "multiAssetBalanceUpdates",
+            "description": "Get token balance updates as map { (account, token_id) => delta } based on tx params (reduced)",
             "implementations": [
                 {
-                    "michelson-parameter-view": {
+                    "michelsonParameterEvent": {
                         "parameter": {
                             "prim": "or",
                             "args": [
@@ -43,7 +40,7 @@
                                 }
                             ]
                         },
-                        "return-type": {"prim": "map", "args": [{"prim": "pair", "args": [{"prim": "address"}, {"prim": "nat"}]}, {"prim": "int"}]},
+                        "returnType": {"prim": "map", "args": [{"prim": "pair", "args": [{"prim": "address"}, {"prim": "nat"}]}, {"prim": "int"}]},
                         "code": [
                             {"prim": "DUP"},
                             {"prim": "CDR"},

@@ -1,0 +1,28 @@
+parameter (pair
+            (pair %admin 
+                (pair (address %admin) (bool %paused))
+                (option %pending_admin address))
+            (pair %assets
+                (pair 
+                    (map %ledger nat address)
+                    (pair %metadata
+                        (pair
+                            (map %metadata 
+                                (pair (nat %from_) (nat %to_))
+                                (pair
+                                    (pair
+                                        (pair (nat %decimals) (map %extras string string))
+                                        (pair (string %name) (string %symbol)))
+                                    (nat %token_id)))
+                            (nat %next_token_id))
+                        (set %token_defs (pair (nat %from_) (nat %to_)))))
+                (map %operators
+                    (pair (address %owner) (pair (address %operator) (nat %token_id)))
+                    unit)));
+storage (map nat (option address)) ;
+code {
+    CADAAR ;
+    MAP { CDR ; SOME } ;
+    NIL operation ;
+    PAIR
+}
