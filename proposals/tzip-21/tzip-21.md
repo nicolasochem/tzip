@@ -12,14 +12,14 @@ created: 2020-11-12
 This proposal is an extension of [TZIP-016][1] and describes a metadata schema
 and standards for contracts and tokens.
 
-The document is boken into two main sections: 1) The metadata schema, and 2)
+The document is broken into two main sections: 1) The metadata schema, and 2)
 standards and recommendations for how to apply the schema to different token types.
 
 Many of the terms in this standard are derived from [The Dublin Core, RCF 2413][2].
 
 ## Motivation & Goals
 
-This metdata standard aims to:
+This metadata standard aims to:
 
 1. Simplify the creation of rich metadata for tokens and assets
 2. Provide a commonly understood interface
@@ -45,7 +45,7 @@ token types, from fungible tokens to semi-fungible tokens to nonfungibles.
 _All fields are defined and described in the [Schema Definition](#schema-definition) section of the document._
 
 It is strongly advised -- but not required -- that all tokens follow the following
-standards and reccomendations.
+standards and recommendations.
 
 ### Base Token Metadata Standard
 
@@ -201,7 +201,7 @@ Used for display purposes.
 A URI (as defined in the [JSON Schema Specification][10]) to an image of the asset
 for wallets and client applications to have a scaled down image to present to end-users.
 
-Reccomened maximum size of 350x350px.
+Recommend maximum size of 350x350px.
 
 #### `externalUri` (string) *[format: uri-reference]*
 
