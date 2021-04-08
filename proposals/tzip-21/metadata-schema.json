@@ -5,7 +5,7 @@
   "definitions": {
     "asset": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "description": {
           "type": "string",
@@ -167,7 +167,8 @@
           "description": "Filename for the asset in this format. For display purposes."
         },
         "duration": {
-          "type": "time",
+          "type": "string",
+          "format": "time",
           "description": "Time duration of the content of the asset in this format."
         },
         "dimensions": {
