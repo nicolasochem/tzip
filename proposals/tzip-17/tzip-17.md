@@ -95,7 +95,132 @@ The storage also contains two variables:
 
 ### Submission
 
-#### Permit
+All contracts implementing TZIP-16 MUST implement BOTH
+- An entrypoint to submit Permits:
+  * In one-step: submit both the Permits and permitted parameters in
+    one step using a specialized entrypoint type
+  * In separate-steps: submit the Permit(s) and permitted parameter(s) in
+    separate steps using an additional entrypoint: `permit`
+- `setExpiry`: set your default expiry or the expiry for a particular Permit
+
+#### One-step Permit Entrypoints
+
+While The `permit` entrypoint allows submitting the Permit and parameters in
+separate steps without modifying the entrypoint's type, submitting both of them
+in one-step requires a new entrypoint type.
+
+Given an entrypoint of the form:
+
+```
+(entrypoint_type %entrypointName)
+```
+
+The one-step Permit entrypoint type MUST BE of ONE of the following forms:
+
+- Batched:
+
+```bash
+list (pair %name entrypoint_type
+                 (option %permit (pair key
+                                       signature)))
+```
+
+- Non-batched, i.e. the batched version without the outermost `list`:
+
+```bash
+pair %name entrypoint_type
+           (option %permit (pair key
+                                 signature))
+```
+
+Note that since the parameter is present, the Blake2B `bytes` hash of the
+parameter unnecessary and thus omitted from the `permit` field.
+
+See below for naming restrictions when the original entrypoint is also present.
+
+##### Naming One-step and Separate-step Permits
+
+If both the original entrypoint (`entrypointName`) and the one-step Permit
+version are implemented in a contract, the entrypoint names must be of the
+following form:
+
+- `entrypointName`: The original entrypoint's name
+- `permitEntrypointName`: The name of the entrypoint with one-step Permits
+  * `"permit"` or `"permit_"` MUST BE the prefix.
+  * `entrypointName` MUST follow immediately after the prefix.
+  * The first character of `entrypointName` MAY BE uppercased.
+
+Additionally, calling `entrypointName` MUST BE equivalent to calling
+`permitEntrypointName` with `None` in its `permit` field.
+
+##### Specification
+
+###### Non-batched
+
+If the non-batched form is implemented, its behavior must be equivalent to
+the batched form with a singleton list input:
+
+```
+entrypointNameUnbatched(x) == entrypointName([x])
+```
+
+###### Batched
+
+We define one-step Permits in terms of the simpler separate-step `permit`
+entrypoint, which accepts a Permit and then allows anyone to submit the
+permitted parameters in a separate step.
+
+Given a series of Permits and their respective parameters:
+
+```
+P_0, P_1, .., P_N := Permits for X_0, X_1, .., X_N
+X_0, X_1, .., X_N := parameters for entrypointName
+```
+
+Calling `permit(P_i)` followed by `entrypointName([X_i, None)]` for
+`i = 0, 1, .., N` within one operation MUST BE equivalent to calling
+`entrypointName` with the Permits and parameters in one step:
+
+```
+permit(P_0)
+permitEntrypointName([(X_0, None)])
+
+permit(P_1)
+permitEntrypointName([(X_1, None)])
+..
+permit(P_N)
+permitEntrypointName([(X_N, None)])
+
+ ==
+
+permitEntrypointName([ (X_0, Some P_0) ;
+                       (X_1, Some P_1) ;
+                       ..
+                       (X_N, Some P_N)
+                     ])
+```
+
+In other words, the one-step Permit entrypoint must be equivalent to an
+implementation that iterates over the list, calling `permit` and then the
+original entrypoint for each pair. Additionally, the entire batch MUST
+fail if and only if any element of the list would result in failure.
+
+Note that submitting a batch of Permits/parameters across multiple operations
+may not be equivalent to submitting the entire batch in one step:
+- One of the entrypoint calls could fail, which would cancel the entire batch
+  if it were submitted in a single operaton, but would fail independently when
+  submitting the batch in separate steps
+- One of the Permits could expire during the batch's submission
+- The behavior of `entrypointName` could change across multiple operations,
+  e.g. if it's implemented using the `NOW` or `LEVEL` instructions
+
+#### Separate-step Permit
+
+With separate-step Permits, the original entrypoint `entrypointName` retains its
+original type and the Permit must be submitted to the `permit` entrypoint in a
+separate step, i.e. in an additional contract call.
+
+##### Specification
 
 ```
 list (pair %permit key
@@ -126,7 +251,7 @@ To make a Permit, a user:
 When a Permit is created:
 - The creation time is saved.
   See the `SetExpiry` entrypoint for more detail.
-- The `counter: nat` is incremented
+- The `counter: nat` is incremented by one.
 
 ##### Duplicate Permit
 
@@ -182,7 +307,6 @@ PACK_FOR_SIGNING := {
 }
 ```
 
-### Management
 
 ## SetExpiry
 
