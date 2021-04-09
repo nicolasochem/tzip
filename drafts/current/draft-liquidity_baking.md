@@ -5,7 +5,7 @@ author: Gabriel Alfour, Sophia Gold, Arthur Breitman, et al.
 type: Protocol
 created: 2021-01-05
 date: 2021-03-30
-version: 2
+version: 3
 ---
 
 ## Summary
@@ -40,7 +40,7 @@ To implement this contract, we use a fork of the open source code base used by [
 
 ### Subsidy
 
-At every block in the chain, 5 tez are minted and credited to the CPMM contract, and the CPMM's `%default` entrypoint is called to update the `xtz_pool` balance in its storage. This corresponds to 1/16th of 80 tez which is the typical block reward and endorsement reward for a block of priority 0 with all endorsements. If for any reason this constant changes, the amount of 5 tez should also be changed adequately.
+At every block in the chain, 2.5 tez are minted and credited to the CPMM contract, and the CPMM's `%default` entrypoint is called to update the `xtz_pool` balance in its storage. This corresponds to 1/16th of 40 tez which is the typical block reward and endorsement reward for a block of priority 0 with all endorsements. If for any reason this constant changes, the amount of 2.5 tez should also be changed adequately.
 
 So the credits to the CPMM contract can be accounted for by indexers, they are included in block metadata as a balance update with a new update origin constructor, `Subsidy`.
 
@@ -51,9 +51,9 @@ As a safety precaution, the subsidy expires automatically after 6 months but it 
 In addition to the 6 months sunset, an escape hatch is included. At every block, a baker can choose to include a flag that requests ending the subsidy. The context maintains an exponential moving average of that flag calculated as such with integer arithmetic:
 
 `e[0] = 0`
-`e[n+1] = (999 * e[n] // 1000) + (1000 if flag[n] else 0)`
+`e[n+1] = (1999 * e[n] // 2000) + (1000 if flag[n] else 0)`
 
-If at any block `e[n] >= 500000` then it means that an exponential moving average with a window size on the order of one thousand blocks has had roughly a majority of blocks demanding the end of the subsidy. If that is the case, the subsidy is permanently halted (though it can be reactivated by a protocol upgrade).
+If at any block `e[n] >= 1000000` then it means that an exponential moving average with a window size on the order of one thousand blocks has had roughly a majority of blocks demanding the end of the subsidy. If that is the case, the subsidy is permanently halted (though it can be reactivated by a protocol upgrade).
 
 For indicative purposes, if a fraction `f` of blocks start signalling the flag, the threshold is reached after roughly `log(1-1/(2f)) / log(0.999)` blocks, about 693 blocks if everyone signals, 980 blocks if 80% do, 1790 blocks if 60% do, etc.
 
