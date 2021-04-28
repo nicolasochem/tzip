@@ -43,6 +43,7 @@ Open a [merge request](https://gitlab.com/tzip/tzip/-/merge_requests) using the 
 | [TZIP-019] | Tezos Decentralized Identifier (DID) Manager         |  2020-09-16   | Work In Progress |
 | [TZIP-020] | Off-chain Events                                     |  2020-10-07   | Work In Progress |
 | [TZIP-021] | Rich Metadata                       |  2020-11-12   | Draft |
+| [TZIP-022] | Vanity Name Resolution Standard                    |  2021-01-06   | Work In Progress |
 
 [TZIP-001]: proposals/tzip-1/tzip-1.md
 [TZIP-002]: proposals/tzip-2/tzip-2.md
@@ -65,3 +66,4 @@ Open a [merge request](https://gitlab.com/tzip/tzip/-/merge_requests) using the 
 [TZIP-019]: proposals/tzip-19/tzip-19.md
 [TZIP-020]: proposals/tzip-20/tzip-20.md
 [TZIP-021]: proposals/tzip-21/tzip-21.md
+[TZIP-022]: proposals/tzip-22/tzip-22.md
