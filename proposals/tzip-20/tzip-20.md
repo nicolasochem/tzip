@@ -178,11 +178,9 @@ The `"michelsonExtendedStorageEvent"` accepts storage from the operation result 
 }
 ```
 
-## Token events
+## Indexer events
 
-This specification defines two approaches to emitting token balance and metadata update events:
-- **Basic**, which does not require to implement off-chain events, but restricts the storage type;
-- **Custom**, which requires implementing off-chain events with standardized names and return types.
+This specification defines an approach to emitting token balance and metadata update events, which requires implementing off-chain events with standardized names and return types.
 
 > Here and hereafter, we are based on the following statements about tokens:
 > 1. Token represents an asset;
@@ -191,43 +189,7 @@ This specification defines two approaches to emitting token balance and metadata
 
 NOTE that this specification doesn't linked to any particular token standard.
 
-### Basic approach
-
-This method sets restrictions on the name (field annotation) and type of the ledger containing token balances. In order to cover more cases and be consistent with other standards, three common token workflows are addressed in this spec.
-
-#### Single asset balance updates
-```
-big_map %ledger address nat
-```
-where key is the owner's address and value is the amount of tokens owned.
-
-#### Multi asset balance updates
-```
-big_map %ledger (pair address nat) nat
-```
-where key is the pair [owner's address, token ID] and value is the amount of tokens owned.
-
-#### NFT asset balance updates
-```
-big_map %ledger nat address
-```
-where key is the token ID and value is owner's address.
-
-#### Metadata updates
-```
-big_map %token_metadata nat (pair nat (map string bytes))
-```
-where key is the token ID and the value is the pair [token ID, token information]
-
-### Custom approach
-
-For each case defined in the previous section there's an according off-chain event name and return type:
-- `singleAssetBalanceUpdates :: map address int`
-- `multiAssetBalanceUpdates :: map (pair address nat) int`
-- `nftAssetBalanceUpdates :: map nat (option address)`
-- `tokenMetadataUpdates :: set nat`
-
-Read more in the [indexer events](./indexer-events.md) specification.
+Read more in the [indexer events](./indexer-events.md) documentation.
 
 ## Implementation guide
 

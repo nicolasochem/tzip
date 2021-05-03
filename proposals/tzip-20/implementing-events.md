@@ -4,7 +4,7 @@ Writing an off-chain event is quite simple, the main difficulty is to carefully 
 
 ## Inferred events
 
-First of all, make sure that you really need to implement an off-chain event: if you are using one of the [predefined types](./tzip-20.md#basic-approach) for storing token balances/metadata, indexers (or other consumers) will be able to infer updates on their own.
+First of all, make sure that you really need to implement an off-chain event: if you are using one of the [predefined types](../tzip-12/tzip-12.md#token-balance-updates) for storing token balances/metadata, indexers (or other consumers) will be able to infer updates on their own.
 
 ## Event kind
 
