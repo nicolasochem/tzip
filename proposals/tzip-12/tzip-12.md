@@ -22,6 +22,7 @@ created: 2020-01-24
   - [Metadata](#token-metadata)
     - [Token Metadata](#token-metadata)
     - [Contract Metadata (TZIP-016)](#contract-metadata-tzip-016)
+  - [Token balance updates](#token-balance-updates)
   - [FA2 Transfer Permission Policies and Configuration](#fa2-transfer-permission-policies-and-configuration)
   - [Error Handling](#error-handling)
 - [Future Directions](#future-directions)
@@ -384,6 +385,30 @@ following types (Michelson annotations are optional) and semantics:
 - `token_metadata` is one of the 2 ways of providing token-specific metadata, it
   is defined in section [Token Metadata](#token-metadata) and is not optional if
   the contract does not have a `%token_metadata` big-map.
+
+## Token balance updates
+
+FA2 contracts usually have non-standard (other than `transfer`) entrypoints that alter token balances. In addition to that, there may be an initial distribution of tokens at the origination of the contract. All that makes impossible for a third-party that is working with the FA2 contract in a generic way (not knowing the implementation details) to do proper token balance accounting.  
+
+One can make token balances indexable by storing them in a standardized way. Depending on the case, one of the following options should be used.
+
+#### Single asset contract
+```
+big_map %ledger address nat
+```
+where key is the owner's address and value is the amount of tokens owned.
+
+#### Multi asset contract
+```
+big_map %ledger (pair address nat) nat
+```
+where key is the pair [owner's address, token ID] and value is the amount of tokens owned.
+
+#### NFT asset contract
+```
+big_map %ledger nat address
+```
+where key is the token ID and value is owner's address.
 
 ## FA2 Transfer Permission Policies and Configuration
 

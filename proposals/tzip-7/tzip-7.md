@@ -105,6 +105,15 @@ Token metadata for TZIP-7 should be presented in the same form as
 [TZIP-12's token metadata](/proposals/tzip-12/tzip-12.md#token-metadata) and 
 conforms to the same semantic rules. The `token-id` used for FA1.2 tokens must be `0`.
 
+## Token balance updates
+
+One can make token balances indexable by storing them in a standardized way:
+
+```
+big_map %ledger address (pair nat (map address nat))
+```
+where key is the owner's address and value is the pair [amount, map of allowances].
+
 ## Related work
 
 [ERC-20](https://eips.ethereum.org/EIPS/eip-20) is a standard used in Ethereum for implementing tokens.
