@@ -1,12 +1,12 @@
  - [Legacy Interface](#legacy-interface)
-  - [Token Metadata Entrypoints](#token-metadata-entrypoints)
+  - [Token Metadata](#token-metadata)
   - [Permissions Descriptor Entrypoint](#permissions-descriptor-entrypoint)
 
 
 ## Legacy Interface
 
 Contracts which for historical reasons do not implement [TZIP-16 Contract
-Metadata](#tzip-16-contract-metadata) are expected to have implemented the
+Metadata](../tzip-16/tzip-16.md) are expected to have implemented the
 interface in this section (now deprecated).
 
 ### Token Metadata
@@ -53,7 +53,7 @@ Examples:
    - Contract storage MUST have a `big_map` that maps `token_id ->
      token_metadata` and annotated `%token_metadata`
    - Contract MUST implement entrypoint `token_metadata`
-   
+
 All entry-points rely on the Michelson type of the token metadata:
 
 ```

@@ -236,7 +236,7 @@ number ranges to represent `token_id`s for NFTs.
 ### Non-transferable Tokens
 
 Either fungible and non-fungible tokens can be non-transferable. Non-transferable
-tokens can be represented by the FA2 contract which [operator transfer behavior](#operator-transfer-behavior)
+tokens can be represented by the FA2 contract which [operator transfer behavior](permissions-policy.md#operator-permission-behavior)
 is defined as `No_transfer`. Tokens cannot be transferred either by the token owner
 or by any operator. Only privileged operations like mint and burn can assign tokens
 to owner accounts.
@@ -281,9 +281,10 @@ If any of the balances is wrong it MUST interrupt the operation using
 
 Transfer hook is one recommended design pattern to implement FA2 that enables
 separation of the core token transfer logic and a permission policy. Instead of
-implementing FA2 as a monolithic contract, a [permission policy]
-(#fa2-permission-policies-and-configuration) can be implemented as a separate
-contract. Permission policy contract provides an entrypoint invoked by the core
+implementing FA2 as a monolithic contract, a
+[permission policy](permissions-policy.md) can be implemented
+as a separate contract.
+Permission policy contract provides an entrypoint invoked by the core
 FA2 contract to accept or reject a particular transfer operation (such
 an entrypoint is called **transfer hook**).
 
@@ -484,7 +485,7 @@ Any address can be a recipient of the token transfer.
 
 This is a sample implementation of the FA2 transfer hook, which supports receiver
 transfer list and `fa2_token_receiver` for token receivers. The hook contract also
-supports [operators](#operator-transfer-behavior).
+supports [operators](tzip-12.md#operators).
 
 Only addresses that on the transfer list or implement the `fa2_token_receiver`
 interface can receive tokens. If one or more `to_` addresses in FA2 transfer batch

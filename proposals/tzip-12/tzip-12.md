@@ -36,18 +36,18 @@ an overview of the interface, token transfer semantics, and metadata.
 
 ## Abstract
 
-Many considerations weigh on the implementer of a token contract. Tokens might be fungible or non-fungible. 
+Many considerations weigh on the implementer of a token contract. Tokens might be fungible or non-fungible.
 A variety of transfer permission policies can be used to define how many tokens can be transferred,
 who can perform a transfer, and who can receive tokens. A token contract can be
 designed to support a single token type (e.g. ERC-20 or ERC-721) or multiple token
 types (e.g. ERC-1155) to optimize batch transfers and atomic swaps of the tokens.
 
-The FA2 standard aims to provide significant expressivity to contract developers 
-to create new types of tokens while maintaining a common interface standard for wallet 
+The FA2 standard aims to provide significant expressivity to contract developers
+to create new types of tokens while maintaining a common interface standard for wallet
 integrators and external developers.
 
-A particular FA2 implementation may support either a single token type per contract or 
-multiple tokens per contract, including hybrid implementations where multiple token kinds 
+A particular FA2 implementation may support either a single token type per contract or
+multiple tokens per contract, including hybrid implementations where multiple token kinds
 (fungible, non-fungible, non-transferable etc) can coexist (e.g. in a fractionalized NFT contract).
 
 This document also specifies metadata at the token and contract level based on [TZIP-016](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md).
@@ -152,7 +152,7 @@ FA2 token contracts MUST always implement this behavior.
 
 - Transfer implementations MUST apply transfer permission policy logic (either
   [default transfer permission policy](#default-transfer-permission-policy) or
-  [customized one](#customizing-transfer-permission-policy)).
+  [customized one](permissions-policy.md#customizing-transfer-permission-policy)).
   If permission logic rejects a transfer, the whole operation MUST fail.
 
 - Core transfer behavior MAY be extended. If additional constraints on tokens
@@ -275,7 +275,7 @@ or be limited to an administrator.
 ## Token Metadata
 
 Token metadata is intended for off-chain, user-facing contexts (e.g.  wallets,
-explorers, marketplaces). An earlier (superseded) specification of TZIP-012 token metadata is 
+explorers, marketplaces). An earlier (superseded) specification of TZIP-012 token metadata is
 contained in the *Legacy Interface* section of the Legacy FA2 document.
 
 #### Token-Metadata Values
@@ -298,13 +298,13 @@ same 3 reserved non-empty fields:
 
 `{ "symbol": <string>, "name": <string>, "decimals": <number>, ... }`
 
-Providing a value for `"decimals"` is required for all token types. `"name”` and `"symbol"` are not required but it is highly recommended for most tokens to provide the values either in the map or the JSON found via the TZIP-016 URI. 
+Providing a value for `"decimals"` is required for all token types. `"name”` and `"symbol"` are not required but it is highly recommended for most tokens to provide the values either in the map or the JSON found via the TZIP-016 URI.
 
 Other standards such as [TZIP-021](https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-21/tzip-21.md) describe token metadata schemas which reserve additional keys for different token types for greater compatibility across indexers, wallets, and tooling.
 
 #### Token Metadata Storage & Access
 
-A contract can use two methods to provide access to the token-metadata. 
+A contract can use two methods to provide access to the token-metadata.
 
 - **Basic**: Store the values in a big-map annotated `%token_metadata` of type
    `(big_map nat (pair (nat %token_id) (map %token_info string bytes)))`.
@@ -337,7 +337,7 @@ The TZIP-016 contract metadata JSON structure is described below:
   specifed below, see section [Off-chain-views](#off-chain-views).
 
 - A TZIP-012-specific field `"permissions"` is defined in [Exposing Permissions
-Descriptor](#exposing-permissions-descriptor), and it is optional, but
+Descriptor](permissions-policy.md#exposing-permissions-descriptor), and it is optional, but
 recommended if it differs from the default value.
 
 ### Example
@@ -415,7 +415,7 @@ where key is the token ID and value is owner's address.
 Most token standards specify logic such as who can perform a transfer, the amount
 of a transfer, and who can receive tokens. This standard calls such logic
 _transfer permission policy_ and defines a framework to compose such permission
-policies from the [standard permission behaviors](#permission-behaviors).
+policies from the [standard permission behaviors](permissions-policy.md#permission-behaviors).
 
 FA2 allows the contract developer to choose and customize from a variety of permissions
 behaviors, easily enabling non-transferrable tokens or centrally-administrated

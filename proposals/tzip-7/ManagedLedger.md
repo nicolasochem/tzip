@@ -91,7 +91,7 @@ The contract code can be found
 
 An implementation of [TZIP-7](/proposals/tzip-7/tzip-7.md)
 that includes contract metadata, as specified in
-[TZIP-12](/proposals/tzip-12/tzip-12.md#token_metadata),
+[TZIP-12](/proposals/tzip-12/tzip-12.md#token-metadata),
 can be found
 [here](https://github.com/tqtezos/lorentz-contract-metadata).
 

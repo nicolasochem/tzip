@@ -60,14 +60,14 @@ type operator_transfer_policy =
   mnemonic `"FA2_NOT_OPERATOR"`.
   The FA2 standard defines the entrypoint to manage operators associated with
   the token owner address and specific token IDs (token types)
-  ([`update_operators`](#update_operators)). Once an operator is added, it can
+  ([`update_operators`](tzip-12.md#operators)). Once an operator is added, it can
   manage permitted token types of the associated owner.
 
-The operation permission behavior also affects [`update_operators`](#update_operators)
+The operation permission behavior also affects [`update_operators`](tzip-12.md#operators)
 entrypoint:
 
 - If an operator transfer is denied (`No_transfer` or `Owner_transfer`),
-  [`update_operators`](#update_operators) entrypoint MUST fail if invoked with the
+  [`update_operators`](tzip-12.md#update_operators) entrypoint MUST fail if invoked with the
   error mnemonic `"FA2_OPERATORS_UNSUPPORTED"`.
 
 ###### `Token Owner Hook` Permission Behavior
@@ -259,10 +259,9 @@ and/or use a `tag` hint of `custom_permission_policy`.
 ##### Customizing Transfer Permission Policy
 
 The FA2 contract MUST always implement the
-[core transfer behavior](#core-transfer-behavior).
+[core transfer behavior](tzip-12.md#transfer).
 However, FA2 contract developer MAY chose to implement either the
-[default transfer permission policy](#default-transfer-permission-policy) or a
-custom policy.
+[default transfer permission policy](tzip-12.md#default-transfer-permission-policy) or a custom policy.
 The FA2 contract implementation MAY customize one or more of the standard permission
 behaviors (`operator`, `receiver`, `sender` as specified in `permissions_descriptor`
 type), by choosing one of the available options for those permission behaviors.
@@ -288,8 +287,7 @@ the previous sections:
   where `"config-api"` is an optional contract adddress.
 
 The implicit value of the field corresponding to the
-[default `transfer` permission policy](#default-transfer-permission-policy) is
-the following:
+[default `transfer` permission policy](tzip-12.md#default-transfer-permission-policy) is the following:
 
 ```json
 {

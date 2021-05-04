@@ -114,7 +114,7 @@ This way, security deposits are proportional with the maximum reward. The parame
 
 ## Rationale
 
-Each of the [two mentioned updates](#Abstract) helps decrease the time to finality:
+Each of the [two mentioned updates](#abstract) helps decrease the time to finality:
 
 * Increasing the number of required endorsements makes nodes converge faster on the same chain. In other words, the number of confirmations decreases, as detailed below.
 * While the new block delay formula does not help with decreasing the number of confirmations, it helps decrease the confirmation times simply by decreasing the time between blocks.

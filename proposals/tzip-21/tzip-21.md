@@ -109,7 +109,7 @@ If provided at the token metadata level, content should be provided in accordanc
 the recommendations of the token standard used (see [TZIP-12][7], [TZIP-7][8]).
 
 If provided at the contract metadata level, to prevent pollution in the top level of the
-metadata, content should be provided as a nested object under the key `assets`. 
+metadata, content should be provided as a nested object under the key `assets`.
 
 The schema defines the following additional types:
 
@@ -118,7 +118,7 @@ The schema defines the following additional types:
 ### `asset` (object)
 
 Properties of the `asset` object are designed to live at the root level of the token metadata,
-or as an object array under the key `assets`. at the contract metadata level. 
+or as an object array under the key `assets`. at the contract metadata level.
 
 #### `description` (string)
 
@@ -238,29 +238,29 @@ The object is an array with all elements of the type `attribute`.
 ```json
 "attributes": [
   {
-    "name": "Base", 
+    "name": "Base",
     "value": "Starfish"
-  }, 
+  },
   {
-    "name": "Eyes", 
+    "name": "Eyes",
     "value": "Big"
-  }, 
+  },
   {
-    "name": "Mouth", 
+    "name": "Mouth",
     "value": "Surprised"
-  }, 
+  },
   {
-    "name": "Level", 
+    "name": "Level",
     "value": "5",
     "type": "integer"
-  }, 
+  },
   {
-    "name": "Stamina", 
+    "name": "Stamina",
     "value": "1.4",
     "type": "number"
-  }, 
+  },
   {
-    "trait_type": "Stamina Increase", 
+    "trait_type": "Stamina Increase",
     "value": "10",
     "type": "percentage"
   }
@@ -352,7 +352,7 @@ Type of the value. To be used for display purposes.
 
 ```json
 {
-  "name": "Stamina", 
+  "name": "Stamina",
   "value": "1.4",
   "type": "number"
 }

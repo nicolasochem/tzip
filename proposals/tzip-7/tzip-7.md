@@ -34,7 +34,7 @@ See also:
 
 This document does not specify contract metadata.
 For a metadata specification, see
-[TZIP-012](/proposals/tzip-12/tzip-12.md#token_metadata)
+[TZIP-012](/proposals/tzip-12/tzip-12.md#token-metadata)
 
 ## Errors
 
