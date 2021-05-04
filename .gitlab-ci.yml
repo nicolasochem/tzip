@@ -2,7 +2,7 @@ stages:
   - test
 
 variables:
-  XREFCHECK_URL: "https://github.com/serokell/xrefcheck/releases/download/v0.1.1/release.tar.gz"
+  XREFCHECK_URL: "https://github.com/serokell/xrefcheck/releases/download/v0.2/xrefcheck-x86_64-linux"
 
 verify-doc-links:
   stage: test
@@ -11,7 +11,7 @@ verify-doc-links:
     refs:
       - merge_requests
   script:
-    - wget -O - "$XREFCHECK_URL" | tar xzv && xrefcheck/bin/xrefcheck --no-progress --ignored xrefcheck --mode local-only
+    - wget -O xrefcheck "$XREFCHECK_URL" && chmod +x ./xrefcheck && ./xrefcheck --no-progress --ignored xrefcheck --mode local-only
 
 # In case it is necessary to exclude some links from checking,
 # see the Special functionality section of xrefcheck README.
@@ -26,4 +26,4 @@ verify-doc-external-links:
     refs:
       - merge_requests
   script:
-    - wget -O - "$XREFCHECK_URL" | tar xzv && xrefcheck/bin/xrefcheck --no-progress --ignored xrefcheck --mode external-only
+    - wget -O xrefcheck "$XREFCHECK_URL" && chmod +x ./xrefcheck && ./xrefcheck --no-progress --ignored xrefcheck --mode external-only
