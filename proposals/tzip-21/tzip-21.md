@@ -67,7 +67,7 @@ further emphasizes that either `name` or `symbol` should be present.
 
 In addition to the Base Token Metadata Standard, the following fields are recommended for all fungible tokens:
 
-* [symbolPreference](#symbolpreference-boolean-default-false)
+* [shouldPreferSymbol](#shouldprefersymbol-boolean-default-false)
 * [thumbnailUri](#thumbnailuri-string-format-uri-reference)
 
 #### Example:
