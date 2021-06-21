@@ -47,7 +47,7 @@ Unlike Emmy<sup>+</sup>, Tenderbake has [two types of votes](https://blog.nomadi
 
 The validator's whose turn is to inject a candidate block at a given round is called the *proposer* at that round. Proposers in Tenderbake are selected similarly as bakers in Emmy<sup>+</sup>: the proposer at round `r` is the validator who has the validator slot `r`.
 A proposer who has observed a preendorsement quorum for a candidate block, is required to propose a block with the same *payload* (that is, the same sequence of non-consensus operations) as the initial block. We talk about a *re-proposal* in this case.
- 
+
 ### Transaction and block finality
 
 A transaction is final as soon as the block including it has a confirmation. Indeed, as hinted above, a block contains the endorsement quorum on the previous block contents. Thanks to the endorsement quorum, we have **transaction finality after 1 confirmation**.
@@ -62,10 +62,10 @@ Round durations will be set based on outcome from performance evaluations and fr
 
 ### Validator selection and activity monitoring
 
-In contrast to Emmy<sup>+</sup>, where baking and endorsing rights are computed in one go, 5 cycles in advance, in Tenderbake validators are selected in two steps. 
+In contrast to Emmy<sup>+</sup>, where baking and endorsing rights are computed in one go, 5 cycles in advance, in Tenderbake validators are selected in two steps.
 
-1. The first step is the same as the endorsers' selection in Emmy<sup>+</sup>, and it is a pre-selection step: in this step we only select potential validators. 
-2. In a second step, performed 5 levels in advance, given by a `validators_selection_offset` parameter, we select among the potential validators those that have enough tokens to place the security deposit. 
+1. The first step is the same as the endorsers' selection in Emmy<sup>+</sup>, and it is a pre-selection step: in this step we only select potential validators.
+2. In a second step, performed 5 levels in advance, given by a `validators_selection_offset` parameter, we select among the potential validators those that have enough tokens to place the security deposit.
 
 This mechanism is necessary in order to prevent the situation where too few validators have enough stake to participate in consensus when their turn comes. Note in particular that the security deposit is placed even if the delegate does not actually participate in consensus. (See below for the value of the security deposit.)
 
@@ -78,7 +78,7 @@ As in Emmy<sup>+</sup>, we reward participation in consensus and punish bad beha
 - Fees and baking rewards go to the payload proposer, the one who selects the transactions to be included in the block. In some cases, this validator might be different from block proposer, the baker who injects the block.
 - Including extra endorsements, that is, more than the minimal required to obtain a quorum, is rewarded with a bonus.
 - Endorsing rewards are shared equally among all validators. Participation above a minimal threshold per cycle is however required.
-- As the selection of validators in Tenderbake is done on a level basis, modifications were made to the balance unfreeze mechanism. In particular, validators are rewarded instantaneously for baking blocks and including extra endorsements, and not at the end of the cycle like in Emmy<sup>+</sup>. Similarly, the deposits are unfrozen after a delay expressed in levels, and not necessarily at the end of a cycle. Only the rewards for endorsing are unfrozen at the end of a cycle. 
+- As the selection of validators in Tenderbake is done on a level basis, modifications were made to the balance unfreeze mechanism. In particular, validators are rewarded instantaneously for baking blocks and including extra endorsements, and not at the end of the cycle like in Emmy<sup>+</sup>. Similarly, the deposits are unfrozen after a delay expressed in levels, and not necessarily at the end of a cycle. Only the rewards for endorsing are unfrozen at the end of a cycle.
 
 
 #### Fees
@@ -87,7 +87,7 @@ The fees associated to the transactions included in a block go to the
 payload proposer. This is only natural given that this is the
 validator that selects the transactions to be included; see [an
 in-depth blog post](https://ex.rs/protocol-level-fees/) for further
-motivation. 
+motivation.
 
 The payload proposer is usually the same delegate as the block
 proposer (that is, the one that signs and injects the block): that's
@@ -157,7 +157,7 @@ We note that selfish baking is not an issue in Tenderbake: say we are at round `
 
 ## Backwards Compatibility
 
-As mentioned in the abstract, the main change in going from Emmy<sup>+</sup> to [Tenderbake](https://arxiv.org/abs/2001.11965) is going from probabilistic to deterministic finality, more precisely, to [finality in 2 blocks](#finality-in-two-blocks).
+As mentioned in the abstract, the main change in going from Emmy<sup>+</sup> to [Tenderbake](https://arxiv.org/abs/2001.11965) is going from probabilistic to deterministic finality, more precisely, to finality in 2 blocks.
 The remaining changes are as follows:
 - the format of endorsements changes, in particular, an endorsement for block `b` includes the round at which `b` was proposed; a validator emits at most an endorsement per round, but can emit more endorsements per level; therefore, the current high-water mark mechanism used by the signer needs to be adapted;
 - besides endorsing, there is a second type of consensus operation called preendorsement; similarly, besides `double_endorsement_evidence` there is the operation `double_preendorsement_evidence`;
