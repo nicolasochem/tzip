@@ -4,8 +4,8 @@ status: Draft
 author: Nomadic Labs
 type:
 created: 2021-03-09
-date: 2021-06-15
-version: 2
+date: 2021-06-23
+version: 3
 ---
 
 # Deterministic Finality with Tenderbake
@@ -31,7 +31,7 @@ Tenderbake adapts Tendermint to the Tezos blockchain, but the adjustments requir
 
 The design and the rationale behind the design of Tenderbake are described at length in the [technical report](https://arxiv.org/abs/2001.11965) and in a [Nomadic Labs's blog post](https://blog.nomadic-labs.com/a-look-ahead-to-tenderbake.html). Here we only give a description of changes relevant from a user/developer perspective.
 
-Tenderbake is executed for each new block level by a "committee" whose members are called *validators*, which are delegates selected at random based on their stake, in the same way as endorsers are selected in Emmy<sup>+</sup>. We let `consensus_committee_size` be the number of validator slots per level. This constant has the role of `endorsers_per_block` in Emmy<sup>+</sup>; its concrete value will be decided later, however it will be significantly higher than the current value 32, ideally 8000.
+Tenderbake is executed for each new block level by a "committee" whose members are called *validators*, which are delegates selected at random based on their stake, in the same way as endorsers are selected in Emmy<sup>+</sup>. We let `consensus_committee_size` be the number of validator slots per level. This constant has the role of `endorsers_per_block` in Emmy<sup>+</sup>; its concrete value will be decided later, however it will be significantly higher than the current value 32, ideally 7000.
 
 For each level, Tenderbake proceeds in rounds. Each *round* represents an attempt by the validators to agree on the content of the block for the current level, that is, on the sequence of non-consensus operations the block contains.
 
@@ -128,11 +128,11 @@ to their number of validator slots. The endorsing reward may be
 received even if the validator's endorsement is not included in a
 block. However, it is required a minimal presence per cycle.  More
 precisely, we say that a delegate is *present* during a cycle if its
-endorsements are included in at least `presence_levels_per_cycle`
-blocks in a cycle. We set `presence_levels_per_cycle` to `1/4` of
-`blocks_per_cycle`. The endorsing rewards are distributed at the end
-of the cycle if the delegate was present. If the delegate was not
-present, its rewards are burned.
+endorsements are included in at least `presence_ratio` of the blocks
+of the cycle at which the delegate had validator slots. We set
+`presence_ratio` to `1/4`. The endorsing rewards are distributed at
+the end of the cycle if the delegate was present. If the delegate was
+not present, its rewards are burned.
 
 Regarding the concrete values for rewards, we first fix the total reward per
 level, call it `total_rewards_per_level`, to `80 / blocks_per_minute` tez. We
