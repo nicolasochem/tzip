@@ -31,7 +31,15 @@ Tenderbake adapts Tendermint to the Tezos blockchain, but the adjustments requir
 
 The design and the rationale behind the design of Tenderbake are described at length in the [technical report](https://arxiv.org/abs/2001.11965) and in a [Nomadic Labs's blog post](https://blog.nomadic-labs.com/a-look-ahead-to-tenderbake.html). Here we only give a description of changes relevant from a user/developer perspective.
 
-Tenderbake is executed for each new block level by a "committee" whose members are called *validators*, which are delegates selected at random based on their stake, in the same way as endorsers are selected in Emmy<sup>+</sup>. We let `consensus_committee_size` be the number of validator slots per level. This constant has the role of `endorsers_per_block` in Emmy<sup>+</sup>; its concrete value will be decided later, however it will be significantly higher than the current value 32, ideally 7000.
+Tenderbake is executed for each new block level by a "committee" whose members are called *validators*, which are delegates selected at random based on their stake, in the same way as endorsers are selected in Emmy<sup>+</sup>.
+We let `consensus_committee_size` be the number of validator slots per level.
+This constant has the role of `endorsers_per_block` in Emmy<sup>+</sup>; its concrete value will be decided later, however it will be significantly higher than the current value 32, ideally at least 7354.
+(This value is obtained by computing the minimum number of slots such
+that, under the assumption that 30% of all rolls are detained by a
+Byzantine entity and there is a block every second, then the random
+selection of `consensus_committee_size` rolls does not contain more
+than one third Byzantine rolls more than once in 100 years on
+average.)
 
 For each level, Tenderbake proceeds in rounds. Each *round* represents an attempt by the validators to agree on the content of the block for the current level, that is, on the sequence of non-consensus operations the block contains.
 
