@@ -5,35 +5,91 @@ status: Draft
 author: ChiaChi (cct@marigold.dev), Gabriel (ga@marigold.dev)
 type: -
 created: 2020-12-09
-date: 2020-12-16
-version: 0
+date: 2021-7-12
+version: 1
 ---
 
 ## Summary
 
-This propose is to provide ways for read-only accessing anther contracts. Three Michelson instructions `GET_STORAGE`, `VIEW` (operation) and `VIEW` (on top-level) are implemented for.
+We propose read-only access from a contract to another. Two Michelson primitives `VIEW` (instruction) and `view` (top-level keywork) are added.
 
 ## Abstract
 
-Currently, there is no direct way to get output from another contract. The sequence of operations execution of Tezos was designed in Breadth First Search order. That allows Tezos satisfied in terms of ACID transactions. However, it prevents us to interact with another contract. If it breaks each of the terms, it may repeat the mistake like reentrancy attacks. Therefore, the available solution is proposed as read-only in Continuation Passing Style. Three Michelson instructions `GET_STORAGE`, `VIEW` (operation) and `VIEW` (on top-level) are providing for this.  
+Currently, there is no direct way to get a value computed by another contract.  Inter-contract interactions must be performed in continuation-passing style (CPS); see for instance [the CPS views of TZIP-4](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-4/tzip-4.md#view-entrypoints). This brings complexity but also security risk because when calling a smart contract in CPS, the caller has no guarantee that the callee won't modify its storage or even call back.
+
+We propose to extend Michelson with built-in read-only views. To this aim, two new Michelson primitives are introduced: the `view` top-level keyword (to declare a view) and the `VIEW` instruction (to call a previously declared view).
 
 ## Specification
 
-For the Three Michelson instructions:
+Views are a mechanism for contract calls that:
 
-- `GET_STORAGE 'return_ty`: It allows obtaining storage contents from a given address. If the given address is nonexistent, NONE will be returned. Otherwise, Some a will be returned.
-    
-    > address : 'S -> option 'return : 'S
-    >\> GET_STORAGE 'return_ty / address : S => option 'return_ty : S
-       
-- `VIEW name 'arg_ty 'return_ty { (instr) ; ... }`: This VIEW should be defined in the top-level. Like the main Michelson program, it maintains a stack and its initial value contains a pair in which the first element is an input value and the second element is a storage contents .
+- are read-only: they may depend on the storage of the contract declaring the view but cannot modify it nor emit operations (but they can call other views),
+- take arguments as input in addition to the contract storage,
+- return results as output,
+- are synchronous: the result is immediately available on the stack of the caller contract.
 
-- `VIEW name 'arg_ty 'return_ty`: It allows to use of predefine VIEW in top-level and a result can be obtained immediately. If the given address or name is nonexistent, NONE will be returned. Otherwise, Some a will be returned.
+In other words, the execution of a view is included in the operation of caller's contract, but accesses the storage of the declarer's contract, in read-only mode.
+Thus, in terms of execution, views are more like lambda functions rather than contract entrypoints,
+Here is an example:
 
-    > arg : address : 'S -> option 'return_ty : 'S
-    >\> VIEW name 'arg_ty 'return_ty / arg : address : S => option 'return_ty : S
-    
-Here is an example of contracts: In the first contract, it defines two view s in top-level which named add_v and mul_v.
+
+    code {
+    ...;
+    TRANSFER_TOKENS;
+    ...;
+    VIEW "view_ex" unit;
+    ...;
+    };
+
+
+This contract calls a contract `TRANSFER_TOKENS`, and, later on, a view called "view_ex".
+No matter if the callee "view_ex" is defined in the same contract with this caller contract or not,
+this view will be executed immediately in the current operation,
+while the operations emitted by `TRANSFER_TOKENS` will be executed later on.
+As a result, although it may seem that "view_ex" receives the storage modified by `TRANSFER_TOKENS`,
+this is not the case.
+In other words, the storage of the view is the same as when the current contract was called.
+In particular, in case of re-entrance, i.e., if a contract A calls a contract B that calls a view on A, the storage of the view will be the same as when B started, not when A started.
+
+Views are **declared** at the toplevel of the script of the contract on which they operate,
+alongside the contract parameter type, storage type, and code.
+To declare a view, the `view` keyword is used; its syntax is
+`view name 'arg 'return { instr; ... }` where:
+
+- `name` is a string of at most 31 characters matching the regular expression `[a-zA-Z0-9_.%@]*`; it is used to identify the view, hence it must be different from the names of the other views declared in the same script;
+- `'arg` is the type of the argument of the view;
+- `'return` is the type of the result returned by the view;
+- `{ instr; ... }` is a sequence of instructions of type `lambda (pair 'arg 'storage_ty) 'return` where `'storage_ty` is the type of the storage of the current contract. Certain specific instructions have different semantics in `view`: `BALANCE` represents the current amount of mutez held by the contract where `view` is; `SENDER` represents the contract which is the caller of `view`; `SELF_ADDRESS` represents the contract where `view` is; `AMOUNT` is always 0 mutez.
+
+Note that in both view input (type `'arg`) and view output (type `'return`), the following types are forbidden: `ticket`, `operation`, `big_map` and `sapling_state`.
+
+Views are **called** using the following Michelson instruction:
+
+-  `VIEW name 'return`: Call the view named `name` from the contract whose address is the second element of the stack, sending it as input the top element of the stack.
+
+```
+'arg : address : 'S  ->  option 'return : 'S
+
+> VIEW name 'return / x : addr : S  =>  Some y : S
+    iff addr is the address of a smart contract c with storage s
+    where c has a toplevel declaration of the form "view name 'arg 'return { code }"
+    and code / Pair x s : []  =>  y : []
+
+> VIEW name 'return / _ : _ : S  =>  None : S
+    otherwise
+```
+
+If the given address is nonexistent or if the contract at that address does not have a view of the expected name and type,
+`None` will be returned.
+Otherwise, `Some a` will be returned where `a` is the result of the view call.
+Note that if a contract address containing an entrypoint `address%entrypoint` is provided,
+only the `address` part will be taken.
+`operation`, `big_map` and `sapling_state` and `ticket` types are forbidden for the `'return` type.
+
+
+Here is an example using views, consisting of two contracts.
+The first contract defines two views at toplevel that are named `add_v` and `mul_v`.
+
 
     { parameter nat;
       storage nat;
@@ -41,22 +97,16 @@ Here is an example of contracts: In the first contract, it defines two view s in
       view "add_v" nat nat { UNPAIR; ADD };
       view "mul_v" nat nat { UNPAIR; MUL };
     }
-    
-In this contract, it calls the add_v of the above contract and obtains a result immediately.
+
+
+The second contract calls the `add_v` view of the above contract and obtains a result immediately.
+
 
     { parameter (pair nat address) ;
       storage nat ;
-      code { CAR ; UNPAIR; VIEW "add_v" nat nat ;
-             IF_SOME { } { FAIL }; NIL operation; PAIR }; 
-    }
-    
-In this one, it obtains storage contents from a given address.
+      code { CAR ; UNPAIR; VIEW "add_v" nat ;
+             IF_SOME { } { FAIL }; NIL operation; PAIR }; }
 
-    { parameter (pair nat address) ;
-      storage nat;
-      code { CAR ; UNPAIR; DROP; GET_STORAGE nat ;
-             IF_SOME { } { FAIL } ; NIL operation ; PAIR }
-    }
 
 ## Backwards Compatibility
 
@@ -64,51 +114,12 @@ The change is adding new instructions without changing the fundamental architect
 
 ## Test Cases
 
-### test cases for compile time error 
-- VIEW toplevel
-    - multiple entries with the repeating name should return D`uplicated_view_name`.
-    - if the return type mismatch type from its signature, the message "not compatible with type" will be returned.
-    - if the number of arguments of `VIEW`, the message "primitive view expects 4 arguments" will be return
-    - if the name of `VIEW` isn't a string, return `Bad_view_name`.
+https://gitlab.com/tezos/tezos/-/merge_requests/2359/
 
-- VIEW op
-    - if the number of arguments of `VIEW`, the message "primitive view expects 3 arguments" will be return
-    - if the name of `VIEW` isn't a string, return `Bad_view_name`
-    - if the return type mismatch, the type error message, for example, "two branches don't end with the same stack type", will be returned.
-    - if the input type mismatch, the message "not compatible with type" will be returned.
-
-
-- GET_STORAGE op
-    - if the number of arguments of `GET_STORAGE`, the message "primitive view expects 1 argument" will be returned.
-
-
-### test cases for runtime
-- VIEW toplevel
-    - multiple entries with regular cases → ok
-    - identity review (the view code block is empty): return Pair (arg, storage) → ok
-    - testing arbitrary operation: add → ok
-
-- VIEW op
-    - if the target address is nonexistent, return `None`.
-    - if the target function is nonexistent, return `None`.
-    - if the input type mismatch to target contract's `VIEW`, return `None`
-    - if the output type mismatch to target contract's `VIEW`, return `None`
-
-- GET_STORAGE op
-    - regular case, return `Some a`.
-    - if the target address is nonexistent, return `None`
-    - if the type mismatch to target contract's storage, return `None`
 
 ## Implementations
 
-- `src/proto_alpha/lib_protocol/michelson_v1_gas.ml`
-Define the gas consumption of new Michelson instructions
-
-- `src/proto_alpha/lib_protocol/script_interpreter.ml`
-Define the evaluation of new Michelson instructions.
-
-- `src/proto_alpha/lib_protocol/script_ir_translator.ml`
-Define the type-checking of new Michelson instructions.
+https://gitlab.com/tezos/tezos/-/merge_requests/2359/
 
 ## Appendix
 
