@@ -50,7 +50,7 @@ We propose to add two new operations:
 
   This operation immediately transfers all the free balance of the manager account into the consensus account. It has no effect on the frozen balance.
 
-  This operation fails if the governance toggle `consensus_key_drain_toggle` is set to False.
+  This operation fails if the governance toggle `consensus_key_drain_toggle` is set to **Off**.
 
 ### `consensus_key_drain_toggle` toggle vote
 
@@ -127,18 +127,19 @@ The motivation of the `drain` operation is twofold.
 
 #### As a deterrent against handing over the key to a third party
 
-When there is one key, whoever has access to it has full control over the baker. When there are two keys, the possibility emerges of each of these keys being controlled by different people or entities. For example, the delegate key would be in physical custody of the baker, while the consensus key could be:
+When there is one key, whoever has access to it has full control over the baker. When there are two keys, the possibility emerges of each of these keys being controlled by different people or entities. For example, the delegate key would likely be in physical custody of the baker, while the consensus key could be handed to, or created by:
 
-* hosted in a cloud platform where the cloud provider may revoke access unilaterally,
-* handed to a contractor or baking-as-a-service provider taking care of the baking operations on behalf of the baker.
+* a cloud platform, or
+* a contractor or baking-as-a-service provider taking care of the baking operations on behalf of the baker.
 
 This constitues a centralization risk:
 
-* some cloud operators have a large market share, which may give them the power to disrupt or stop the network,
+* the cloud platform may revoke access unilaterally. Some cloud operators have a large market share, which may give them the power to disrupt or stop the network,
 * dominant baking service providers may emerge.
 
+At any time, if over one third of the stake goes offline, the chain can not move forward. Decentralization is key to avoiding this.
 
-The drain operation acts as an additional deterrent and ensures that the consensus keys ultimately has the same control over the balance than the delegate's key.
+The drain operation acts as an deterrent against centralization and ensures that the consensus keys ultimately has the same control over the balance than the delegate's key.
 
 #### As a recovery mechanism from baker's key loss
 
@@ -146,7 +147,7 @@ A baker may lose their baking key. In this case, they may stop baking, wait `PRE
 
 ### `consensus_key_drain_toggle` governance toggle
 
-The permissions granted to a consensus key have been subject to vigourous debate in the past.
+The permissions granted to a potential consensus key have been subject of vigourous debates in the past.
 
 The core argument against the existence of the `drain` operation is that it increases the security posture of the baker even further. Indeed, in the absence of the drain operation, a compromise of the consensus key does not put the unfrozen balance at risk.
 
@@ -168,7 +169,7 @@ The operation will initially be enabled. When setting up their baker for the new
 
 #### Why not introduce a mechanism to rotate the baking key altogether?
 
-We rejected the baking key rotation idea due to its intrusiveness. In particular, it would require all delegations to be changed to the new key.
+The implmementation of such a rotation mechanism would be very intrusive. In particular, it would require all delegations to be changed to the new key. We believe that a parent/key design is a better path to solving the issue.
 
 #### What if the signature scheme of the parent key turns out to be insecure?
 In this proposal, the ultimate authority indeed rests on the parent key which can not be rotated. The security of the signature scheme of the parent key may decrease over time. However, the less often a key is used, the more secure it is.
