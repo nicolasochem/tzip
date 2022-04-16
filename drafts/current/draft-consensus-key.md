@@ -145,15 +145,24 @@ The drain operation acts as an additional deterrent and ensures that the consens
 A baker may lose their baking key. In this case, they may stop baking, wait `PRESERVED_CYCLES`, and then recover their funds with the `drain` operation. They may then start baking from another account.
 
 ### `consensus_key_drain_toggle` governance toggle
-The introduction of the consensus key is an uncontroversial and long-standing request from the community. Many competing blockchains already have this feature implemented. But the permissions granted to the key have been subject to vigourous debate in the past.
 
-A good case can be made for disabling the `drain` operation: it increases the security posture of the baker even further. Indeed, in the absence of the drain operation, a compromise of the consensus key does not put the unfrozen balance at risk. It still exposes the baker to a double signing attack, but this attack is complex to pull off and results in half of the frozen balance being burned.
+The permissions granted to a consensus key have been subject to vigourous debate in the past.
 
-On the other hand, disabling the `drain` operation also disables the recovery mechanism from loss of the baker key, and re-introduces concerns expressed above about changing the decentralization dynamics of the network.
+The core argument against the existence of the `drain` operation is that it increases the security posture of the baker even further. Indeed, in the absence of the drain operation, a compromise of the consensus key does not put the unfrozen balance at risk.
 
-The [liquidity baking toggle vote](https://gitlab.com/tezos/tzip/-/blob/master/drafts/current/draft-symmetric-liquidity-baking-toggle-vote.md) TZIP introduced a mechanism for fast and concurrent governance signaling mechanisms. This mechanism is suitable for a binary decision such as enabling or disabling an operation.
+On the other hand, we already listed the arguments for keeping the `drain` operation enabled:
+* it stands as a recovery mechanism in case of baker's key loss,
+* it deters bakers from handing off the baker key to third-parties, which is good for decentralization.
 
-The `consensus_key_drain_toggle` governance toggle leaves the matter for the community to decide, separately from the feature itself.
+It is useful to ask two questions:
+* should the consensus key exist at all? The answer is an uncontroversial yes. A consensus key is long-standing request from the community. Many competing blockchains already have this feature implemented.
+* what permissions should be granted to it? Opinions on the matter differ, but we believe they can coalesce into a binary question on whether the `drain` operation as proposed should exist or not.
+
+The [liquidity baking toggle vote](https://gitlab.com/tezos/tzip/-/blob/master/drafts/current/draft-symmetric-liquidity-baking-toggle-vote.md) TZIP introduced a mechanism for fast and concurrent governance signaling mechanisms.
+
+This mechanism is suitable for a binary decision such as enabling or disabling the `drain` operation. Therefore, the proposed `consensus_key_drain_toggle` governance toggle leaves the matter for the community to decide, separately from the feature itself.
+
+The operation will initially be enabled. When setting up their baker for the new protocol, bakers will have to choose whether to vote `pass`, `on` and `off`.
 
 ### Q&A
 
