@@ -18,7 +18,7 @@ In the current version of the Tezos protocol (Ithaca), a baker is identified by 
 
 For this purpose, we propose to reuse the oldest trick in programming history: to add an intermediate pointer. With this proposal, the address of a baker does not designate an implicit account anymore but a reference to an implicit account. The baker may change the referenced implicit account by calling the newly introduced `update_consensus_key` operation, thus transfering to it all the block-signing rights and (pre)endorsements-signing rights after a delay of `PRESERVED_CYCLES + 1`.
 
-Separating keys allows separation of human responsibilities, which may alter the decentralization dynamics of the network. To neutralize this concern, a newly introduced `drain` operation allows the consensus key to transfer all the free balance of the baker to its own implicit account. This roughly confers the same powers to both keys. However, a newly introduced governance toggle `allow_consensus_key_drain` will allow a majority of bakers to disable this operation later on, if they so choose.
+Separating keys allows separation of human responsibilities, which may alter the decentralization dynamics of the network. To neutralize this concern, a newly introduced `drain` operation allows the consensus key to transfer all the free balance of the baker to its own implicit account. This roughly confers the same powers to both keys. However, a newly introduced governance toggle `consensus_key_drain_toggle` will allow a majority of bakers to disable this operation later on, if they so choose.
 
 ## Design
 
@@ -50,9 +50,9 @@ We propose to add two new operations:
 
   This operation immediately transfers all the free balance of the manager account into the consensus account. It has no effect on the frozen balance.
 
-  This operation fails if the governance toggle `allow_consensus_key_drain` is set to False.
+  This operation fails if the governance toggle `consensus_key_drain_toggle` is set to False.
 
-- `allow_consensus_key_drain` toggle vote
+### `consensus_key_drain_toggle` toggle vote
 
 The Toggle Vote for the drain operation relies on the computation of an
 exponential moving average (EMA) of the signals sent by bakers in
@@ -70,9 +70,7 @@ _threshold_ of the Toggle Vote. When the EMA is above the threshold,
 it means that **Off** votes have the majority. On the opposite, a
 value below the threshold means that **On** votes have the majority.
 
-The subsidy is sent to the Liquidity Baking contract if and only if
-the block level is below the liquidity baking sunset level and the EMA
-is below the threshold.
+The `drain` operation works if and only if the EMA is below the threshold.
 
 More precisely, the EMA is a natual number whose value can vary
 between 0 and 2 billion and the threshold is 1 billion.
@@ -88,6 +86,30 @@ In each block, the EMA is updated as follows:
 
 The migration establishes the correspondance table between the manager accounts and their consensus keys. Initially, all manager accounts and consensus keys are equal.
 
+The migration also sets the initial EMA of the toggle vote to 1 billion.
+
+### Commands
+
+
+A consensus key can be changed at any point. This may be done with the command:
+
+```shell
+tezos-client set baker <bkr> consensus key to <key>
+```
+
+The current registration command still works:
+
+```shell
+tezos-client register key <mgr> as delegate
+```
+
+It is also possible to register as a delegate and immediately set the consensus key:
+
+```shell
+tezos-client register key <mgr> as delegate with consensus key <key>
+```
+
+TODO discuss this and figure out if it's true
 ## Motivation
 
 ### `update_consensus_key`
@@ -125,7 +147,7 @@ The drain operation acts as an additional deterrent and ensures that the consens
 
 A baker may lose their baking key. In this case, they may stop baking, wait `PRESERVED_CYCLES`, and then recover their funds with the `drain` operation. They may then start baking from another account.
 
-### `allow_consensus_key_drain` governance toggle
+### `consensus_key_drain_toggle` governance toggle
 The introduction of the consensus key is an uncontroversial and long-standing request from the community. But the permissions granted to the key have been subject to vigourous debate in the past.
 
 The [liquidity baking toggle vote](https://gitlab.com/tezos/tzip/-/blob/master/drafts/current/draft-symmetric-liquidity-baking-toggle-vote.md) TZIP introduced a mechanism for fast and concurrent governance signaling mechanisms. 
@@ -134,7 +156,21 @@ A good case can be made for disabling the `drain` operation: it increases the se
 
 On the other hand, disabling the `drain` operation also disables the recovery mechanism from loss of the baker key, and re-introduces concerns expressed above about changing the decentralization dynamics of the network.
 
-The `allow_consensus_key_drain` governance toggle leaves the matter for the community to decide, separately from the feature itself.
+The `consensus_key_drain_toggle` governance toggle leaves the matter for the community to decide, separately from the feature itself.
+
+### Q&A
+
+#### Why not introduce a mechanism to rotate the baking key altogether?
+
+We rejected the baking key rotation feature due to its intrusiveness. In particular, it would require all delegations to be changed.
+
+#### Why not change the encoding of the baking key to something different than a `tz` address such as `BAKxxx`
+
+This change would be disruptive in the community and mandate a lot of changes in tooling. We feel it is a useless distraction.
+
+#### Can the baking key be a multisig? Can we have smart contracts manage baking? Can the rewards be sent to a third address?
+
+All of these topics were discussed in the past. A previous TZIP called "Baking accounts" was implementing some of these ideas, but was ultimately rejected by the community because of some technical shortcoming. We are actively limiting the scope and the amount of code changes in this TZIP to solve a narrower problem of consensus key separation.
 
 ## Testing / edge cases
 
