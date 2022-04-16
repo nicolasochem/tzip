@@ -14,15 +14,15 @@ This TZIP describes a proposed protocol-amendment that would allow bakers to des
 
 ## Abstract
 
-In the current version of the Tezos protocol (Ithaca), a baker is identified by a public key hash, e.g. a `tz1...` address. Like any public key hash in Tezos, this hash, or address, identifies an implicit account, i.e. a balance and the corresponding keypair allowed to withdraw funds. If for any reason a baker want to change its keypair, it has to ask all their delegator to redelegate to the hash of their new public key. This TZIP aims to ease this process and to avoid any redelegations.
+In the current version of the Tezos protocol (Ithaca), a baker is identified by a public key hash, e.g. a `tz1...` address. Like any public key hash in Tezos, this hash, or address, identifies an implicit account, i.e. a balance and the corresponding keypair allowed to withdraw funds. If for any reason a baker want to change the keypair used for signing consensus operations, they have to have all their delegator accounts redelegate to the hash of their new public key. This TZIP aims to ease this process and to avoid any redelegations.
 
 For this purpose, we propose to reuse the oldest trick in programming history: to add an intermediate pointer. With this proposal, the address of a baker does not designate an implicit account anymore but a reference to an implicit account. The baker may change the referenced implicit account by calling the newly introduced `update_consensus_key` operation, thus transfering to it all the block-signing rights and (pre)endorsements-signing rights after a delay of `PRESERVED_CYCLES + 1`.
 
-Separating keys allows separation of human responsibilities, which may alter the decentralization dynamics of the network. To neutralize this concern, a newly introduced `drain` operation allows the consensus key to transfer all the free balance of the baker to its own implicit account. This roughly confers the same powers to both keys. However, a newly introduced governance toggle `consensus_key_drain_toggle` will allow a majority of bakers to disable this operation later on, if they so choose.
+Separating keys allows separation of human responsibilities, which may alter the decentralization dynamics of the network. To neutralize this concern, a newly introduced `drain` operation allows the consensus key to transfer all the free balance of the baker to its own implicit account. This roughly confers the same powers to both keys. However, a newly introduced governance toggle `consensus_key_drain_toggle` will allow a majority of bakers to disable this `drain` operation later on, if they so choose.
 
 ## Design
 
-We propose to add a second key to delegates, called the consensus key. This consensus key is used instead of the regular key of the delegate (a.k.a. the manager key or the parent key) for signing blocks and (pre)endorsement. By default, the manager key and the consensus key are equal.
+We add a second key to delegates, called the consensus key. This consensus key is used instead of the regular key of the delegate (a.k.a. the manager key or the parent key) for signing blocks and (pre)endorsements. By default, the manager key and the consensus key are equal.
 
 Internally, a table associates the manager keys to their respective consensus keys. This table is stored in the context. (right?)
 
@@ -148,13 +148,13 @@ The drain operation acts as an additional deterrent and ensures that the consens
 A baker may lose their baking key. In this case, they may stop baking, wait `PRESERVED_CYCLES`, and then recover their funds with the `drain` operation. They may then start baking from another account.
 
 ### `consensus_key_drain_toggle` governance toggle
-The introduction of the consensus key is an uncontroversial and long-standing request from the community. But the permissions granted to the key have been subject to vigourous debate in the past.
-
-The [liquidity baking toggle vote](https://gitlab.com/tezos/tzip/-/blob/master/drafts/current/draft-symmetric-liquidity-baking-toggle-vote.md) TZIP introduced a mechanism for fast and concurrent governance signaling mechanisms. 
+The introduction of the consensus key is an uncontroversial and long-standing request from the community. Many competing blockchains already have this feature implemented. But the permissions granted to the key have been subject to vigourous debate in the past.
 
 A good case can be made for disabling the `drain` operation: it increases the security posture of the baker even further. Indeed, in the absence of the drain operation, a compromise of the consensus key does not put the unfrozen balance at risk. It still exposes the baker to a double signing attack, but this attack is complex to pull off and results in half of the frozen balance being burned.
 
 On the other hand, disabling the `drain` operation also disables the recovery mechanism from loss of the baker key, and re-introduces concerns expressed above about changing the decentralization dynamics of the network.
+
+The [liquidity baking toggle vote](https://gitlab.com/tezos/tzip/-/blob/master/drafts/current/draft-symmetric-liquidity-baking-toggle-vote.md) TZIP introduced a mechanism for fast and concurrent governance signaling mechanisms. This mechanism is suitable for a binary decision such as enabling or disabling an operation.
 
 The `consensus_key_drain_toggle` governance toggle leaves the matter for the community to decide, separately from the feature itself.
 
@@ -162,9 +162,9 @@ The `consensus_key_drain_toggle` governance toggle leaves the matter for the com
 
 #### Why not introduce a mechanism to rotate the baking key altogether?
 
-We rejected the baking key rotation feature due to its intrusiveness. In particular, it would require all delegations to be changed.
+We rejected the baking key rotation feature due to its intrusiveness. In particular, it would require all delegations to be changedm touching various parts of the storage, each time such operation runs.
 
-#### Why not change the encoding of the baking key to something different than a `tz` address such as `BAKxxx`
+#### Why not change the encoding of the baking key to something different than a `tz` address such as `BAKxxx` or `SG1xxx`?
 
 This change would be disruptive in the community and mandate a lot of changes in tooling. We feel it is a useless distraction.
 
