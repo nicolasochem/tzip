@@ -118,9 +118,8 @@ Key rotation is a common feature of any cryptosystem. Having a parent key delega
 
 It also allows establishment of baking operations in an environment where access is not ultimately guaranteed: for example, a cloud platform providing hosted Key Management Systems where the private key is generated within the system and can never be downloaded by the baker. The baker can designate such KMS key as consensus key. Shall they lose access to the cloud platform for any reason, they can simply rotate to a new key.
 
-Moreover, this proposal allows the baker to sign their consensus operations using new signature schemes as they get introduced in Tezos. They may elect to do so for performance or security reasons. The ultimate authority still rests on the parent key which can not be rotated. The security of the signature scheme of the parent key may decrease over time, however the fact that this key is used less often than the consensus key helps to mitigate this.
+Moreover, this proposal allows the baker to sign their consensus operations using new signature schemes as they get introduced in Tezos. They may elect to do so for performance or security reasons.
 
-As a private baker, it is possible to put 90% of the funds in cold storage, in an account that delegates to the baker. This is however an imperfect substitute to this proposal, given that it still leaves 10% of the funds in the baker's account. It is also not doable for a public baker who may have 100% of their balance frozen.
 
 ### `drain`
 
@@ -128,18 +127,16 @@ The motivation of the `drain` operation is twofold.
 
 #### As a deterrent against handing over the key to a third party
 
-When there is one key, whoever has access to it has full control over the baker. When there are two keys, the possibility emerges of each of these keys being controlled by different people or entities. For example, the delegate key could be in physical custody of the baker, while the consensus key could be:
+When there is one key, whoever has access to it has full control over the baker. When there are two keys, the possibility emerges of each of these keys being controlled by different people or entities. For example, the delegate key would be in physical custody of the baker, while the consensus key could be:
 
-* hosted in a cloud platform where the cloud provider merely grants access to the baker, to be revoked at their discretion,
-* handed to a service provider taking care of the baking operations on behalf of the baker (baking-as-a-service operator)
+* hosted in a cloud platform where the cloud provider may revoke access unilaterally,
+* handed to a contractor or baking-as-a-service provider taking care of the baking operations on behalf of the baker.
 
-This constitues a centralization risk: some cloud operators have a large market share, which may give them the power to disrupt or stop the network. Some baking providers may also become dominant.
+This constitues a centralization risk:
 
-There are risks to this regardless of the existence of the `drain` operation: indeed, anyone with access to the consensus key has the ability to double sign, which can result in the delegate being slashed. Shall the attacker have baking rights, they may inject the denunciation operation in their own block, stealing half of the frozen balance, while the other half is burned.
+* some cloud operators have a large market share, which may give them the power to disrupt or stop the network,
+* dominant baking service providers may emerge.
 
-Therefore, a rigorous baker will not hand off their consensus key to an untrusted party.
-
-When the drain operation is enabled, a compromise of the consensus key allows a motivated attacker to spend all of the baker's balance. Indeed, the drain operation always takes precedence over any transaction in any block (TODO confirm this). Therefore, a motivated attacker is able to steal all of the baker's money by timing their drain operations appropriately, even if all of the balance is initially frozen.
 
 The drain operation acts as an additional deterrent and ensures that the consensus keys ultimately has the same control over the balance than the delegate's key.
 
@@ -164,11 +161,24 @@ The `consensus_key_drain_toggle` governance toggle leaves the matter for the com
 
 We rejected the baking key rotation idea due to its intrusiveness. In particular, it would require all delegations to be changed to the new key.
 
+#### What if the signature scheme of the parent key turns out to be insecure?
+In this proposal, the ultimate authority indeed rests on the parent key which can not be rotated. The security of the signature scheme of the parent key may decrease over time. However, the less often a key is used, the more secure it is.
+
+#### A baker can already self-delegate to put most funds in a cold wallet. Why do we need a consensus key?
+
+As a private baker, it is possible to put 90% of the funds in cold storage, in an account that delegates to the baker. This is however an imperfect substitute to this proposal, given that it still leaves 10% of the funds in the baker's account. It is also not doable for a public baker who may have 100% of their balance frozen.
+#### Why is the drain operation necessary? Isn't giving away your consensus key risky, even in the absence of a drain operation?
+
+Indeed, anyone with access to the consensus key has the ability to double sign, which can result in the delegate being slashed. Shall the attacker have baking rights, they may inject the denunciation operation in their own block, stealing half of the frozen balance, while the other half is burned.
+
+Therefore, a rigorous baker will not hand off their consensus key to an untrusted party. But, the drain operation makes it more evident.
+
+When the drain operation is enabled, a compromise of the consensus key allows a motivated attacker to spend all of the baker's balance. Indeed, the drain operation always takes precedence over any transaction in any block (TODO confirm this). Therefore, a motivated attacker is able to steal all of the baker's money by timing their drain operations appropriately, even if all of the balance is initially frozen.
 #### Why not change the encoding of the baking key to something different than a `tz` address such as `BAKxxx` or `SG1xxx`?
 
 This change would be disruptive in the community and mandate a lot of changes in tooling, for questionable benefit.
 
-#### Can the baking key be a multisig? Can we have smart contracts manage baking? Can the rewards be sent to a third address?
+#### Can the baking key be a multisig? Can we have smart contracts manage baking? Can the rewards be sent to a third address? Can a third address be used for voting?
 
 All of these topics were discussed in the past. A previous TZIP called "Baking accounts" was implementing some of these ideas, but was ultimately rejected by the community because of technical shortcomings. We are actively limiting the scope and the amount of code changes in this TZIP to solve the narrower goal of having a separate consensus key.
 
