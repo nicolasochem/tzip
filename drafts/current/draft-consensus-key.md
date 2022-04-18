@@ -86,7 +86,7 @@ In each block, the EMA is updated as follows:
 
 The migration establishes the correspondance table between the manager accounts and their consensus keys. Initially, all manager accounts and consensus keys are equal.
 
-The migration also sets the initial EMA of the toggle vote to 1 billion.
+The migration also sets the initial EMA of the toggle vote to zero.
 
 ### Commands
 
@@ -164,6 +164,8 @@ The [liquidity baking toggle vote](https://gitlab.com/tezos/tzip/-/blob/master/d
 This mechanism is suitable for a binary decision such as enabling or disabling the `drain` operation. Therefore, the proposed `consensus_key_drain_toggle` governance toggle leaves the matter for the community to decide, separately from the feature itself.
 
 The operation will initially be enabled. When setting up their baker for the new protocol, bakers will have to choose whether to vote `pass`, `on` and `off`.
+
+The threshold for disabling the operation is at 50% (simple majority). The exponential moving average is initially set to zero, as if 100% of the stake was in favor of enabling it: this matches the current reality on the network where the owner of the consensus key can spend the free balance. In order to disable it, it is necessary to have more `Off` than `On` votes for a sufficiently long period before it goes over the threshold.
 
 ### Q&A
 
