@@ -22,37 +22,50 @@ Separating keys allows separation of human responsibilities, which may alter the
 
 ## Design
 
-We add a second key to delegates, called the consensus key. This consensus key is used instead of the regular key of the delegate (a.k.a. the manager key or the parent key) for signing blocks and (pre)endorsements. By default, the manager key and the consensus key are equal.
+### A new consensus key table in the context
 
-Internally, a table associates the manager keys to their respective consensus keys. This table is stored in the context. (right?)
+We propose to add a second key to delegates, called the consensus key. This
+consensus key is used instead of the regular key of the delegate
+(a.k.a. the manager key or the parent key) for signing blocks and
+(pre)endorsements. By default, the manager key and the consensus key are
+equal.
 
-The consensus key of a given delegate is set per cycle to whatever the consensus key is set in the table at the time the snapshot is taken.
+Internally, a table associates the manager keys to their respective
+consensus keys. This table is stored in the context, and is called the
+consensus key table in this document.
+
+The key currently used to sign blocks and (pre)endorsements is called the
+active consensus key of a given delegate. It is set per cycle to whatever
+the consensus key is set in the consensus key table at the time the
+stake snapshot is taken.
+
+### Two new operations in the protocol
 
 We propose to add two new operations:
 
 - `Update_consensus_key <public_key>`
 
-  This operation must be signed by the manager key of a delegate. It
-  will change the consensus key associated to the delegate: the new
-  key will be used instead of the old key when computing the future
-  baking rights distributions, meaning that the key will be required
-  for signing blocks and endorsement in `preserved_cycles` (currently
-  5 cycles in Ithaca).
+  This operation must be signed by the manager key of a delegate.
 
-  
-  It is required that the account used as consensus key be allocated. The operation fails otherwise.
+  It will change the consensus key associated to the delegate in the
+  consensus key table. The new key will now be used instead of the old key
+  when computing the baking rights distributions, meaning that the key will
+  become active and be required for signing blocks and endorsement in
+  `preserved_cycles` (currently 5 cycles in Ithaca).
 
-  Several bakers can have their consensus key set to the same key.
+  At any time, only one baker can use a consensus key at any give time.
 
-- `drain`
+- `Drain_delegate <public_key_hash>`
 
-  This operation must be signed by the consensus key of a delegate currently allowed to sign consensus operations.
+  This operation must be signed by the consensus key of a delegate,
+  as currently set in the consensus key table.
 
   This operation immediately transfers all the free balance of the manager account into the consensus account. It has no effect on the frozen balance.
 
-  This operation fails if the governance toggle `consensus_key_drain_toggle` is set to **Off**.
+  This operation fails if the governance toggle `drain_toggle` is set to
+  **Off** (see next section)
 
-### `consensus_key_drain_toggle` toggle vote
+### A new toggle vote `drain_toggle_vote`
 
 The Toggle Vote for the drain operation relies on the computation of an
 exponential moving average (EMA) of the signals sent by bakers in
@@ -70,7 +83,8 @@ _threshold_ of the Toggle Vote. When the EMA is above the threshold,
 it means that **Off** votes have the majority. On the opposite, a
 value below the threshold means that **On** votes have the majority.
 
-The `drain` operation works if and only if the EMA is below the threshold.
+The `Drain_delegate` operation works if and only if the EMA is below the
+threshold.
 
 More precisely, the EMA is a natual number whose value can vary
 between 0 and 2 billion and the threshold is 1 billion.
@@ -84,17 +98,18 @@ In each block, the EMA is updated as follows:
 
 ### Protocol migration
 
-The migration establishes the correspondance table between the manager accounts and their consensus keys. Initially, all manager accounts and consensus keys are equal.
+The proposed amendment needs to initialize the new consensus key table.
+It will iterate on all registered delegates (around ~2500) and set
+the consensus key to be equal to the manager key.
 
 The migration also sets the initial EMA of the toggle vote to zero.
 
-### Commands
-
+### New commands in `tezos-client`
 
 A consensus key can be changed at any point. This may be done with the command:
 
 ```shell
-tezos-client set baker <bkr> consensus key to <key>
+tezos-client set consensus key for <mgr> to <key>
 ```
 
 The current registration command still works:
@@ -109,10 +124,21 @@ It is also possible to register as a delegate and immediately set the consensus 
 tezos-client register key <mgr> as delegate with consensus key <key>
 ```
 
-TODO discuss this and figure out if it's true
+The drain operation might be sent with:
+
+```shell
+tezos-client drain delegate <mkr> to <key>
+```
+
+### A new flag to the baker
+
+Like the mandatory flag `--liquidity-baking-togle-vote [on|off|pass]`, the
+baker now requires the flag `--drain-toggle-vote [on|off|pass]`.
+
+
 ## Motivation
 
-### `update_consensus_key`
+### `Update_consensus_key`
 
 Key rotation is a common feature of any cryptosystem. Having a parent key delegate responsibilities to a child key allows for optimal protection of the parent key, for example in a cold wallet.
 
@@ -121,9 +147,9 @@ It also allows establishment of baking operations in an environment where access
 Moreover, this proposal allows the baker to sign their consensus operations using new signature schemes as they get introduced in Tezos. They may elect to do so for performance or security reasons.
 
 
-### `drain`
+### `Drain_delegate`
 
-The motivation of the `drain` operation is twofold.
+The motivation of the `Drain_delegate` operation is twofold.
 
 #### As a deterrent against handing over the key to a third party
 
@@ -143,15 +169,15 @@ The drain operation acts as an deterrent against centralization and ensures that
 
 #### As a recovery mechanism from baker's key loss
 
-A baker may lose their baking key. In this case, they may stop baking, wait `PRESERVED_CYCLES`, and then recover their funds with the `drain` operation. They may then start baking from another account.
+A baker may lose their baking key. In this case, they may stop baking, wait `PRESERVED_CYCLES`, and then recover their funds with the `Drain_delegate` operation. They may then start baking from another account.
 
-### `consensus_key_drain_toggle` governance toggle
+### `drain_toggle` governance toggle
 
 The permissions granted to a potential consensus key have been subject of vigourous debates in the past.
 
-The core argument against the existence of the `drain` operation is that it increases the security posture of the baker even further. Indeed, in the absence of the drain operation, a compromise of the consensus key does not put the unfrozen balance at risk.
+The core argument against the existence of the `Drain_delegate` operation is that it increases the security posture of the baker even further. Indeed, in the absence of the drain operation, a compromise of the consensus key does not put the unfrozen balance at risk.
 
-On the other hand, we already listed the arguments for keeping the `drain` operation enabled:
+On the other hand, we already listed the arguments for keeping the `Drain_delegate` operation enabled:
 * it stands as a recovery mechanism in case of baker's key loss,
 * it deters bakers from handing off the baker key to third-parties, which is good for decentralization.
 
@@ -192,7 +218,7 @@ This change would be disruptive in the community and mandate a lot of changes in
 
 #### Can the baking key be a multisig? Can we have smart contracts manage baking? Can the rewards be sent to a third address? Can a third address be used for voting?
 
-All of these topics were discussed in the past. A previous TZIP called "Baking accounts" was implementing some of these ideas, but was ultimately rejected by the community because of technical shortcomings. We are actively limiting the scope and the amount of code changes in this TZIP to solve the narrower goal of having a separate consensus key.
+All of these topics were discussed in the past. A previous TZIP draft called "Baking accounts" was implementing some of these ideas, but was ultimately rejected by the community because of technical shortcomings. We are actively limiting the scope and the amount of code changes in this TZIP to solve the narrower goal of having a separate consensus key.
 
 #### Have you addressed all the unexpected breaking changes of the previous baking accounts proposal?
 
@@ -202,7 +228,13 @@ Specifically this quote:
 
 > A future version of Baking Accounts which does not break current contracts and preserves important invariants is possible, and should be developed to take its place.
 
-We believe that the current proposal fits this description. Unlike the previous proposal, we are not allowing bakers to be controlled by multisignature smart contracts. As a result, we did not change any Michelson instruction and no smart contracts will break. Moreover, the consensus key is a regular implicit account with its own balance. In addition to signing consensus messages, it can do anything on chain that any other account can do, including calling smart contrats.
+We believe that the current proposal fits this description. Unlike the
+previous proposal, we are not allowing bakers to be controlled by
+multisignature smart contracts. As a result, we did not change any
+Michelson instruction and no smart contracts will break. Moreover, the
+consensus key is a regular implicit account with its own balance. In
+addition to signing consensus messages, it can at any time do anything on
+chain that any other account can do, including calling smart contrats.
 
 ## Testing / edge cases
 
