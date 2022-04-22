@@ -218,3 +218,99 @@ Michelson instruction and no smart contracts will break. Moreover, the
 consensus key is a regular implicit account with its own balance. In
 addition to signing consensus messages, it can at any time do anything on
 chain that any other account can do, including calling smart contrats.
+
+## Change in RPCs
+
+- `GET /chains/main/blocks/head/header`
+
+  The protocol specific part of a block header is extended with a new toggle vote:
+
+```
+   "drain_toggle_vote": "off|on|pass",
+```
+
+- `GET /chains/main/blocks/head/context/constants`
+
+  A new constant is exported:
+
+``
+   "drain_toggle_ema_threshold": 1000000000
+``
+
+- GET `/chains/main/blocks/head/metadata`
+
+  The block metadata are extended with the active consensus key of the baker and proposer. The field `proposer` and `baker` still hold the respective public key hash of the manager keys of the proposer and baker. The block metadata also export the current value of the drain toggle ema.
+
+```
+  "proposer_consensus_key": "[PUBLIC_KEY_HASH]",
+  "baker_consensus_key": "[PUBLIC_KEY_HASH]",
+  "drain_toggle_ema": 1234567890,
+```
+
+- `GET /chains/main/blocks/head/context/delegates/[PUBLIC_KEY_HASH]`
+
+  The delegate data are extended with active and pending consensus keys.
+
+```
+{ "full_balance": "4000000000000",
+  "current_frozen_deposits": "200000000000",
+  "frozen_deposits": "200000000000",
+  "staking_balance": "4000000000000",
+  "delegated_contracts": [ "[PUBLIC_KEY_HASH]" ],
+  "delegated_balance": "0",
+  "deactivated": false,
+  "grace_period": 5,
+  "voting_power": "4000000000000",
+  "active_consensus_key": "[PUBLIC_KEY_HASH]",
+  "pending_consensus_keys": [
+      { "cycle": 7, "pkh": "[PUBLIC_KEY_HASH]},
+      { "cycle": 9, "pkh": "[PUBLIC_KEY_HASH]}
+    ]
+  }
+```
+
+- `GET /chains/main/blocks/head/helpers/baking_rights`
+
+  The baking rights RPC now returns both the manager key, required to identify the rewarded delegate, and the active consensus key required to sign block. The RPC also accepts a new parameter `consensus_key=<pkh>` to filter the result by active consensus key.
+
+```
+[ { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 0, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 1, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 2, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 3, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 10, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" } ]
+```
+
+- `GET /chains/main/blocks/head/helpers/endorsing_rights`
+
+  The endorsing rights RPC now returns both the manager key, required to identify the rewarded delegate, and the active consensus key required to sign block. The RPC also accepts a new parameter `consensus_key=<pkh>` to filter the result by active consensus key.
+
+```
+[ { "level": 1,
+    "delegates":
+      [ { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 11, "endorsing_power": 50,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 4, "endorsing_power": 47,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 2, "endorsing_power": 46,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 1, "endorsing_power": 55,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 0, "endorsing_power": 58,
+          "consensus_key": "[PUBLIC_KEY_HASH]" } ] } ]
+```
