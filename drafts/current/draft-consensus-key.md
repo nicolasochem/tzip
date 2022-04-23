@@ -25,8 +25,8 @@ Separating keys allows separation of human responsibilities, which may alter the
 ### A new consensus key table in the context
 
 We propose to extend the context with two new tables:
-- one main table storing the active consensus key of a delegate,
-- and a second table storing pending consensus-key updates for a delegate and at which cycle the key must be activated.
+- one main table storing the active consensus key of a baker,
+- and a second table indexed by baker and cycle and storing pending consensus-key updates.
 
 At the end of each cycle, the table of pending updates is traversed: consensus keys that must be activated in the next cycle are removed from the pending consensus-key table and inserted into the active consensus-key table.
 
@@ -38,7 +38,7 @@ We propose to add two new operations:
 
   This operation must be signed by the manager key of a delegate.
 
-  It will record the pending update in the pending consensus-key table. The current implementation requires that `<cycle>` is equal to the current cycle plus `PRESERVED_CYCLES + 1`.
+  It will record the update in the pending consensus-key table. The current implementation requires that `<cycle>` is equal to the current cycle plus `PRESERVED_CYCLES + 1`.
 
   At any time, a consensus key can only be used by a single baker, the operation fails otherwise.
 
@@ -50,7 +50,7 @@ We propose to add two new operations:
 
   This operation fails if the governance toggle `--drain-toggle-vote` is set to **Off**, see next section.
 
-  This operation fails if the implicit account associated with the consensus key is not initialized.
+  This operation is a regular `Manager_operation`. Thus, it fails if the implicit account associated with the consensus key is not initialized, and if it cannot pay for the associated fees.
 
 ### A new toggle vote `--drain-toggle-vote`
 
