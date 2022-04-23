@@ -24,7 +24,11 @@ Separating keys allows separation of human responsibilities, which may alter the
 
 ### A new consensus key table in the context
 
-We propose to extend the context with a new table storing, per cycle and per baker, the public key of the active consensus key. In this document, this newly introduced table is referenced as the consensus key table. The key associated to the current cycle is called the active consensus key of a baker. The keys associated to the upcoming cycles are called pending consensus keys. When taking stake snapshot for computing baking rights and endorsing rights for a given cycle, the consensus key active for the cycle is used instead of the manager key.
+We propose to extend the context with two new tables:
+- one main table storing the active consensus key of a delegate,
+- and a second table storing pending consensus-key updates for a delegate and at which cycle the key must be activated.
+
+At the end of each cycle, the table of pending updates is traversed: consensus keys that must be activated in the next cycle are removed fpr the pending consensus-key table and inserted into the active consensus-key table.
 
 ### Two new operations in the protocol
 
@@ -34,7 +38,7 @@ We propose to add two new operations:
 
   This operation must be signed by the manager key of a delegate.
 
-  It will change the consensus key associated to the signing delegate in the consensus key table, starting at cycle `<cycle>`. The current implementation requires that `<cycle>` is equal to the current cycle plus `PRESERVED_CYCLES + 1`.
+  It will record the pending update in the pending consensus-key table. The current implementation requires that `<cycle>` is equal to the current cycle plus `PRESERVED_CYCLES + 1`.
 
   At any time, a consensus key can only be used by a single baker, the operation fails otherwise.
 
