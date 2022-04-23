@@ -36,7 +36,7 @@ We propose to add two new operations:
 
 - `Update_consensus_key (<public_key>, <cycle>)`
 
-  This operation must be signed by the manager key of a delegate.
+  This operation must be signed by the manager key of a baker.
 
   It will record the update in the pending consensus-key table. The current implementation requires that `<cycle>` is equal to the current cycle plus `PRESERVED_CYCLES + 1`.
 
@@ -44,7 +44,7 @@ We propose to add two new operations:
 
 - `Drain_delegate <public_key_hash>`
 
-  This operation must be signed by the active consensus key of a delegate.
+  This operation must be signed by the active consensus key of baker.
 
   This operation immediately transfers all the free balance of the manager implicit account into the consensus implicit account. It has no effect on the frozen balance.
 
@@ -86,7 +86,7 @@ In each block, the EMA is updated as follows:
 ### Protocol migration
 
 The proposed amendment needs to initialize the new consensus key table.
-It will iterate on all registered delegates (around ~2500) and set
+It will iterate on all registered bakers (around ~2500) and set
 the consensus key to be equal to the manager key.
 
 The migration also sets the initial EMA of the toggle vote to zero.
@@ -242,7 +242,7 @@ The motivation of the `Drain_delegate` operation is twofold.
 
 #### As a deterrent against handing over the key to a third party
 
-When there is one key, whoever has access to it has full control over the baker. When there are two keys, the possibility emerges of each of these keys being controlled by different people or entities. For example, the delegate key would likely be in physical custody of the baker, while the consensus key could be handed to, or created by:
+When there is one key, whoever has access to it has full control over the baker. When there are two keys, the possibility emerges of each of these keys being controlled by different people or entities. For example, the manager key would likely be in physical custody of the baker, while the consensus key could be handed to, or created by:
 
 * a cloud platform, or
 * a contractor or baking-as-a-service provider taking care of the baking operations on behalf of the baker.
@@ -254,7 +254,7 @@ This constitues a centralization risk:
 
 At any time, if over one third of the stake goes offline, the chain can not move forward. Decentralization is key to avoiding this.
 
-The drain operation acts as an deterrent against centralization and ensures that the consensus keys ultimately has the same control over the balance than the delegate's key.
+The drain operation acts as an deterrent against centralization and ensures that the consensus keys ultimately has the same control over the balance than the manaker key.
 
 #### As a recovery mechanism from baker's key loss
 
@@ -292,7 +292,7 @@ In this proposal, the ultimate authority indeed rests on the parent key which ca
 As a private baker, it is possible to put 90% of the funds in cold storage, in an account that delegates to the baker. This is however an imperfect substitute to this proposal, given that it still leaves 10% of the funds in the baker's account. It is also not doable for a public baker who may have 100% of their balance frozen.
 #### Why is the drain operation necessary? Isn't giving away your consensus key risky, even in the absence of a drain operation?
 
-Indeed, anyone with access to the consensus key has the ability to double sign, which can result in the delegate being slashed. Shall the attacker have baking rights, they may inject the denunciation operation in their own block, stealing half of the frozen balance, while the other half is burned.
+Indeed, anyone with access to the consensus key has the ability to double sign, which can result in the baker being slashed. Shall the attacker have baking rights, they may inject the denunciation operation in their own block, stealing half of the frozen balance, while the other half is burned.
 
 Therefore, a rigorous baker will keep their consensus key secure and will not hand it off to an untrusted party.
 
@@ -300,13 +300,13 @@ But the drain operation makes the risk of doing so more evident: when the drain 
 
 #### How to bake using the consensus key?
 
-In your baker's command, replace the delegate's key alias with the consenus key alias:
+In your baker's command, replace the delegate's manager key alias with the consenus key alias:
 
 ```
 tezos-baker-0XX-Psxxxxxx run with local node ~/.tezos-node <consensus_key_alias>
 ```
 
-While transitioning from the delegate's key, it is possible to pass the alias for both delegate's key and consensus key. The baker will seamlessly keep baking when the transition happens:
+While transitioning from the delegate's manager key, it is possible to pass the alias for both delegate's manager key and consensus key. The baker will seamlessly keep baking when the transition happens:
 ```
 tezos-baker-0XX-Psxxxxxx run with local node ~/.tezos-node <consensus_key_alias> <delegate_key_alias>
 ```
