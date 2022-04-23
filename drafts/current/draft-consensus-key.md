@@ -14,58 +14,39 @@ This TZIP describes a proposed protocol-amendment that would allow bakers to des
 
 ## Abstract
 
-In the current version of the Tezos protocol (Ithaca), a baker is identified by a public key hash, e.g. a `tz1...` address. Like any public key hash in Tezos, this hash, or address, identifies an implicit account, i.e. a balance and the corresponding keypair allowed to withdraw funds. If for any reason a baker want to change the keypair used for signing consensus operations, they have to have all their delegator accounts redelegate to the hash of their new public key. This TZIP aims to ease this process and to avoid any redelegations.
+In the current version of the Tezos protocol (Ithaca), a baker is identified by a public key hash, e.g. a `tz1...` address. Like any public key hash in Tezos, this hash, or address, identifies an implicit account, i.e. a balance and the corresponding keypair allowed to withdraw funds. If for any reason a baker want to change the keypair used for signing consensus operations, they have to have all their delegator accounts manually redelegate to the hash of their new public key. This TZIP aims to ease this process and to avoid any explicit redelegations.
 
-For this purpose, we propose to reuse the oldest trick in programming history: to add an intermediate pointer. With this proposal, the address of a baker does not designate an implicit account anymore but a reference to an implicit account. The baker may change the referenced implicit account by calling the newly introduced `Update_consensus_key` operation, thus transfering to it all the block-signing rights and (pre)endorsements-signing rights after a delay of `PRESERVED_CYCLES + 1`.
+For this purpose, we propose to associate a second keypair to registered bakers, called the consensus key or the child key. By default this key is equal to the regular key of the baker (a.k.a. the manager key or the parent key). A baker may change the consensus key by calling the newly introduced `Update_consensus_key` operation, thus transfering to it all the block-signing rights and (pre)endorsements-signing rights after a delay of `PRESERVED_CYCLES + 1`.
 
-Separating keys allows separation of human responsibilities, which may alter the decentralization dynamics of the network. To neutralize this concern, a newly introduced `drain` operation allows the consensus key to transfer all the free balance of the baker to its own implicit account. This roughly confers the same powers to both keys. However, a newly introduced governance toggle `--drain-toggle-vote` will allow a majority of voting bakers to disable this `drain` operation later on, if they so choose.
+Separating keys allows separation of human responsibilities, which may alter the decentralization dynamics of the network. To neutralize this concern, a newly introduced `Drain_delegate` operation allows the consensus key to transfer all the free balance of the baker to its own implicit account. This roughly confers the same powers to both keys. However, a newly introduced governance toggle `--drain-toggle-vote` will allow a majority of voting bakers to disable this `Drain_delegate` operation later on, if they so choose.
 
 ## Design
 
 ### A new consensus key table in the context
 
-We propose to add a second key to delegates, called the consensus key. This
-consensus key is used instead of the regular key of the delegate
-(a.k.a. the manager key or the parent key) for signing blocks and
-(pre)endorsements. By default, the manager key and the consensus key are
-equal.
-
-Internally, a table associates the manager keys to their respective
-consensus keys. This table is stored in the context, and is called the
-consensus key table in this document.
-
-The key currently used to sign blocks and (pre)endorsements is called the
-active consensus key of a given delegate. It is set per cycle to whatever
-the consensus key is set in the consensus key table at the time the
-stake snapshot is taken.
+We propose to extend the context with a new table storing, per cycle and per baker, the public key of the active consensus key. In this document, this newly introduced table is referenced as the consensus key table. The key associated to the current cycle is called the active consensus key of a baker. The keys associated to the upcoming cycles are called pending consensus keys. When taking stake snapshot for computing baking rights and endorsing rights for a given cycle, the consensus key active for the cycle is used instead of the manager key.
 
 ### Two new operations in the protocol
 
 We propose to add two new operations:
 
-- `Update_consensus_key <public_key>`
+- `Update_consensus_key (<public_key>, <cycle>)`
 
   This operation must be signed by the manager key of a delegate.
 
-  It will change the consensus key associated to the delegate in the
-  consensus key table. The new key will now be used instead of the old key
-  when computing the baking rights distributions, meaning that the key will
-  become active and be required for signing blocks and endorsement in
-  `preserved_cycles` (currently 5 cycles in Ithaca).
+  It will change the consensus key associated to the signing delegate in the consensus key table, starting at cycle `<cycle>`. The current implementation requires that `<cycle>` is equal to the current cycle plus `PRESERVED_CYCLES + 1`.
 
   At any time, a consensus key can only be used by a single baker, the operation fails otherwise.
 
 - `Drain_delegate <public_key_hash>`
 
-  This operation must be signed by the consensus key of a delegate,
-  as currently set in the consensus key table.
+  This operation must be signed by the active consensus key of a delegate.
 
-  This operation immediately transfers all the free balance of the manager account into the consensus account. It has no effect on the frozen balance.
+  This operation immediately transfers all the free balance of the manager implicit account into the consensus implicit account. It has no effect on the frozen balance.
 
-  This operation fails if the governance toggle `drain_toggle` is set to
-  **Off** (see next section)
+  This operation fails if the governance toggle `--drain-toggle-vote` is set to **Off**, see next section.
 
-### A new toggle vote `drain_toggle_vote`
+### A new toggle vote `--drain-toggle-vote`
 
 The Toggle Vote for the drain operation relies on the computation of an
 exponential moving average (EMA) of the signals sent by bakers in
@@ -103,6 +84,8 @@ It will iterate on all registered delegates (around ~2500) and set
 the consensus key to be equal to the manager key.
 
 The migration also sets the initial EMA of the toggle vote to zero.
+
+The stake snapshots for the next `PRESERVED_CYCLES` are also reallocated. They now snapshot both the consensus public key and the manager public key hash. Yet, the baking and endorsing rights are unchanged.
 
 ### New commands in `tezos-client`
 
@@ -235,3 +218,99 @@ Michelson instruction and no smart contracts will break. Moreover, the
 consensus key is a regular implicit account with its own balance. In
 addition to signing consensus messages, it can at any time do anything on
 chain that any other account can do, including calling smart contrats.
+
+## Change in RPCs
+
+- `GET /chains/main/blocks/head/header`
+
+  The protocol specific part of a block header is extended with a new toggle vote:
+
+```
+   "drain_toggle_vote": "off|on|pass",
+```
+
+- `GET /chains/main/blocks/head/context/constants`
+
+  A new constant is exported:
+
+``
+   "drain_toggle_ema_threshold": 1000000000
+``
+
+- GET `/chains/main/blocks/head/metadata`
+
+  The block metadata are extended with the active consensus key of the baker and proposer. The field `proposer` and `baker` still hold the respective public key hash of the manager keys of the proposer and baker. The block metadata also export the current value of the drain toggle ema.
+
+```
+  "proposer_consensus_key": "[PUBLIC_KEY_HASH]",
+  "baker_consensus_key": "[PUBLIC_KEY_HASH]",
+  "drain_toggle_ema": 1234567890,
+```
+
+- `GET /chains/main/blocks/head/context/delegates/[PUBLIC_KEY_HASH]`
+
+  The delegate data are extended with active and pending consensus keys.
+
+```
+{ "full_balance": "4000000000000",
+  "current_frozen_deposits": "200000000000",
+  "frozen_deposits": "200000000000",
+  "staking_balance": "4000000000000",
+  "delegated_contracts": [ "[PUBLIC_KEY_HASH]" ],
+  "delegated_balance": "0",
+  "deactivated": false,
+  "grace_period": 5,
+  "voting_power": "4000000000000",
+  "active_consensus_key": "[PUBLIC_KEY_HASH]",
+  "pending_consensus_keys": [
+      { "cycle": 7, "pkh": "[PUBLIC_KEY_HASH]},
+      { "cycle": 9, "pkh": "[PUBLIC_KEY_HASH]}
+    ]
+  }
+```
+
+- `GET /chains/main/blocks/head/helpers/baking_rights`
+
+  The baking rights RPC now returns both the manager key, required to identify the rewarded delegate, and the active consensus key required to sign block. The RPC also accepts a new parameter `consensus_key=<pkh>` to filter the result by active consensus key.
+
+```
+[ { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 0, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 1, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 2, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 3, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" },
+  { "level": 2, "delegate": "[PUBLIC_KEY_HASH]",
+    "round": 10, "estimated_time": "[TIMESTAMP]",
+    "consensus_key": "[PUBLIC_KEY_HASH]" } ]
+```
+
+- `GET /chains/main/blocks/head/helpers/endorsing_rights`
+
+  The endorsing rights RPC now returns both the manager key, required to identify the rewarded delegate, and the active consensus key required to sign block. The RPC also accepts a new parameter `consensus_key=<pkh>` to filter the result by active consensus key.
+
+```
+[ { "level": 1,
+    "delegates":
+      [ { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 11, "endorsing_power": 50,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 4, "endorsing_power": 47,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 2, "endorsing_power": 46,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 1, "endorsing_power": 55,
+          "consensus_key": "[PUBLIC_KEY_HASH]" },
+        { "delegate": "[PUBLIC_KEY_HASH]",
+          "first_slot": 0, "endorsing_power": 58,
+          "consensus_key": "[PUBLIC_KEY_HASH]" } ] } ]
+```
