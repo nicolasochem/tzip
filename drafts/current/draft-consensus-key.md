@@ -116,7 +116,7 @@ tezos-client register key <mgr> as delegate with consensus key <key>
 The drain operation might be sent with:
 
 ```shell
-tezos-client drain delegate <mkr> to <key>
+tezos-client drain delegate <mgr> to <key>
 ```
 
 ### A new flag to the baker
