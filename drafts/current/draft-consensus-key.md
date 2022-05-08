@@ -4,8 +4,8 @@ status: Draft
 author: G.B. Fefe <gb.fefe@protonmail.com>, Nicolas Ochem <nicolas.ochem@gmail.com>
 type: Interface
 created: 2022-04-06
-date: 2022-04-06
-version: 0
+date: 2022-05-08
+version: 1
 ---
 
 ## Summary
@@ -42,15 +42,17 @@ We propose to add two new operations:
 
   At any time, a consensus key can only be used by a single baker, the operation fails otherwise.
 
-- `Drain_delegate <public_key_hash>`
+- `Drain_delegate (<baker_pkh, consensus_pkh, destination_pkh>)`
 
-  This operation must be signed by the active consensus key of baker.
+  This operation must be signed by the active consensus key `consensus_pkh` of the baker `baker_pkh`.
 
-  This operation immediately transfers all the free balance of the manager implicit account into the consensus implicit account. It has no effect on the frozen balance.
+  This operation immediately transfers all the free balance of the `baker_pkh` implicit account into the `destination_pkh` implicit account. It has no effect on the frozen balance.
 
   This operation fails if the governance toggle `--drain-toggle-vote` is set to **Off**, see next section.
 
-  This operation is a regular `Manager_operation`. Thus, it fails if the implicit account associated with the consensus key is not initialized, and if it cannot pay for the associated fees.
+  This operation is included in pass 2, together with `Seed_nonce_revelation`,`Double_*_evidence` and `Activate_account`. So they don't compete with regular manager operation in gas and block size quota, and they will always be applied before regular manager operation, e.g. a transfer operation from the baker.
+
+  As an incentive for bakers to include `Drain_delegate` operation, a small fixed fraction of the baker free balance is transfered as fees to baker that includes the operation, i.e. the smallest amount between 1tz or 1% of the free balance.
 
 ### A new toggle vote `--drain-toggle-vote`
 
